@@ -26,6 +26,8 @@ INSTALLED_APPS = [
     'invoices',
     'wishlist',
     'inventory',
+    'procurement',
+    'production',
 ]
 
 MIDDLEWARE = [

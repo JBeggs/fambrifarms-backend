@@ -4,7 +4,7 @@ from .models import User, RestaurantProfile
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ['id', 'email', 'first_name', 'last_name', 'user_type', 'phone', 'is_verified']
+        fields = ['id', 'email', 'first_name', 'last_name', 'user_type', 'phone', 'is_verified', 'roles', 'restaurant_roles']
 
 class RestaurantRegistrationSerializer(serializers.Serializer):
     email = serializers.EmailField()

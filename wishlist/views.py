@@ -8,6 +8,8 @@ from datetime import datetime
 from .models import Wishlist, WishlistItem
 from products.models import Product
 from orders.models import Order, OrderItem
+from suppliers.models import SupplierProduct
+from inventory.models import FinishedInventory
 from .serializers import WishlistSerializer, WishlistItemSerializer
 
 @api_view(['GET'])
@@ -84,20 +86,53 @@ def convert_to_order(request):
     
     # Create order
     order = Order.objects.create(
-        restaurant=request.user,  # Changed from user to restaurant
+        restaurant=request.user,  # restaurant account
+        created_by=request.user,  # audit who placed the order
         total_amount=total_amount,
         subtotal=total_amount,
         status='pending'
     )
     
-    # Create order items
+    # Create order items with supplier/internal auto-assignment
     for item in wishlist.items.all():
+        product = item.product
+        quantity = item.quantity
+        selling_price = product.price
+
+        # Default values
+        supplier = None
+        supplier_price = None
+        fulfillment_source = 'supplier'
+
+        # Try to pick best supplier by lowest price and availability
+        best_supplier_product = (
+            SupplierProduct.objects.filter(product=product, is_available=True)
+            .order_by('supplier_price')
+            .first()
+        )
+
+        if best_supplier_product:
+            supplier = best_supplier_product.supplier
+            supplier_price = best_supplier_product.supplier_price
+            fulfillment_source = 'supplier'
+        else:
+            # Fall back to internal production/stock if available
+            inv = FinishedInventory.objects.filter(product=product).first()
+            if inv and inv.reserve_stock(quantity):
+                fulfillment_source = 'internal'
+            else:
+                # No supplier and no internal stock, keep as supplier with None (to be handled by staff)
+                fulfillment_source = 'supplier'
+
         OrderItem.objects.create(
             order=order,
-            product=item.product,
-            quantity=item.quantity,
-            price=item.product.price,
-            total_price=item.product.price * item.quantity
+            product=product,
+            quantity=quantity,
+            price=selling_price,
+            total_price=selling_price * quantity,
+            supplier=supplier,
+            supplier_price=supplier_price,
+            fulfillment_source=fulfillment_source,
         )
     
     # Clear wishlist

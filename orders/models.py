@@ -17,6 +17,7 @@ class Order(models.Model):
     ]
     
     restaurant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
+    created_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name='orders_created')
     order_number = models.CharField(max_length=20, unique=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     
@@ -48,6 +49,14 @@ class OrderItem(models.Model):
     quantity = models.DecimalField(max_digits=8, decimal_places=2, validators=[MinValueValidator(0.01)])
     price = models.DecimalField(max_digits=10, decimal_places=2)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    # Multi-supplier fulfillment fields
+    supplier = models.ForeignKey('suppliers.Supplier', on_delete=models.SET_NULL, null=True, blank=True, related_name='order_items')
+    supplier_price = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    FULFILLMENT_CHOICES = [
+        ('supplier', 'Supplier'),
+        ('internal', 'Internal/Production'),
+    ]
+    fulfillment_source = models.CharField(max_length=20, choices=FULFILLMENT_CHOICES, default='supplier')
     notes = models.TextField(blank=True)
     
     def save(self, *args, **kwargs):
