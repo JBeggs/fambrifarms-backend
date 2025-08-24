@@ -12,46 +12,78 @@ Fambri Farms is a family-owned farm located in Hartbeespoort, South Africa, spec
 
 ## 🏗️ System Architecture
 
-This Django backend serves as the API for a B2B platform that manages:
+This Django backend serves as the API for a comprehensive farm-to-restaurant B2B platform that manages the complete supply chain:
 
 ### 🏢 Restaurant Customer Management (`accounts/`)
 - Custom user authentication with email-based login
 - Restaurant profiles with business details and payment terms
 - JWT-based secure authentication
-- User types: restaurants (customers), admin, staff
+- Multi-role system: restaurants, staff (CEO, Manager, Stocktaker, Production Lead, Sales), admin
+- Support for multiple users per restaurant (chef, manager, owner)
 
-### 🥬 Product Catalog (`products/`)
-- Product management with department categorization
-- Color-coded product departments
-- Per-kilogram pricing model
-- Comprehensive CMS for content management (company info, FAQs, testimonials)
+### 🥬 Product Catalog & CMS (`products/`)
+- Product management with color-coded department categorization
+- Per-kilogram pricing model with supplier integration
+- Comprehensive CMS: company info, FAQs, testimonials, business hours, team members
+- Content management for public-facing pages
 
-### 📋 Order Management (`orders/`)
+### 📋 Advanced Order Management (`orders/`)
 - **Scheduled ordering**: Orders only accepted on Tuesdays and Fridays
-- Order lifecycle: pending → confirmed → processing → ready → delivered
+- Enhanced order lifecycle: pending → confirmed → processing → ready → delivered
+- **Multi-fulfillment sources**: Supplier procurement + internal production
+- Automatic supplier assignment based on cost and availability
+- Order item tracking with supplier and pricing details
 - Automatic order number generation (FB + date + random digits)
 
-### 🧾 Invoice System (`invoices/`)
+### 🏭 Production Management (`production/`)
+- **Production batch tracking**: Complete traceability from raw materials to finished products
+- **Production reservations**: Automatic stock reservation for internal fulfillment
+- Recipe-based production with yield tracking
+- Batch lifecycle management with actual vs planned quantities
+- Integration with order fulfillment workflow
+
+### 📦 Comprehensive Inventory System (`inventory/`)
+- **Dual supply chain**: Raw materials and finished products
+- **Batch tracking**: Complete traceability with expiry management
+- **Automated stock movements**: Integration with orders and production
+- **Alert system**: Low stock, expiry warnings, production needed alerts
+- **Cost tracking**: FIFO/weighted average costing methods
+- **Multi-location support**: Raw material and finished inventory separation
+
+### 🛒 Procurement System (`procurement/`)
+- **Automated PO generation**: Group order items by supplier
+- **Purchase order management**: Draft → Sent → Confirmed → Received workflow
+- **Partial receiving**: Support for incomplete deliveries
+- **Supplier performance tracking**: Lead times, quality ratings, cost analysis
+- **Integration with inventory**: Automatic stock updates on receipt
+
+### 🚚 Advanced Supplier Management (`suppliers/`)
+- **Supplier classification**: Raw materials, finished products, or mixed
+- **Dual product relationships**: Separate models for raw materials vs finished products
+- **Quality management**: Ratings, certifications, business terms
+- **Purchase order integration**: Complete PO lifecycle management
+- **Performance analytics**: Delivery tracking, cost optimization
+
+### 🧾 Enhanced Invoice System (`invoices/`)
 - Automatic invoice generation from completed orders
 - South African VAT calculation (15%)
-- 30-day payment terms
+- 30-day payment terms with due date tracking
 - Sequential invoice numbering (INV-YYYYMM-XXXX)
+- Integration with multi-supplier cost calculations
 
 ### ❤️ Wishlist Feature (`wishlist/`)
 - Save products for quick future ordering
 - Quantity tracking and order notes
-
-### 🚚 Supplier Management (`suppliers/`)
-- Basic supplier information and contact details
-- Supplier-specific product pricing
-- Limited stock quantity tracking (manual updates only)
+- One-click order conversion from wishlist
 
 ## ⚙️ Technical Stack
 
-- **Framework**: Django 4.2.7 + Django REST Framework 3.14.0
-- **Authentication**: JWT tokens (djangorestframework-simplejwt)
-- **Database**: SQLite (development)
-- **CORS**: Configured for frontend at localhost:3000
+- **Framework**: Django 5.0.9 + Django REST Framework 3.15.2
+- **Authentication**: JWT tokens (djangorestframework-simplejwt 5.3.0)
+- **Database**: SQLite (development), MySQL (production ready)
+- **CORS**: Configured for frontend at localhost:3000 (django-cors-headers 4.4.0)
+- **Image Processing**: Pillow 10.4.0 for product images
+- **Configuration**: python-decouple 3.8 for environment management
 - **Timezone**: Africa/Johannesburg
 
 ## 🚀 Getting Started
@@ -122,24 +154,93 @@ The API will be available at `http://127.0.0.1:8000/`
 ## 🔗 API Endpoints
 
 ### Authentication
-- `POST /api/auth/login/` - User login
+- `POST /api/auth/login/` - User login with role-based routing
 - `POST /api/auth/register/` - Restaurant registration
 - `POST /api/auth/token/refresh/` - Refresh JWT token
+- `GET /api/auth/profile/` - Current user profile with roles
 
-### Products
-- `GET /api/products/` - List all active products
-- `GET /api/products/{id}/` - Product details
-- `GET /api/products/departments/` - Product departments
+### Products & CMS
+- `GET /api/products/` - List all active products with filtering
+- `GET /api/products/{id}/` - Product details with supplier information
+- `GET /api/products/departments/` - Product departments with color coding
+- `GET /api/products/company-info/` - Company information for CMS
+- `GET /api/products/page-content/{page}/` - Dynamic page content
+- `GET /api/products/business-hours/` - Operating hours
+- `GET /api/products/team-members/` - Team information
+- `GET /api/products/faqs/` - Frequently asked questions
+- `GET /api/products/testimonials/` - Customer testimonials
 
-### Orders
-- `GET /api/orders/` - User's orders (or all for admin)
-- `GET /api/orders/{id}/` - Order details
+### Orders & Fulfillment
+- `GET /api/orders/` - User's orders (or all for admin) with supplier grouping
+- `GET /api/orders/{id}/` - Order details with fulfillment sources
+- `POST /api/orders/` - Create order from wishlist with auto-supplier assignment
 - `PATCH /api/orders/{id}/status/` - Update order status (admin only)
 
+### Procurement System
+- `GET /api/procurement/purchase-orders/` - List purchase orders
+- `POST /api/procurement/purchase-orders/generate/` - Generate POs from order
+- `GET /api/procurement/purchase-orders/{id}/` - PO details
+- `PATCH /api/procurement/purchase-orders/{id}/` - Update PO status/notes
+- `POST /api/procurement/purchase-orders/{id}/receive/` - Receive PO items
+
+### Production Management
+- `GET /api/production/batches/` - Production batch list
+- `POST /api/production/batches/` - Create production batch
+- `GET /api/production/batches/{id}/` - Batch details with yield tracking
+- `PATCH /api/production/batches/{id}/complete/` - Complete production batch
+- `GET /api/production/reservations/` - Production reservations for orders
+- `POST /api/production/reservations/` - Create production reservation
+
+### Inventory System
+- `GET /api/inventory/raw-materials/` - Raw material inventory
+- `GET /api/inventory/finished-inventory/` - Finished product inventory
+- `GET /api/inventory/stock-movements/` - Stock movement history
+- `GET /api/inventory/alerts/` - Active inventory alerts
+- `POST /api/inventory/stock-movements/` - Record manual stock adjustment
+
+### Supplier Management
+- `GET /api/suppliers/` - List suppliers with classification
+- `GET /api/suppliers/{id}/` - Supplier details with performance metrics
+- `GET /api/suppliers/supplier-products/` - Supplier product catalog
+- `GET /api/suppliers/supplier-raw-materials/` - Supplier raw materials
+- `POST /api/suppliers/supplier-products/` - Add supplier product relationship
+
+### Invoices
+- `GET /api/invoices/` - User's invoices
+- `GET /api/invoices/{id}/` - Invoice details with VAT breakdown
+- `POST /api/invoices/generate/` - Generate invoice from completed order
+
 ### Wishlist
-- `GET /api/wishlist/` - User's wishlist
+- `GET /api/wishlist/` - User's wishlist with availability
 - `POST /api/wishlist/add/` - Add item to wishlist
 - `DELETE /api/wishlist/remove/{id}/` - Remove wishlist item
+- `POST /api/wishlist/convert-to-order/` - Convert wishlist to order
+
+## 🚀 Development Status & Next Steps
+
+### ✅ **Production Ready**
+- User authentication and role management
+- Product catalog with CMS
+- Order lifecycle management
+- Invoice generation with VAT
+- Wishlist functionality
+- Database models for inventory, production, procurement
+
+### 🚧 **In Development** 
+- Procurement system automation
+- Production reservation workflows  
+- Advanced role-based permissions
+- Audit trail system
+- Email notification system
+
+### 📋 **Planned Features**
+- Swagger/OpenAPI documentation
+- Comprehensive test suite
+- Advanced reporting APIs
+- Mobile-optimized endpoints
+- Real-time inventory updates
+
+**📖 See [DEVELOPMENT-ROADMAP.md](DEVELOPMENT-ROADMAP.md) for detailed implementation plan**
 
 ## 🏢 Company Information
 

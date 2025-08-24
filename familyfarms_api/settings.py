@@ -19,6 +19,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'drf_spectacular',
     'accounts',
     'products',
     'orders',
@@ -132,6 +133,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
+    'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 SIMPLE_JWT = {
@@ -139,6 +141,33 @@ SIMPLE_JWT = {
     'REFRESH_TOKEN_LIFETIME': timedelta(days=7),
     'ROTATE_REFRESH_TOKENS': True,
     'BLACKLIST_AFTER_ROTATION': True,
+}
+
+# API Documentation Configuration
+SPECTACULAR_SETTINGS = {
+    'TITLE': 'Fambri Farms API',
+    'DESCRIPTION': 'A comprehensive farm-to-restaurant B2B platform API for managing the complete supply chain including orders, inventory, production, and procurement.',
+    'VERSION': '1.0.0',
+    'SERVE_INCLUDE_SCHEMA': False,
+    'COMPONENT_SPLIT_REQUEST': True,
+    'SCHEMA_PATH_PREFIX': r'/api/v[0-9]',
+    'DEFAULT_GENERATOR_CLASS': 'drf_spectacular.generators.SchemaGenerator',
+    'SERVE_PERMISSIONS': ['rest_framework.permissions.AllowAny'],
+    'SERVERS': [
+        {'url': 'http://127.0.0.1:8000', 'description': 'Development server'},
+        {'url': 'https://api.fambrifarms.co.za', 'description': 'Production server'},
+    ],
+    'TAGS': [
+        {'name': 'Authentication', 'description': 'User authentication and registration'},
+        {'name': 'Products', 'description': 'Product catalog and CMS content'},
+        {'name': 'Orders', 'description': 'Order lifecycle and fulfillment management'},
+        {'name': 'Procurement', 'description': 'Purchase orders and supplier management'},
+        {'name': 'Production', 'description': 'Production batches and reservations'},
+        {'name': 'Inventory', 'description': 'Stock management and movements'},
+        {'name': 'Suppliers', 'description': 'Supplier relationships and catalog'},
+        {'name': 'Invoices', 'description': 'Invoice generation and billing'},
+        {'name': 'Wishlist', 'description': 'Customer wishlist management'},
+    ],
 }
 
 # CORS/CSRF configuration
