@@ -13,9 +13,40 @@ class ProductSerializer(serializers.ModelSerializer):
     department_name = serializers.CharField(source='department.name', read_only=True)
     department_color = serializers.CharField(source='department.color', read_only=True)
     
+    # Inventory information
+    available_quantity = serializers.SerializerMethodField()
+    reserved_quantity = serializers.SerializerMethodField()
+    needs_production = serializers.SerializerMethodField()
+    supplier_count = serializers.SerializerMethodField()
+    
     class Meta:
         model = Product
-        fields = ['id', 'name', 'description', 'department', 'department_name', 'department_color', 'price', 'unit', 'is_active']
+        fields = [
+            'id', 'name', 'description', 'department', 'department_name', 
+            'department_color', 'price', 'unit', 'is_active',
+            'available_quantity', 'reserved_quantity', 'needs_production', 'supplier_count'
+        ]
+    
+    def get_available_quantity(self, obj):
+        try:
+            return obj.inventory.available_quantity
+        except:
+            return 0
+    
+    def get_reserved_quantity(self, obj):
+        try:
+            return obj.inventory.reserved_quantity
+        except:
+            return 0
+    
+    def get_needs_production(self, obj):
+        try:
+            return obj.inventory.needs_production
+        except:
+            return False
+    
+    def get_supplier_count(self, obj):
+        return obj.suppliers.filter(is_available=True).count()
 
 
 # CMS Serializers

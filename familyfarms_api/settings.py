@@ -6,6 +6,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 
 SECRET_KEY = config('SECRET_KEY', default='django-insecure-fambri-farms-dev-key')
 DEBUG = config('DEBUG', default=True, cast=bool)
+PRODUCTION = config('PRODUCTION', default=False, cast=bool)
 ALLOWED_HOSTS = config('ALLOWED_HOSTS', default='localhost,127.0.0.1', cast=Csv())
 
 INSTALLED_APPS = [
@@ -24,6 +25,7 @@ INSTALLED_APPS = [
     'suppliers',
     'invoices',
     'wishlist',
+    'inventory',
 ]
 
 MIDDLEWARE = [
@@ -76,9 +78,24 @@ TIME_ZONE = 'Africa/Johannesburg'
 USE_I18N = True
 USE_TZ = True
 
-STATIC_URL = 'static/'
+# Static files (CSS, JavaScript, Images)
+STATIC_URL = '/static/'
+STATIC_ROOT = config('STATIC_ROOT', default=BASE_DIR / 'staticfiles')
+
+# Media files (User uploads)
 MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR / 'media'
+MEDIA_ROOT = config('MEDIA_ROOT', default=BASE_DIR / 'media')
+
+# Additional locations of static files for development
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+] if not PRODUCTION else []
+
+# Static files finders
+STATICFILES_FINDERS = [
+    'django.contrib.staticfiles.finders.FileSystemFinder',
+    'django.contrib.staticfiles.finders.AppDirectoriesFinder',
+]
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 AUTH_USER_MODEL = 'accounts.User'
@@ -104,9 +121,37 @@ SIMPLE_JWT = {
     'BLACKLIST_AFTER_ROTATION': True,
 }
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
-    "http://127.0.0.1:3000",
+# CORS/CSRF configuration
+# Allowlist specific origins; can be overridden via environment for production
+CORS_ALLOWED_ORIGINS = config(
+    'CORS_ALLOWED_ORIGINS',
+    default='http://localhost:3000,http://127.0.0.1:3000',
+    cast=Csv()
+)
+
+# For development, allow all origins from local network
+CORS_ALLOWED_ORIGIN_REGEXES = [] if PRODUCTION else [
+    r"^http://192\.168\.\d+\.\d+:3000$",  # Any 192.168.x.x:3000
+    r"^http://10\.\d+\.\d+\.\d+:3000$",   # Any 10.x.x.x:3000 (common local network)
+    r"^http://172\.16\.\d+\.\d+:3000$",   # Any 172.16.x.x:3000 (common local network)
 ]
 
-CORS_ALLOW_CREDENTIALS = True 
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOW_ALL_ORIGINS = False  # Keep this False for security
+CORS_ALLOW_HEADERS = [
+    "accept",
+    "accept-encoding",
+    "authorization",
+    "content-type",
+    "dnt",
+    "origin",
+    "user-agent",
+    "x-csrftoken",
+    "x-requested-with",
+] 
+
+# CSRF and security settings
+CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='', cast=Csv())
+CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=PRODUCTION, cast=bool)
+SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=PRODUCTION, cast=bool)
+SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=PRODUCTION, cast=bool)
