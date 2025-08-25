@@ -108,7 +108,7 @@
 
 ### ✅ **Always Backend**
 1. **Business Rule Enforcement**
-   - Order validation (Tuesday/Friday rule, minimum quantities)
+   - Order validation (Monday/Thursday rule, minimum quantities)
    - Pricing calculations (VAT, discounts, supplier markups)
    - Stock availability checks and reservations
 

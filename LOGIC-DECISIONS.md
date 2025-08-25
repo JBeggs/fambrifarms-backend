@@ -26,7 +26,7 @@
 ### ✅ **Always Backend Logic**
 
 #### **1. Business Rule Enforcement**
-- **Order validation** (Tuesday/Friday scheduling, minimum quantities)
+- **Order validation** (Monday/Thursday scheduling, minimum quantities)
 - **Pricing calculations** (VAT, discounts, supplier markups, cost calculations)
 - **Stock availability checks** and automatic reservations
 - **Production yield tracking** and cost calculations
