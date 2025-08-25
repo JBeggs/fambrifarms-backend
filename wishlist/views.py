@@ -74,11 +74,11 @@ def convert_to_order(request):
     if not wishlist.items.exists():
         return Response({'error': 'Wishlist is empty'}, status=status.HTTP_400_BAD_REQUEST)
     
-    # Check if today is an order day (Tuesday = 1, Friday = 4)
+    # Check if today is an order day (Monday = 0, Thursday = 3)
     today = timezone.now().weekday()
-    if today not in [1, 4]:  # Tuesday and Friday
+    if today not in [0, 3]:  # Monday and Thursday
         return Response({
-            'error': 'Orders can only be placed on Tuesdays and Fridays'
+            'error': 'Orders can only be placed on Mondays and Thursdays'
         }, status=status.HTTP_400_BAD_REQUEST)
     
     # Calculate total
@@ -148,9 +148,9 @@ def convert_to_order(request):
 def check_order_day(request):
     """Check if today is an order day"""
     today = timezone.now().weekday()
-    is_order_day = today in [1, 4]  # Tuesday and Friday
+    is_order_day = today in [0, 3]  # Monday and Thursday
     
     return Response({
         'is_order_day': is_order_day,
-        'message': 'Today is an order day' if is_order_day else 'Orders can only be placed on Tuesdays and Fridays'
+        'message': 'Today is an order day' if is_order_day else 'Orders can only be placed on Mondays and Thursdays'
     }) 

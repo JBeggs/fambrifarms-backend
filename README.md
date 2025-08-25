@@ -28,7 +28,7 @@ This Django backend serves as the API for a comprehensive farm-to-restaurant B2B
 - Content management for public-facing pages
 
 ### 📋 Advanced Order Management (`orders/`)
-- **Scheduled ordering**: Orders only accepted on Tuesdays and Fridays
+- **Scheduled ordering**: Orders only accepted on Mondays and Thursdays
 - Enhanced order lifecycle: pending → confirmed → processing → ready → delivered
 - **Multi-fulfillment sources**: Supplier procurement + internal production
 - Automatic supplier assignment based on cost and availability
@@ -136,7 +136,7 @@ The API will be available at `http://127.0.0.1:8000/`
 ## 📊 Business Rules
 
 ### Order Schedule
-- **Order Days**: Tuesday and Friday only
+- **Order Days**: Monday and Thursday only
 - **Business Hours**: 
   - Monday-Friday: 7:00 AM - 5:00 PM
   - Saturday: 8:00 AM - 2:00 PM  

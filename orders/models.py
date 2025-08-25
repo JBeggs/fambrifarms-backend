@@ -38,7 +38,7 @@ class Order(models.Model):
     @staticmethod
     def is_order_day():
         today = timezone.now().date()
-        return today.weekday() in [1, 4]  # Tuesday = 1, Friday = 4
+        return today.weekday() in [0, 3]  # Monday = 0, Thursday = 3
     
     def __str__(self):
         return f"Order {self.order_number} - {self.restaurant.email}"

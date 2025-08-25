@@ -33,7 +33,7 @@ def api_overview(request):
             "list_orders": "/api/orders/",
             "order_detail": "/api/orders/{id}/",
             "update_status": "/api/orders/{id}/status/ [PATCH]",
-            "order_days": "Tuesdays and Fridays only"
+            "order_days": "Mondays and Thursdays only"
         },
         
         "suppliers": {
@@ -122,7 +122,7 @@ def api_overview(request):
         },
         
         "business_rules": {
-            "order_days": "Orders can only be placed on Tuesdays and Fridays",
+            "order_days": "Orders can only be placed on Mondays and Thursdays",
             "business_hours": {
                 "monday_friday": "7:00 AM - 5:00 PM",
                 "saturday": "8:00 AM - 2:00 PM", 
