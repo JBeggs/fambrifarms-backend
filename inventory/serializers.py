@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from decimal import Decimal
 from .models import (
     UnitOfMeasure, RawMaterial, RawMaterialBatch, ProductionRecipe, 
     RecipeIngredient, FinishedInventory, StockMovement, ProductionBatch, 
@@ -241,7 +242,7 @@ class StockLevelSerializer(serializers.Serializer):
 class StockReservationSerializer(serializers.Serializer):
     """For reserving/releasing stock"""
     product_id = serializers.IntegerField()
-    quantity = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0.01)
+    quantity = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0.01'))
     reference_number = serializers.CharField(max_length=50)
     notes = serializers.CharField(max_length=500, required=False)
 
@@ -256,11 +257,11 @@ class ProductionStartSerializer(serializers.Serializer):
 class ProductionCompleteSerializer(serializers.Serializer):
     """For completing production batches"""
     batch_id = serializers.IntegerField()
-    actual_quantity = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0)
-    waste_quantity = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0, default=0)
+    actual_quantity = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0'))
+    waste_quantity = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0'), default=Decimal('0'))
     actual_completion_time = serializers.DateTimeField(required=False)
-    labor_cost = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0, default=0)
-    overhead_cost = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=0, default=0)
+    labor_cost = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0'), default=Decimal('0'))
+    overhead_cost = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0'), default=Decimal('0'))
     notes = serializers.CharField(max_length=500, required=False)
 
 

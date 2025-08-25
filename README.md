@@ -96,8 +96,8 @@ This Django backend serves as the API for a comprehensive farm-to-restaurant B2B
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/JBeggs/famdrifarms-backend.git
-   cd famdrifarms-backend
+   git clone https://github.com/JBeggs/fambrifarms-backend.git
+   cd fambrifarms-backend
    ```
 
 2. **Create and activate virtual environment**

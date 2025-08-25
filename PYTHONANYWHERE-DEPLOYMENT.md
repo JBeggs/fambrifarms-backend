@@ -26,7 +26,7 @@ Your project is already configured with:
 2. **Clone your repository**:
    ```bash
    cd ~
-   git clone https://github.com/JBeggs/famdrifarms-backend.git app
+   git clone https://github.com/JBeggs/fambrifarms-backend.git app
    cd app
    ```
 
