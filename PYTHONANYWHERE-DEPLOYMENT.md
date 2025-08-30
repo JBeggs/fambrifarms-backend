@@ -4,9 +4,10 @@ This guide will walk you through deploying your FambriFarms Django backend to Py
 
 ## 📋 Prerequisites
 
-- PythonAnywhere account (username: FamdriDevOps)
+- PythonAnywhere account (username: FambriDevOps)
 - Django 5.0.9 project ready for deployment
 - Repository access to push your code
+- **Python 3.11** (3.10 has compatibility issues)
 
 ## 🚀 Step-by-Step Deployment
 
@@ -34,33 +35,30 @@ Your project is already configured with:
 
 1. Zip your entire `backend/` folder (excluding `venv/`)
 2. Upload via PythonAnywhere Files tab
-3. Extract to `/home/FamdriDevOps/app/`
+3. Extract to `/home/FambriDevOps/app/`
 
 ### 3. Create Virtual Environment
 
 In the PythonAnywhere Bash Console:
 
 ```bash
-# Create virtual environment
-mkvirtualenv fambrifarms --python=/usr/bin/python3.10
-
-# If command not found, install virtualenvwrapper first:
-pip3.10 install --user virtualenvwrapper
-echo "source ~/.local/bin/virtualenvwrapper.sh" >> ~/.bashrc
-source ~/.bashrc
-mkvirtualenv fambrifarms --python=/usr/bin/python3.10
-
-# Activate the environment (should happen automatically)
-workon fambrifarms
-
 # Navigate to your app directory
 cd ~/app
+
+# Create virtual environment using Python 3.11
+python3.11 -m venv venv
+
+# Activate the virtual environment
+source venv/bin/activate
+
+# Verify Python version (should show 3.11.x)
+python --version
 ```
 
 ### 4. Install Dependencies
 
 ```bash
-# Make sure you're in the virtual environment (you should see (fambrifarms) in prompt)
+# Make sure you're in the virtual environment (you should see (venv) in prompt)
 pip install -r requirements.txt
 ```
 
@@ -78,9 +76,9 @@ pip install -r requirements.txt
    SECRET_KEY=your-super-secret-production-key-here
    DEBUG=False
    PRODUCTION=True
-   ALLOWED_HOSTS=famdridevops.pythonanywhere.com
-   STATIC_ROOT=/home/FamdriDevOps/app/static
-   MEDIA_ROOT=/home/FamdriDevOps/app/media
+   ALLOWED_HOSTS=fambridevops.pythonanywhere.com
+   STATIC_ROOT=/home/FambriDevOps/app/static
+   MEDIA_ROOT=/home/FambriDevOps/app/media
    ```
 
    **⚠️ Important**: Generate a new SECRET_KEY for production using:
@@ -110,12 +108,12 @@ python manage.py populate_shallome_stock
 1. **Go to Web tab** in PythonAnywhere dashboard
 2. **Click "Add a new web app"**
 3. **Choose "Manual configuration"**
-4. **Select "Python 3.10"**
+4. **Select "Python 3.11"**
 
 ### 8. Configure Virtual Environment
 
 1. In the **Web tab**, find the **Virtualenv** section
-2. Enter: `/home/FamdriDevOps/.virtualenvs/fambrifarms`
+2. Enter: `/home/FambriDevOps/app/venv`
 3. Click the checkmark to save
 
 ### 9. Configure WSGI File
@@ -128,7 +126,7 @@ python manage.py populate_shallome_stock
    import sys
 
    # Add your project directory to Python's path
-   path = '/home/FamdriDevOps/app'
+   path = '/home/FambriDevOps/app'
    if path not in sys.path:
        sys.path.insert(0, path)
 
@@ -152,19 +150,19 @@ python manage.py populate_shallome_stock
 
    | URL | Directory |
    |-----|-----------|
-   | `/static/` | `/home/FamdriDevOps/app/static/` |
-   | `/media/` | `/home/FamdriDevOps/app/media/` |
+   | `/static/` | `/home/FambriDevOps/app/static/` |
+   | `/media/` | `/home/FambriDevOps/app/media/` |
 
 3. **Click the checkmarks** to save both mappings
 
 ### 11. Reload and Test
 
 1. **Click the "Reload" button** in the Web tab
-2. **Visit your site**: `https://famdridevops.pythonanywhere.com`
+2. **Visit your site**: `https://fambridevops.pythonanywhere.com`
 3. **Test API endpoints**:
-   - Main API: `https://famdridevops.pythonanywhere.com/api/`
-   - Products: `https://famdridevops.pythonanywhere.com/api/products/products/`
-   - Admin: `https://famdridevops.pythonanywhere.com/admin/`
+   - Main API: `https://fambridevops.pythonanywhere.com/api/`
+   - Products: `https://fambridevops.pythonanywhere.com/api/products/products/`
+   - Admin: `https://fambridevops.pythonanywhere.com/admin/`
 
 ## 🔧 Troubleshooting
 
@@ -172,7 +170,7 @@ python manage.py populate_shallome_stock
 
 1. **DisallowedHost Error**
    - Check `ALLOWED_HOSTS` in your `.env` file
-   - Make sure it includes `famdridevops.pythonanywhere.com`
+   - Make sure it includes `fambridevops.pythonanywhere.com`
 
 2. **Static Files Not Loading**
    - Ensure static file mappings are correct in Web tab
@@ -212,7 +210,8 @@ When you make changes to your code:
 
 2. **Install any new requirements**:
    ```bash
-   workon fambrifarms
+   cd ~/app
+   source venv/bin/activate
    pip install -r requirements.txt
    ```
 
@@ -232,7 +231,7 @@ When you make changes to your code:
 
 Update your Next.js frontend to point to:
 ```env
-NEXT_PUBLIC_API_URL=https://famdridevops.pythonanywhere.com/api
+NEXT_PUBLIC_API_URL=https://fambridevops.pythonanywhere.com/api
 ```
 
 ## 📞 Support
@@ -245,6 +244,6 @@ NEXT_PUBLIC_API_URL=https://famdridevops.pythonanywhere.com/api
 **🎉 Your FambriFarms Django backend is now live on PythonAnywhere!**
 
 **Live URLs:**
-- **Main Site**: https://famdridevops.pythonanywhere.com
-- **API Root**: https://famdridevops.pythonanywhere.com/api/
-- **Admin Panel**: https://famdridevops.pythonanywhere.com/admin/
+- **Main Site**: https://fambridevops.pythonanywhere.com
+- **API Root**: https://fambridevops.pythonanywhere.com/api/
+- **Admin Panel**: https://fambridevops.pythonanywhere.com/admin/

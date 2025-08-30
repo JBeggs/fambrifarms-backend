@@ -5,16 +5,16 @@ This module contains the WSGI application used by Django's development server
 and any production WSGI deployments on PythonAnywhere.
 
 Usage on PythonAnywhere:
-1. Upload your project to: /home/FamdriDevOps/app/
+1. Upload your project to: /home/FambriDevOps/app/
 2. Set this as your WSGI file in the Web tab
-3. Configure virtualenv: /home/FamdriDevOps/.virtualenvs/fambrifarms
+3. Configure virtualenv: /home/FambriDevOps/.virtualenvs/fambrifarms
 """
 
 import os
 import sys
 
 # Add your project directory to Python's path
-path = '/home/FamdriDevOps/app'
+path = '/home/FambriDevOps/app'
 if path not in sys.path:
     sys.path.insert(0, path)
 

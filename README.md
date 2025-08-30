@@ -89,7 +89,7 @@ This Django backend serves as the API for a comprehensive farm-to-restaurant B2B
 ## 🚀 Getting Started
 
 ### Prerequisites
-- Python 3.11+
+- **Python 3.11+** (Python 3.10 has compatibility issues)
 - Virtual environment support
 
 ### Installation
@@ -102,7 +102,7 @@ This Django backend serves as the API for a comprehensive farm-to-restaurant B2B
 
 2. **Create and activate virtual environment**
    ```bash
-   python -m venv venv
+   python3.11 -m venv venv
    source venv/bin/activate  # On Windows: venv\Scripts\activate
    ```
 
