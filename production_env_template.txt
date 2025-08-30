@@ -16,8 +16,8 @@ DB_HOST=fambridevops.mysql.pythonanywhere-services.com
 DB_PORT=3306
 
 # Static and Media Files
-STATIC_ROOT=/home/FambriDevOps/app/static
-MEDIA_ROOT=/home/FambriDevOps/app/media
+STATIC_ROOT=/home/fambridevops/app/static
+MEDIA_ROOT=/home/fambridevops/app/media
 
 # CORS/CSRF Configuration for Production
 # Include your frontend domains (add both http and https if applicable)

@@ -108,12 +108,15 @@ python manage.py migrate
 # Create superuser for admin access
 python manage.py createsuperuser
 
+# Create static directory first (if collectstatic fails)
+mkdir -p /home/fambridevops/app/static
+mkdir -p /home/fambridevops/app/media
+
 # Collect static files
 python manage.py collectstatic --noinput
 
-# Load your sample data
-python manage.py populate_fambri_content
-python manage.py populate_shallome_stock
+# Load your sample data (if these commands exist)
+python manage.py setup_test_data
 ```
 
 ### 7. Configure Web App on PythonAnywhere
@@ -163,8 +166,8 @@ python manage.py populate_shallome_stock
 
    | URL | Directory |
    |-----|-----------|
-   | `/static/` | `/home/FambriDevOps/app/static/` |
-   | `/media/` | `/home/FambriDevOps/app/media/` |
+   | `/static/` | `/home/fambridevops/app/static/` |
+   | `/media/` | `/home/fambridevops/app/media/` |
 
 3. **Click the checkmarks** to save both mappings
 
@@ -246,6 +249,52 @@ Update your Next.js frontend to point to:
 ```env
 NEXT_PUBLIC_API_URL=https://fambridevops.pythonanywhere.com/api
 ```
+
+## 🔧 Troubleshooting
+
+### collectstatic Error (Permission/Path Issues)
+
+If you get an error like:
+```
+os.makedirs(directory, exist_ok=True)
+File "<frozen os>", line 225, in makedirs
+```
+
+**Solution:**
+```bash
+# 1. Create directories manually with correct permissions
+mkdir -p /home/fambridevops/app/static
+mkdir -p /home/fambridevops/app/media
+
+# 2. Set proper permissions
+chmod 755 /home/fambridevops/app/static
+chmod 755 /home/fambridevops/app/media
+
+# 3. Try collectstatic again
+python manage.py collectstatic --noinput --clear
+```
+
+### Static Files Not Loading
+
+1. **Check Web tab Static files mappings**:
+   - `/static/` → `/home/fambridevops/app/static/`
+   - `/media/` → `/home/fambridevops/app/media/`
+
+2. **Verify .env file has correct paths**:
+   ```
+   STATIC_ROOT=/home/fambridevops/app/static
+   MEDIA_ROOT=/home/fambridevops/app/media
+   ```
+
+3. **Reload your web app** after making changes
+
+### Database Connection Issues
+
+1. **Check MySQL credentials** in .env file
+2. **Test connection** in console:
+   ```bash
+   python manage.py dbshell
+   ```
 
 ## 📞 Support
 
