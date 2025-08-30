@@ -77,8 +77,21 @@ pip install -r requirements.txt
    DEBUG=False
    PRODUCTION=True
    ALLOWED_HOSTS=fambridevops.pythonanywhere.com
+   
+   # MySQL Database Configuration
+   DB_ENGINE=mysql
+   DB_NAME=fambridevops$default
+   DB_USER=fambridevops
+   DB_PASSWORD=your-mysql-password-here
+   DB_HOST=fambridevops.mysql.pythonanywhere-services.com
+   DB_PORT=3306
+   
    STATIC_ROOT=/home/FambriDevOps/app/static
    MEDIA_ROOT=/home/FambriDevOps/app/media
+   
+   # CORS/CSRF Configuration
+   CORS_ALLOWED_ORIGINS=https://fambrifarms.vercel.app,http://localhost:3000,http://127.0.0.1:3000
+   CSRF_TRUSTED_ORIGINS=https://fambrifarms.vercel.app,https://fambridevops.pythonanywhere.com,http://localhost:3000,http://127.0.0.1:3000
    ```
 
    **⚠️ Important**: Generate a new SECRET_KEY for production using:

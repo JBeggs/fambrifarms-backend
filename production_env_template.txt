@@ -7,8 +7,13 @@ DEBUG=False
 PRODUCTION=True
 ALLOWED_HOSTS=fambridevops.pythonanywhere.com,www.fambridevops.pythonanywhere.com
 
-# Database Configuration (SQLite for now, can be changed to MySQL later)
-# DATABASE_URL=sqlite:///home/FambriDevOps/app/db.sqlite3
+# Database Configuration - MySQL
+DB_ENGINE=mysql
+DB_NAME=fambridevops$default
+DB_USER=fambridevops
+DB_PASSWORD=your-mysql-password-here
+DB_HOST=fambridevops.mysql.pythonanywhere-services.com
+DB_PORT=3306
 
 # Static and Media Files
 STATIC_ROOT=/home/FambriDevOps/app/static
@@ -16,8 +21,8 @@ MEDIA_ROOT=/home/FambriDevOps/app/media
 
 # CORS/CSRF Configuration for Production
 # Include your frontend domains (add both http and https if applicable)
-CORS_ALLOWED_ORIGINS=https://fambrifarms.vercel.app
-CSRF_TRUSTED_ORIGINS=https://fambrifarms.vercel.app,https://fambridevops.pythonanywhere.com
+CORS_ALLOWED_ORIGINS=https://fambrifarms.vercel.app,http://localhost:3000,http://127.0.0.1:3000
+CSRF_TRUSTED_ORIGINS=https://fambrifarms.vercel.app,https://fambridevops.pythonanywhere.com,http://localhost:3000,http://127.0.0.1:3000
 
 # Email Configuration (if needed)
 # EMAIL_HOST=smtp.gmail.com
