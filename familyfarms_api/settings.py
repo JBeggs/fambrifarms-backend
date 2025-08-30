@@ -23,12 +23,13 @@ INSTALLED_APPS = [
     'accounts',
     'products',
     'orders',
-    'suppliers',
-    'invoices',
-    'wishlist',
+    'whatsapp',
     'inventory',
-    'procurement',
-    'production',
+    # Remove complex apps not needed initially
+    # 'suppliers',
+    # 'invoices', 
+    # 'procurement',
+    # 'production',
 ]
 
 MIDDLEWARE = [
@@ -204,3 +205,7 @@ CSRF_TRUSTED_ORIGINS = config('CSRF_TRUSTED_ORIGINS', default='', cast=Csv())
 CSRF_COOKIE_SECURE = config('CSRF_COOKIE_SECURE', default=PRODUCTION, cast=bool)
 SESSION_COOKIE_SECURE = config('SESSION_COOKIE_SECURE', default=PRODUCTION, cast=bool)
 SECURE_SSL_REDIRECT = config('SECURE_SSL_REDIRECT', default=PRODUCTION, cast=bool)
+
+# Business Rules Configuration
+ORDER_DAYS = [0, 3]  # Monday=0, Thursday=3
+DELIVERY_DAYS = [1, 2, 4]  # Tuesday=1, Wednesday=2, Friday=4

@@ -18,12 +18,8 @@ urlpatterns = [
     path('api/auth/', include('accounts.urls')),
     path('api/products/', include('products.urls')),
     path('api/orders/', include('orders.urls')),
-    path('api/suppliers/', include('suppliers.urls')),
-    path('api/invoices/', include('invoices.urls')),
-    path('api/wishlist/', include('wishlist.urls')),
+    path('api/whatsapp/', include('whatsapp.urls')),
     path('api/inventory/', include('inventory.urls')),
-    path('api/procurement/', include('procurement.urls')),
-    path('api/production/', include('production.urls')),
 ]
 
 if settings.DEBUG:

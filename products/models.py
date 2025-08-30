@@ -15,11 +15,24 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='products')
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
-    unit = models.CharField(max_length=50, default='per kg')
+    unit = models.CharField(max_length=50, default='kg')  # Simplified: kg, bunch, piece
     is_active = models.BooleanField(default=True)
     
+    # AI parsing helpers
+    common_names = models.JSONField(default=list, blank=True, help_text='Alternative names for AI parsing: ["onions", "red onions", "onion"]')
+    typical_order_quantity = models.DecimalField(max_digits=8, decimal_places=2, default=1, help_text='Typical restaurant order quantity')
+    
+    # Stock info
+    in_stock = models.BooleanField(default=True)
+    stock_level = models.CharField(max_length=20, choices=[
+        ('high', 'High Stock'),
+        ('medium', 'Medium Stock'), 
+        ('low', 'Low Stock'),
+        ('out', 'Out of Stock'),
+    ], default='medium')
+    
     def __str__(self):
-        return f"{self.name} - R{self.price} {self.unit}"
+        return f"{self.name} - R{self.price}/{self.unit}"
 
 
 # CMS Models for Content Management

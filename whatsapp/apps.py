@@ -1,5 +1,6 @@
 from django.apps import AppConfig
 
-class WishlistConfig(AppConfig):
+
+class WhatsappConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'wishlist' 
+    name = 'whatsapp'
