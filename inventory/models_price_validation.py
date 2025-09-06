@@ -86,7 +86,8 @@ class PriceHistory(models.Model):
     
     # Timestamps
     price_date = models.DateTimeField(
-        default=timezone.now,
+        null=True,
+        blank=True,
         help_text="Date when this price was effective"
     )
     created_at = models.DateTimeField(auto_now_add=True)
@@ -99,7 +100,8 @@ class PriceHistory(models.Model):
     
     # Validation flags
     is_validated = models.BooleanField(
-        default=False,
+        null=True,
+        blank=True,
         help_text="Whether this price has been validated by a manager"
     )
     

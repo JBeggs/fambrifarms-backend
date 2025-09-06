@@ -13,9 +13,9 @@ class UnitOfMeasure(models.Model):
     """Standard units of measurement for inventory tracking"""
     name = models.CharField(max_length=50, unique=True)  # kg, grams, pieces, bunches
     abbreviation = models.CharField(max_length=10, unique=True)  # kg, g, pcs, bunch
-    is_weight = models.BooleanField(default=True)  # True for weight-based, False for count-based
-    base_unit_multiplier = models.DecimalField(max_digits=10, decimal_places=4, default=1)  # For conversion to base unit
-    is_active = models.BooleanField(default=True)
+    is_weight = models.BooleanField(null=True, blank=True, help_text="True for weight-based, False for count-based")
+    base_unit_multiplier = models.DecimalField(max_digits=10, decimal_places=4, null=True, blank=True, help_text="For conversion to base unit")
+    is_active = models.BooleanField(null=True, blank=True)
     
     def __str__(self):
         return f"{self.name} ({self.abbreviation})"
@@ -39,7 +39,7 @@ class RawMaterial(models.Model):
     reorder_level = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     maximum_stock_level = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -79,7 +79,7 @@ class RawMaterialBatch(models.Model):
     total_cost = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
     
     # Dates
-    received_date = models.DateTimeField(default=timezone.now)
+    received_date = models.DateTimeField(null=True, blank=True)
     production_date = models.DateField(null=True, blank=True)
     expiry_date = models.DateField(null=True, blank=True)
     
@@ -91,7 +91,7 @@ class RawMaterialBatch(models.Model):
         ('R', 'Rejected')
     ])
     
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(null=True, blank=True)
     notes = models.TextField(blank=True)
     
     def save(self, *args, **kwargs):
@@ -149,7 +149,7 @@ class ProductionRecipe(models.Model):
     yield_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True,
                                          validators=[MinValueValidator(1), MaxValueValidator(100)])
     
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     created_by = models.ForeignKey(User, on_delete=models.CASCADE)
     
@@ -311,7 +311,7 @@ class ProductionBatch(models.Model):
     # Production Details
     planned_quantity = models.DecimalField(max_digits=10, decimal_places=2)
     actual_quantity = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
-    waste_quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    waste_quantity = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
     # Status
     STATUS_CHOICES = [
@@ -332,9 +332,9 @@ class ProductionBatch(models.Model):
     produced_by = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name='produced_batches')
     
     # Costing
-    total_raw_material_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    labor_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    overhead_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    total_raw_material_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    labor_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    overhead_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
     notes = models.TextField(blank=True)
     
@@ -404,11 +404,11 @@ class StockAlert(models.Model):
         ('medium', 'Medium'),
         ('high', 'High'),
         ('critical', 'Critical'),
-    ], default='medium')
+    ])
     
     # Status
-    is_active = models.BooleanField(default=True)
-    is_acknowledged = models.BooleanField(default=False)
+    is_active = models.BooleanField(null=True, blank=True)
+    is_acknowledged = models.BooleanField(null=True, blank=True)
     acknowledged_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
     acknowledged_at = models.DateTimeField(null=True, blank=True)
     

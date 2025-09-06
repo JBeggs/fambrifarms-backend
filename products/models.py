@@ -4,8 +4,8 @@ from django.core.validators import MinValueValidator
 class Department(models.Model):
     name = models.CharField(max_length=100, unique=True)
     description = models.TextField(blank=True)
-    color = models.CharField(max_length=7, default='#16a34a', help_text='Hex color code (e.g. #16a34a)')
-    is_active = models.BooleanField(default=True)
+    color = models.CharField(max_length=7, null=True, blank=True, help_text='Hex color code (e.g. #16a34a)')
+    is_active = models.BooleanField(null=True, blank=True)
     
     def __str__(self):
         return self.name
@@ -15,21 +15,21 @@ class Product(models.Model):
     description = models.TextField(blank=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='products')
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
-    unit = models.CharField(max_length=50, default='kg')  # Simplified: kg, bunch, piece
-    is_active = models.BooleanField(default=True)
+    unit = models.CharField(max_length=50, null=True, blank=True, help_text='Simplified: kg, bunch, piece')
+    is_active = models.BooleanField(null=True, blank=True)
     
     # AI parsing helpers
-    common_names = models.JSONField(default=list, blank=True, help_text='Alternative names for AI parsing: ["onions", "red onions", "onion"]')
-    typical_order_quantity = models.DecimalField(max_digits=8, decimal_places=2, default=1, help_text='Typical restaurant order quantity')
+    common_names = models.JSONField(null=True, blank=True, help_text='Alternative names for AI parsing: ["onions", "red onions", "onion"]')
+    typical_order_quantity = models.DecimalField(max_digits=8, decimal_places=2, null=True, blank=True, help_text='Typical restaurant order quantity')
     
     # Stock info
-    in_stock = models.BooleanField(default=True)
+    in_stock = models.BooleanField(null=True, blank=True)
     stock_level = models.CharField(max_length=20, choices=[
         ('high', 'High Stock'),
         ('medium', 'Medium Stock'), 
         ('low', 'Low Stock'),
         ('out', 'Out of Stock'),
-    ], default='medium')
+    ])
     
     def __str__(self):
         return f"{self.name} - R{self.price}/{self.unit}"
@@ -37,7 +37,7 @@ class Product(models.Model):
 
 # CMS Models for Content Management
 class CompanyInfo(models.Model):
-    name = models.CharField(max_length=100, default="Fambri Farms")
+    name = models.CharField(max_length=100, null=True, blank=True)
     tagline = models.CharField(max_length=200, blank=True)
     description = models.TextField()
     phone_primary = models.CharField(max_length=20)
@@ -45,7 +45,7 @@ class CompanyInfo(models.Model):
     email = models.EmailField()
     address = models.TextField()
     whatsapp = models.CharField(max_length=20, blank=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -73,7 +73,7 @@ class PageContent(models.Model):
     hero_title = models.CharField(max_length=200, blank=True)
     hero_subtitle = models.CharField(max_length=300, blank=True)
     meta_description = models.CharField(max_length=160, blank=True)
-    is_active = models.BooleanField(default=True)
+    is_active = models.BooleanField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -97,7 +97,7 @@ class BusinessHours(models.Model):
     ]
     
     day = models.CharField(max_length=10, choices=DAY_CHOICES, unique=True)
-    is_open = models.BooleanField(default=True)
+    is_open = models.BooleanField(null=True, blank=True)
     open_time = models.TimeField(null=True, blank=True)
     close_time = models.TimeField(null=True, blank=True)
     special_note = models.CharField(max_length=100, blank=True)
@@ -121,8 +121,8 @@ class TeamMember(models.Model):
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=20, blank=True)
     image = models.ImageField(upload_to='team/', blank=True)
-    is_active = models.BooleanField(default=True)
-    order = models.IntegerField(default=0)
+    is_active = models.BooleanField(null=True, blank=True)
+    order = models.IntegerField(null=True, blank=True)
     
     class Meta:
         verbose_name = "Team Member"
@@ -136,9 +136,9 @@ class TeamMember(models.Model):
 class FAQ(models.Model):
     question = models.CharField(max_length=200)
     answer = models.TextField()
-    category = models.CharField(max_length=50, default='general')
-    is_active = models.BooleanField(default=True)
-    order = models.IntegerField(default=0)
+    category = models.CharField(max_length=50, null=True, blank=True)
+    is_active = models.BooleanField(null=True, blank=True)
+    order = models.IntegerField(null=True, blank=True)
     
     class Meta:
         verbose_name = "FAQ"
@@ -153,9 +153,9 @@ class Testimonial(models.Model):
     customer_name = models.CharField(max_length=100)
     restaurant_name = models.CharField(max_length=100)
     content = models.TextField()
-    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)], default=5)
-    is_featured = models.BooleanField(default=False)
-    is_active = models.BooleanField(default=True)
+    rating = models.IntegerField(choices=[(i, i) for i in range(1, 6)], null=True, blank=True)
+    is_featured = models.BooleanField(null=True, blank=True)
+    is_active = models.BooleanField(null=True, blank=True)
     created_at = models.DateTimeField(auto_now_add=True)
     
     class Meta:
