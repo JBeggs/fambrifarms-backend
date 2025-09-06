@@ -162,7 +162,9 @@ class ProductViewSet(viewsets.ModelViewSet):
                 inventory.save()
                 
                 # Log the adjustment (in a full system, you'd have proper audit logging)
-                adjustment_type = request.data.get('adjustment_type')\n                if adjustment_type is None:\n                    adjustment_type = 'manual_add'  # Explicit default for logging only
+                adjustment_type = request.data.get('adjustment_type')
+                if adjustment_type is None:
+                    adjustment_type = 'manual_add'  # Explicit default for logging only
                 print(f"Stock adjustment: Added {add_stock} {product.unit} to {product.name} ({adjustment_type})")
             
             return Response(serializer.data)
