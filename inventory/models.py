@@ -29,7 +29,7 @@ class RawMaterial(models.Model):
     unit = models.ForeignKey(UnitOfMeasure, on_delete=models.CASCADE)
     
     # Quality and Safety
-    requires_batch_tracking = models.BooleanField(default=True)
+    requires_batch_tracking = models.BooleanField(null=True, blank=True)
     shelf_life_days = models.IntegerField(null=True, blank=True, help_text="Shelf life in days")
     storage_temperature_min = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     storage_temperature_max = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
@@ -89,7 +89,7 @@ class RawMaterialBatch(models.Model):
         ('B', 'Grade B - Standard'),
         ('C', 'Grade C - Basic'),
         ('R', 'Rejected')
-    ], default='A')
+    ])
     
     is_active = models.BooleanField(default=True)
     notes = models.TextField(blank=True)
@@ -137,16 +137,16 @@ class RawMaterialBatch(models.Model):
 class ProductionRecipe(models.Model):
     """Defines how raw materials are converted into finished products"""
     product = models.ForeignKey('products.Product', on_delete=models.CASCADE, related_name='recipes')
-    version = models.CharField(max_length=10, default='1.0')
+    version = models.CharField(max_length=10)
     
     # Recipe Details
     output_quantity = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0.01)])
     output_unit = models.ForeignKey(UnitOfMeasure, on_delete=models.CASCADE, related_name='recipe_outputs')
     
     # Processing
-    processing_time_minutes = models.IntegerField(default=0)
+    processing_time_minutes = models.IntegerField(null=True, blank=True)
     processing_notes = models.TextField(blank=True)
-    yield_percentage = models.DecimalField(max_digits=5, decimal_places=2, default=100, 
+    yield_percentage = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True,
                                          validators=[MinValueValidator(1), MaxValueValidator(100)])
     
     is_active = models.BooleanField(default=True)
@@ -212,7 +212,7 @@ class FinishedInventory(models.Model):
     reorder_level = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
     # Costing
-    average_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    average_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -320,7 +320,7 @@ class ProductionBatch(models.Model):
         ('completed', 'Completed'),
         ('cancelled', 'Cancelled'),
     ]
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='planned')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES)
     
     # Timing
     planned_date = models.DateTimeField()
