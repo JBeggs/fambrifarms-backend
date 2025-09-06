@@ -84,11 +84,22 @@ def create_simple_purchase_order(request):
                 status=status.HTTP_400_BAD_REQUEST
             )
         
+        # Get the order if provided (for linking PO to customer order)
+        order = None
+        order_id = data.get('order_id')
+        if order_id:
+            try:
+                from orders.models import Order
+                order = Order.objects.get(id=order_id)
+            except Order.DoesNotExist:
+                pass  # Continue without linking to order
+        
         # Create purchase order
         with transaction.atomic():
             po = PurchaseOrder.objects.create(
                 supplier=supplier,
                 sales_rep=sales_rep,
+                order=order,  # Link to customer order if provided
                 status='draft',
                 order_date=timezone.now().date(),
                 expected_delivery_date=data.get('expected_delivery_date'),
