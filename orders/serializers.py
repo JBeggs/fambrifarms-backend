@@ -16,13 +16,14 @@ class OrderSerializer(serializers.ModelSerializer):
     restaurant_address = serializers.SerializerMethodField()
     restaurant_phone = serializers.CharField(source='restaurant.phone', read_only=True)
     restaurant_email = serializers.CharField(source='restaurant.email', read_only=True)
+    purchase_orders = serializers.SerializerMethodField()
     
     class Meta:
         model = Order
         fields = ['id', 'order_number', 'restaurant', 'restaurant_name', 'restaurant_business_name', 
                  'restaurant_address', 'restaurant_phone', 'restaurant_email', 'status', 'order_date',
                  'delivery_date', 'whatsapp_message_id', 'original_message', 'parsed_by_ai', 'subtotal', 
-                 'total_amount', 'items', 'created_at', 'updated_at']
+                 'total_amount', 'items', 'purchase_orders', 'created_at', 'updated_at']
     
     def get_restaurant_name(self, obj):
         return f"{obj.restaurant.first_name} {obj.restaurant.last_name}"
@@ -39,3 +40,11 @@ class OrderSerializer(serializers.ModelSerializer):
             return f"{profile.address}, {profile.city}, {profile.postal_code}"
         except:
             return None 
+    
+    def get_purchase_orders(self, obj):
+        """Get basic info about purchase orders for this order"""
+        try:
+            pos = obj.purchase_orders.all()
+            return [{'id': po.id, 'po_number': po.po_number, 'status': po.status} for po in pos]
+        except:
+            return []
