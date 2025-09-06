@@ -58,7 +58,7 @@ class PurchaseOrder(models.Model):
         
     def __str__(self):
         supplier_name = self.supplier.name if self.supplier else 'No Supplier'
-        return f"PO-{self.po_number} ({supplier_name})"
+        return f"{self.po_number} ({supplier_name})"
     
     def save(self, *args, **kwargs):
         if not self.po_number:
