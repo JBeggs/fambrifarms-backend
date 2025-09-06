@@ -27,10 +27,10 @@ from .serializers import (
 from products.models import Product
 
 
-class UnitOfMeasureViewSet(viewsets.ModelViewSet):
+class UnitOfMeasureViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = UnitOfMeasure.objects.all()
     serializer_class = UnitOfMeasureSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = []  # Public endpoint for reference data
     
     def get_queryset(self):
         queryset = UnitOfMeasure.objects.all()

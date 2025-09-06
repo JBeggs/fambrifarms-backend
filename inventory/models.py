@@ -64,8 +64,11 @@ class RawMaterialBatch(models.Model):
     """Individual batches of raw materials for traceability"""
     raw_material = models.ForeignKey(RawMaterial, on_delete=models.CASCADE, related_name='batches')
     batch_number = models.CharField(max_length=100, unique=True)
-    supplier = models.ForeignKey('suppliers.Supplier', on_delete=models.CASCADE, null=True, blank=True)
-    supplier_name = models.CharField(max_length=200, default='Pretoria Market')  # Backup field
+    supplier = models.ForeignKey(
+        'suppliers.Supplier',
+        on_delete=models.PROTECT,
+        help_text="Supplier who provided this batch"
+    )
     
     # Quantities
     received_quantity = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])

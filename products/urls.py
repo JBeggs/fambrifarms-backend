@@ -14,6 +14,10 @@ router.register(r'team-members', views.TeamMemberViewSet, basename='team-members
 router.register(r'faqs', views.FAQViewSet, basename='faqs')
 router.register(r'testimonials', views.TestimonialViewSet, basename='testimonials')
 
+# Business Settings ViewSets
+router.register(r'business-settings', views.BusinessSettingsViewSet, basename='business-settings')
+router.register(r'department-keywords', views.DepartmentKeywordViewSet, basename='department-keywords')
+
 urlpatterns = [
     # API Overview
     path('overview/', views.api_overview, name='api-overview'),

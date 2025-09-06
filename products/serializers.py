@@ -114,4 +114,12 @@ class TestimonialSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'customer_name', 'restaurant_name', 'content', 'rating', 
             'is_featured', 'is_active', 'created_at'
-        ] 
+        ]
+
+
+# Import BusinessSettings serializers
+from .serializers_business_settings import (
+    BusinessSettingsSerializer, 
+    BusinessSettingsPublicSerializer,
+    DepartmentKeywordSerializer
+) 

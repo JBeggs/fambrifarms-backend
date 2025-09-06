@@ -164,4 +164,8 @@ class Testimonial(models.Model):
         ordering = ['-created_at']
 
     def __str__(self):
-        return f"{self.customer_name} - {self.restaurant_name}" 
+        return f"{self.customer_name} - {self.restaurant_name}"
+
+
+# Import BusinessSettings from separate file to keep models organized
+from .models_business_settings import BusinessSettings, DepartmentKeyword 

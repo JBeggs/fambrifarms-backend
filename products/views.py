@@ -6,12 +6,13 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction
 from .models import (
     Product, Department, CompanyInfo, PageContent, BusinessHours, 
-    TeamMember, FAQ, Testimonial
+    TeamMember, FAQ, Testimonial, BusinessSettings, DepartmentKeyword
 )
 from .serializers import (
     ProductSerializer, DepartmentSerializer, CompanyInfoSerializer,
     PageContentSerializer, BusinessHoursSerializer, TeamMemberSerializer,
-    FAQSerializer, TestimonialSerializer
+    FAQSerializer, TestimonialSerializer, BusinessSettingsSerializer,
+    BusinessSettingsPublicSerializer, DepartmentKeywordSerializer
 )
 
 @api_view(['GET'])
@@ -227,4 +228,46 @@ class TestimonialViewSet(viewsets.ReadOnlyModelViewSet):
         is_featured = self.request.query_params.get('is_featured', None)
         if is_featured is not None:
             queryset = queryset.filter(is_featured=is_featured.lower() == 'true')
-        return queryset 
+        return queryset
+
+
+class BusinessSettingsViewSet(viewsets.ReadOnlyModelViewSet):
+    """
+    ViewSet for BusinessSettings - read-only singleton
+    Provides configurable defaults for the frontend
+    """
+    queryset = BusinessSettings.objects.all()
+    permission_classes = []  # Public endpoint for configuration
+    
+    def get_serializer_class(self):
+        # Use public serializer to avoid exposing sensitive business data
+        return BusinessSettingsPublicSerializer
+    
+    def get_queryset(self):
+        # Always return the singleton instance
+        settings = BusinessSettings.get_settings()
+        return BusinessSettings.objects.filter(pk=settings.pk)
+
+
+class DepartmentKeywordViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for DepartmentKeyword - for automatic department assignment
+    """
+    queryset = DepartmentKeyword.objects.all()
+    serializer_class = DepartmentKeywordSerializer
+    permission_classes = [IsAuthenticated]  # Admin only
+    
+    def get_queryset(self):
+        queryset = DepartmentKeyword.objects.all()
+        
+        # Filter by active status
+        is_active = self.request.query_params.get('is_active', None)
+        if is_active is not None:
+            queryset = queryset.filter(is_active=is_active.lower() == 'true')
+        
+        # Filter by department
+        department_id = self.request.query_params.get('department', None)
+        if department_id:
+            queryset = queryset.filter(department_id=department_id)
+        
+        return queryset.order_by('department__name', 'keyword') 
