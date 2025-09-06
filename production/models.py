@@ -12,17 +12,17 @@ class Recipe(models.Model):
     description = models.TextField(blank=True)
     
     # Production details
-    batch_size = models.PositiveIntegerField(default=1, help_text="Standard batch size")
-    production_time_minutes = models.PositiveIntegerField(default=60)
+    batch_size = models.PositiveIntegerField(null=True, blank=True, help_text="Standard batch size")
+    production_time_minutes = models.PositiveIntegerField(null=True, blank=True)
     yield_percentage = models.DecimalField(
         max_digits=5, decimal_places=2, 
-        default=Decimal('100.00'),
+        null=True, blank=True,
         validators=[MinValueValidator(Decimal('0.01'))]
     )
     
     # Status
-    is_active = models.BooleanField(default=True)
-    version = models.CharField(max_length=10, default='1.0')
+    is_active = models.BooleanField(null=True, blank=True)
+    version = models.CharField(max_length=10, null=True, blank=True)
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
@@ -46,11 +46,11 @@ class RecipeIngredient(models.Model):
         max_digits=10, decimal_places=3,
         validators=[MinValueValidator(Decimal('0.001'))]
     )
-    unit = models.CharField(max_length=20, default='kg')
+    unit = models.CharField(max_length=20, null=True, blank=True)
     
     # Optional details
     preparation_notes = models.TextField(blank=True)
-    is_optional = models.BooleanField(default=False)
+    is_optional = models.BooleanField(null=True, blank=True)
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
@@ -81,10 +81,10 @@ class ProductionBatch(models.Model):
     
     # Quantities
     planned_quantity = models.PositiveIntegerField()
-    actual_quantity = models.PositiveIntegerField(default=0)
+    actual_quantity = models.PositiveIntegerField(null=True, blank=True)
     
     # Status and timing
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='planned')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, null=True, blank=True)
     planned_start_date = models.DateTimeField()
     planned_end_date = models.DateTimeField()
     actual_start_date = models.DateTimeField(null=True, blank=True)
@@ -144,12 +144,12 @@ class ProductionReservation(models.Model):
     )
     quantity_used = models.DecimalField(
         max_digits=10, decimal_places=3,
-        default=Decimal('0.000'),
+        null=True, blank=True,
         validators=[MinValueValidator(Decimal('0.000'))]
     )
     
     # Status
-    is_consumed = models.BooleanField(default=False)
+    is_consumed = models.BooleanField(null=True, blank=True)
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
@@ -190,7 +190,7 @@ class QualityCheck(models.Model):
     # Details
     notes = models.TextField(blank=True)
     checked_by = models.ForeignKey('accounts.User', on_delete=models.SET_NULL, null=True, blank=True)
-    check_date = models.DateTimeField(default=timezone.now)
+    check_date = models.DateTimeField(null=True, blank=True)
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)

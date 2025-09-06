@@ -258,10 +258,10 @@ class ProductionCompleteSerializer(serializers.Serializer):
     """For completing production batches"""
     batch_id = serializers.IntegerField()
     actual_quantity = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0'))
-    waste_quantity = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0'), default=Decimal('0'))
+    waste_quantity = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0'), required=False, allow_null=True)
     actual_completion_time = serializers.DateTimeField(required=False)
-    labor_cost = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0'), default=Decimal('0'))
-    overhead_cost = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0'), default=Decimal('0'))
+    labor_cost = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0'), required=False, allow_null=True)
+    overhead_cost = serializers.DecimalField(max_digits=10, decimal_places=2, min_value=Decimal('0'), required=False, allow_null=True)
     notes = serializers.CharField(max_length=500, required=False)
 
 

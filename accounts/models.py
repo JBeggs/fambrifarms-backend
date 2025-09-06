@@ -32,12 +32,12 @@ class User(AbstractUser):
         ('admin', 'Admin'),
         ('staff', 'Staff'),
     ]
-    user_type = models.CharField(max_length=20, choices=USER_TYPES, default='restaurant')
+    user_type = models.CharField(max_length=20, choices=USER_TYPES, null=True, blank=True)
     phone = models.CharField(max_length=20, blank=True)
-    is_verified = models.BooleanField(default=False)
+    is_verified = models.BooleanField(null=True, blank=True)
     # Multi-role support
-    roles = models.JSONField(default=list, blank=True)
-    restaurant_roles = models.JSONField(default=list, blank=True)
+    roles = models.JSONField(null=True, blank=True)
+    restaurant_roles = models.JSONField(null=True, blank=True)
     
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
@@ -55,7 +55,7 @@ class RestaurantProfile(models.Model):
     address = models.TextField()
     city = models.CharField(max_length=100)
     postal_code = models.CharField(max_length=20)
-    payment_terms = models.CharField(max_length=50, default='Net 30')
+    payment_terms = models.CharField(max_length=50, null=True, blank=True)
     
     def __str__(self):
         if self.branch_name:

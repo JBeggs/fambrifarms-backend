@@ -51,7 +51,7 @@ class Order(models.Model):
     # Basic order info
     restaurant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     order_number = models.CharField(max_length=20, unique=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='received')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, null=True, blank=True)
     
     # Scheduling (CRITICAL - Monday/Thursday → Tuesday/Wednesday/Friday)
     order_date = models.DateField(validators=[validate_order_date])
@@ -60,11 +60,11 @@ class Order(models.Model):
     # WhatsApp integration
     whatsapp_message_id = models.CharField(max_length=100, null=True, blank=True)
     original_message = models.TextField(blank=True)
-    parsed_by_ai = models.BooleanField(default=False)
+    parsed_by_ai = models.BooleanField(null=True, blank=True)
     
     # Pricing
-    subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
-    total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
+    subtotal = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    total_amount = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
@@ -132,14 +132,14 @@ class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
     product = models.ForeignKey('products.Product', on_delete=models.CASCADE)
     quantity = models.DecimalField(max_digits=8, decimal_places=2, validators=[MinValueValidator(0.01)])
-    unit = models.CharField(max_length=20, default='kg')  # kg, bunch, piece, etc.
+    unit = models.CharField(max_length=20, null=True, blank=True)  # kg, bunch, piece, etc.
     price = models.DecimalField(max_digits=10, decimal_places=2)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     
     # AI parsing tracking
     original_text = models.CharField(max_length=200, blank=True)  # "1 x onions"
-    confidence_score = models.FloatField(default=0.0)  # AI parsing confidence
-    manually_corrected = models.BooleanField(default=False)
+    confidence_score = models.FloatField(null=True, blank=True)  # AI parsing confidence
+    manually_corrected = models.BooleanField(null=True, blank=True)
     
     # Notes
     notes = models.TextField(blank=True)

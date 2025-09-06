@@ -17,12 +17,12 @@ class Supplier(models.Model):
     tax_number = models.CharField(max_length=50, blank=True)
     
     # Status and settings
-    is_active = models.BooleanField(default=True)
-    payment_terms_days = models.PositiveIntegerField(default=30)
-    lead_time_days = models.PositiveIntegerField(default=1)
+    is_active = models.BooleanField(null=True, blank=True)
+    payment_terms_days = models.PositiveIntegerField(null=True, blank=True)
+    lead_time_days = models.PositiveIntegerField(null=True, blank=True)
     minimum_order_value = models.DecimalField(
         max_digits=10, decimal_places=2, 
-        default=Decimal('0.00'),
+        null=True, blank=True,
         validators=[MinValueValidator(Decimal('0.00'))]
     )
     
@@ -44,14 +44,14 @@ class SalesRep(models.Model):
     name = models.CharField(max_length=100)
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=20, blank=True)
-    position = models.CharField(max_length=100, blank=True, default='Sales Representative')
+    position = models.CharField(max_length=100, blank=True)
     
     # Status
-    is_active = models.BooleanField(default=True)
-    is_primary = models.BooleanField(default=False, help_text='Primary contact for this supplier')
+    is_active = models.BooleanField(null=True, blank=True)
+    is_primary = models.BooleanField(null=True, blank=True, help_text='Primary contact for this supplier')
     
     # Performance tracking
-    total_orders = models.PositiveIntegerField(default=0)
+    total_orders = models.PositiveIntegerField(null=True, blank=True)
     last_contact_date = models.DateField(null=True, blank=True)
     
     # Timestamps
@@ -81,12 +81,12 @@ class SupplierProduct(models.Model):
         max_digits=10, decimal_places=2,
         validators=[MinValueValidator(Decimal('0.00'))]
     )
-    currency = models.CharField(max_length=3, default='ZAR')
+    currency = models.CharField(max_length=3, null=True, blank=True)
     
     # Availability
-    is_available = models.BooleanField(default=True)
-    stock_quantity = models.PositiveIntegerField(default=0)
-    minimum_order_quantity = models.PositiveIntegerField(default=1)
+    is_available = models.BooleanField(null=True, blank=True)
+    stock_quantity = models.PositiveIntegerField(null=True, blank=True)
+    minimum_order_quantity = models.PositiveIntegerField(null=True, blank=True)
     
     # Lead time (can override supplier default)
     lead_time_days = models.PositiveIntegerField(null=True, blank=True)

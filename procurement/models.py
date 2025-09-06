@@ -23,25 +23,25 @@ class PurchaseOrder(models.Model):
     order = models.ForeignKey('orders.Order', on_delete=models.SET_NULL, related_name='purchase_orders', null=True, blank=True)
     
     # Status and dates
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
-    order_date = models.DateField(default=timezone.now)
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, null=True, blank=True)
+    order_date = models.DateField(null=True, blank=True)
     expected_delivery_date = models.DateField(null=True, blank=True)
     actual_delivery_date = models.DateField(null=True, blank=True)
     
     # Financial
     subtotal = models.DecimalField(
         max_digits=10, decimal_places=2, 
-        default=Decimal('0.00'),
+        null=True, blank=True,
         validators=[MinValueValidator(Decimal('0.00'))]
     )
     tax_amount = models.DecimalField(
         max_digits=10, decimal_places=2, 
-        default=Decimal('0.00'),
+        null=True, blank=True,
         validators=[MinValueValidator(Decimal('0.00'))]
     )
     total_amount = models.DecimalField(
         max_digits=10, decimal_places=2, 
-        default=Decimal('0.00'),
+        null=True, blank=True,
         validators=[MinValueValidator(Decimal('0.00'))]
     )
     
@@ -86,7 +86,7 @@ class PurchaseOrderItem(models.Model):
     
     # Quantities
     quantity_ordered = models.PositiveIntegerField()
-    quantity_received = models.PositiveIntegerField(default=0)
+    quantity_received = models.PositiveIntegerField(null=True, blank=True)
     
     # Pricing
     unit_price = models.DecimalField(
@@ -129,10 +129,10 @@ class PurchaseOrderReceipt(models.Model):
     """
     purchase_order = models.ForeignKey(PurchaseOrder, on_delete=models.CASCADE, related_name='receipts')
     received_by = models.ForeignKey('accounts.User', on_delete=models.SET_NULL, null=True, blank=True)
-    received_date = models.DateTimeField(default=timezone.now)
+    received_date = models.DateTimeField(null=True, blank=True)
     
     # Quality check
-    quality_check_passed = models.BooleanField(default=True)
+    quality_check_passed = models.BooleanField(null=True, blank=True)
     quality_notes = models.TextField(blank=True)
     
     # Documentation
@@ -166,7 +166,6 @@ class PurchaseOrderReceiptItem(models.Model):
             ('fair', 'Fair'),
             ('poor', 'Poor'),
         ],
-        default='good'
     )
     notes = models.TextField(blank=True)
     

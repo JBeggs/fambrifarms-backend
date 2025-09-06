@@ -22,46 +22,46 @@ class Invoice(models.Model):
     customer = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='invoices')
     
     # Dates
-    invoice_date = models.DateField(default=timezone.now)
+    invoice_date = models.DateField(null=True, blank=True)
     due_date = models.DateField()
     paid_date = models.DateField(null=True, blank=True)
     
     # Financial details
     subtotal = models.DecimalField(
         max_digits=10, decimal_places=2,
-        default=Decimal('0.00'),
+        null=True, blank=True,
         validators=[MinValueValidator(Decimal('0.00'))]
     )
     tax_rate = models.DecimalField(
         max_digits=5, decimal_places=2,
-        default=Decimal('15.00'),  # South African VAT
+        null=True, blank=True,  # South African VAT
         validators=[MinValueValidator(Decimal('0.00'))]
     )
     tax_amount = models.DecimalField(
         max_digits=10, decimal_places=2,
-        default=Decimal('0.00'),
+        null=True, blank=True,
         validators=[MinValueValidator(Decimal('0.00'))]
     )
     discount_amount = models.DecimalField(
         max_digits=10, decimal_places=2,
-        default=Decimal('0.00'),
+        null=True, blank=True,
         validators=[MinValueValidator(Decimal('0.00'))]
     )
     total_amount = models.DecimalField(
         max_digits=10, decimal_places=2,
-        default=Decimal('0.00'),
+        null=True, blank=True,
         validators=[MinValueValidator(Decimal('0.00'))]
     )
     amount_paid = models.DecimalField(
         max_digits=10, decimal_places=2,
-        default=Decimal('0.00'),
+        null=True, blank=True,
         validators=[MinValueValidator(Decimal('0.00'))]
     )
     
     # Status and notes
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='draft')
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, null=True, blank=True)
     notes = models.TextField(blank=True)
-    payment_terms = models.CharField(max_length=100, default='Net 30 days')
+    payment_terms = models.CharField(max_length=100, null=True, blank=True)
     
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
@@ -169,7 +169,7 @@ class Payment(models.Model):
         validators=[MinValueValidator(Decimal('0.01'))]
     )
     payment_method = models.CharField(max_length=20, choices=PAYMENT_METHOD_CHOICES)
-    payment_date = models.DateField(default=timezone.now)
+    payment_date = models.DateField(null=True, blank=True)
     
     # Reference details
     reference_number = models.CharField(max_length=100, blank=True)
@@ -217,7 +217,7 @@ class CreditNote(models.Model):
     description = models.TextField()
     
     # Dates
-    credit_date = models.DateField(default=timezone.now)
+    credit_date = models.DateField(null=True, blank=True)
     
     # Processing
     approved_by = models.ForeignKey('accounts.User', on_delete=models.SET_NULL, null=True, blank=True)
