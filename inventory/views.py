@@ -31,6 +31,7 @@ class UnitOfMeasureViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = UnitOfMeasure.objects.all()
     serializer_class = UnitOfMeasureSerializer
     permission_classes = []  # Public endpoint for reference data
+    pagination_class = None  # Disable pagination for reference data
     
     def get_queryset(self):
         queryset = UnitOfMeasure.objects.all()
