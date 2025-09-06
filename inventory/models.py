@@ -426,3 +426,7 @@ class StockAlert(models.Model):
     
     def __str__(self):
         return f"{self.get_alert_type_display()}: {self.message[:50]}..."
+
+
+# Import price validation models
+from .models_price_validation import PriceHistory, PriceValidationResult, validate_price
