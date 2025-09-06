@@ -64,7 +64,9 @@ def create_order_from_whatsapp(request):
         sender_name = data.get('sender_name')
         message_text = data.get('message_text')
         timestamp = data.get('timestamp')
-        is_backdated = data.get('is_backdated', False)
+        is_backdated = data.get('is_backdated')
+        if is_backdated is None:
+            is_backdated = False  # Explicit default for order dating
         customer_id = data.get('customer_id')  # For manual order creation
         
         if not all([whatsapp_message_id, message_text]):
@@ -102,14 +104,18 @@ def create_order_from_whatsapp(request):
         
         # Handle items differently for manual vs automated orders
         parsed_items = []
-        items_data = data.get('items', [])  # Expect pre-parsed items from frontend
+        items_data = data.get('items')
+        if items_data is None:
+            items_data = []  # Explicit default for items list
         
         if items_data and customer_id:  # Manual order with pre-parsed items
             for item_data in items_data:
-                product_name = item_data.get('name', '').strip()
-                quantity = item_data.get('quantity', 1)
-                unit = item_data.get('unit', '').strip()
-                original_text = item_data.get('originalText', '')
+                product_name = (item_data.get('name') or '').strip()
+                quantity = item_data.get('quantity')
+                if quantity is None:
+                    quantity = 1
+                unit = (item_data.get('unit') or '').strip()
+                original_text = item_data.get('originalText') or ''
                 
                 if product_name:
                     # Find matching product
@@ -130,8 +136,12 @@ def create_order_from_whatsapp(request):
         # Create order items
         for item_data in parsed_items:
             product = item_data.get('product')
-            quantity = item_data.get('quantity', 1)
-            confidence = item_data.get('confidence', 0.5)
+            quantity = item_data.get('quantity')
+            if quantity is None:
+                quantity = 1
+            confidence = item_data.get('confidence')
+            if confidence is None:
+                confidence = 0.5
             
             if product:
                 OrderItem.objects.create(
@@ -139,7 +149,7 @@ def create_order_from_whatsapp(request):
                     product=product,
                     quantity=quantity,
                     price=product.price,
-                    original_text=item_data.get('original_text', ''),
+                    original_text=item_data.get('original_text') or '',
                     confidence_score=confidence,
                     manually_corrected=customer_id is not None  # Mark as manually corrected if from frontend
                 )

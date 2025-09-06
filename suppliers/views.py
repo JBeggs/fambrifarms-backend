@@ -12,7 +12,7 @@ class SupplierViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         queryset = Supplier.objects.all()
-        is_active = self.request.query_params.get('is_active', None)
+        is_active = self.request.query_params.get('is_active')  # None means no filter
         if is_active is not None:
             queryset = queryset.filter(is_active=is_active.lower() == 'true')
         return queryset
@@ -32,8 +32,8 @@ class SalesRepViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         queryset = SalesRep.objects.all()
-        supplier_id = self.request.query_params.get('supplier', None)
-        is_active = self.request.query_params.get('is_active', None)
+        supplier_id = self.request.query_params.get('supplier')  # None means no filter
+        is_active = self.request.query_params.get('is_active')  # None means no filter
         
         if supplier_id is not None:
             queryset = queryset.filter(supplier_id=supplier_id)

@@ -34,7 +34,7 @@ class UnitOfMeasureViewSet(viewsets.ReadOnlyModelViewSet):
     
     def get_queryset(self):
         queryset = UnitOfMeasure.objects.all()
-        is_active = self.request.query_params.get('is_active', None)
+        is_active = self.request.query_params.get('is_active')  # None means no filter
         if is_active is not None:
             queryset = queryset.filter(is_active=is_active.lower() == 'true')
         return queryset
@@ -53,12 +53,12 @@ class RawMaterialViewSet(viewsets.ModelViewSet):
         queryset = RawMaterial.objects.all()
         
         # Filter by active status
-        is_active = self.request.query_params.get('is_active', None)
+        is_active = self.request.query_params.get('is_active')  # None means no filter
         if is_active is not None:
             queryset = queryset.filter(is_active=is_active.lower() == 'true')
         
         # Filter by needs reorder
-        needs_reorder = self.request.query_params.get('needs_reorder', None)
+        needs_reorder = self.request.query_params.get('needs_reorder')  # None means no filter
         if needs_reorder is not None:
             if needs_reorder.lower() == 'true':
                 queryset = queryset.filter(
@@ -66,7 +66,7 @@ class RawMaterialViewSet(viewsets.ModelViewSet):
                 )
         
         # Search by name or SKU
-        search = self.request.query_params.get('search', None)
+        search = self.request.query_params.get('search')  # None means no filter
         if search:
             queryset = queryset.filter(
                 Q(name__icontains=search) | Q(sku__icontains=search)
@@ -108,17 +108,17 @@ class RawMaterialBatchViewSet(viewsets.ModelViewSet):
         ).all()
         
         # Filter by raw material
-        raw_material_id = self.request.query_params.get('raw_material', None)
+        raw_material_id = self.request.query_params.get('raw_material')  # None means no filter
         if raw_material_id:
             queryset = queryset.filter(raw_material_id=raw_material_id)
         
         # Filter by supplier
-        supplier_id = self.request.query_params.get('supplier', None)
+        supplier_id = self.request.query_params.get('supplier')  # None means no filter
         if supplier_id:
             queryset = queryset.filter(supplier_id=supplier_id)
         
         # Filter by expiry status
-        expiry_status = self.request.query_params.get('expiry_status', None)
+        expiry_status = self.request.query_params.get('expiry_status')  # None means no filter
         if expiry_status == 'expired':
             queryset = queryset.filter(expiry_date__lt=timezone.now().date())
         elif expiry_status == 'expiring_soon':
@@ -129,7 +129,7 @@ class RawMaterialBatchViewSet(viewsets.ModelViewSet):
             )
         
         # Filter by availability
-        has_stock = self.request.query_params.get('has_stock', None)
+        has_stock = self.request.query_params.get('has_stock')  # None means no filter
         if has_stock is not None:
             if has_stock.lower() == 'true':
                 queryset = queryset.filter(available_quantity__gt=0)
@@ -167,12 +167,12 @@ class ProductionRecipeViewSet(viewsets.ModelViewSet):
         ).prefetch_related('ingredients__raw_material').all()
         
         # Filter by product
-        product_id = self.request.query_params.get('product', None)
+        product_id = self.request.query_params.get('product')  # None means no filter
         if product_id:
             queryset = queryset.filter(product_id=product_id)
         
         # Filter by active status
-        is_active = self.request.query_params.get('is_active', None)
+        is_active = self.request.query_params.get('is_active')  # None means no filter
         if is_active is not None:
             queryset = queryset.filter(is_active=is_active.lower() == 'true')
         
@@ -217,17 +217,17 @@ class FinishedInventoryViewSet(viewsets.ModelViewSet):
         ).all()
         
         # Filter by department
-        department_id = self.request.query_params.get('department', None)
+        department_id = self.request.query_params.get('department')  # None means no filter
         if department_id:
             queryset = queryset.filter(product__department_id=department_id)
         
         # Filter by low stock
-        low_stock = self.request.query_params.get('low_stock', None)
+        low_stock = self.request.query_params.get('low_stock')  # None means no filter
         if low_stock is not None and low_stock.lower() == 'true':
             queryset = queryset.filter(available_quantity__lte=F('reorder_level'))
         
         # Filter by needs production
-        needs_production = self.request.query_params.get('needs_production', None)
+        needs_production = self.request.query_params.get('needs_production')  # None means no filter
         if needs_production is not None and needs_production.lower() == 'true':
             queryset = queryset.filter(available_quantity__lte=F('reorder_level'))
         
@@ -279,23 +279,23 @@ class StockMovementViewSet(viewsets.ReadOnlyModelViewSet):
         ).all()
         
         # Filter by movement type
-        movement_type = self.request.query_params.get('movement_type', None)
+        movement_type = self.request.query_params.get('movement_type')  # None means no filter
         if movement_type:
             queryset = queryset.filter(movement_type=movement_type)
         
         # Filter by product
-        product_id = self.request.query_params.get('product', None)
+        product_id = self.request.query_params.get('product')  # None means no filter
         if product_id:
             queryset = queryset.filter(product_id=product_id)
         
         # Filter by raw material
-        raw_material_id = self.request.query_params.get('raw_material', None)
+        raw_material_id = self.request.query_params.get('raw_material')  # None means no filter
         if raw_material_id:
             queryset = queryset.filter(raw_material_id=raw_material_id)
         
         # Filter by date range
-        date_from = self.request.query_params.get('date_from', None)
-        date_to = self.request.query_params.get('date_to', None)
+        date_from = self.request.query_params.get('date_from')  # None means no filter
+        date_to = self.request.query_params.get('date_to')  # None means no filter
         
         if date_from:
             queryset = queryset.filter(timestamp__gte=date_from)
@@ -320,18 +320,18 @@ class ProductionBatchViewSet(viewsets.ModelViewSet):
         ).all()
         
         # Filter by status
-        status_filter = self.request.query_params.get('status', None)
+        status_filter = self.request.query_params.get('status')  # None means no filter
         if status_filter:
             queryset = queryset.filter(status=status_filter)
         
         # Filter by product
-        product_id = self.request.query_params.get('product', None)
+        product_id = self.request.query_params.get('product')  # None means no filter
         if product_id:
             queryset = queryset.filter(recipe__product_id=product_id)
         
         # Filter by date range
-        date_from = self.request.query_params.get('date_from', None)
-        date_to = self.request.query_params.get('date_to', None)
+        date_from = self.request.query_params.get('date_from')  # None means no filter
+        date_to = self.request.query_params.get('date_to')  # None means no filter
         
         if date_from:
             queryset = queryset.filter(planned_date__gte=date_from)
@@ -387,12 +387,15 @@ class ProductionBatchViewSet(viewsets.ModelViewSet):
             # Update batch with completion data
             batch.status = 'completed'
             batch.actual_quantity = serializer.validated_data['actual_quantity']
-            batch.waste_quantity = serializer.validated_data.get('waste_quantity', 0)
+            waste_quantity = serializer.validated_data.get('waste_quantity')
+            batch.waste_quantity = waste_quantity if waste_quantity is not None else 0
             batch.completed_at = serializer.validated_data.get(
                 'actual_completion_time', timezone.now()
             )
-            batch.labor_cost = serializer.validated_data.get('labor_cost', 0)
-            batch.overhead_cost = serializer.validated_data.get('overhead_cost', 0)
+            labor_cost = serializer.validated_data.get('labor_cost')
+            batch.labor_cost = labor_cost if labor_cost is not None else 0
+            overhead_cost = serializer.validated_data.get('overhead_cost')
+            batch.overhead_cost = overhead_cost if overhead_cost is not None else 0
             
             if serializer.validated_data.get('notes'):
                 batch.notes += f"\nCompleted: {serializer.validated_data['notes']}"
@@ -420,22 +423,22 @@ class StockAlertViewSet(viewsets.ModelViewSet):
         ).all()
         
         # Filter by alert type
-        alert_type = self.request.query_params.get('alert_type', None)
+        alert_type = self.request.query_params.get('alert_type')  # None means no filter
         if alert_type:
             queryset = queryset.filter(alert_type=alert_type)
         
         # Filter by severity
-        severity = self.request.query_params.get('severity', None)
+        severity = self.request.query_params.get('severity')  # None means no filter
         if severity:
             queryset = queryset.filter(severity=severity)
         
         # Filter by active status
-        is_active = self.request.query_params.get('is_active', None)
+        is_active = self.request.query_params.get('is_active')  # None means no filter
         if is_active is not None:
             queryset = queryset.filter(is_active=is_active.lower() == 'true')
         
         # Filter by acknowledged status
-        is_acknowledged = self.request.query_params.get('is_acknowledged', None)
+        is_acknowledged = self.request.query_params.get('is_acknowledged')  # None means no filter
         if is_acknowledged is not None:
             queryset = queryset.filter(is_acknowledged=is_acknowledged.lower() == 'true')
         
@@ -455,7 +458,7 @@ class StockAlertViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'])
     def acknowledge_multiple(self, request):
         """Acknowledge multiple alerts"""
-        alert_ids = request.data.get('alert_ids', [])
+        alert_ids = request.data.get('alert_ids')\n        if alert_ids is None:\n            alert_ids = []
         
         if not alert_ids:
             return Response(
@@ -554,7 +557,7 @@ def reserve_stock(request):
                     product=product,
                     quantity=quantity,
                     user=request.user,
-                    notes=serializer.validated_data.get('notes', '')
+                    notes=serializer.validated_data.get('notes') or ''
                 )
                 
                 return Response(
@@ -587,7 +590,7 @@ def stock_adjustment(request):
         movement_type = data['adjustment_type']
         quantity = data['quantity']
         reason = data['reason']
-        notes = data.get('notes', '')
+        notes = data.get('notes') or ''
         
         try:
             if movement_type in ['finished_adjust', 'finished_waste']:

@@ -29,7 +29,9 @@ def create_simple_purchase_order(request):
         data = request.data
         
         # Check if this is a production order
-        is_production = data.get('is_production', False)
+        is_production = data.get('is_production')
+        if is_production is None:
+            is_production = False  # Explicit default for order type
         
         # Get the supplier (not required for production orders)
         supplier = None
@@ -90,12 +92,14 @@ def create_simple_purchase_order(request):
                 status='draft',
                 order_date=timezone.now().date(),
                 expected_delivery_date=data.get('expected_delivery_date'),
-                notes=data.get('notes', '')
+                notes=data.get('notes') or ''
             )
             
             # Create purchase order item
-            quantity = int(data.get('quantity', 1))
-            unit_price = float(data.get('unit_price', 0))
+            quantity_raw = data.get('quantity')
+            quantity = int(quantity_raw) if quantity_raw is not None else 1
+            unit_price_raw = data.get('unit_price')
+            unit_price = float(unit_price_raw) if unit_price_raw is not None else 0.0
             
             po_item = PurchaseOrderItem.objects.create(
                 purchase_order=po,

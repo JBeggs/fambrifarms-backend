@@ -18,7 +18,7 @@ def register(request):
             password=serializer.validated_data['password'],
             first_name=serializer.validated_data['first_name'],
             last_name=serializer.validated_data['last_name'],
-            phone=serializer.validated_data.get('phone', ''),
+            phone=serializer.validated_data.get('phone') or '',
             user_type='restaurant'
         )
         

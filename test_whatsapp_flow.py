@@ -151,7 +151,7 @@ def test_order_creation(whatsapp_message, manager):
             name=item_data['product_name'],
             defaults={
                 'description': f'Product from WhatsApp order',
-                'unit': item_data.get('unit', 'kg'),
+                'unit': item_data.get('unit') or 'kg',
                 'price': Decimal('10.00'),  # Default price
                 'is_active': True
             }
@@ -162,10 +162,10 @@ def test_order_creation(whatsapp_message, manager):
             order=order,
             product=product,
             quantity=Decimal(str(item_data['quantity'])),
-            unit=item_data.get('unit', 'kg'),
+            unit=item_data.get('unit') or 'kg',
             price=product.price,  # Use product price
-            original_text=item_data.get('original_text', ''),
-            confidence_score=item_data.get('confidence', 0.0)
+            original_text=item_data.get('original_text') or '',
+            confidence_score=item_data.get('confidence') if item_data.get('confidence') is not None else 0.0
         )
     
     # Mark WhatsApp message as processed

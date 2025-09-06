@@ -33,7 +33,7 @@ class DepartmentViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         queryset = Department.objects.all()
-        is_active = self.request.query_params.get('is_active', None)
+        is_active = self.request.query_params.get('is_active')  # None means no filter
         if is_active is not None:
             queryset = queryset.filter(is_active=is_active.lower() == 'true')
         return queryset
@@ -45,8 +45,8 @@ class ProductViewSet(viewsets.ModelViewSet):
     
     def get_queryset(self):
         queryset = Product.objects.all()
-        department = self.request.query_params.get('department', None)
-        is_active = self.request.query_params.get('is_active', None)
+        department = self.request.query_params.get('department')  # None means no filter
+        is_active = self.request.query_params.get('is_active')  # None means no filter
         
         if department is not None:
             queryset = queryset.filter(department=department)
@@ -65,12 +65,21 @@ class ProductViewSet(viewsets.ModelViewSet):
             product = serializer.save()
             
             # Create FinishedInventory if requested
-            create_inventory = request.data.get('create_inventory', False)
+            create_inventory = request.data.get('create_inventory')
             if create_inventory:
                 from inventory.models import FinishedInventory
-                initial_stock = request.data.get('initial_stock', 0)
-                minimum_level = request.data.get('minimum_level', 5)
-                reorder_level = request.data.get('reorder_level', 10)
+                
+                initial_stock = request.data.get('initial_stock')
+                if initial_stock is None:
+                    raise ValidationError({'initial_stock': 'Initial stock is required when creating inventory'})
+                
+                minimum_level = request.data.get('minimum_level')
+                if minimum_level is None:
+                    raise ValidationError({'minimum_level': 'Minimum level is required when creating inventory'})
+                
+                reorder_level = request.data.get('reorder_level')
+                if reorder_level is None:
+                    raise ValidationError({'reorder_level': 'Reorder level is required when creating inventory'})
                 
                 # Use get_or_create to avoid unique constraint errors
                 inventory, created = FinishedInventory.objects.get_or_create(
@@ -104,15 +113,23 @@ class ProductViewSet(viewsets.ModelViewSet):
             product = serializer.save()
             
             # Create FinishedInventory if requested and doesn't exist
-            create_inventory = request.data.get('create_inventory', False)
+            create_inventory = request.data.get('create_inventory')
             if create_inventory:
                 from inventory.models import FinishedInventory
                 
                 # Check if inventory already exists
                 if not hasattr(product, 'inventory'):
-                    initial_stock = request.data.get('initial_stock', 0)
-                    minimum_level = request.data.get('minimum_level', 5)
-                    reorder_level = request.data.get('reorder_level', 10)
+                    initial_stock = request.data.get('initial_stock')
+                    if initial_stock is None:
+                        raise ValidationError({'initial_stock': 'Initial stock is required when creating inventory'})
+                    
+                    minimum_level = request.data.get('minimum_level')
+                    if minimum_level is None:
+                        raise ValidationError({'minimum_level': 'Minimum level is required when creating inventory'})
+                    
+                    reorder_level = request.data.get('reorder_level')
+                    if reorder_level is None:
+                        raise ValidationError({'reorder_level': 'Reorder level is required when creating inventory'})
                     
                     FinishedInventory.objects.create(
                         product=product,
@@ -145,7 +162,7 @@ class ProductViewSet(viewsets.ModelViewSet):
                 inventory.save()
                 
                 # Log the adjustment (in a full system, you'd have proper audit logging)
-                adjustment_type = request.data.get('adjustment_type', 'manual_add')
+                adjustment_type = request.data.get('adjustment_type')\n                if adjustment_type is None:\n                    adjustment_type = 'manual_add'  # Explicit default for logging only
                 print(f"Stock adjustment: Added {add_stock} {product.unit} to {product.name} ({adjustment_type})")
             
             return Response(serializer.data)
@@ -225,7 +242,7 @@ class TestimonialViewSet(viewsets.ReadOnlyModelViewSet):
     
     def get_queryset(self):
         queryset = Testimonial.objects.filter(is_active=True)
-        is_featured = self.request.query_params.get('is_featured', None)
+        is_featured = self.request.query_params.get('is_featured')  # None means no filter
         if is_featured is not None:
             queryset = queryset.filter(is_featured=is_featured.lower() == 'true')
         return queryset
@@ -261,12 +278,12 @@ class DepartmentKeywordViewSet(viewsets.ModelViewSet):
         queryset = DepartmentKeyword.objects.all()
         
         # Filter by active status
-        is_active = self.request.query_params.get('is_active', None)
+        is_active = self.request.query_params.get('is_active')  # None means no filter
         if is_active is not None:
             queryset = queryset.filter(is_active=is_active.lower() == 'true')
         
         # Filter by department
-        department_id = self.request.query_params.get('department', None)
+        department_id = self.request.query_params.get('department')  # None means no filter
         if department_id:
             queryset = queryset.filter(department_id=department_id)
         
