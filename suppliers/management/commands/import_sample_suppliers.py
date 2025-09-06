@@ -35,39 +35,43 @@ class Command(BaseCommand):
         if options['create_products']:
             self.create_sample_products()
 
-        # Create sample suppliers
-        suppliers_data = [
+        # Create sample supplier
+        supplier_data = {
+            'name': 'Pretoria Fresh Market',
+            'contact_person': 'John Smith',
+            'email': 'orders@pretoriafresh.co.za',
+            'phone': '+27 12 555 1001',
+            'address': '123 Market Street, Pretoria, 0001',
+            'payment_terms_days': 30,
+            'lead_time_days': 2,
+            'minimum_order_value': Decimal('500.00'),
+            'is_active': True,
+        }
+        
+        # Sales reps data for the supplier
+        sales_reps_data = [
             {
-                'name': 'Pretoria Fresh Market',
-                'contact_person': 'John Smith',
-                'email': 'orders@pretoriafresh.co.za',
+                'name': 'John Smith',
+                'email': 'john.smith@pretoriafresh.co.za',
                 'phone': '+27 12 555 1001',
-                'address': '123 Market Street, Pretoria, 0001',
-                'payment_terms_days': 30,
-                'lead_time_days': 2,
-                'minimum_order_value': Decimal('500.00'),
+                'position': 'General Manager',
+                'is_primary': True,
                 'is_active': True,
             },
             {
-                'name': 'Johannesburg Wholesale Produce',
-                'contact_person': 'Sarah Johnson',
-                'email': 'procurement@jhbwholesale.co.za',
-                'phone': '+27 11 555 2001',
-                'address': '456 Wholesale Ave, Johannesburg, 2000',
-                'payment_terms_days': 21,
-                'lead_time_days': 1,
-                'minimum_order_value': Decimal('750.00'),
+                'name': 'Sarah Johnson',
+                'email': 'sarah.johnson@pretoriafresh.co.za',
+                'phone': '+27 12 555 1002',
+                'position': 'Sales Representative',
+                'is_primary': False,
                 'is_active': True,
             },
             {
-                'name': 'Cape Town Fresh Suppliers',
-                'contact_person': 'Mike Williams',
-                'email': 'sales@capetownfresh.co.za',
-                'phone': '+27 21 555 3001',
-                'address': '789 Fresh Road, Cape Town, 8000',
-                'payment_terms_days': 14,
-                'lead_time_days': 3,
-                'minimum_order_value': Decimal('1000.00'),
+                'name': 'Mike Williams',
+                'email': 'mike.williams@pretoriafresh.co.za',
+                'phone': '+27 12 555 1003',
+                'position': 'Account Manager',
+                'is_primary': False,
                 'is_active': True,
             },
         ]
@@ -75,35 +79,36 @@ class Command(BaseCommand):
         created_suppliers = []
         
         with transaction.atomic():
-            for supplier_data in suppliers_data:
-                supplier, created = Supplier.objects.get_or_create(
-                    name=supplier_data['name'],
-                    defaults=supplier_data
-                )
+            # Create the supplier
+            supplier, created = Supplier.objects.get_or_create(
+                name=supplier_data['name'],
+                defaults=supplier_data
+            )
+            
+            if created:
+                self.stdout.write(f'Created supplier: {supplier.name}')
                 
-                if created:
-                    self.stdout.write(f'Created supplier: {supplier.name}')
-                    
-                    # Create sales rep for each supplier
+                # Create multiple sales reps for the supplier
+                for rep_data in sales_reps_data:
                     sales_rep = SalesRep.objects.create(
                         supplier=supplier,
-                        name=f"{supplier_data['contact_person']} (Sales)",
-                        email=supplier_data['email'],
-                        phone=supplier_data['phone'],
-                        position='Sales Representative',
-                        is_primary=True,
-                        is_active=True,
+                        name=rep_data['name'],
+                        email=rep_data['email'],
+                        phone=rep_data['phone'],
+                        position=rep_data['position'],
+                        is_primary=rep_data['is_primary'],
+                        is_active=rep_data['is_active'],
                     )
-                    self.stdout.write(f'  Created sales rep: {sales_rep.name}')
+                    self.stdout.write(f'  Created sales rep: {sales_rep.name} ({sales_rep.position})')
                     
-                created_suppliers.append(supplier)
+            created_suppliers.append(supplier)
 
         # Create sample price lists
         self.create_sample_price_lists(created_suppliers)
 
         self.stdout.write(
             self.style.SUCCESS(
-                f'Successfully imported {len(created_suppliers)} suppliers with sample price lists'
+                f'Successfully imported {len(created_suppliers)} supplier with {len(sales_reps_data)} sales reps and sample price lists'
             )
         )
 
@@ -262,7 +267,7 @@ class Command(BaseCommand):
         ]
 
         for supplier in suppliers:
-            # Create a price list for each supplier
+            # Create a price list for the supplier
             price_list = SupplierPriceList.objects.create(
                 supplier=supplier,
                 list_date=date.today(),
@@ -271,11 +276,11 @@ class Command(BaseCommand):
                 notes=f'Sample price list data for testing - {supplier.name}',
             )
             
-            # Add random selection of items to each price list
-            selected_items = random.sample(sample_items, min(len(sample_items), random.randint(15, 25)))
+            # Add random selection of items to the price list
+            selected_items = random.sample(sample_items, min(len(sample_items), random.randint(20, 30)))
             
             for item_data in selected_items:
-                # Add some price variation between suppliers
+                # Add some price variation
                 price_variation = random.uniform(0.9, 1.1)
                 adjusted_price = Decimal(str(item_data['price'])) * Decimal(str(price_variation))
                 
