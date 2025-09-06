@@ -30,7 +30,7 @@ class Product(models.Model):
         ('medium', 'Medium Stock'), 
         ('low', 'Low Stock'),
         ('out', 'Out of Stock'),
-    ])
+    ], null=True, blank=True)
     
     def __str__(self):
         return f"{self.name} - R{self.price}/{self.unit}"
