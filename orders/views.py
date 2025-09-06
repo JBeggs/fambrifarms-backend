@@ -14,21 +14,19 @@ User = get_user_model()
 
 class OrderListView(generics.ListAPIView):
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]  # Temporarily allow access for development
     
     def get_queryset(self):
-        if self.request.user.user_type == 'admin':
-            return Order.objects.all().order_by('-created_at')
-        return Order.objects.filter(restaurant=self.request.user).order_by('-created_at')
+        # For development - return all orders since we don't have auth
+        return Order.objects.all().order_by('-created_at')
 
 class OrderDetailView(generics.RetrieveAPIView):
     serializer_class = OrderSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [AllowAny]  # Temporarily allow access for development
     
     def get_queryset(self):
-        if self.request.user.user_type == 'admin':
-            return Order.objects.all()
-        return Order.objects.filter(restaurant=self.request.user)
+        # For development - return all orders since we don't have auth
+        return Order.objects.all()
 
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
