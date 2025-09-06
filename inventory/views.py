@@ -458,7 +458,9 @@ class StockAlertViewSet(viewsets.ModelViewSet):
     @action(detail=False, methods=['post'])
     def acknowledge_multiple(self, request):
         """Acknowledge multiple alerts"""
-        alert_ids = request.data.get('alert_ids')\n        if alert_ids is None:\n            alert_ids = []
+        alert_ids = request.data.get('alert_ids')
+        if alert_ids is None:
+            alert_ids = []
         
         if not alert_ids:
             return Response(
