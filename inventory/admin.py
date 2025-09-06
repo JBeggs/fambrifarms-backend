@@ -51,7 +51,7 @@ class RawMaterialAdmin(admin.ModelAdmin):
 
 
 class RawMaterialBatchAdmin(admin.ModelAdmin):
-    list_display = ('batch_number', 'raw_material', 'supplier_name', 'received_quantity', 'available_quantity', 
+    list_display = ('batch_number', 'raw_material', 'supplier', 'supplier_name', 'received_quantity', 'available_quantity', 
                    'expiry_date', 'days_until_expiry_display', 'quality_grade', 'is_active')
     list_filter = ('quality_grade', 'is_active', 'received_date', 'expiry_date')
     search_fields = ('batch_number', 'raw_material__name', 'supplier_name')

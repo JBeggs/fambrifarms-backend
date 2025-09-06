@@ -1,11 +1,12 @@
-from rest_framework import status
+from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.contrib.auth import authenticate
+from django.db import transaction
 from .models import User, RestaurantProfile
-from .serializers import UserSerializer, RestaurantRegistrationSerializer
+from .serializers import UserSerializer, RestaurantRegistrationSerializer, CustomerSerializer
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
@@ -65,3 +66,106 @@ def login(request):
 def profile(request):
     """Return the authenticated user's profile"""
     return Response(UserSerializer(request.user).data)
+
+class CustomerViewSet(viewsets.ModelViewSet):
+    """
+    ViewSet for managing customers (restaurants)
+    Provides CRUD operations for customer data
+    """
+    serializer_class = CustomerSerializer
+    permission_classes = [AllowAny]  # Allow access for order processing
+    
+    def get_queryset(self):
+        """Return only restaurant users"""
+        return User.objects.filter(user_type='restaurant').select_related('restaurantprofile')
+    
+    @transaction.atomic
+    def create(self, request, *args, **kwargs):
+        """Create a new customer with restaurant profile"""
+        try:
+            serializer = self.get_serializer(data=request.data)
+            if serializer.is_valid():
+                customer = serializer.save()
+                return Response(
+                    CustomerSerializer(customer).data, 
+                    status=status.HTTP_201_CREATED
+                )
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to create customer: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    def list(self, request, *args, **kwargs):
+        """List all customers with error handling"""
+        try:
+            queryset = self.get_queryset()
+            serializer = self.get_serializer(queryset, many=True)
+            return Response({
+                'customers': serializer.data,
+                'count': queryset.count()
+            })
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to fetch customers: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    def retrieve(self, request, *args, **kwargs):
+        """Get a specific customer with error handling"""
+        try:
+            customer = self.get_object()
+            serializer = self.get_serializer(customer)
+            return Response(serializer.data)
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'Customer not found'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to fetch customer: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    @transaction.atomic
+    def update(self, request, *args, **kwargs):
+        """Update customer with error handling"""
+        try:
+            customer = self.get_object()
+            serializer = self.get_serializer(customer, data=request.data, partial=True)
+            if serializer.is_valid():
+                customer = serializer.save()
+                return Response(CustomerSerializer(customer).data)
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'Customer not found'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to update customer: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    def destroy(self, request, *args, **kwargs):
+        """Delete customer with error handling"""
+        try:
+            customer = self.get_object()
+            customer.delete()
+            return Response(
+                {'message': 'Customer deleted successfully'}, 
+                status=status.HTTP_204_NO_CONTENT
+            )
+        except User.DoesNotExist:
+            return Response(
+                {'error': 'Customer not found'}, 
+                status=status.HTTP_404_NOT_FOUND
+            )
+        except Exception as e:
+            return Response(
+                {'error': f'Failed to delete customer: {str(e)}'}, 
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )

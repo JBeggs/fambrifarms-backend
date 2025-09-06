@@ -23,13 +23,13 @@ INSTALLED_APPS = [
     'accounts',
     'products',
     'orders',
-    'whatsapp',
     'inventory',
-    # Remove complex apps not needed initially
-    # 'suppliers',
-    # 'invoices', 
-    # 'procurement',
-    # 'production',
+    # Restored apps for full system functionality
+    'suppliers',
+    'procurement',
+    'production',
+    'invoices',
+    # WhatsApp processing moved to social-hub (Node.js)
 ]
 
 MIDDLEWARE = [

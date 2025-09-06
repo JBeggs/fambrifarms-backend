@@ -7,7 +7,7 @@ from .models import (
     StockAlert
 )
 from products.models import Product
-# from suppliers.models import Supplier  # Removed for simplified system
+from suppliers.models import Supplier
 
 User = get_user_model()
 

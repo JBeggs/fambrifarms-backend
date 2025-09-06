@@ -50,6 +50,7 @@ class User(AbstractUser):
 class RestaurantProfile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     business_name = models.CharField(max_length=200)
+    branch_name = models.CharField(max_length=200, blank=True, help_text="Branch name for multi-location businesses (e.g., 'Debonairs Sandton')")
     business_registration = models.CharField(max_length=100, blank=True)
     address = models.TextField()
     city = models.CharField(max_length=100)
@@ -57,4 +58,6 @@ class RestaurantProfile(models.Model):
     payment_terms = models.CharField(max_length=50, default='Net 30')
     
     def __str__(self):
+        if self.branch_name:
+            return f"{self.business_name} - {self.branch_name}"
         return self.business_name 

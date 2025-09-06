@@ -15,13 +15,10 @@ router.register(r'faqs', views.FAQViewSet, basename='faqs')
 router.register(r'testimonials', views.TestimonialViewSet, basename='testimonials')
 
 urlpatterns = [
-    # Product list/detail aliases for cleaner URLs
-    path('', views.ProductViewSet.as_view({'get': 'list'}), name='product-list'),
-    path('<int:pk>/', views.ProductViewSet.as_view({'get': 'retrieve'}), name='product-detail'),
     # API Overview
     path('overview/', views.api_overview, name='api-overview'),
     
-    # Include ViewSet URLs
+    # Include ViewSet URLs (supports full CRUD)
     path('', include(router.urls)),
     
     # CMS endpoints

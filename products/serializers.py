@@ -13,7 +13,7 @@ class ProductSerializer(serializers.ModelSerializer):
     department_name = serializers.CharField(source='department.name', read_only=True)
     department_color = serializers.CharField(source='department.color', read_only=True)
     
-    # Inventory information
+    # Inventory information (read-only)
     available_quantity = serializers.SerializerMethodField()
     reserved_quantity = serializers.SerializerMethodField()
     needs_production = serializers.SerializerMethodField()
@@ -24,8 +24,17 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'description', 'department', 'department_name', 
             'department_color', 'price', 'unit', 'is_active',
-            'available_quantity', 'reserved_quantity', 'needs_production', 'supplier_count'
+            'available_quantity', 'reserved_quantity', 'needs_production', 'supplier_count',
+            'common_names', 'typical_order_quantity', 'in_stock', 'stock_level'
         ]
+        extra_kwargs = {
+            'department_name': {'read_only': True},
+            'department_color': {'read_only': True},
+            'available_quantity': {'read_only': True},
+            'reserved_quantity': {'read_only': True},
+            'needs_production': {'read_only': True},
+            'supplier_count': {'read_only': True},
+        }
     
     def get_available_quantity(self, obj):
         try:
@@ -46,7 +55,12 @@ class ProductSerializer(serializers.ModelSerializer):
             return False
     
     def get_supplier_count(self, obj):
-        return obj.suppliers.filter(is_available=True).count()
+        # Count suppliers that have this product available
+        try:
+            from suppliers.models import SupplierProduct
+            return SupplierProduct.objects.filter(product=obj, is_available=True).count()
+        except:
+            return 0
 
 
 # CMS Serializers
