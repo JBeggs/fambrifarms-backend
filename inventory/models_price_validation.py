@@ -64,8 +64,7 @@ class PriceHistory(models.Model):
             ('invoice', 'Invoice'),
             ('manual_entry', 'Manual Entry'),
             ('market_data', 'Market Data'),
-        ],
-        default='purchase_order'
+        ]
     )
     
     source_reference = models.CharField(
@@ -82,8 +81,7 @@ class PriceHistory(models.Model):
             ('B', 'Grade B - Standard'),
             ('C', 'Grade C - Economy'),
             ('R', 'Grade R - Reject/Processing'),
-        ],
-        default='B'
+        ]
     )
     
     # Timestamps
@@ -190,8 +188,7 @@ class PriceValidationResult(models.Model):
             ('no_history', 'No Historical Data'),
             ('approved', 'Manually Approved'),
             ('rejected', 'Rejected'),
-        ],
-        default='within_range'
+        ]
     )
     
     # Comparison data

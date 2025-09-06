@@ -35,8 +35,8 @@ class RawMaterial(models.Model):
     storage_temperature_max = models.DecimalField(max_digits=5, decimal_places=2, null=True, blank=True)
     
     # Inventory Levels
-    minimum_stock_level = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    reorder_level = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    minimum_stock_level = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    reorder_level = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     maximum_stock_level = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
     is_active = models.BooleanField(default=True)
@@ -206,10 +206,10 @@ class FinishedInventory(models.Model):
     product = models.OneToOneField('products.Product', on_delete=models.CASCADE, related_name='inventory')
     
     # Stock Levels
-    available_quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    reserved_quantity = models.DecimalField(max_digits=10, decimal_places=2, default=0)  # For confirmed orders
-    minimum_level = models.DecimalField(max_digits=10, decimal_places=2, default=0)
-    reorder_level = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    available_quantity = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    reserved_quantity = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)  # For confirmed orders
+    minimum_level = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    reorder_level = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     
     # Costing
     average_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
