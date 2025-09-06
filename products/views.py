@@ -2,6 +2,7 @@ from rest_framework import generics, viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
 from django.db import transaction
 from .models import (
@@ -97,6 +98,17 @@ class ProductViewSet(viewsets.ModelViewSet):
             return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
             
         except Exception as e:
+            import traceback
+            print(f"PRODUCT CREATION ERROR: {str(e)}")
+            print(f"FULL TRACEBACK: {traceback.format_exc()}")
+            
+            # Handle unique constraint violation for product names
+            if 'unique' in str(e).lower() and 'name' in str(e).lower():
+                return Response(
+                    {'error': f'A product with this name already exists. Please use a different name or search for the existing product.'}, 
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+            
             return Response(
                 {'error': f'Failed to create product: {str(e)}'}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR

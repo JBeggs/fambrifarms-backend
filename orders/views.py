@@ -173,6 +173,9 @@ def create_order_from_whatsapp(request):
         }, status=status.HTTP_201_CREATED)
         
     except Exception as e:
+        import traceback
+        print(f"ORDER CREATION ERROR: {str(e)}")
+        print(f"FULL TRACEBACK: {traceback.format_exc()}")
         return Response({
             'error': f'Failed to create order: {str(e)}'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
@@ -266,12 +269,29 @@ def parse_order_message(message_text):
 
 def find_product_by_name(product_name):
     """
-    Find product by name or common names
+    Find product by name or common names with precise matching
     """
+    if not product_name:
+        return None
+    
+    product_name = product_name.strip()
+    
+    # 1. Try exact name match first (case insensitive)
     try:
-        # Direct name match
-        return Product.objects.get(name__icontains=product_name)
+        return Product.objects.get(name__iexact=product_name)
     except Product.DoesNotExist:
+        pass
+    except Product.MultipleObjectsReturned:
+        # If multiple exact matches, log warning and return first
+        print(f"WARNING: Multiple products with exact name '{product_name}' found")
+        return Product.objects.filter(name__iexact=product_name).first()
+    
+    # 2. Try exact match in common_names
+    try:
+        products = Product.objects.filter(common_names__icontains=f'"{product_name}"')  # Look for quoted exact match
+        if products.exists():
+            return products.first()
+    except Exception:
         pass
     
     # Try common names (if available)
