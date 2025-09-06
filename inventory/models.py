@@ -71,12 +71,12 @@ class RawMaterialBatch(models.Model):
     )
     
     # Quantities
-    received_quantity = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
-    available_quantity = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    received_quantity = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0'))])
+    available_quantity = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0'))])
     
     # Pricing
-    unit_cost = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
-    total_cost = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0)])
+    unit_cost = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0'))])
+    total_cost = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0'))])
     
     # Dates
     received_date = models.DateTimeField(null=True, blank=True)
@@ -140,7 +140,7 @@ class ProductionRecipe(models.Model):
     version = models.CharField(max_length=10)
     
     # Recipe Details
-    output_quantity = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0.01)])
+    output_quantity = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
     output_unit = models.ForeignKey(UnitOfMeasure, on_delete=models.CASCADE, related_name='recipe_outputs')
     
     # Processing
@@ -177,7 +177,7 @@ class RecipeIngredient(models.Model):
     """Individual raw materials used in a recipe"""
     recipe = models.ForeignKey(ProductionRecipe, on_delete=models.CASCADE, related_name='ingredients')
     raw_material = models.ForeignKey(RawMaterial, on_delete=models.CASCADE)
-    quantity = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(0.01)])
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
     notes = models.CharField(max_length=200, blank=True)
     
     class Meta:
