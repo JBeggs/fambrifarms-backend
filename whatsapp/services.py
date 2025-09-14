@@ -459,12 +459,16 @@ def get_or_create_product(product_name):
         pass
     
     # Create new product
-    return Product.objects.create(
-        name=product_name,
-        price=Decimal('0.00'),  # Will be updated manually
-        department_id=1,  # Default department
-        is_active=True
-    )
+    try:
+        return Product.objects.create(
+            name=product_name,
+            price=Decimal('0.00'),  # Will be updated manually
+            department_id=1,  # Default department
+            is_active=True
+        )
+    except Exception as e:
+        print(f"[ERROR] Failed to create product '{product_name}': {e}")
+        return None
 
 def process_stock_updates(messages):
     """
