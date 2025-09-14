@@ -460,12 +460,27 @@ def get_or_create_product(product_name):
     
     # Create new product
     try:
-        return Product.objects.create(
+        product = Product.objects.create(
             name=product_name,
             price=Decimal('0.00'),  # Will be updated manually
             department_id=1,  # Default department
-            is_active=True
+            is_active=True,
+            needs_setup=True,  # Flag for admin attention
+            description=f"Auto-created from WhatsApp order. Needs pricing and inventory setup."
         )
+        
+        # Create alert for admin review
+        from products.models import ProductAlert
+        ProductAlert.objects.create(
+            product=product,
+            alert_type='needs_setup',
+            message=f"Product '{product_name}' was auto-created from WhatsApp order and needs pricing, inventory, and possibly a recipe setup.",
+        )
+        
+        # Log that a new product was created and needs setup
+        print(f"[PRODUCT] Auto-created product '{product_name}' - NEEDS PRICING & INVENTORY SETUP")
+        
+        return product
     except Exception as e:
         print(f"[ERROR] Failed to create product '{product_name}': {e}")
         return None

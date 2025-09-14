@@ -83,15 +83,19 @@ class CustomerViewSet(viewsets.ModelViewSet):
     def create(self, request, *args, **kwargs):
         """Create a new customer with restaurant profile"""
         try:
+            print(f"[accounts] Creating customer with data: {request.data}")
             serializer = self.get_serializer(data=request.data)
             if serializer.is_valid():
                 customer = serializer.save()
+                print(f"[accounts] Customer created successfully: {customer.email}")
                 return Response(
                     CustomerSerializer(customer).data, 
                     status=status.HTTP_201_CREATED
                 )
+            print(f"[accounts] Validation errors: {serializer.errors}")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except Exception as e:
+            print(f"[accounts] Exception creating customer: {str(e)}")
             return Response(
                 {'error': f'Failed to create customer: {str(e)}'}, 
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR

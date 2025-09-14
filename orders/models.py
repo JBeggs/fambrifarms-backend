@@ -145,8 +145,10 @@ class OrderItem(models.Model):
     notes = models.TextField(blank=True)
     
     def save(self, *args, **kwargs):
-        # Auto-calculate total price
-        self.total_price = self.quantity * self.price
+        # Auto-calculate total price (convert to Decimal to avoid type errors)
+        from decimal import Decimal
+        if self.quantity is not None and self.price is not None:
+            self.total_price = Decimal(str(self.quantity)) * self.price
         super().save(*args, **kwargs)
     
     def __str__(self):

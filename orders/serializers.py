@@ -4,10 +4,16 @@ from accounts.models import RestaurantProfile
 
 class OrderItemSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source='product.name', read_only=True)
+    product_description = serializers.CharField(source='product.description', read_only=True)
+    product_department = serializers.CharField(source='product.department.name', read_only=True)
+    product_stock_level = serializers.CharField(source='product.stock_level', read_only=True)
+    product_default_unit = serializers.CharField(source='product.unit', read_only=True)
     
     class Meta:
         model = OrderItem
-        fields = ['id', 'product', 'product_name', 'quantity', 'unit', 'price', 'total_price', 'original_text', 'confidence_score', 'manually_corrected', 'notes']
+        fields = ['id', 'product', 'product_name', 'product_description', 'product_department', 
+                 'product_stock_level', 'product_default_unit', 'quantity', 'unit', 'price', 
+                 'total_price', 'original_text', 'confidence_score', 'manually_corrected', 'notes']
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)
@@ -24,6 +30,9 @@ class OrderSerializer(serializers.ModelSerializer):
                  'restaurant_address', 'restaurant_phone', 'restaurant_email', 'status', 'order_date',
                  'delivery_date', 'whatsapp_message_id', 'original_message', 'parsed_by_ai', 'subtotal', 
                  'total_amount', 'items', 'purchase_orders', 'created_at', 'updated_at']
+        read_only_fields = ['id', 'order_number', 'restaurant_name', 'restaurant_business_name', 
+                           'restaurant_address', 'restaurant_phone', 'restaurant_email', 'purchase_orders', 
+                           'created_at', 'updated_at']
     
     def get_restaurant_name(self, obj):
         return f"{obj.restaurant.first_name} {obj.restaurant.last_name}"

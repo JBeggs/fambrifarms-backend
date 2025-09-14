@@ -20,13 +20,78 @@ class OrderListView(generics.ListAPIView):
         # For development - return all orders since we don't have auth
         return Order.objects.all().order_by('-created_at')
 
-class OrderDetailView(generics.RetrieveAPIView):
+class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = OrderSerializer
     permission_classes = [AllowAny]  # Temporarily allow access for development
     
     def get_queryset(self):
         # For development - return all orders since we don't have auth
         return Order.objects.all()
+    
+    def update(self, request, *args, **kwargs):
+        """Handle order updates including items"""
+        partial = kwargs.pop('partial', False)
+        instance = self.get_object()
+        
+        # Handle order items if provided
+        items_data = request.data.get('items', [])
+        
+        # Update basic order fields
+        serializer = self.get_serializer(instance, data=request.data, partial=partial)
+        serializer.is_valid(raise_exception=True)
+        
+        # Save the order first
+        order = serializer.save()
+        
+        # Handle items update if provided
+        if items_data:
+            # Clear existing items
+            order.items.all().delete()
+            
+            # Create new items
+            for item_data in items_data:
+                product_id = item_data.get('product')
+                quantity = item_data.get('quantity', 1)
+                price = item_data.get('price', 0)
+                
+                if product_id:
+                    try:
+                        product = Product.objects.get(id=product_id)
+                        OrderItem.objects.create(
+                            order=order,
+                            product=product,
+                            quantity=quantity,
+                            price=price,
+                            unit=item_data.get('unit', ''),
+                            original_text=item_data.get('original_text', ''),
+                            manually_corrected=True  # Mark as manually edited
+                        )
+                    except Product.DoesNotExist:
+                        continue
+        
+        # Recalculate totals
+        order.subtotal = sum(item.total_price for item in order.items.all())
+        order.total_amount = order.subtotal
+        order.save()
+        
+        # Return updated order
+        return Response(OrderSerializer(order).data)
+    
+    def destroy(self, request, *args, **kwargs):
+        """Handle order deletion"""
+        instance = self.get_object()
+        order_number = instance.order_number
+        
+        # Log the deletion for audit purposes
+        print(f"[orders] Deleting order {order_number} (ID: {instance.id})")
+        
+        # Perform the deletion
+        self.perform_destroy(instance)
+        
+        return Response(
+            {"message": f"Order {order_number} deleted successfully"}, 
+            status=status.HTTP_200_OK
+        )
 
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])
@@ -186,11 +251,10 @@ def get_or_create_restaurant_user(sender, sender_name):
     phone = re.sub(r'[^\d+]', '', sender)
     
     # Try to find existing user by phone or email
-    user = None
-    try:
-        # Look for user with phone in email (temporary approach)
-        user = User.objects.get(email__contains=phone.replace('+', ''))
-    except User.DoesNotExist:
+    # Look for user with phone in email (temporary approach)
+    user = User.objects.filter(email__contains=phone.replace('+', '')).first()
+    
+    if not user:
         # Create new restaurant user
         email = f"whatsapp_{phone.replace('+', '')}@fambrifarms.temp"
         user = User.objects.create_user(
@@ -275,14 +339,9 @@ def find_product_by_name(product_name):
     product_name = product_name.strip()
     
     # 1. Try exact name match first (case insensitive)
-    try:
-        return Product.objects.get(name__iexact=product_name)
-    except Product.DoesNotExist:
-        pass
-    except Product.MultipleObjectsReturned:
-        # If multiple exact matches, log warning and return first
-        print(f"WARNING: Multiple products with exact name '{product_name}' found")
-        return Product.objects.filter(name__iexact=product_name).first()
+    product = Product.objects.filter(name__iexact=product_name).first()
+    if product:
+        return product
     
     # 2. Try exact match in common_names
     try:
@@ -314,9 +373,9 @@ def find_product_by_name(product_name):
     
     for key, value in name_mappings.items():
         if key in product_name.lower():
-            try:
-                return Product.objects.get(name__icontains=value)
-            except Product.DoesNotExist:
-                continue
+            # Use filter().first() to avoid MultipleObjectsReturned error
+            product = Product.objects.filter(name__icontains=value).first()
+            if product:
+                return product
     
     return None 

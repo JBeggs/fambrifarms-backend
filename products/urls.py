@@ -1,36 +1,11 @@
-from django.urls import path, include
-from rest_framework.routers import DefaultRouter
+from django.urls import path
 from . import views
 
-# Create router for ViewSets
-router = DefaultRouter()
-router.register(r'departments', views.DepartmentViewSet, basename='department')
-router.register(r'products', views.ProductViewSet, basename='product')
-
-# CMS ViewSets
-router.register(r'company-info', views.CompanyInfoViewSet, basename='company-info')
-router.register(r'business-hours', views.BusinessHoursViewSet, basename='business-hours')
-router.register(r'team-members', views.TeamMemberViewSet, basename='team-members')
-router.register(r'faqs', views.FAQViewSet, basename='faqs')
-router.register(r'testimonials', views.TestimonialViewSet, basename='testimonials')
-
-# Business Settings ViewSets
-router.register(r'business-settings', views.BusinessSettingsViewSet, basename='business-settings')
-router.register(r'department-keywords', views.DepartmentKeywordViewSet, basename='department-keywords')
-
 urlpatterns = [
-    # API Overview
-    path('overview/', views.api_overview, name='api-overview'),
-    
-    # Include ViewSet URLs (supports full CRUD)
-    path('', include(router.urls)),
-    
-    # CMS endpoints
-    path('company/', views.company_info, name='company-info'),
-    path('page-content/<str:page>/', views.page_content, name='page-content'),
-    
-    # Legacy endpoints for backward compatibility
-    path('products-list/', views.ProductListView.as_view(), name='product-list-legacy'),
-    path('products-detail/<int:pk>/', views.ProductDetailView.as_view(), name='product-detail-legacy'),
-    path('departments-list/', views.DepartmentListView.as_view(), name='department-list-legacy'),
-] 
+    path('', views.api_overview, name='products_api_overview'),
+    path('products/', views.ProductListView.as_view(), name='product_list'),
+    path('products/<int:pk>/', views.ProductDetailView.as_view(), name='product_detail'),
+    path('departments/', views.DepartmentListView.as_view(), name='department_list'),
+    path('alerts/', views.product_alerts, name='product_alerts'),
+    path('alerts/<int:alert_id>/resolve/', views.resolve_alert, name='resolve_alert'),
+]

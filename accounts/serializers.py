@@ -47,9 +47,13 @@ class CustomerSerializer(serializers.ModelSerializer):
             'business_registration': validated_data.pop('business_registration', '')
         }
         
-        # Create user with restaurant type
+        # Create user with restaurant type and default password
         validated_data['user_type'] = 'restaurant'
-        user = User.objects.create(**validated_data)
+        # Generate a default password for customers created via order system
+        import secrets
+        import string
+        default_password = ''.join(secrets.choice(string.ascii_letters + string.digits) for _ in range(12))
+        user = User.objects.create_user(password=default_password, **validated_data)
         
         # Create restaurant profile
         RestaurantProfile.objects.create(user=user, **profile_data)

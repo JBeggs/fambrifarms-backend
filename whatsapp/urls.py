@@ -1,0 +1,29 @@
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    # Health check
+    path('health/', views.health_check, name='whatsapp-health'),
+    
+    # Companies
+    path('companies/', views.get_companies, name='get-companies'),
+    
+    # Message processing
+    path('receive-messages/', views.receive_messages, name='receive-messages'),
+    path('messages/', views.get_messages, name='get-messages'),
+    path('messages/edit/', views.edit_message, name='edit-message'),
+    path('messages/update-company/', views.update_message_company, name='update-message-company'),
+    path('messages/process/', views.process_messages_to_orders, name='process-messages'),
+    path('messages/<int:message_id>/', views.delete_message, name='delete-message'),
+    path('messages/bulk-delete/', views.bulk_delete_messages, name='bulk-delete-messages'),
+    
+    # Stock management
+    path('stock-updates/', views.get_stock_updates, name='stock-updates'),
+    path('orders/<int:order_id>/validate-stock/', views.validate_order_stock, name='validate-order-stock'),
+    
+    # Logging and monitoring
+    path('logs/', views.get_processing_logs, name='processing-logs'),
+    
+    # Company extraction refresh
+    path('messages/refresh-companies/', views.refresh_company_extraction, name='refresh-company-extraction'),
+]

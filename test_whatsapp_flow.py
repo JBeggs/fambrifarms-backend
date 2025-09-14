@@ -14,8 +14,10 @@ os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'familyfarms_api.settings')
 django.setup()
 
 from django.contrib.auth import get_user_model
-from whatsapp.models import WhatsAppMessage, SalesRep, PurchaseOrder
-from whatsapp.utils import parse_whatsapp_message
+from whatsapp.models import WhatsAppMessage
+from suppliers.models import SalesRep, Supplier
+from procurement.models import PurchaseOrder, PurchaseOrderItem
+from whatsapp.services import parse_order_items
 from orders.models import Order, OrderItem
 from products.models import Product, Department
 
@@ -41,12 +43,14 @@ def setup_test_data():
         manager.save()
     
     # Create a sales rep
+    supplier, _ = Supplier.objects.get_or_create(name='Default Supplier')
     sales_rep, created = SalesRep.objects.get_or_create(
+        supplier=supplier,
         name='John Smith',
         defaults={
-            'phone_number': '+27123456789',
-            'whatsapp_number': '+27123456789',
-            'is_active': True
+            'phone': '+27123456789',
+            'is_active': True,
+            'is_primary': True
         }
     )
     
@@ -67,16 +71,14 @@ def test_message_parsing():
     results = []
     for message in test_messages:
         print(f"\n📝 Message: '{message}'")
-        result = parse_whatsapp_message(message)
+        items = parse_order_items(message)
         
-        print(f"   Confidence: {result['confidence']}")
-        print(f"   Items found: {result['total_items']}")
-        print(f"   Needs review: {result['needs_review']}")
+        print(f"   Items found: {len(items)}")
         
-        for item in result['items']:
+        for item in items:
             print(f"     - {item['product_name']}: {item['quantity']}{item['unit']}")
         
-        results.append(result)
+        results.append({'items': items, 'total_items': len(items)})
     
     return results
 
@@ -97,9 +99,9 @@ def test_whatsapp_message_creation():
     )
     
     # Parse the message
-    parsing_result = parse_whatsapp_message(message.message_text)
-    message.parsed_items = parsing_result['items']
-    message.parsing_confidence = parsing_result['confidence']
+    parsed_items = parse_order_items(message.message_text)
+    message.parsed_items = parsed_items
+    message.parsing_confidence = 0.8
     message.save()
     
     print(f"✅ Created WhatsApp message: {message.id}")
@@ -198,13 +200,12 @@ def test_po_generation(order, manager, sales_rep):
         unit_price = order_item.product.price
         line_total = unit_price * order_item.quantity
         
-        from whatsapp.models import POItem
-        POItem.objects.create(
+        PurchaseOrderItem.objects.create(
             purchase_order=po,
-            product_name=order_item.product.name,
-            quantity_requested=order_item.quantity,
-            unit=order_item.unit,
-            price_per_unit=unit_price,
+            product=order_item.product,
+            order_item=order_item,
+            quantity_ordered=int(order_item.quantity),
+            unit_price=unit_price,
             total_price=line_total
         )
         

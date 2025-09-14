@@ -2,303 +2,81 @@ from rest_framework import generics, viewsets, status
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
-from rest_framework.exceptions import ValidationError
 from django.shortcuts import get_object_or_404
-from django.db import transaction
-from .models import (
-    Product, Department, CompanyInfo, PageContent, BusinessHours, 
-    TeamMember, FAQ, Testimonial, BusinessSettings, DepartmentKeyword
-)
-from .serializers import (
-    ProductSerializer, DepartmentSerializer, CompanyInfoSerializer,
-    PageContentSerializer, BusinessHoursSerializer, TeamMemberSerializer,
-    FAQSerializer, TestimonialSerializer, BusinessSettingsSerializer,
-    BusinessSettingsPublicSerializer, DepartmentKeywordSerializer
-)
+from .models import Product, Department, ProductAlert, Recipe
+from .serializers import ProductSerializer, DepartmentSerializer
 
 @api_view(['GET'])
 def api_overview(request):
     """API overview showing available endpoints"""
     urls = {
-        'Products': '/products/',
-        'Product Detail': '/products/<int:id>/',
-        'Departments': '/departments/',
-        'Department Detail': '/departments/<int:id>/',
+        'products': '/api/products/products/',
+        'departments': '/api/products/departments/',
+        'product_alerts': '/api/products/alerts/',
     }
     return Response(urls)
 
-class DepartmentViewSet(viewsets.ModelViewSet):
-    queryset = Department.objects.all()
-    serializer_class = DepartmentSerializer
-    permission_classes = [AllowAny]
-    
-    def get_queryset(self):
-        queryset = Department.objects.all()
-        is_active = self.request.query_params.get('is_active')  # None means no filter
-        if is_active is not None:
-            queryset = queryset.filter(is_active=is_active.lower() == 'true')
-        return queryset
-
-class ProductViewSet(viewsets.ModelViewSet):
+class ProductListView(generics.ListCreateAPIView):
+    """List all products or create a new product"""
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
     
     def get_queryset(self):
-        queryset = Product.objects.all()
-        department = self.request.query_params.get('department')  # None means no filter
-        is_active = self.request.query_params.get('is_active')  # None means no filter
+        queryset = Product.objects.select_related('department').all()
         
-        if department is not None:
-            queryset = queryset.filter(department=department)
-        if is_active is not None:
-            queryset = queryset.filter(is_active=is_active.lower() == 'true')
-        
-        return queryset
-    
-    @transaction.atomic
-    def create(self, request, *args, **kwargs):
-        """Create product and optionally create FinishedInventory record"""
-        try:
-            # Create the product
-            serializer = self.get_serializer(data=request.data)
-            serializer.is_valid(raise_exception=True)
-            product = serializer.save()
+        # Filter by needs_setup
+        needs_setup = self.request.query_params.get('needs_setup')
+        if needs_setup is not None:
+            queryset = queryset.filter(needs_setup=needs_setup.lower() == 'true')
             
-            # Create FinishedInventory if requested
-            create_inventory = request.data.get('create_inventory')
-            if create_inventory:
-                from inventory.models import FinishedInventory
-                
-                initial_stock = request.data.get('initial_stock')
-                if initial_stock is None:
-                    raise ValidationError({'initial_stock': 'Initial stock is required when creating inventory'})
-                
-                minimum_level = request.data.get('minimum_level')
-                if minimum_level is None:
-                    raise ValidationError({'minimum_level': 'Minimum level is required when creating inventory'})
-                
-                reorder_level = request.data.get('reorder_level')
-                if reorder_level is None:
-                    raise ValidationError({'reorder_level': 'Reorder level is required when creating inventory'})
-                
-                # Use get_or_create to avoid unique constraint errors
-                inventory, created = FinishedInventory.objects.get_or_create(
-                    product=product,
-                    defaults={
-                        'available_quantity': initial_stock,
-                        'reserved_quantity': 0,
-                        'minimum_level': minimum_level,
-                        'reorder_level': reorder_level,
-                        'average_cost': product.price
-                    }
-                )
+        # Filter by department
+        department = self.request.query_params.get('department')
+        if department:
+            queryset = queryset.filter(department__name__icontains=department)
             
-            headers = self.get_success_headers(serializer.data)
-            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
-            
-        except Exception as e:
-            import traceback
-            print(f"PRODUCT CREATION ERROR: {str(e)}")
-            print(f"FULL TRACEBACK: {traceback.format_exc()}")
-            
-            # Handle unique constraint violation for product names
-            if 'unique' in str(e).lower() and 'name' in str(e).lower():
-                return Response(
-                    {'error': f'A product with this name already exists. Please use a different name or search for the existing product.'}, 
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-            
-            return Response(
-                {'error': f'Failed to create product: {str(e)}'}, 
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
-    
-    @transaction.atomic
-    def update(self, request, *args, **kwargs):
-        """Update product and optionally create FinishedInventory record"""
-        try:
-            # Update the product
-            instance = self.get_object()
-            serializer = self.get_serializer(instance, data=request.data, partial=True)
-            serializer.is_valid(raise_exception=True)
-            product = serializer.save()
-            
-            # Create FinishedInventory if requested and doesn't exist
-            create_inventory = request.data.get('create_inventory')
-            if create_inventory:
-                from inventory.models import FinishedInventory
-                
-                # Check if inventory already exists
-                if not hasattr(product, 'inventory'):
-                    initial_stock = request.data.get('initial_stock')
-                    if initial_stock is None:
-                        raise ValidationError({'initial_stock': 'Initial stock is required when creating inventory'})
-                    
-                    minimum_level = request.data.get('minimum_level')
-                    if minimum_level is None:
-                        raise ValidationError({'minimum_level': 'Minimum level is required when creating inventory'})
-                    
-                    reorder_level = request.data.get('reorder_level')
-                    if reorder_level is None:
-                        raise ValidationError({'reorder_level': 'Reorder level is required when creating inventory'})
-                    
-                    FinishedInventory.objects.create(
-                        product=product,
-                        available_quantity=initial_stock,
-                        reserved_quantity=0,
-                        minimum_level=minimum_level,
-                        reorder_level=reorder_level,
-                        average_cost=product.price
-                    )
-            
-            # Add stock to existing inventory if requested
-            add_stock = request.data.get('add_stock')
-            if add_stock is not None and add_stock > 0:
-                from inventory.models import FinishedInventory
-                
-                # Get or create inventory record
-                inventory, created = FinishedInventory.objects.get_or_create(
-                    product=product,
-                    defaults={
-                        'available_quantity': 0,
-                        'reserved_quantity': 0,
-                        'minimum_level': 5,
-                        'reorder_level': 10,
-                        'average_cost': product.price
-                    }
-                )
-                
-                # Add the stock
-                inventory.available_quantity += add_stock
-                inventory.save()
-                
-                # Log the adjustment (in a full system, you'd have proper audit logging)
-                adjustment_type = request.data.get('adjustment_type')
-                if adjustment_type is None:
-                    adjustment_type = 'manual_add'  # Explicit default for logging only
-                print(f"Stock adjustment: Added {add_stock} {product.unit} to {product.name} ({adjustment_type})")
-            
-            return Response(serializer.data)
-            
-        except Exception as e:
-            return Response(
-                {'error': f'Failed to update product: {str(e)}'}, 
-                status=status.HTTP_500_INTERNAL_SERVER_ERROR
-            )
+        return queryset.order_by('name')
 
-# Keep legacy views for backward compatibility
-class ProductListView(generics.ListAPIView):
-    queryset = Product.objects.filter(is_active=True)
+class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
+    """Retrieve, update or delete a product"""
+    queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
 
-class ProductDetailView(generics.RetrieveAPIView):
-    queryset = Product.objects.filter(is_active=True)
-    serializer_class = ProductSerializer
-    permission_classes = [AllowAny]
-
-class DepartmentListView(generics.ListAPIView):
-    queryset = Department.objects.filter(is_active=True)
+class DepartmentListView(generics.ListCreateAPIView):
+    """List all departments or create a new department"""
+    queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
     permission_classes = [AllowAny]
 
-
-# CMS Views
-class CompanyInfoViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = CompanyInfo.objects.filter(is_active=True)
-    serializer_class = CompanyInfoSerializer
-    permission_classes = [AllowAny]
-
 @api_view(['GET'])
-def company_info(request):
-    """Get active company information"""
-    try:
-        company = CompanyInfo.objects.filter(is_active=True).first()
-        if company:
-            serializer = CompanyInfoSerializer(company)
-            return Response(serializer.data)
-        return Response({'error': 'Company information not found'}, status=404)
-    except Exception as e:
-        return Response({'error': str(e)}, status=500)
-
-@api_view(['GET'])
-def page_content(request, page):
-    """Get content for a specific page"""
-    try:
-        content = PageContent.objects.filter(page=page, is_active=True).first()
-        if content:
-            serializer = PageContentSerializer(content)
-            return Response(serializer.data)
-        return Response({'error': f'Content for page "{page}" not found'}, status=404)
-    except Exception as e:
-        return Response({'error': str(e)}, status=500)
-
-class BusinessHoursViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = BusinessHours.objects.all()
-    serializer_class = BusinessHoursSerializer
-    permission_classes = [AllowAny]
-
-class TeamMemberViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = TeamMember.objects.filter(is_active=True)
-    serializer_class = TeamMemberSerializer
-    permission_classes = [AllowAny]
-
-class FAQViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = FAQ.objects.filter(is_active=True)
-    serializer_class = FAQSerializer
-    permission_classes = [AllowAny]
-
-class TestimonialViewSet(viewsets.ReadOnlyModelViewSet):
-    queryset = Testimonial.objects.filter(is_active=True)
-    serializer_class = TestimonialSerializer
-    permission_classes = [AllowAny]
+def product_alerts(request):
+    """Get unresolved product alerts"""
+    alerts = ProductAlert.objects.filter(is_resolved=False).select_related('product')
     
-    def get_queryset(self):
-        queryset = Testimonial.objects.filter(is_active=True)
-        is_featured = self.request.query_params.get('is_featured')  # None means no filter
-        if is_featured is not None:
-            queryset = queryset.filter(is_featured=is_featured.lower() == 'true')
-        return queryset
-
-
-class BusinessSettingsViewSet(viewsets.ReadOnlyModelViewSet):
-    """
-    ViewSet for BusinessSettings - read-only singleton
-    Provides configurable defaults for the frontend
-    """
-    queryset = BusinessSettings.objects.all()
-    permission_classes = []  # Public endpoint for configuration
+    alert_data = []
+    for alert in alerts:
+        alert_data.append({
+            'id': alert.id,
+            'product_id': alert.product.id,
+            'product_name': alert.product.name,
+            'alert_type': alert.alert_type,
+            'message': alert.message,
+            'created_at': alert.created_at,
+            'created_by_order': alert.created_by_order,
+        })
     
-    def get_serializer_class(self):
-        # Use public serializer to avoid exposing sensitive business data
-        return BusinessSettingsPublicSerializer
-    
-    def get_queryset(self):
-        # Always return the singleton instance
-        settings = BusinessSettings.get_settings()
-        return BusinessSettings.objects.filter(pk=settings.pk)
+    return Response({
+        'count': len(alert_data),
+        'alerts': alert_data
+    })
 
-
-class DepartmentKeywordViewSet(viewsets.ModelViewSet):
-    """
-    ViewSet for DepartmentKeyword - for automatic department assignment
-    """
-    queryset = DepartmentKeyword.objects.all()
-    serializer_class = DepartmentKeywordSerializer
-    permission_classes = [IsAuthenticated]  # Admin only
+@api_view(['POST'])
+def resolve_alert(request, alert_id):
+    """Mark an alert as resolved"""
+    alert = get_object_or_404(ProductAlert, id=alert_id)
+    alert.is_resolved = True
+    alert.resolved_by = request.user if request.user.is_authenticated else None
+    alert.save()
     
-    def get_queryset(self):
-        queryset = DepartmentKeyword.objects.all()
-        
-        # Filter by active status
-        is_active = self.request.query_params.get('is_active')  # None means no filter
-        if is_active is not None:
-            queryset = queryset.filter(is_active=is_active.lower() == 'true')
-        
-        # Filter by department
-        department_id = self.request.query_params.get('department')  # None means no filter
-        if department_id:
-            queryset = queryset.filter(department_id=department_id)
-        
-        return queryset.order_by('department__name', 'keyword') 
+    return Response({'message': 'Alert resolved successfully'})

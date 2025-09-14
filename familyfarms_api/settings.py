@@ -29,7 +29,7 @@ INSTALLED_APPS = [
     'procurement',
     'production',
     'invoices',
-    # WhatsApp processing moved to social-hub (Node.js)
+    'whatsapp',
 ]
 
 MIDDLEWARE = [

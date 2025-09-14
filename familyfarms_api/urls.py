@@ -23,7 +23,7 @@ urlpatterns = [
     path('api/procurement/', include('procurement.urls')),
     path('api/production/', include('production.urls')),
     path('api/invoices/', include('invoices.urls')),
-    # WhatsApp processing moved to social-hub (Node.js)
+    path('api/whatsapp/', include('whatsapp.urls')),
 ]
 
 if settings.DEBUG:
