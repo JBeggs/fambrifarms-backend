@@ -1,5 +1,5 @@
 from django.urls import path
-from . import views
+from . import views, views_procurement
 
 urlpatterns = [
     path('', views.api_overview, name='products_api_overview'),
@@ -9,4 +9,14 @@ urlpatterns = [
     path('departments/', views.DepartmentListView.as_view(), name='department_list'),
     path('alerts/', views.product_alerts, name='product_alerts'),
     path('alerts/<int:alert_id>/resolve/', views.resolve_alert, name='resolve_alert'),
+    
+    # Procurement Intelligence APIs
+    path('procurement/generate-recommendation/', views_procurement.generate_market_recommendation, name='generate_market_recommendation'),
+    path('procurement/recommendations/', views_procurement.get_market_recommendations, name='get_market_recommendations'),
+    path('procurement/recommendations/<int:recommendation_id>/approve/', views_procurement.approve_market_recommendation, name='approve_market_recommendation'),
+    path('procurement/buffers/', views_procurement.get_procurement_buffers, name='get_procurement_buffers'),
+    path('procurement/buffers/<int:product_id>/', views_procurement.update_procurement_buffer, name='update_procurement_buffer'),
+    path('procurement/recipes/', views_procurement.get_product_recipes, name='get_product_recipes'),
+    path('procurement/recipes/create-veggie-boxes/', views_procurement.create_veggie_box_recipes, name='create_veggie_box_recipes'),
+    path('procurement/dashboard/', views_procurement.procurement_dashboard_data, name='procurement_dashboard_data'),
 ]

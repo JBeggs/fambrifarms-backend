@@ -153,6 +153,10 @@ class Command(BaseCommand):
             {'name': 'Cherry Tomatoes', 'department': 'Specialty Items', 'unit': 'punnet', 'price': 20.00, 'stock_level': 5.0, 'min_stock': 3.0},
             {'name': 'Micro Herbs', 'department': 'Specialty Items', 'unit': 'packet', 'price': 25.00, 'stock_level': 10.0, 'min_stock': 3.0},
             {'name': 'Edible Flowers', 'department': 'Specialty Items', 'unit': 'packet', 'price': 35.00, 'stock_level': 5.0, 'min_stock': 2.0},
+            
+            # VEGGIE BOX PRODUCTS - Composite items with recipes
+            {'name': 'Small Veggie Box', 'department': 'Specialty Items', 'unit': 'box', 'price': 180.00, 'stock_level': 10.0, 'min_stock': 3.0},
+            {'name': 'Large Veggie Box', 'department': 'Specialty Items', 'unit': 'box', 'price': 320.00, 'stock_level': 8.0, 'min_stock': 2.0},
         ]
 
         created_count = 0

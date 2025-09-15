@@ -34,6 +34,7 @@ class Command(BaseCommand):
         )
         self.stdout.write(f'👥 Complete user ecosystem with real WhatsApp contacts')
         self.stdout.write(f'🌾 Farm staff: Karl (Manager), Hazvinei (Stock Taker)')
+        self.stdout.write(f'🤖 System user: WhatsApp integration (API key authentication)')
         self.stdout.write(f'👤 Private customers: Sylvia, Marco, Arthur with real patterns')
         self.stdout.write(f'🔐 Role-based permissions and access levels configured')
         self.stdout.write(f'✅ Phase 5 Complete: User system ready for frontend integration')
@@ -107,6 +108,27 @@ class Command(BaseCommand):
                     'can_manage_customers': False,
                     'can_view_reports': True,
                     'notes': 'Stock Taker - manages all inventory counts, SHALLOME stock reports, and inventory updates. Sends daily stock updates via WhatsApp.'
+                }
+            },
+            {
+                'email': 'system@fambrifarms.co.za',
+                'first_name': 'WhatsApp',
+                'last_name': 'System',
+                'phone': '',  # System user doesn't need phone
+                'user_type': 'admin',
+                'is_staff': False,
+                'is_active': True,
+                'profile_data': {
+                    'employee_id': 'SYS001',
+                    'department': 'System',
+                    'position': 'WhatsApp Integration',
+                    'whatsapp_number': '',
+                    'access_level': 'system',
+                    'can_manage_inventory': False,
+                    'can_approve_orders': False,
+                    'can_manage_customers': False,
+                    'can_view_reports': False,
+                    'notes': 'System user for WhatsApp scraper API key authentication. Allows Python scraper to send messages to Django backend securely.'
                 }
             },
         ]

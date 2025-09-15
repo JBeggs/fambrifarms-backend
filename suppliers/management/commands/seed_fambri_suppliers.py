@@ -121,6 +121,38 @@ class Command(BaseCommand):
                         'is_active': True,
                     }
                 ]
+            },
+            {
+                'name': 'Tshwane Fresh Produce Market',
+                'contact_person': 'Market Administration',
+                'email': 'admin@tshwanemarket.co.za',
+                'phone': '+27 12 358 1911',
+                'address': 'Tshwane Fresh Produce Market, Pretoria West, 0183',
+                'registration_number': 'TFPM1985/001',
+                'tax_number': '3456789012',
+                'payment_terms_days': 0,   # Cash on delivery at market
+                'lead_time_days': 0,       # Same day - Karl goes to market
+                'minimum_order_value': Decimal('500.00'),  # Minimum for wholesale
+                'is_active': True,
+                'specialty': 'Wholesale fresh produce, bulk quantities, competitive prices',
+                'sales_reps': [
+                    {
+                        'name': 'Market Floor Manager',
+                        'email': 'floor@tshwanemarket.co.za',
+                        'phone': '+27 12 358 1912',
+                        'position': 'Floor Manager',
+                        'is_primary': True,
+                        'is_active': True,
+                    },
+                    {
+                        'name': 'Wholesale Coordinator',
+                        'email': 'wholesale@tshwanemarket.co.za',
+                        'phone': '+27 12 358 1913',
+                        'position': 'Wholesale Coordinator',
+                        'is_primary': False,
+                        'is_active': True,
+                    }
+                ]
             }
         ]
 

@@ -1,7 +1,8 @@
 from rest_framework import generics, status
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
+from rest_framework.permissions import AllowAny, IsAuthenticated
 from rest_framework.response import Response
+from familyfarms_api.authentication import FlexibleAuthentication
 from django.shortcuts import get_object_or_404
 from django.db import transaction, models
 from django.utils import timezone
@@ -25,7 +26,8 @@ from .services import (
 from accounts.models import RestaurantProfile
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@authentication_classes([FlexibleAuthentication])
+@permission_classes([IsAuthenticated])
 def health_check(request):
     """Health check endpoint for the WhatsApp integration service"""
     return Response({
@@ -36,7 +38,8 @@ def health_check(request):
     })
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@authentication_classes([FlexibleAuthentication])
+@permission_classes([IsAuthenticated])
 def get_companies(request):
     """Get list of valid companies from RestaurantProfile"""
     try:
@@ -71,7 +74,8 @@ def get_companies(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@authentication_classes([FlexibleAuthentication])
+@permission_classes([IsAuthenticated])
 def receive_messages(request):
     """
     Receive scraped messages from the Python WhatsApp scraper
@@ -281,7 +285,8 @@ def receive_messages(request):
 
 
 @api_view(['GET'])
-@permission_classes([AllowAny])
+@authentication_classes([FlexibleAuthentication])
+@permission_classes([IsAuthenticated])
 def get_messages(request):
     """Get WhatsApp messages for the Flutter app"""
     

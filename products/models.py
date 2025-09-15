@@ -97,6 +97,176 @@ class ProductAlert(models.Model):
     class Meta:
         ordering = ['-created_at']
 
+class ProcurementBuffer(models.Model):
+    """Intelligent buffer calculations for market purchases"""
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='procurement_buffer')
+    
+    # Wastage factors
+    spoilage_rate = models.DecimalField(
+        max_digits=5, decimal_places=3, default=0.15,
+        help_text="Expected spoilage rate (0.15 = 15%)"
+    )
+    cutting_waste_rate = models.DecimalField(
+        max_digits=5, decimal_places=3, default=0.10,
+        help_text="Waste from cutting/trimming (0.10 = 10%)"
+    )
+    quality_rejection_rate = models.DecimalField(
+        max_digits=5, decimal_places=3, default=0.05,
+        help_text="Rate of quality rejections (0.05 = 5%)"
+    )
+    
+    # Buffer calculation
+    total_buffer_rate = models.DecimalField(
+        max_digits=5, decimal_places=3, default=0.30,
+        help_text="Total buffer rate (auto-calculated)"
+    )
+    
+    # Market-specific settings
+    market_pack_size = models.DecimalField(
+        max_digits=10, decimal_places=2, default=1,
+        help_text="Standard market pack size (e.g., 10kg boxes)"
+    )
+    market_pack_unit = models.CharField(
+        max_length=20, choices=Product.UNIT_CHOICES, default='kg'
+    )
+    
+    # Seasonality
+    is_seasonal = models.BooleanField(default=False)
+    peak_season_months = models.JSONField(
+        default=list, 
+        help_text="List of peak season months [1-12]"
+    )
+    peak_season_buffer_multiplier = models.DecimalField(
+        max_digits=4, decimal_places=2, default=1.5,
+        help_text="Extra buffer during peak season"
+    )
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def save(self, *args, **kwargs):
+        # Auto-calculate total buffer rate
+        self.total_buffer_rate = (
+            self.spoilage_rate + 
+            self.cutting_waste_rate + 
+            self.quality_rejection_rate
+        )
+        super().save(*args, **kwargs)
+    
+    def calculate_market_quantity(self, needed_quantity):
+        """Calculate how much to buy at market based on needed quantity"""
+        from datetime import datetime
+        from decimal import Decimal
+        
+        # Convert to Decimal for consistent math
+        needed_quantity = Decimal(str(needed_quantity))
+        
+        # Apply buffer
+        buffered_quantity = needed_quantity * (1 + self.total_buffer_rate)
+        
+        # Apply seasonal multiplier if in peak season
+        current_month = datetime.now().month
+        if self.is_seasonal and current_month in self.peak_season_months:
+            buffered_quantity *= self.peak_season_buffer_multiplier
+        
+        # Round up to nearest market pack size
+        if self.market_pack_size > 1:
+            packs_needed = int((buffered_quantity / self.market_pack_size).__ceil__())
+            market_quantity = packs_needed * self.market_pack_size
+        else:
+            market_quantity = buffered_quantity
+        
+        return {
+            'needed_quantity': float(needed_quantity),
+            'buffer_applied': float(buffered_quantity),
+            'market_quantity': float(market_quantity),
+            'buffer_rate': float(self.total_buffer_rate),
+            'seasonal_multiplier': float(self.peak_season_buffer_multiplier) if current_month in self.peak_season_months else 1.0,
+            'market_packs': int(market_quantity / self.market_pack_size) if self.market_pack_size > 1 else 1
+        }
+    
+    def __str__(self):
+        return f"Buffer for {self.product.name} ({self.total_buffer_rate:.1%})"
+    
+    class Meta:
+        ordering = ['product__name']
+
+class MarketProcurementRecommendation(models.Model):
+    """AI-generated recommendations for market purchases"""
+    
+    # Recommendation metadata
+    created_at = models.DateTimeField(auto_now_add=True)
+    for_date = models.DateField(help_text="Market trip date")
+    total_estimated_cost = models.DecimalField(max_digits=10, decimal_places=2, default=0)
+    
+    # Status
+    STATUS_CHOICES = [
+        ('pending', 'Pending Review'),
+        ('approved', 'Approved by Karl'),
+        ('purchased', 'Purchased at Market'),
+        ('cancelled', 'Cancelled'),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    
+    # Analysis data
+    analysis_data = models.JSONField(
+        default=dict,
+        help_text="Detailed analysis: orders, stock levels, predictions"
+    )
+    
+    # Notes
+    notes = models.TextField(blank=True)
+    approved_by = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True)
+    approved_at = models.DateTimeField(null=True, blank=True)
+    
+    def __str__(self):
+        return f"Market Recommendation for {self.for_date} (R{self.total_estimated_cost})"
+    
+    class Meta:
+        ordering = ['-created_at']
+
+class MarketProcurementItem(models.Model):
+    """Individual items in a market procurement recommendation"""
+    recommendation = models.ForeignKey(
+        MarketProcurementRecommendation, 
+        on_delete=models.CASCADE, 
+        related_name='items'
+    )
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    
+    # Quantities
+    needed_quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    recommended_quantity = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    # Pricing
+    estimated_unit_price = models.DecimalField(max_digits=10, decimal_places=2)
+    estimated_total_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    # Reasoning
+    reasoning = models.TextField(help_text="Why this quantity is recommended")
+    priority = models.CharField(
+        max_length=20,
+        choices=[
+            ('critical', 'Critical - Out of Stock'),
+            ('high', 'High - Low Stock'),
+            ('medium', 'Medium - Upcoming Orders'),
+            ('low', 'Low - Buffer Stock'),
+        ],
+        default='medium'
+    )
+    
+    # Source orders/predictions
+    source_orders = models.JSONField(
+        default=list,
+        help_text="Order IDs that drove this recommendation"
+    )
+    
+    def __str__(self):
+        return f"{self.product.name} x{self.recommended_quantity} ({self.priority})"
+    
+    class Meta:
+        ordering = ['priority', 'product__name']
+
 class Recipe(models.Model):
     """Recipe/ingredient breakdown for complex products"""
     product = models.OneToOneField(Product, on_delete=models.CASCADE, related_name='product_recipe')
