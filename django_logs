@@ -1,0 +1,8 @@
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 15, 2025 - 23:20:17
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+

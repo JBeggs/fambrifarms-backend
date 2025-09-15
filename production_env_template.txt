@@ -1,0 +1,37 @@
+# PythonAnywhere Production Environment Variables
+# Copy this content to .env file on PythonAnywhere server
+
+# Django Configuration
+SECRET_KEY=your-production-secret-key-here
+DEBUG=False
+PRODUCTION=True
+ALLOWED_HOSTS=fambridevops.pythonanywhere.com,www.fambridevops.pythonanywhere.com
+
+# Database Configuration - MySQL
+DB_ENGINE=mysql
+DB_NAME=fambridevops$default
+DB_USER=fambridevops
+DB_PASSWORD=your-mysql-password-here
+DB_HOST=fambridevops.mysql.pythonanywhere-services.com
+DB_PORT=3306
+
+# Static and Media Files
+STATIC_ROOT=/home/fambridevops/app/static
+MEDIA_ROOT=/home/fambridevops/app/media
+
+# CORS/CSRF Configuration for Production
+# Include your frontend domains (add both http and https if applicable)
+CORS_ALLOWED_ORIGINS=https://fambrifarms.vercel.app,http://localhost:3000,http://127.0.0.1:3000
+CSRF_TRUSTED_ORIGINS=https://fambrifarms.vercel.app,https://fambridevops.pythonanywhere.com,http://localhost:3000,http://127.0.0.1:3000
+
+# Email Configuration (if needed)
+# EMAIL_HOST=smtp.gmail.com
+# EMAIL_PORT=587
+# EMAIL_USE_TLS=True
+# EMAIL_HOST_USER=your-email@gmail.com
+# EMAIL_HOST_PASSWORD=your-app-password
+
+# Security Settings (uncomment for enhanced security)
+# SECURE_SSL_REDIRECT=True
+# SESSION_COOKIE_SECURE=True
+# CSRF_COOKIE_SECURE=True
