@@ -38,7 +38,15 @@ def classify_message_type(msg_data):
         raise ValueError("Message sender is required for classification")
     
     # Stock controller messages (SHALLOME +27 61 674 9368)
-    stock_header = ('STOKE AS AT' in content or 'STOCK AS AT' in content)
+    # ENHANCED: Handle various typos in stock headers
+    stock_header_patterns = [
+        'STOCK AS AT',
+        'STOKE AS AT',  # Common typo
+        'TOCK AS AT',   # Missing S typo
+        'STOCK AT',     # Missing AS
+        'STOK AS AT'    # Another typo
+    ]
+    stock_header = any(pattern in content for pattern in stock_header_patterns)
     is_shallome_sender = ('+27 61 674 9368' in sender or 'SHALLOME' in sender.upper())
     is_shallome_content = 'SHALLOME' in content
     
@@ -47,6 +55,15 @@ def classify_message_type(msg_data):
     if stock_header and (is_shallome_sender or is_shallome_content):
         logger.info(f"Message classified as stock: id={msg_data.get('id', 'unknown')} (sender_match={is_shallome_sender}, content_match={is_shallome_content}, stock_header={stock_header})")
         return 'stock'
+    
+    # ADDITIONAL FIX: If message starts with SHALLOME and has numbered items, it's likely stock
+    # This catches cases where the header is completely mangled
+    if is_shallome_content and content.strip().upper().startswith('SHALLOME'):
+        # Check if it has numbered items like stock messages do
+        numbered_items = len([line for line in content.split('\n') if re.match(r'^\d+\.', line.strip())])
+        if numbered_items >= 5:  # Stock messages typically have many numbered items
+            logger.info(f"Message classified as stock (SHALLOME + numbered items): id={msg_data.get('id', 'unknown')} items={numbered_items}")
+            return 'stock'
     
     # Order day demarcation messages
     demarcation_patterns = [
@@ -191,11 +208,7 @@ def get_or_create_customer(company_name, sender_name):
         ).first()
         
         if restaurant_profile:
-            log_processing_action(None, 'customer_matched_from_seed_data', {
-                'company_name': company_name,
-                'matched_business': restaurant_profile.business_name,
-                'customer_id': restaurant_profile.user.id
-            })
+            print(f"[CUSTOMER] Matched restaurant profile: {company_name} -> {restaurant_profile.business_name}")
             return restaurant_profile.user
     except Exception as e:
         print(f"[CUSTOMER] Error matching restaurant profile: {e}")
@@ -210,11 +223,7 @@ def get_or_create_customer(company_name, sender_name):
         
         if restaurant_profiles.exists():
             matched_profile = restaurant_profiles.first()
-            log_processing_action(None, 'customer_partial_matched_from_seed_data', {
-                'company_name': company_name,
-                'matched_business': matched_profile.business_name,
-                'customer_id': matched_profile.user.id
-            })
+            print(f"[CUSTOMER] Partial matched restaurant profile: {company_name} -> {matched_profile.business_name}")
             return matched_profile.user
     except Exception as e:
         print(f"[CUSTOMER] Error with partial restaurant matching: {e}")
@@ -228,11 +237,7 @@ def get_or_create_customer(company_name, sender_name):
             ).first()
             
             if private_profile:
-                log_processing_action(None, 'private_customer_matched_from_seed_data', {
-                    'company_name': company_name,
-                    'matched_customer': private_profile.user.first_name,
-                    'customer_id': private_profile.user.id
-                })
+                print(f"[CUSTOMER] Private customer matched: {company_name} -> {private_profile.user.first_name}")
                 return private_profile.user
         except Exception as e:
             print(f"[CUSTOMER] Error matching private customer: {e}")
@@ -257,11 +262,7 @@ def get_or_create_customer(company_name, sender_name):
     # Try to find existing customer by email
     try:
         existing_customer = User.objects.get(email=email)
-        log_processing_action(None, 'customer_found_by_email', {
-            'company_name': company_name,
-            'email': email,
-            'customer_id': existing_customer.id
-        })
+        print(f"[CUSTOMER] Found existing customer by email: {company_name} -> {email}")
         return existing_customer
     except User.DoesNotExist:
         pass
@@ -289,13 +290,7 @@ def get_or_create_customer(company_name, sender_name):
             order_pattern="To be determined from order history"
         )
         
-        log_processing_action(None, 'new_customer_created_from_whatsapp', {
-            'company_name': company_name,
-            'sender_name': sender_name,
-            'email': email,
-            'customer_id': customer.id,
-            'needs_setup': True
-        })
+        # Customer creation logged below with print statement
         
         print(f"[CUSTOMER] Created new customer: {company_name} (ID: {customer.id}) - NEEDS PROFILE COMPLETION")
         
@@ -309,11 +304,7 @@ def get_or_create_customer(company_name, sender_name):
         ).first()
         
         if fallback_customer:
-            log_processing_action(None, 'customer_fallback_match', {
-                'company_name': company_name,
-                'fallback_customer': fallback_customer.first_name,
-                'customer_id': fallback_customer.id
-            })
+            # Customer fallback match found
             return fallback_customer
         
         return None
@@ -597,12 +588,7 @@ def get_or_create_product(product_name):
     # ENHANCEMENT 2: Try exact match with normalized name first
     try:
         product = Product.objects.get(name__iexact=normalized_name)
-        log_processing_action(None, 'product_exact_match', {
-            'input_name': product_name,
-            'normalized_name': normalized_name,
-            'matched_product': product.name,
-            'product_id': product.id
-        })
+        # Product exact match found
         return product
     except Product.DoesNotExist:
         pass
@@ -650,13 +636,7 @@ def get_or_create_product(product_name):
                 try:
                     product = Product.objects.filter(name__icontains=canonical).first()
                     if product:
-                        log_processing_action(None, 'product_alias_match', {
-                            'input_name': product_name,
-                            'alias_used': alias,
-                            'canonical_name': canonical,
-                            'matched_product': product.name,
-                            'product_id': product.id
-                        })
+                        # Product alias match found
                         return product
                 except Exception as e:
                     print(f"[PRODUCT] Error in alias matching: {e}")
@@ -665,25 +645,14 @@ def get_or_create_product(product_name):
         partial_matches = Product.objects.filter(name__icontains=normalized_name)
         if partial_matches.exists():
             best_match = partial_matches.first()
-            log_processing_action(None, 'product_partial_match', {
-                'input_name': product_name,
-                'normalized_name': normalized_name,
-                'matched_product': best_match.name,
-                'product_id': best_match.id,
-                'total_matches': partial_matches.count()
-            })
-            return best_match
+        # Logging disabled to prevent transaction errors            return best_match
             
         # Try reverse matching (product name contains input)
         reverse_matches = Product.objects.filter(name__icontains=product_name[:8])  # First 8 chars
         if reverse_matches.exists():
             best_match = reverse_matches.first()
-            log_processing_action(None, 'product_reverse_match', {
-                'input_name': product_name,
-                'matched_product': best_match.name,
-                'product_id': best_match.id
-            })
-            return best_match
+        # Logging disabled to prevent transaction errors            
+        return best_match
             
     except Exception as e:
         print(f"[PRODUCT] Error in enhanced matching: {e}")
@@ -719,15 +688,7 @@ def get_or_create_product(product_name):
                    f"Please verify pricing, stock levels, and supplier information.",
         )
         
-        log_processing_action(None, 'new_product_created_enhanced', {
-            'input_name': product_name,
-            'created_name': normalized_name,
-            'department': department.name,
-            'estimated_price': float(estimated_price),
-            'product_id': product.id,
-            'needs_setup': True
-        })
-        
+        # Logging disabled to prevent transaction errors        
         print(f"[PRODUCT] Enhanced auto-created: '{normalized_name}' (from '{product_name}') - "
               f"Dept: {department.name}, Price: R{estimated_price}")
         
@@ -746,12 +707,7 @@ def get_or_create_product(product_name):
                 description=f"Fallback creation from WhatsApp order."
             )
             
-            log_processing_action(None, 'product_fallback_creation', {
-                'input_name': product_name,
-                'product_id': product.id,
-                'error': str(e)
-            })
-            
+        # Logging disabled to prevent transaction errors            
             return product
         except Exception as fallback_error:
             print(f"[PRODUCT] Even fallback creation failed: {fallback_error}")
@@ -837,6 +793,7 @@ def estimate_product_price(product_name):
         ).exclude(price=0)
         
         if similar_products.exists():
+            from django.db import models
             avg_price = similar_products.aggregate(
                 avg_price=models.Avg('price')
             )['avg_price']
@@ -882,11 +839,7 @@ def get_customer_specific_price(product, customer):
             ).first()
             
             if price_item:
-                log_processing_action(None, 'customer_price_list_used', {
-                    'customer_id': customer.id,
-                    'product_id': product.id,
-                    'price': float(price_item.price)
-                })
+                # Customer price list item found
                 return price_item.price
         except Exception as e:
             print(f"[PRICING] Error getting customer price list: {e}")
@@ -910,15 +863,7 @@ def get_customer_specific_price(product, customer):
                 else:
                     adjusted_price = product.price
                 
-                log_processing_action(None, 'pricing_rule_applied', {
-                    'customer_id': customer.id,
-                    'customer_segment': customer_segment,
-                    'product_id': product.id,
-                    'base_price': float(product.price),
-                    'adjusted_price': float(adjusted_price),
-                    'rule_id': pricing_rule.id
-                })
-                
+        # Logging disabled to prevent transaction errors                
                 return adjusted_price
         except Exception as e:
             print(f"[PRICING] Error applying pricing rule: {e}")
@@ -1027,16 +972,21 @@ def parse_stock_message(message):
     # Find date line (STOKE AS AT 28 AUGUST 2025)
     stock_date = None
     for line in lines:
-        if 'STOKE AS AT' in line or 'STOCK AS AT' in line:
-            date_match = re.search(r'(\d{1,2})\s+(\w+)\s+(\d{4})', line)
+        if 'STOKE AS AT' in line.upper() or 'STOCK AS AT' in line.upper():
+            # Try different date formats: "02 SEP 2025", "1Sep 2025", "02SEP2025"
+            date_match = re.search(r'(\d{1,2})\s*(\w+)\s*(\d{4})', line)
             if date_match:
                 day, month_name, year = date_match.groups()
                 try:
-                    # Convert month name to number
+                    # Convert month name to number (support both full names and abbreviations)
                     month_names = {
                         'january': 1, 'february': 2, 'march': 3, 'april': 4,
                         'may': 5, 'june': 6, 'july': 7, 'august': 8,
-                        'september': 9, 'october': 10, 'november': 11, 'december': 12
+                        'september': 9, 'october': 10, 'november': 11, 'december': 12,
+                        # Abbreviations
+                        'jan': 1, 'feb': 2, 'mar': 3, 'apr': 4,
+                        'may': 5, 'jun': 6, 'jul': 7, 'aug': 8,
+                        'sep': 9, 'oct': 10, 'nov': 11, 'dec': 12
                     }
                     month_num = month_names.get(month_name.lower())
                     if month_num:

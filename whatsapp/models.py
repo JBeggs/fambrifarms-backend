@@ -32,6 +32,7 @@ class WhatsAppMessage(models.Model):
     # Message content
     content = models.TextField()
     cleaned_content = models.TextField(blank=True)
+    content_hash = models.CharField(max_length=32, blank=True, help_text="MD5 hash of content for deduplication")
     timestamp = models.DateTimeField()
     scraped_at = models.DateTimeField(auto_now_add=True)
     
@@ -68,6 +69,14 @@ class WhatsAppMessage(models.Model):
     # Order day context
     order_day = models.CharField(max_length=10, blank=True)  # Monday/Thursday
     
+    # HTML processing and expansion tracking (for simplified architecture)
+    raw_html = models.TextField(blank=True, help_text="Raw HTML from WhatsApp message element")
+    was_expanded = models.BooleanField(default=False, help_text="Whether message was expanded from truncated state")
+    expansion_failed = models.BooleanField(default=False, help_text="Whether expansion was attempted but failed")
+    original_preview = models.TextField(blank=True, help_text="Preview text before expansion")
+    needs_manual_review = models.BooleanField(default=False, help_text="Flagged for manual review")
+    review_reason = models.CharField(max_length=255, blank=True, help_text="Reason for manual review")
+    
     class Meta:
         ordering = ['-timestamp']
         indexes = [
@@ -83,7 +92,9 @@ class WhatsAppMessage(models.Model):
     def is_stock_controller(self):
         """Check if message is from SHALLOME (stock controller)"""
         return ('+27 61 674 9368' in self.sender_phone or 
-                'SHALLOME' in self.sender_name.upper())
+                'SHALLOME' in self.sender_name.upper() or
+                self.content.upper().startswith('SHALLOME') or
+                '+27 61 674 9368' in self.content)
     
     def is_order_day_demarcation(self):
         """Check if message marks start of order day"""
@@ -95,11 +106,20 @@ class WhatsAppMessage(models.Model):
     
     def extract_company_name(self):
         """Extract company name from message using enhanced MessageParser"""
+        # CRITICAL FIX: Don't extract company names from stock messages
+        # SHALLOME should never be treated as a customer
+        if self.message_type == 'stock' or self.is_stock_controller():
+            return ''
+            
         # Prioritize manual company selection
         if self.manual_company:
             return self.manual_company
             
         company = django_message_parser.to_canonical_company(self.content)
+        
+        # CRITICAL FIX: Don't treat SHALLOME as a customer even if found in content
+        if company and company.upper() == 'SHALLOME':
+            return ''
         
         # If no company found in current message, look at recent previous messages
         if not company and self.message_type == 'order':
@@ -114,51 +134,45 @@ class WhatsAppMessage(models.Model):
         return company or ''
     
     def _extract_company_from_context(self):
-        """Look at nearby messages for company context - check both before AND after"""
-        from datetime import timedelta
+        """Look at nearby messages for company context - check ONLY one message before and one message after"""
         
-        # CRITICAL FIX: Check messages AFTER this one too (company names often come after order items)
-        immediate_window_before = self.timestamp - timedelta(seconds=30)
-        immediate_window_after = self.timestamp + timedelta(seconds=30)
-        
-        # Check immediate context (30 seconds before AND after)
-        immediate_messages = WhatsAppMessage.objects.filter(
+        # Get exactly one message before and one message after this message
+        # Order by timestamp and ID to ensure consistent ordering
+        all_messages = WhatsAppMessage.objects.filter(
             chat_name=self.chat_name,
-            timestamp__gte=immediate_window_before,
-            timestamp__lte=immediate_window_after,
             is_deleted=False
         ).exclude(
             id=self.id  # Exclude current message
-        ).order_by('timestamp', 'id')[:10]  # Check messages in chronological order
+        ).order_by('timestamp', 'id')
         
-        # Look for company in immediate context (both directions)
-        for msg in immediate_messages:
-            company = django_message_parser.to_canonical_company(msg.content)
+        # Find the position of current message
+        current_message_time = self.timestamp
+        
+        # Get one message immediately before (closest timestamp before current)
+        message_before = all_messages.filter(
+            timestamp__lt=current_message_time
+        ).last()  # Last = most recent before current
+        
+        # Get one message immediately after (closest timestamp after current)  
+        message_after = all_messages.filter(
+            timestamp__gt=current_message_time
+        ).first()  # First = earliest after current
+        
+        # Check the message immediately after first (company names often come after order items)
+        if message_after:
+            company = django_message_parser.to_canonical_company(message_after.content)
             if company:
+                print(f"[CONTEXT] Found company '{company}' in message AFTER (ID: {message_after.id})")
                 return company
         
-        # If no company found in immediate context, expand to 5-minute window (both directions)
-        extended_window_before = self.timestamp - timedelta(minutes=5)
-        extended_window_after = self.timestamp + timedelta(minutes=5)
-        
-        extended_messages = WhatsAppMessage.objects.filter(
-            chat_name=self.chat_name,
-            timestamp__gte=extended_window_before,
-            timestamp__lte=extended_window_after,
-            is_deleted=False
-        ).exclude(
-            id=self.id
-        ).exclude(
-            # Don't re-check immediate messages
-            timestamp__gte=immediate_window_before,
-            timestamp__lte=immediate_window_after
-        ).order_by('timestamp', 'id')[:20]
-        
-        for msg in extended_messages:
-            company = django_message_parser.to_canonical_company(msg.content)
+        # Then check the message immediately before
+        if message_before:
+            company = django_message_parser.to_canonical_company(message_before.content)
             if company:
+                print(f"[CONTEXT] Found company '{company}' in message BEFORE (ID: {message_before.id})")
                 return company
         
+        print(f"[CONTEXT] No company found in immediate context for message {self.id}")
         return None
     
     def extract_order_items(self):

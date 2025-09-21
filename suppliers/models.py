@@ -6,11 +6,25 @@ class Supplier(models.Model):
     """
     Supplier/vendor that provides products to Fambri Farms
     """
+    SUPPLIER_TYPE_CHOICES = [
+        ('internal', 'Internal Farm'),
+        ('external', 'External Supplier'),
+    ]
+    
     name = models.CharField(max_length=200)
     contact_person = models.CharField(max_length=100, blank=True)
     email = models.EmailField(blank=True)
     phone = models.CharField(max_length=20, blank=True)
     address = models.TextField(blank=True)
+    description = models.TextField(blank=True, help_text="Description of supplier and specialties")
+    
+    # Supplier type - only internal or external as requested
+    supplier_type = models.CharField(
+        max_length=20, 
+        choices=SUPPLIER_TYPE_CHOICES, 
+        default='external',
+        help_text="Type of supplier - internal farm or external supplier"
+    )
     
     # Business details
     registration_number = models.CharField(max_length=50, blank=True)
@@ -35,6 +49,35 @@ class Supplier(models.Model):
         
     def __str__(self):
         return self.name
+    
+    @property
+    def total_orders(self):
+        """Calculate total number of orders containing products from this supplier"""
+        # Import here to avoid circular imports
+        from orders.models import OrderItem
+        # Count distinct orders that have items from products supplied by this supplier
+        return OrderItem.objects.filter(
+            product__supplier_products__supplier=self
+        ).values('order').distinct().count()
+    
+    @property
+    def total_order_value(self):
+        """Calculate total value of all order items from this supplier"""
+        from orders.models import OrderItem
+        from django.db.models import Sum
+        result = OrderItem.objects.filter(
+            product__supplier_products__supplier=self
+        ).aggregate(total=Sum('total_price'))
+        return float(result['total'] or 0.0)
+    
+    @property
+    def last_order_date(self):
+        """Get the date of the most recent order containing products from this supplier"""
+        from orders.models import OrderItem
+        last_item = OrderItem.objects.filter(
+            product__supplier_products__supplier=self
+        ).select_related('order').order_by('-order__created_at').first()
+        return last_item.order.created_at.date() if last_item else None
 
 class SalesRep(models.Model):
     """

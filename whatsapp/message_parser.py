@@ -63,9 +63,9 @@ class MessageParser:
             "sylvia": "Sylvia",
             "arthur": "Arthur",
             
-            # Internal/Stock
-            "shallome": "SHALLOME",
-            "hazvinei": "SHALLOME",  # Stock taker name
+            # Internal/Stock - REMOVED: SHALLOME should never be treated as a customer
+            # "shallome": "SHALLOME",  # REMOVED - stock controller, not customer
+            # "hazvinei": "SHALLOME",  # REMOVED - stock taker name, not customer
             
             # Legacy aliases (for backward compatibility)
             "luma": "Luma",

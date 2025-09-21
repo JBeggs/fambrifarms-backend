@@ -166,43 +166,43 @@ class Command(BaseCommand):
                 'order_pattern': 'Tuesday orders - Culinary training supplies',
             },
             
-            # PRIVATE CUSTOMERS - Real WhatsApp contacts
-            {
-                'name': 'Marco',
-                'type': 'private',  # CORRECTED from restaurant to private
-                'contact_person': 'Marco',
-                'phone': '+27 73 621 2471',  # Real WhatsApp number
-                'email': 'marco.private@gmail.com',
-                'address': '963 Residential Street, Johannesburg, 2001',
-                'credit_limit': 5000.00,  # Lower for private customer
-                'payment_terms_days': 7,  # Shorter for private
-                'delivery_notes': 'Private customer - mixed vegetables and fruits',
-                'order_pattern': 'Tuesday orders - Personal household supplies',
-            },
-            {
-                'name': 'Sylvia',  # NEW - Real WhatsApp customer
-                'type': 'private',
-                'contact_person': 'Sylvia',
-                'phone': '+27 73 621 2471',  # Real WhatsApp number from messages
-                'email': 'sylvia.orders@gmail.com',
-                'address': '456 Residential Avenue, Johannesburg, 2001',
-                'credit_limit': 3000.00,
-                'payment_terms_days': 7,
-                'delivery_notes': 'Small household orders - potatoes, oranges, bananas, carrots',
-                'order_pattern': 'Tuesday orders - "Sylvia Tuesday order" - household basics',
-            },
-            {
-                'name': 'Arthur',  # NEW - Real WhatsApp customer
-                'type': 'private',
-                'contact_person': 'Arthur',
-                'phone': '+27 76 555 0018',
-                'email': 'arthur.orders@gmail.com',
-                'address': '789 Private Road, Johannesburg, 2001',
-                'credit_limit': 2000.00,
-                'payment_terms_days': 7,
-                'delivery_notes': 'Simple orders - "Arthur box x2"',
-                'order_pattern': 'Tuesday orders - Box orders',
-            },
+            # # PRIVATE CUSTOMERS - Real WhatsApp contacts
+            # {
+            #     'name': 'Marco',
+            #     'type': 'private',  # CORRECTED from restaurant to private
+            #     'contact_person': 'Marco',
+            #     'phone': '+27 73 621 2471',  # Real WhatsApp number
+            #     'email': 'marco.private@gmail.com',
+            #     'address': '963 Residential Street, Johannesburg, 2001',
+            #     'credit_limit': 5000.00,  # Lower for private customer
+            #     'payment_terms_days': 7,  # Shorter for private
+            #     'delivery_notes': 'Private customer - mixed vegetables and fruits',
+            #     'order_pattern': 'Tuesday orders - Personal household supplies',
+            # },
+            # {
+            #     'name': 'Sylvia',  # NEW - Real WhatsApp customer
+            #     'type': 'private',
+            #     'contact_person': 'Sylvia',
+            #     'phone': '+27 73 621 2471',  # Real WhatsApp number from messages
+            #     'email': 'sylvia.orders@gmail.com',
+            #     'address': '456 Residential Avenue, Johannesburg, 2001',
+            #     'credit_limit': 3000.00,
+            #     'payment_terms_days': 7,
+            #     'delivery_notes': 'Small household orders - potatoes, oranges, bananas, carrots',
+            #     'order_pattern': 'Tuesday orders - "Sylvia Tuesday order" - household basics',
+            # },
+            # {
+            #     'name': 'Arthur',  # NEW - Real WhatsApp customer
+            #     'type': 'private',
+            #     'contact_person': 'Arthur',
+            #     'phone': '+27 76 555 0018',
+            #     'email': 'arthur.orders@gmail.com',
+            #     'address': '789 Private Road, Johannesburg, 2001',
+            #     'credit_limit': 2000.00,
+            #     'payment_terms_days': 7,
+            #     'delivery_notes': 'Simple orders - "Arthur box x2"',
+            #     'order_pattern': 'Tuesday orders - Box orders',
+            # },
             
             # INTERNAL CUSTOMERS
             {
@@ -253,6 +253,7 @@ class Command(BaseCommand):
                         'payment_terms': f"{customer_data['payment_terms_days']} days",
                         'delivery_notes': customer_data.get('delivery_notes', ''),
                         'order_pattern': customer_data.get('order_pattern', ''),
+                        'is_private_customer': customer_data['type'] == 'private',  # Set private customer flag
                     }
                 )
 

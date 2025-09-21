@@ -38,6 +38,24 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
         ).prefetch_related(
             'items__product__department'
         )
+
+class CustomerOrdersView(generics.ListAPIView):
+    """Get orders for a specific customer"""
+    serializer_class = OrderSerializer
+    permission_classes = [AllowAny]  # Temporarily allow access for development
+    
+    def get_queryset(self):
+        customer_id = self.kwargs.get('customer_id')
+        if customer_id:
+            return Order.objects.filter(
+                restaurant_id=customer_id
+            ).select_related(
+                'restaurant', 
+                'restaurant__restaurantprofile'
+            ).prefetch_related(
+                'items__product__department'
+            ).order_by('-created_at')
+        return Order.objects.none()
     
     def update(self, request, *args, **kwargs):
         """Handle order updates including items"""

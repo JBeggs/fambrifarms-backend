@@ -33,7 +33,21 @@ class UserAdmin(BaseUserAdmin):
 
 @admin.register(RestaurantProfile)
 class RestaurantProfileAdmin(admin.ModelAdmin):
-    list_display = ('business_name', 'user', 'city', 'payment_terms')
-    list_filter = ('city', 'payment_terms')
+    list_display = ('business_name', 'user', 'city', 'payment_terms', 'is_private_customer')
+    list_filter = ('city', 'payment_terms', 'is_private_customer')
     search_fields = ('business_name', 'user__email', 'business_registration')
-    readonly_fields = ('user',) 
+    readonly_fields = ('user',)
+    fieldsets = (
+        (None, {
+            'fields': ('user', 'business_name', 'branch_name', 'is_private_customer')
+        }),
+        ('Contact Information', {
+            'fields': ('address', 'city', 'postal_code')
+        }),
+        ('Business Details', {
+            'fields': ('business_registration', 'payment_terms')
+        }),
+        ('WhatsApp Integration', {
+            'fields': ('delivery_notes', 'order_pattern')
+        }),
+    ) 

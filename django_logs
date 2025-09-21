@@ -1,8 +1,1388 @@
 Performing system checks...
 
 System check identified no issues (0 silenced).
-September 15, 2025 - 23:20:17
+September 20, 2025 - 16:43:41
 Django version 5.0.9, using settings 'familyfarms_api.settings'
 Starting development server at http://127.0.0.1:8000/
 Quit the server with CONTROL-C.
 
+[DJANGO][DELETE] Deleting message ID 171, content: 'Good morning. Tuesday orders s', detected_company: 'None'
+[DJANGO][DELETE] No company detected in deleted message, skipping re-evaluation
+[DJANGO][DELETE] Deleting message ID 175, content: 'Pliz add 10kg lemons', detected_company: 'None'
+[DJANGO][DELETE] No company detected in deleted message, skipping re-evaluation
+[DJANGO][DELETE] Deleting message ID 180, content: 'Casa Bella', detected_company: 'Casa Bella'
+[DJANGO][DELETE] Company 'Casa Bella' detected, starting re-evaluation...
+[DJANGO][DELETE][REEVALUATE] Starting re-evaluation for deleted company 'Casa Bella'
+[DJANGO][DELETE] Deleting message ID 185, content: 'Wimpy mooinooi', detected_company: 'Wimpy Mooikloof'
+[DJANGO][DELETE] Company 'Wimpy Mooikloof' detected, starting re-evaluation...
+[DJANGO][DELETE][REEVALUATE] Starting re-evaluation for deleted company 'Wimpy Mooikloof'
+[DJANGO][DELETE] Deleting message ID 186, content: '1kg red onions', detected_company: 'None'
+[DJANGO][DELETE] No company detected in deleted message, skipping re-evaluation
+[DJANGO][DELETE] Deleting message ID 187, content: 'Wimpy', detected_company: 'Wimpy Mooikloof'
+[DJANGO][DELETE] Company 'Wimpy Mooikloof' detected, starting re-evaluation...
+[DJANGO][DELETE][REEVALUATE] Starting re-evaluation for deleted company 'Wimpy Mooikloof'
+[DJANGO][DELETE] Deleting message ID 189, content: 'Debonair', detected_company: 'Debonairs Pizza'
+[DJANGO][DELETE] Company 'Debonairs Pizza' detected, starting re-evaluation...
+[DJANGO][DELETE][REEVALUATE] Starting re-evaluation for deleted company 'Debonairs Pizza'
+[DJANGO][DELETE] Deleting message ID 191, content: '6 box Avo
+Culinary', detected_company: 'Culinary Institute'
+[DJANGO][DELETE] Company 'Culinary Institute' detected, starting re-evaluation...
+[DJANGO][DELETE][REEVALUATE] Starting re-evaluation for deleted company 'Culinary Institute'
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 17:40:15
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+[CONTEXT] No company found in immediate context for message 207
+[DJANGO][DELETE] Deleting message ID 220, content: '6 box Avo
+Culinary', detected_company: 'Culinary Institute'
+[DJANGO][DELETE] Company 'Culinary Institute' detected, starting re-evaluation...
+[DJANGO][DELETE][REEVALUATE] Starting re-evaluation for deleted company 'Culinary Institute'
+[CONTEXT] No company found in immediate context for message 207
+[CONTEXT] No company found in immediate context for message 207
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 17:41:46
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+[DJANGO][DELETE] Deleting message ID 221, content: 'Please add on
+5kg spinach
+1kg ', detected_company: 'None'
+[DJANGO][DELETE] No company detected in deleted message, skipping re-evaluation
+[CONTEXT] No company found in immediate context for message 207
+[DJANGO][DELETE] Deleting message ID 222, content: 'KarlPlease add on
+5kg spinach
+', detected_company: 'Casa Bella'
+[DJANGO][DELETE] Company 'Casa Bella' detected, starting re-evaluation...
+[DJANGO][DELETE][REEVALUATE] Starting re-evaluation for deleted company 'Casa Bella'
+[CONTEXT] No company found in immediate context for message 207
+[CONTEXT] No company found in immediate context for message 207
+[CONTEXT] No company found in immediate context for message 207
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 17:48:59
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 17:51:55
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 17:52:19
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 17:53:22
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:04:44
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+[CONTEXT] Found company 'Mugg and Bean' in message AFTER (ID: 255)
+[CONTEXT] Found company 'Casa Bella' in message AFTER (ID: 251)
+[CONTEXT] Found company 'Culinary Institute' in message AFTER (ID: 249)
+[CONTEXT] Found company 'Debonairs Pizza' in message AFTER (ID: 247)
+[CONTEXT] Found company 'Wimpy Mooikloof' in message AFTER (ID: 245)
+[CONTEXT] Found company 'Wimpy Mooikloof' in message AFTER (ID: 243)
+[CONTEXT] Found company 'Mugg and Bean' in message AFTER (ID: 241)
+[CONTEXT] Found company 'Casa Bella' in message AFTER (ID: 238)
+[CONTEXT] No company found in immediate context for message 236
+[CONTEXT] Found company 'Luma' in message BEFORE (ID: 234)
+[CONTEXT] Found company 'Luma' in message AFTER (ID: 234)
+[DJANGO][DELETE] Deleting message ID 229, content: 'Good morning. Tuesday orders s', detected_company: 'None'
+[DJANGO][DELETE] No company detected in deleted message, skipping re-evaluation
+[CONTEXT] No company found in immediate context for message 236
+[DJANGO][DELETE] Deleting message ID 233, content: 'Pliz add 10kg lemons', detected_company: 'None'
+[DJANGO][DELETE] No company detected in deleted message, skipping re-evaluation
+[CONTEXT] No company found in immediate context for message 236
+[DJANGO][DELETE] Deleting message ID 238, content: 'Casa Bella', detected_company: 'Casa Bella'
+[DJANGO][DELETE] Company 'Casa Bella' detected, starting re-evaluation...
+[DJANGO][DELETE][REEVALUATE] Starting re-evaluation for deleted company 'Casa Bella'
+[DJANGO][DELETE] Deleting message ID 241, content: 'Mugg and Bean', detected_company: 'Mugg and Bean'
+[DJANGO][DELETE] Company 'Mugg and Bean' detected, starting re-evaluation...
+[DJANGO][DELETE][REEVALUATE] Starting re-evaluation for deleted company 'Mugg and Bean'
+[DJANGO][DELETE] Deleting message ID 243, content: 'Wimpy mooinooi', detected_company: 'Wimpy Mooikloof'
+[DJANGO][DELETE] Company 'Wimpy Mooikloof' detected, starting re-evaluation...
+[DJANGO][DELETE][REEVALUATE] Starting re-evaluation for deleted company 'Wimpy Mooikloof'
+[DJANGO][DELETE] Deleting message ID 245, content: 'Wimpy', detected_company: 'Wimpy Mooikloof'
+[DJANGO][DELETE] Company 'Wimpy Mooikloof' detected, starting re-evaluation...
+[DJANGO][DELETE][REEVALUATE] Starting re-evaluation for deleted company 'Wimpy Mooikloof'
+[DJANGO][DELETE] Deleting message ID 247, content: 'Debonair', detected_company: 'Debonairs Pizza'
+[DJANGO][DELETE] Company 'Debonairs Pizza' detected, starting re-evaluation...
+[DJANGO][DELETE][REEVALUATE] Starting re-evaluation for deleted company 'Debonairs Pizza'
+[DJANGO][DELETE] Deleting message ID 255, content: 'Mugg Been', detected_company: 'Mugg and Bean'
+[DJANGO][DELETE] Company 'Mugg and Bean' detected, starting re-evaluation...
+[DJANGO][DELETE][REEVALUATE] Starting re-evaluation for deleted company 'Mugg and Bean'
+[DJANGO][DELETE] Deleting message ID 251, content: '5kg spinach
+1kg lime
+1kg banan', detected_company: 'None'
+[DJANGO][DELETE] No company detected in deleted message, skipping re-evaluation
+[DJANGO][DELETE] Deleting message ID 256, content: 'Good day .Our apology concerni', detected_company: 'None'
+[DJANGO][DELETE] No company detected in deleted message, skipping re-evaluation
+[CUSTOMER] Failed to create customer 'Mugg and Bean - Centurion': RestaurantProfile() got unexpected keyword arguments: 'credit_limit'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Failed to create customer 'Pecanwood Golf Estate - Clubhouse': RestaurantProfile() got unexpected keyword arguments: 'credit_limit'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Matched restaurant profile: Casa Bella -> Casa Bella
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'Lime' (from 'Lime') - Dept: Fruits, Price: R25.00
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Matched restaurant profile: Culinary Institute -> Culinary Institute
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Matched restaurant profile: Culinary Institute -> Culinary Institute
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'X Bags Butternut' (from 'X Bags Butternut') - Dept: Vegetables, Price: R25.00
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'X Box Ginger' (from 'X Box Ginger') - Dept: Herbs & Spices, Price: R25.00
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'X Box Garlic' (from 'X Box Garlic') - Dept: Herbs & Spices, Price: R25
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'X Boxes Baby Marrow' (from 'X Boxes Baby Marrow') - Dept: Vegetables, Price: R25.00
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'X Green Beans' (from 'X Green Beans') - Dept: Vegetables, Price: R25.00
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'X Box Artichokes' (from 'X Box Artichokes') - Dept: Vegetables, Price: R25
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Failed to create customer 'Debonairs Pizza - Centurion': RestaurantProfile() got unexpected keyword arguments: 'credit_limit'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'Green Paper' (from 'Green Paper') - Dept: Vegetables, Price: R46.25
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Failed to create customer 'Wimpy Mooikloof - Mooikloof': RestaurantProfile() got unexpected keyword arguments: 'credit_limit'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Found existing customer by email: Wimpy Mooikloof - Mooikloof -> wimpymooikloofmooikloof@restaurant.com
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'G Chives' (from 'G Chives') - Dept: Vegetables, Price: R25.00
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Found existing customer by email: Mugg and Bean - Centurion -> muggandbeancenturion@restaurant.com
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Matched restaurant profile: Casa Bella -> Casa Bella
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'G Wild Rocket' (from 'G Wild Rocket') - Dept: Vegetables, Price: R25.00
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Matched restaurant profile: Casa Bella -> Casa Bella
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Matched restaurant profile: Luma -> Luma
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'Box Pineapple' (from 'Box Pineapple') - Dept: Fruits, Price: R25.00
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Matched restaurant profile: Luma -> Luma
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Matched restaurant profile: Maltos -> Maltos
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'Boxes Avos, 3 Semi Ripe' (from 'Boxes Avos, 3 Semi Ripe') - Dept: Vegetables, Price: R25
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'Packets Rocket' (from 'Packets Rocket') - Dept: Vegetables, Price: R25.00
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'Punnets Strawberries' (from 'Punnets Strawberries') - Dept: Vegetables, Price: R25.00
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRODUCT] Error in enhanced matching: cannot access local variable 'best_match' where it is not associated with a value
+[PRODUCT] Enhanced auto-created: 'Box Cucumber' (from 'Box Cucumber') - Dept: Vegetables, Price: R25.00
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Matched restaurant profile: Barchef Entertainment -> Barchef Entertainment
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[CUSTOMER] Matched restaurant profile: Valley -> Valley
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+[PRICING] Error getting customer price list: Cannot resolve keyword 'customer' into field. Choices are: customer_price_excl_vat, customer_price_incl_vat, id, is_premium, is_seasonal, is_volatile, market_price_date, market_price_excl_vat, market_price_incl_vat, markup_percentage, previous_price, price_change_percentage, price_list, price_list_id, product, product_category, product_id, unit_of_measure
+[PRICING] Error determining customer segment: 'RestaurantProfile' object has no attribute 'credit_limit'
+[PRICING] Error applying pricing rule: 'PricingRule' object has no attribute 'markup_percentage'
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:21:14
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:21:21
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:21:28
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:21:33
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:21:48
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:22:29
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:23:25
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:23:33
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:24:20
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:24:28
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:25:58
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:32:31
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:32:36
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:33:20
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:35:33
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:36:11
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+Performing system checks...
+
+System check identified no issues (0 silenced).
+September 20, 2025 - 18:36:18
+Django version 5.0.9, using settings 'familyfarms_api.settings'
+Starting development server at http://127.0.0.1:8000/
+Quit the server with CONTROL-C.
+
+2025-09-20 18:23:43,450 basehttp 17564 6197096448 "POST /api/whatsapp/messages/process-stock/ HTTP/1.1" 200 222
+INFO 2025-09-20 18:24:19,504 autoreload 17564 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-20 18:24:19,957 autoreload 17744 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-20 18:24:27,451 autoreload 17744 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-20 18:24:27,896 autoreload 17780 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-20 18:24:53,313 basehttp 17780 6123237376 "POST /api/whatsapp/messages/process-stock/ HTTP/1.1" 200 74
+INFO 2025-09-20 18:24:58,194 basehttp 17780 6140063744 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:24:58,194 basehttp 17780 6156890112 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:24:58,389 basehttp 17780 6123237376 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 83548
+INFO 2025-09-20 18:24:59,251 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:24:59,722 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:24:59,825 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:24:59,986 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:25:00,665 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:25:01,368 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:25:01,556 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:25:03,977 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:25:32,911 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:25:33,043 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:25:33,186 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:25:33,254 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:25:33,388 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:25:33,418 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:25:33,488 basehttp 17780 6123237376 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:25:57,553 autoreload 17780 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-20 18:25:57,978 autoreload 17941 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-20 18:27:09,631 basehttp 17941 6158544896 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 48680
+INFO 2025-09-20 18:27:09,697 basehttp 17941 6158544896 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2025-09-20 18:27:11,161 log 17941 6192197632 Unauthorized: /api/products/app-config/
+WARNING 2025-09-20 18:27:11,162 basehttp 17941 6192197632 "GET /api/products/app-config/ HTTP/1.1" 401 58
+WARNING 2025-09-20 18:27:11,165 log 17941 6209024000 Unauthorized: /api/settings/form-options/
+WARNING 2025-09-20 18:27:11,165 log 17941 6225850368 Unauthorized: /api/settings/business-config/
+WARNING 2025-09-20 18:27:11,165 basehttp 17941 6209024000 "GET /api/settings/form-options/ HTTP/1.1" 401 58
+WARNING 2025-09-20 18:27:11,165 basehttp 17941 6225850368 "GET /api/settings/business-config/ HTTP/1.1" 401 58
+WARNING 2025-09-20 18:27:11,205 log 17941 6259503104 Unauthorized: /api/whatsapp/health/
+WARNING 2025-09-20 18:27:11,205 basehttp 17941 6259503104 "GET /api/whatsapp/health/ HTTP/1.1" 401 58
+WARNING 2025-09-20 18:27:11,310 log 17941 6242676736 Unauthorized: /api/auth/login/
+WARNING 2025-09-20 18:27:11,310 basehttp 17941 6242676736 "POST /api/auth/login/ HTTP/1.1" 401 31
+INFO 2025-09-20 18:27:21,722 basehttp 17941 6192197632 "POST /api/auth/login/ HTTP/1.1" 200 705
+INFO 2025-09-20 18:27:21,885 basehttp 17941 6309982208 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-20 18:27:21,893 basehttp 17941 6293155840 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-20 18:27:21,959 basehttp 17941 6276329472 "GET /api/products/products/ HTTP/1.1" 200 29853
+INFO 2025-09-20 18:27:21,961 basehttp 17941 6192197632 "GET /api/auth/customers/ HTTP/1.1" 200 19642
+INFO 2025-09-20 18:27:21,986 basehttp 17941 6259503104 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16067
+INFO 2025-09-20 18:27:22,008 basehttp 17941 6225850368 "GET /api/products/products/ HTTP/1.1" 200 29853
+INFO 2025-09-20 18:27:22,022 basehttp 17941 6242676736 "GET /api/orders/ HTTP/1.1" 200 60119
+INFO 2025-09-20 18:27:22,022 basehttp 17941 6209024000 "GET /api/auth/customers/ HTTP/1.1" 200 19642
+INFO 2025-09-20 18:27:23,907 basehttp 17941 6309982208 "GET /api/orders/ HTTP/1.1" 200 60119
+INFO 2025-09-20 18:27:30,885 basehttp 17941 6225850368 "GET /api/inventory/stock-movements/?limit=50 HTTP/1.1" 200 52
+INFO 2025-09-20 18:27:30,890 basehttp 17941 6209024000 "GET /api/inventory/alerts/ HTTP/1.1" 200 6213
+INFO 2025-09-20 18:27:30,907 basehttp 17941 6192197632 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16067
+INFO 2025-09-20 18:28:09,093 views 17941 6192197632 Stock adjustment request received: {'product_id': 30, 'adjustment_type': 'finished_waste', 'quantity': 2, 'reason': 'stock_take', 'notes': 'Stock adjustment via Flutter app'}
+DEBUG 2025-09-20 18:28:09,094 views 17941 6192197632 Validated data: movement_type=finished_waste, quantity=2.00, reason=stock_take
+INFO 2025-09-20 18:28:09,106 views 17941 6192197632 Created new FinishedInventory record for product Avocados (Hard) (ID: 30)
+INFO 2025-09-20 18:28:09,106 views 17941 6192197632 Adjusting stock for product Avocados (Hard) (ID: 30)
+DEBUG 2025-09-20 18:28:09,106 views 17941 6192197632 Before adjustment - Product stock: 1.00, Inventory available: 1.00
+INFO 2025-09-20 18:28:09,109 views 17941 6192197632 Stock adjustment completed. New levels - Product: -1.00, Inventory: -1.00
+INFO 2025-09-20 18:28:09,112 basehttp 17941 6192197632 "POST /api/inventory/actions/stock-adjustment/ HTTP/1.1" 200 335
+INFO 2025-09-20 18:28:09,141 basehttp 17941 6225850368 "GET /api/inventory/stock-movements/?limit=50 HTTP/1.1" 200 480
+INFO 2025-09-20 18:28:09,146 basehttp 17941 6209024000 "GET /api/inventory/alerts/ HTTP/1.1" 200 6632
+INFO 2025-09-20 18:28:09,165 basehttp 17941 6192197632 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16067
+INFO 2025-09-20 18:28:09,723 basehttp 17941 6209024000 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16067
+INFO 2025-09-20 18:28:09,751 basehttp 17941 6225850368 "GET /api/inventory/stock-movements/?limit=50 HTTP/1.1" 200 480
+INFO 2025-09-20 18:28:09,757 basehttp 17941 6192197632 "GET /api/inventory/alerts/ HTTP/1.1" 200 6632
+INFO 2025-09-20 18:28:09,769 basehttp 17941 6209024000 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16067
+INFO 2025-09-20 18:28:18,467 views 17941 6192197632 Stock adjustment request received: {'product_id': 30, 'adjustment_type': 'finished_adjust', 'quantity': 1, 'reason': 'stock_take', 'notes': 'Stock adjustment via Flutter app'}
+DEBUG 2025-09-20 18:28:18,467 views 17941 6192197632 Validated data: movement_type=finished_adjust, quantity=1.00, reason=stock_take
+INFO 2025-09-20 18:28:18,470 views 17941 6192197632 Adjusting stock for product Avocados (Hard) (ID: 30)
+DEBUG 2025-09-20 18:28:18,470 views 17941 6192197632 Before adjustment - Product stock: -1.00, Inventory available: -1.00
+INFO 2025-09-20 18:28:18,479 views 17941 6192197632 Stock adjustment completed. New levels - Product: 0.00, Inventory: 0.00
+INFO 2025-09-20 18:28:18,482 basehttp 17941 6192197632 "POST /api/inventory/actions/stock-adjustment/ HTTP/1.1" 200 333
+INFO 2025-09-20 18:28:18,514 basehttp 17941 6209024000 "GET /api/inventory/stock-movements/?limit=50 HTTP/1.1" 200 917
+INFO 2025-09-20 18:28:18,519 basehttp 17941 6225850368 "GET /api/inventory/alerts/ HTTP/1.1" 200 6631
+INFO 2025-09-20 18:28:18,530 basehttp 17941 6192197632 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16066
+INFO 2025-09-20 18:28:19,068 basehttp 17941 6192197632 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16066
+INFO 2025-09-20 18:28:19,087 basehttp 17941 6209024000 "GET /api/inventory/stock-movements/?limit=50 HTTP/1.1" 200 917
+INFO 2025-09-20 18:28:19,091 basehttp 17941 6225850368 "GET /api/inventory/alerts/ HTTP/1.1" 200 6631
+INFO 2025-09-20 18:28:19,109 basehttp 17941 6192197632 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16066
+INFO 2025-09-20 18:28:27,072 views 17941 6192197632 Stock adjustment request received: {'product_id': 31, 'adjustment_type': 'finished_waste', 'quantity': 40, 'reason': 'stock_take', 'notes': 'Stock adjustment via Flutter app'}
+DEBUG 2025-09-20 18:28:27,072 views 17941 6192197632 Validated data: movement_type=finished_waste, quantity=40.00, reason=stock_take
+INFO 2025-09-20 18:28:27,075 views 17941 6192197632 Created new FinishedInventory record for product Avocados (Semi-Ripe) (ID: 31)
+INFO 2025-09-20 18:28:27,075 views 17941 6192197632 Adjusting stock for product Avocados (Semi-Ripe) (ID: 31)
+DEBUG 2025-09-20 18:28:27,075 views 17941 6192197632 Before adjustment - Product stock: 40.00, Inventory available: 40.00
+INFO 2025-09-20 18:28:27,079 views 17941 6192197632 Stock adjustment completed. New levels - Product: 0.00, Inventory: 0.00
+INFO 2025-09-20 18:28:27,081 basehttp 17941 6192197632 "POST /api/inventory/actions/stock-adjustment/ HTTP/1.1" 200 338
+INFO 2025-09-20 18:28:27,125 basehttp 17941 6192197632 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16064
+INFO 2025-09-20 18:28:27,127 basehttp 17941 6225850368 "GET /api/inventory/stock-movements/?limit=50 HTTP/1.1" 200 1353
+INFO 2025-09-20 18:28:27,130 basehttp 17941 6209024000 "GET /api/inventory/alerts/ HTTP/1.1" 200 7059
+INFO 2025-09-20 18:28:27,703 basehttp 17941 6225850368 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16064
+INFO 2025-09-20 18:28:27,724 basehttp 17941 6192197632 "GET /api/inventory/stock-movements/?limit=50 HTTP/1.1" 200 1353
+INFO 2025-09-20 18:28:27,731 basehttp 17941 6209024000 "GET /api/inventory/alerts/ HTTP/1.1" 200 7059
+INFO 2025-09-20 18:28:27,750 basehttp 17941 6225850368 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16064
+INFO 2025-09-20 18:28:34,381 views 17941 6192197632 Stock adjustment request received: {'product_id': 29, 'adjustment_type': 'finished_waste', 'quantity': 2, 'reason': 'stock_take', 'notes': 'Stock adjustment via Flutter app'}
+DEBUG 2025-09-20 18:28:34,382 views 17941 6192197632 Validated data: movement_type=finished_waste, quantity=2.00, reason=stock_take
+INFO 2025-09-20 18:28:34,388 views 17941 6192197632 Created new FinishedInventory record for product Avocados (Soft) (ID: 29)
+INFO 2025-09-20 18:28:34,388 views 17941 6192197632 Adjusting stock for product Avocados (Soft) (ID: 29)
+DEBUG 2025-09-20 18:28:34,389 views 17941 6192197632 Before adjustment - Product stock: 2.00, Inventory available: 2.00
+INFO 2025-09-20 18:28:34,395 views 17941 6192197632 Stock adjustment completed. New levels - Product: 0.00, Inventory: 0.00
+INFO 2025-09-20 18:28:34,397 basehttp 17941 6192197632 "POST /api/inventory/actions/stock-adjustment/ HTTP/1.1" 200 333
+INFO 2025-09-20 18:28:34,417 basehttp 17941 6225850368 "GET /api/inventory/stock-movements/?limit=50 HTTP/1.1" 200 1783
+INFO 2025-09-20 18:28:34,418 basehttp 17941 6209024000 "GET /api/inventory/alerts/ HTTP/1.1" 200 7477
+INFO 2025-09-20 18:28:34,436 basehttp 17941 6192197632 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16063
+INFO 2025-09-20 18:28:34,983 basehttp 17941 6192197632 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16063
+INFO 2025-09-20 18:28:35,006 basehttp 17941 6209024000 "GET /api/inventory/stock-movements/?limit=50 HTTP/1.1" 200 1783
+INFO 2025-09-20 18:28:35,014 basehttp 17941 6225850368 "GET /api/inventory/alerts/ HTTP/1.1" 200 7477
+INFO 2025-09-20 18:28:35,031 basehttp 17941 6192197632 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16063
+INFO 2025-09-20 18:28:42,614 views 17941 6192197632 Stock adjustment request received: {'product_id': 32, 'adjustment_type': 'finished_waste', 'quantity': 4, 'reason': 'stock_take', 'notes': 'Stock adjustment via Flutter app'}
+DEBUG 2025-09-20 18:28:42,614 views 17941 6192197632 Validated data: movement_type=finished_waste, quantity=4.00, reason=stock_take
+INFO 2025-09-20 18:28:42,619 views 17941 6192197632 Created new FinishedInventory record for product Bananas (ID: 32)
+INFO 2025-09-20 18:28:42,619 views 17941 6192197632 Adjusting stock for product Bananas (ID: 32)
+DEBUG 2025-09-20 18:28:42,619 views 17941 6192197632 Before adjustment - Product stock: 4.00, Inventory available: 4.00
+INFO 2025-09-20 18:28:42,624 views 17941 6192197632 Stock adjustment completed. New levels - Product: 0.00, Inventory: 0.00
+INFO 2025-09-20 18:28:42,627 basehttp 17941 6192197632 "POST /api/inventory/actions/stock-adjustment/ HTTP/1.1" 200 323
+INFO 2025-09-20 18:28:42,647 basehttp 17941 6225850368 "GET /api/inventory/alerts/ HTTP/1.1" 200 7878
+INFO 2025-09-20 18:28:42,649 basehttp 17941 6209024000 "GET /api/inventory/stock-movements/?limit=50 HTTP/1.1" 200 2205
+INFO 2025-09-20 18:28:42,663 basehttp 17941 6192197632 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16062
+INFO 2025-09-20 18:28:43,212 basehttp 17941 6209024000 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16062
+INFO 2025-09-20 18:28:43,234 basehttp 17941 6192197632 "GET /api/inventory/stock-movements/?limit=50 HTTP/1.1" 200 2205
+INFO 2025-09-20 18:28:43,237 basehttp 17941 6225850368 "GET /api/inventory/alerts/ HTTP/1.1" 200 7878
+INFO 2025-09-20 18:28:43,257 basehttp 17941 6209024000 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16062
+INFO 2025-09-20 18:28:55,922 basehttp 17941 6158544896 "GET /admin/inventory/finishedinventory/ HTTP/1.1" 200 41621
+INFO 2025-09-20 18:28:55,941 basehttp 17941 6158544896 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-20 18:28:59,051 basehttp 17941 6158544896 "GET /admin/inventory/finishedinventory/ HTTP/1.1" 200 41621
+INFO 2025-09-20 18:28:59,064 basehttp 17941 6158544896 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-20 18:28:59,260 basehttp 17941 6158544896 "GET /admin/inventory/finishedinventory/ HTTP/1.1" 200 41621
+INFO 2025-09-20 18:28:59,274 basehttp 17941 6158544896 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-20 18:29:12,292 basehttp 17941 6158544896 "POST /admin/inventory/finishedinventory/ HTTP/1.1" 200 29626
+INFO 2025-09-20 18:29:13,630 basehttp 17941 6158544896 "POST /admin/inventory/finishedinventory/ HTTP/1.1" 302 0
+INFO 2025-09-20 18:29:13,645 basehttp 17941 6158544896 "GET /admin/inventory/finishedinventory/ HTTP/1.1" 200 27708
+INFO 2025-09-20 18:29:13,656 basehttp 17941 6158544896 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-20 18:29:35,549 basehttp 17941 6192197632 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 83548
+INFO 2025-09-20 18:29:35,657 basehttp 17941 6209024000 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:29:35,658 basehttp 17941 6192197632 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:29:36,420 basehttp 17941 6209024000 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:29:44,248 basehttp 17941 6192197632 "POST /api/whatsapp/messages/process-stock/ HTTP/1.1" 200 230
+INFO 2025-09-20 18:32:30,743 autoreload 17941 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/models.py changed, reloading.
+INFO 2025-09-20 18:32:31,193 autoreload 18673 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-20 18:32:35,602 autoreload 18673 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/models.py changed, reloading.
+INFO 2025-09-20 18:32:35,888 autoreload 18687 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-20 18:32:54,183 basehttp 18687 6132248576 "POST /api/whatsapp/messages/process-stock/ HTTP/1.1" 200 222
+INFO 2025-09-20 18:33:20,206 autoreload 18687 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-20 18:33:20,654 autoreload 18814 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-20 18:35:32,935 autoreload 18814 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-20 18:35:33,380 autoreload 18923 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-20 18:36:08,298 basehttp 18923 6171160576 "POST /api/whatsapp/messages/process-stock/ HTTP/1.1" 200 74
+INFO 2025-09-20 18:36:10,600 autoreload 18923 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-20 18:36:10,968 autoreload 19032 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-20 18:36:17,466 autoreload 19032 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-20 18:36:17,751 autoreload 19042 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-20 18:36:19,085 autoreload 19042 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-20 18:36:19,440 autoreload 19048 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-20 18:36:26,835 basehttp 19048 6162444288 "GET /admin/inventory/finishedinventory/ HTTP/1.1" 200 27558
+INFO 2025-09-20 18:36:26,898 basehttp 19048 6162444288 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-20 18:36:46,898 basehttp 19048 6162444288 "GET /admin/whatsapp/stockupdate/ HTTP/1.1" 200 30462
+INFO 2025-09-20 18:36:46,923 basehttp 19048 6162444288 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-20 18:36:49,796 basehttp 19048 6162444288 "GET /admin/whatsapp/stockupdate/1/change/ HTTP/1.1" 200 41707
+INFO 2025-09-20 18:36:49,809 basehttp 19048 6196097024 "GET /static/admin/js/calendar.js HTTP/1.1" 304 0
+INFO 2025-09-20 18:36:49,809 basehttp 19048 6179270656 "GET /static/admin/js/admin/DateTimeShortcuts.js HTTP/1.1" 304 0
+INFO 2025-09-20 18:36:49,812 basehttp 19048 6162444288 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-20 18:36:49,861 basehttp 19048 6162444288 "GET /static/admin/img/icon-calendar.svg HTTP/1.1" 304 0
+INFO 2025-09-20 18:37:27,824 basehttp 19048 6212923392 "GET /api/orders/ HTTP/1.1" 200 60119
+INFO 2025-09-20 18:38:28,150 basehttp 19048 6246576128 "GET /api/products/procurement/recipes/ HTTP/1.1" 200 3314
+INFO 2025-09-20 18:38:28,151 basehttp 19048 6212923392 "GET /api/products/procurement/recommendations/?days_back=30 HTTP/1.1" 200 388
+INFO 2025-09-20 18:38:28,156 basehttp 19048 6263402496 "GET /api/products/procurement/buffers/ HTTP/1.1" 200 24271
+INFO 2025-09-20 18:38:28,157 basehttp 19048 6229749760 "GET /api/products/procurement/dashboard/ HTTP/1.1" 200 541
+INFO 2025-09-20 18:39:04,222 basehttp 19048 6212923392 "GET /api/orders/ HTTP/1.1" 200 60119
+INFO 2025-09-20 18:44:38,664 basehttp 19048 6229749760 "GET /api/inventory/stock-movements/?limit=50 HTTP/1.1" 200 2205
+INFO 2025-09-20 18:44:38,667 basehttp 19048 6212923392 "GET /api/inventory/alerts/ HTTP/1.1" 200 7878
+INFO 2025-09-20 18:44:38,680 basehttp 19048 6246576128 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16081
+INFO 2025-09-20 18:45:22,832 basehttp 19048 6212923392 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:45:22,832 basehttp 19048 6246576128 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-20 18:45:22,914 basehttp 19048 6229749760 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 83546
+INFO 2025-09-21 09:14:31,425 autoreload 43899 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 09:14:52,049 basehttp 43899 6196867072 "GET /admin/whatsapp/stockupdate/ HTTP/1.1" 200 30462
+INFO 2025-09-21 09:14:53,240 basehttp 43899 6196867072 "GET /admin/accounts/user/ HTTP/1.1" 200 51969
+INFO 2025-09-21 09:14:53,260 basehttp 43899 6196867072 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:14:57,384 basehttp 43899 6196867072 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 48680
+INFO 2025-09-21 09:14:57,401 basehttp 43899 6196867072 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2025-09-21 09:15:02,715 log 43899 6230519808 Unauthorized: /api/products/app-config/
+WARNING 2025-09-21 09:15:02,716 basehttp 43899 6230519808 "GET /api/products/app-config/ HTTP/1.1" 401 58
+WARNING 2025-09-21 09:15:02,722 log 43899 6247346176 Unauthorized: /api/settings/form-options/
+WARNING 2025-09-21 09:15:02,722 basehttp 43899 6247346176 "GET /api/settings/form-options/ HTTP/1.1" 401 58
+WARNING 2025-09-21 09:15:02,725 log 43899 6264172544 Unauthorized: /api/settings/business-config/
+WARNING 2025-09-21 09:15:02,725 basehttp 43899 6264172544 "GET /api/settings/business-config/ HTTP/1.1" 401 58
+WARNING 2025-09-21 09:15:02,768 log 43899 6297825280 Unauthorized: /api/whatsapp/health/
+WARNING 2025-09-21 09:15:02,769 basehttp 43899 6297825280 "GET /api/whatsapp/health/ HTTP/1.1" 401 58
+WARNING 2025-09-21 09:15:02,927 log 43899 6280998912 Unauthorized: /api/auth/login/
+WARNING 2025-09-21 09:15:02,927 basehttp 43899 6280998912 "POST /api/auth/login/ HTTP/1.1" 401 31
+INFO 2025-09-21 09:15:10,342 basehttp 43899 6230519808 "POST /api/auth/login/ HTTP/1.1" 200 705
+INFO 2025-09-21 09:15:10,610 basehttp 43899 6297825280 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-21 09:15:10,614 basehttp 43899 6314651648 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-21 09:15:10,709 basehttp 43899 6230519808 "GET /api/auth/customers/ HTTP/1.1" 200 19642
+INFO 2025-09-21 09:15:10,710 basehttp 43899 6247346176 "GET /api/auth/customers/ HTTP/1.1" 200 19642
+INFO 2025-09-21 09:15:10,796 basehttp 43899 6331478016 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16081
+INFO 2025-09-21 09:15:10,801 basehttp 43899 6348304384 "GET /api/orders/ HTTP/1.1" 200 60119
+INFO 2025-09-21 09:15:10,808 basehttp 43899 6264172544 "GET /api/products/products/ HTTP/1.1" 200 29852
+INFO 2025-09-21 09:15:10,815 basehttp 43899 6280998912 "GET /api/products/products/ HTTP/1.1" 200 29852
+INFO 2025-09-21 09:15:31,820 basehttp 43899 6230519808 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 83546
+INFO 2025-09-21 09:15:31,960 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:15:31,962 basehttp 43899 6247346176 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:15:40,861 basehttp 43899 6196867072 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 48680
+INFO 2025-09-21 09:15:40,876 basehttp 43899 6196867072 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:15:45,154 basehttp 43899 6196867072 "POST /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 62121
+INFO 2025-09-21 09:15:48,921 basehttp 43899 6196867072 "POST /admin/whatsapp/whatsappmessage/ HTTP/1.1" 302 0
+INFO 2025-09-21 09:15:48,940 basehttp 43899 6196867072 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 29394
+INFO 2025-09-21 09:15:48,956 basehttp 43899 6196867072 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:15:53,441 basehttp 43899 6264172544 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:15:53,443 basehttp 43899 6247346176 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 50
+INFO 2025-09-21 09:15:53,444 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:16:24,439 basehttp 43899 6230519808 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 576
+INFO 2025-09-21 09:17:02,754 basehttp 43899 6196867072 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 43375
+INFO 2025-09-21 09:17:02,771 basehttp 43899 6196867072 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:17:08,601 basehttp 43899 6230519808 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 22991
+INFO 2025-09-21 09:17:08,662 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:17:41,713 basehttp 43899 6230519808 "POST /api/whatsapp/messages/update-company/ HTTP/1.1" 200 2434
+INFO 2025-09-21 09:17:42,520 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:17:47,171 basehttp 43899 6230519808 "POST /api/whatsapp/messages/process/ HTTP/1.1" 200 102
+INFO 2025-09-21 09:17:51,026 basehttp 43899 6230519808 "GET /api/orders/ HTTP/1.1" 200 70256
+INFO 2025-09-21 09:20:17,521 basehttp 43899 6196867072 "GET /admin/orders/order/ HTTP/1.1" 200 39339
+INFO 2025-09-21 09:20:17,539 basehttp 43899 6196867072 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:20:22,425 basehttp 43899 6196867072 "POST /admin/orders/order/ HTTP/1.1" 200 43103
+INFO 2025-09-21 09:20:25,209 basehttp 43899 6196867072 "POST /admin/orders/order/ HTTP/1.1" 302 0
+INFO 2025-09-21 09:20:25,226 basehttp 43899 6196867072 "GET /admin/orders/order/ HTTP/1.1" 200 28294
+INFO 2025-09-21 09:20:25,243 basehttp 43899 6196867072 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:20:31,694 basehttp 43899 6230519808 "GET /api/orders/ HTTP/1.1" 200 52
+INFO 2025-09-21 09:20:34,835 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:20:34,853 basehttp 43899 6247346176 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 23041
+INFO 2025-09-21 09:20:42,149 basehttp 43899 6230519808 "POST /api/whatsapp/messages/edit/ HTTP/1.1" 200 2826
+INFO 2025-09-21 09:20:44,811 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:22:41,516 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:22:41,785 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:22:41,906 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:23:14,259 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:24:00,718 basehttp 43899 6230519808 "POST /api/whatsapp/messages/update-company/ HTTP/1.1" 200 881
+INFO 2025-09-21 09:24:02,856 basehttp 43899 6230519808 "POST /api/whatsapp/messages/update-company/ HTTP/1.1" 200 883
+INFO 2025-09-21 09:24:52,179 basehttp 43899 6196867072 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 43375
+INFO 2025-09-21 09:24:52,194 basehttp 43899 6196867072 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:24:59,047 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:25:17,305 basehttp 43899 6196867072 "GET /admin/whatsapp/whatsappmessage/260/change/ HTTP/1.1" 200 40868
+INFO 2025-09-21 09:25:17,341 basehttp 43899 6196867072 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:25:17,399 basehttp 43899 6196867072 "GET /static/admin/img/icon-clock.svg HTTP/1.1" 304 0
+INFO 2025-09-21 09:25:19,842 basehttp 43899 6196867072 "GET /admin/whatsapp/whatsappmessage/262/change/ HTTP/1.1" 200 39865
+INFO 2025-09-21 09:25:19,875 basehttp 43899 6196867072 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:27:52,764 basehttp 43899 6196867072 "GET /admin/whatsapp/whatsappmessage/275/change/ HTTP/1.1" 200 41413
+INFO 2025-09-21 09:27:52,816 basehttp 43899 6196867072 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:27:54,172 basehttp 43899 6196867072 "GET /admin/whatsapp/whatsappmessage/274/change/ HTTP/1.1" 200 39739
+INFO 2025-09-21 09:27:54,224 basehttp 43899 6196867072 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:27:57,658 basehttp 43899 6196867072 "GET /admin/whatsapp/whatsappmessage/269/change/ HTTP/1.1" 200 39974
+INFO 2025-09-21 09:27:57,707 basehttp 43899 6196867072 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:28:00,498 basehttp 43899 6196867072 "GET /admin/whatsapp/whatsappmessage/271/change/ HTTP/1.1" 200 39748
+INFO 2025-09-21 09:28:00,544 basehttp 43899 6196867072 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:29:11,217 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:29:59,254 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:30:19,484 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:30:33,476 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:30:46,480 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:37:19,447 basehttp 43899 6230519808 "DELETE /api/whatsapp/messages/276/ HTTP/1.1" 200 56
+INFO 2025-09-21 09:37:19,469 basehttp 43899 6230519808 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 22812
+INFO 2025-09-21 09:37:21,451 basehttp 43899 6230519808 "DELETE /api/whatsapp/messages/277/ HTTP/1.1" 200 59
+INFO 2025-09-21 09:37:21,475 basehttp 43899 6230519808 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 22136
+INFO 2025-09-21 09:37:22,484 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:37:22,756 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:37:28,069 basehttp 43899 6230519808 "DELETE /api/whatsapp/messages/270/ HTTP/1.1" 200 103
+INFO 2025-09-21 09:37:28,089 basehttp 43899 6230519808 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 21343
+INFO 2025-09-21 09:37:28,162 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:37:29,599 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:37:30,107 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:37:43,816 basehttp 43899 6230519808 "DELETE /api/whatsapp/messages/258/ HTTP/1.1" 200 68
+INFO 2025-09-21 09:37:43,835 basehttp 43899 6230519808 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 20657
+INFO 2025-09-21 09:37:43,899 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:37:45,819 basehttp 43899 6230519808 "DELETE /api/whatsapp/messages/259/ HTTP/1.1" 200 58
+INFO 2025-09-21 09:37:45,840 basehttp 43899 6230519808 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 19982
+INFO 2025-09-21 09:37:45,914 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:37:47,640 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:37:51,318 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:38:03,547 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:38:13,056 basehttp 43899 6230519808 "POST /api/whatsapp/messages/update-company/ HTTP/1.1" 200 2920
+INFO 2025-09-21 09:38:24,329 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:38:39,104 basehttp 43899 6230519808 "POST /api/whatsapp/messages/edit/ HTTP/1.1" 200 1166
+INFO 2025-09-21 09:38:45,419 basehttp 43899 6230519808 "DELETE /api/whatsapp/messages/264/ HTTP/1.1" 200 103
+INFO 2025-09-21 09:38:45,434 basehttp 43899 6230519808 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 17882
+INFO 2025-09-21 09:38:48,607 basehttp 43899 6230519808 "DELETE /api/whatsapp/messages/266/ HTTP/1.1" 200 103
+INFO 2025-09-21 09:38:48,625 basehttp 43899 6230519808 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 17067
+INFO 2025-09-21 09:38:48,683 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:38:51,796 basehttp 43899 6230519808 "DELETE /api/whatsapp/messages/265/ HTTP/1.1" 200 92
+INFO 2025-09-21 09:38:51,815 basehttp 43899 6230519808 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 16300
+INFO 2025-09-21 09:38:51,880 basehttp 43899 6230519808 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:38:54,978 basehttp 43899 6196867072 "DELETE /api/whatsapp/messages/267/ HTTP/1.1" 200 103
+INFO 2025-09-21 09:38:54,995 basehttp 43899 6196867072 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 15031
+INFO 2025-09-21 09:38:55,046 basehttp 43899 6196867072 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:38:59,365 basehttp 43899 6196867072 "DELETE /api/whatsapp/messages/268/ HTTP/1.1" 200 103
+INFO 2025-09-21 09:38:59,391 basehttp 43899 6196867072 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 14163
+INFO 2025-09-21 09:38:59,466 basehttp 43899 6196867072 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:39:06,215 basehttp 43899 6196867072 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:39:10,178 basehttp 43899 6196867072 "DELETE /api/whatsapp/messages/271/ HTTP/1.1" 200 103
+INFO 2025-09-21 09:39:10,192 basehttp 43899 6196867072 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 13311
+INFO 2025-09-21 09:39:10,263 basehttp 43899 6213693440 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:39:10,264 basehttp 43899 6196867072 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:39:13,497 basehttp 43899 6196867072 "DELETE /api/whatsapp/messages/273/ HTTP/1.1" 200 75
+INFO 2025-09-21 09:39:13,510 basehttp 43899 6196867072 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 12593
+INFO 2025-09-21 09:39:13,578 basehttp 43899 6196867072 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:39:13,578 basehttp 43899 6213693440 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:39:18,589 basehttp 43899 6196867072 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:39:33,577 basehttp 43899 6196867072 "POST /api/whatsapp/messages/edit/ HTTP/1.1" 200 1446
+INFO 2025-09-21 09:39:35,243 basehttp 43899 6196867072 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:39:40,993 basehttp 43899 6196867072 "POST /api/whatsapp/messages/update-company/ HTTP/1.1" 200 1450
+INFO 2025-09-21 09:39:48,567 autoreload 43899 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/views.py changed, reloading.
+INFO 2025-09-21 09:39:49,452 autoreload 46253 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 09:39:51,666 basehttp 46253 6192214016 "POST /api/whatsapp/messages/edit/ HTTP/1.1" 200 1412
+INFO 2025-09-21 09:40:01,940 basehttp 46253 6192214016 "GET /api/orders/ HTTP/1.1" 200 52
+INFO 2025-09-21 09:40:05,067 basehttp 46253 6192214016 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:40:05,075 basehttp 46253 6209040384 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 12642
+INFO 2025-09-21 09:40:06,452 basehttp 46253 6209040384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:40:06,686 basehttp 46253 6209040384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:40:06,963 basehttp 46253 6209040384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:40:06,998 basehttp 46253 6209040384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:40:10,271 basehttp 46253 6192214016 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:40:10,434 basehttp 46253 6192214016 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:40:16,455 basehttp 46253 6192214016 "DELETE /api/whatsapp/messages/274/ HTTP/1.1" 200 99
+INFO 2025-09-21 09:40:16,491 basehttp 46253 6192214016 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 11821
+INFO 2025-09-21 09:40:16,546 basehttp 46253 6192214016 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:40:18,627 autoreload 46253 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/models.py changed, reloading.
+INFO 2025-09-21 09:40:19,166 autoreload 46295 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 09:40:21,419 basehttp 46295 6169931776 "DELETE /api/whatsapp/messages/272/ HTTP/1.1" 200 90
+INFO 2025-09-21 09:40:21,435 basehttp 46295 6169931776 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 11051
+INFO 2025-09-21 09:40:21,469 basehttp 46295 6169931776 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:40:22,305 basehttp 46295 6169931776 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:40:23,004 basehttp 46295 6169931776 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:40:23,254 basehttp 46295 6169931776 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:40:31,141 basehttp 46295 6169931776 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 09:40:31,975 autoreload 46295 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/message_parser.py changed, reloading.
+INFO 2025-09-21 09:40:32,385 autoreload 46315 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 09:40:36,307 basehttp 46315 6165639168 "POST /api/whatsapp/messages/process/ HTTP/1.1" 200 119
+INFO 2025-09-21 09:40:41,880 basehttp 46315 6165639168 "GET /api/orders/ HTTP/1.1" 200 5122
+INFO 2025-09-21 09:40:59,532 autoreload 46315 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/models.py changed, reloading.
+INFO 2025-09-21 09:41:00,061 autoreload 46345 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 09:41:30,094 basehttp 46345 6219067392 "GET /api/products/procurement/recipes/ HTTP/1.1" 200 3314
+INFO 2025-09-21 09:41:30,096 basehttp 46345 6235893760 "GET /api/products/procurement/recommendations/?days_back=30 HTTP/1.1" 200 388
+INFO 2025-09-21 09:41:30,107 basehttp 46345 6202241024 "GET /api/products/procurement/buffers/ HTTP/1.1" 200 24271
+INFO 2025-09-21 09:41:30,107 basehttp 46345 6252720128 "GET /api/products/procurement/dashboard/ HTTP/1.1" 200 541
+INFO 2025-09-21 09:43:28,083 services 46345 6202241024 Generating market recommendation for 2025-09-21
+INFO 2025-09-21 09:43:28,089 services 46345 6202241024 Generated recommendation 2 with 0 items, total cost R0.00
+INFO 2025-09-21 09:43:28,092 basehttp 46345 6202241024 "POST /api/products/procurement/generate-recommendation/ HTTP/1.1" 201 434
+INFO 2025-09-21 09:45:23,955 basehttp 46345 6202241024 "GET /api/products/departments/ HTTP/1.1" 200 946
+INFO 2025-09-21 09:45:23,963 basehttp 46345 6202241024 "GET /api/inventory/units/ HTTP/1.1" 200 1700
+INFO 2025-09-21 09:45:34,579 basehttp 46345 6202241024 "PATCH /api/products/products/76/ HTTP/1.1" 200 400
+INFO 2025-09-21 09:45:34,626 basehttp 46345 6202241024 "GET /api/products/products/ HTTP/1.1" 200 31039
+INFO 2025-09-21 09:47:56,056 basehttp 46345 6235893760 "GET /api/products/procurement/recipes/ HTTP/1.1" 200 3314
+INFO 2025-09-21 09:47:56,066 basehttp 46345 6219067392 "GET /api/products/procurement/recommendations/?days_back=30 HTTP/1.1" 200 730
+INFO 2025-09-21 09:47:56,076 basehttp 46345 6252720128 "GET /api/products/procurement/dashboard/ HTTP/1.1" 200 883
+INFO 2025-09-21 09:47:56,076 basehttp 46345 6202241024 "GET /api/products/procurement/buffers/ HTTP/1.1" 200 24271
+INFO 2025-09-21 09:48:02,215 basehttp 46345 6235893760 "GET /api/inventory/stock-movements/?limit=50 HTTP/1.1" 200 2205
+INFO 2025-09-21 09:48:02,215 basehttp 46345 6219067392 "GET /api/inventory/alerts/ HTTP/1.1" 200 8330
+INFO 2025-09-21 09:48:02,249 basehttp 46345 6202241024 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16666
+INFO 2025-09-21 09:49:16,867 autoreload 46345 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/views.py changed, reloading.
+INFO 2025-09-21 09:49:17,611 autoreload 47016 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 09:49:20,212 autoreload 47016 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/message_parser.py changed, reloading.
+INFO 2025-09-21 09:49:20,595 autoreload 47031 8488968384 Watching for file changes with StatReloader
+WARNING 2025-09-21 09:49:46,557 log 47031 6123892736 Unauthorized: /api/products/app-config/
+WARNING 2025-09-21 09:49:46,558 log 47031 6140719104 Unauthorized: /api/settings/form-options/
+WARNING 2025-09-21 09:49:46,558 log 47031 6157545472 Unauthorized: /api/settings/business-config/
+WARNING 2025-09-21 09:49:46,559 basehttp 47031 6123892736 "GET /api/products/app-config/ HTTP/1.1" 401 58
+WARNING 2025-09-21 09:49:46,559 basehttp 47031 6140719104 "GET /api/settings/form-options/ HTTP/1.1" 401 58
+WARNING 2025-09-21 09:49:46,559 basehttp 47031 6157545472 "GET /api/settings/business-config/ HTTP/1.1" 401 58
+WARNING 2025-09-21 09:49:46,600 log 47031 6191198208 Unauthorized: /api/whatsapp/health/
+WARNING 2025-09-21 09:49:46,601 basehttp 47031 6191198208 "GET /api/whatsapp/health/ HTTP/1.1" 401 58
+WARNING 2025-09-21 09:49:46,760 log 47031 6174371840 Unauthorized: /api/auth/login/
+WARNING 2025-09-21 09:49:46,760 basehttp 47031 6174371840 "POST /api/auth/login/ HTTP/1.1" 401 31
+INFO 2025-09-21 09:57:24,438 basehttp 47031 6123892736 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 43375
+INFO 2025-09-21 09:57:24,465 basehttp 47031 6123892736 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:57:30,359 basehttp 47031 6123892736 "POST /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 38733
+INFO 2025-09-21 09:57:32,655 basehttp 47031 6123892736 "POST /admin/whatsapp/whatsappmessage/ HTTP/1.1" 302 0
+INFO 2025-09-21 09:57:32,672 basehttp 47031 6123892736 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 29394
+INFO 2025-09-21 09:57:32,685 basehttp 47031 6123892736 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 09:59:45,748 basehttp 47031 6157545472 "POST /api/auth/login/ HTTP/1.1" 200 705
+INFO 2025-09-21 09:59:45,995 basehttp 47031 6208024576 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-21 09:59:46,004 basehttp 47031 6191198208 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-21 09:59:46,011 basehttp 47031 6224850944 "GET /api/orders/ HTTP/1.1" 200 5122
+INFO 2025-09-21 09:59:46,143 basehttp 47031 6157545472 "GET /api/auth/customers/ HTTP/1.1" 200 19552
+INFO 2025-09-21 09:59:46,164 basehttp 47031 6174371840 "GET /api/auth/customers/ HTTP/1.1" 200 19552
+INFO 2025-09-21 09:59:46,197 basehttp 47031 6258503680 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16666
+INFO 2025-09-21 09:59:46,216 basehttp 47031 6241677312 "GET /api/products/products/ HTTP/1.1" 200 31039
+INFO 2025-09-21 09:59:46,228 basehttp 47031 6275330048 "GET /api/products/products/ HTTP/1.1" 200 31039
+INFO 2025-09-21 09:59:51,301 basehttp 47031 6157545472 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 50
+INFO 2025-09-21 10:00:16,450 basehttp 47031 6123892736 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 29245
+INFO 2025-09-21 10:00:16,465 basehttp 47031 6123892736 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:00:17,215 basehttp 47031 6123892736 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 29245
+INFO 2025-09-21 10:00:17,230 basehttp 47031 6123892736 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:00:17,492 basehttp 47031 6123892736 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 29245
+INFO 2025-09-21 10:00:17,506 basehttp 47031 6123892736 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:00:17,747 basehttp 47031 6123892736 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 29245
+INFO 2025-09-21 10:00:17,763 basehttp 47031 6123892736 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:00:34,783 basehttp 47031 6123892736 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 29245
+INFO 2025-09-21 10:00:34,799 basehttp 47031 6123892736 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:00:35,616 basehttp 47031 6123892736 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 29245
+INFO 2025-09-21 10:00:35,632 basehttp 47031 6123892736 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:00:36,302 basehttp 47031 6123892736 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 29245
+INFO 2025-09-21 10:00:36,314 basehttp 47031 6123892736 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:01:27,997 autoreload 48092 8488968384 Watching for file changes with StatReloader
+WARNING 2025-09-21 10:01:52,860 log 48092 6123024384 Unauthorized: /api/products/app-config/
+WARNING 2025-09-21 10:01:52,860 basehttp 48092 6123024384 "GET /api/products/app-config/ HTTP/1.1" 401 58
+WARNING 2025-09-21 10:01:52,863 log 48092 6139850752 Unauthorized: /api/settings/form-options/
+WARNING 2025-09-21 10:01:52,863 basehttp 48092 6139850752 "GET /api/settings/form-options/ HTTP/1.1" 401 58
+WARNING 2025-09-21 10:01:52,866 log 48092 6156677120 Unauthorized: /api/settings/business-config/
+WARNING 2025-09-21 10:01:52,867 basehttp 48092 6156677120 "GET /api/settings/business-config/ HTTP/1.1" 401 58
+WARNING 2025-09-21 10:01:52,915 log 48092 6190329856 Unauthorized: /api/whatsapp/health/
+WARNING 2025-09-21 10:01:52,915 basehttp 48092 6190329856 "GET /api/whatsapp/health/ HTTP/1.1" 401 58
+WARNING 2025-09-21 10:01:53,069 log 48092 6173503488 Unauthorized: /api/auth/login/
+WARNING 2025-09-21 10:01:53,070 basehttp 48092 6173503488 "POST /api/auth/login/ HTTP/1.1" 401 31
+INFO 2025-09-21 10:02:11,069 basehttp 48092 6123024384 "POST /api/auth/login/ HTTP/1.1" 200 705
+INFO 2025-09-21 10:02:11,321 basehttp 48092 6156677120 "GET /api/orders/ HTTP/1.1" 200 5122
+INFO 2025-09-21 10:02:11,343 basehttp 48092 6240808960 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-21 10:02:11,343 basehttp 48092 6207156224 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-21 10:02:11,455 basehttp 48092 6123024384 "GET /api/auth/customers/ HTTP/1.1" 200 19552
+INFO 2025-09-21 10:02:11,500 basehttp 48092 6139850752 "GET /api/auth/customers/ HTTP/1.1" 200 19552
+INFO 2025-09-21 10:02:11,514 basehttp 48092 6190329856 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16666
+INFO 2025-09-21 10:02:11,527 basehttp 48092 6223982592 "GET /api/products/products/ HTTP/1.1" 200 31039
+INFO 2025-09-21 10:02:11,530 basehttp 48092 6173503488 "GET /api/products/products/ HTTP/1.1" 200 31039
+INFO 2025-09-21 10:02:34,474 basehttp 48092 6123024384 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 50
+INFO 2025-09-21 10:02:52,631 basehttp 48092 6123024384 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 576
+INFO 2025-09-21 10:03:26,734 basehttp 48092 6123024384 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 576
+INFO 2025-09-21 10:03:26,767 basehttp 48092 6123024384 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 26628
+INFO 2025-09-21 10:03:26,862 basehttp 48092 6123024384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:03:53,464 basehttp 48092 6123024384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:03:53,937 basehttp 48092 6123024384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:03:54,202 basehttp 48092 6123024384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:03:54,723 basehttp 48092 6123024384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:03:54,762 basehttp 48092 6123024384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:03:55,051 basehttp 48092 6123024384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:03:55,736 basehttp 48092 6123024384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:04:40,973 basehttp 48092 6123024384 "DELETE /api/whatsapp/messages/296/ HTTP/1.1" 200 82
+INFO 2025-09-21 10:04:40,996 basehttp 48092 6123024384 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 25984
+INFO 2025-09-21 10:04:41,079 basehttp 48092 6123024384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:04:46,726 basehttp 48092 6123024384 "DELETE /api/whatsapp/messages/297/ HTTP/1.1" 200 103
+INFO 2025-09-21 10:04:46,767 basehttp 48092 6123024384 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 25103
+INFO 2025-09-21 10:05:23,524 basehttp 48092 6123024384 "DELETE /api/whatsapp/messages/298/ HTTP/1.1" 200 59
+INFO 2025-09-21 10:05:23,549 basehttp 48092 6123024384 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 24427
+INFO 2025-09-21 10:05:29,236 basehttp 48092 6123024384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:05:36,874 basehttp 48092 6123024384 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:21:20,042 basehttp 48092 6123024384 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 44132
+INFO 2025-09-21 10:21:20,066 basehttp 48092 6123024384 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:21:24,351 basehttp 48092 6123024384 "POST /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 30443
+INFO 2025-09-21 10:21:25,590 basehttp 48092 6123024384 "POST /admin/whatsapp/whatsappmessage/ HTTP/1.1" 302 0
+INFO 2025-09-21 10:21:25,609 basehttp 48092 6123024384 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 29394
+INFO 2025-09-21 10:21:25,622 basehttp 48092 6123024384 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:23:22,986 autoreload 48092 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-21 10:23:23,552 autoreload 49775 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 10:24:03,124 autoreload 49775 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/serializers.py changed, reloading.
+INFO 2025-09-21 10:24:03,660 autoreload 49819 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 10:24:26,706 autoreload 49819 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/views.py changed, reloading.
+INFO 2025-09-21 10:24:27,113 autoreload 49845 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 10:24:53,261 autoreload 49845 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/views.py changed, reloading.
+INFO 2025-09-21 10:24:53,788 autoreload 49875 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 10:25:05,708 autoreload 49875 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/urls.py changed, reloading.
+INFO 2025-09-21 10:25:06,115 autoreload 49913 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 10:25:39,416 autoreload 49913 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-21 10:25:40,168 autoreload 49957 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 10:25:47,803 autoreload 49957 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-21 10:25:48,361 autoreload 49980 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 10:25:55,029 autoreload 49980 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/serializers.py changed, reloading.
+INFO 2025-09-21 10:25:55,644 autoreload 50000 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 10:25:59,174 autoreload 50000 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/views.py changed, reloading.
+INFO 2025-09-21 10:25:59,550 autoreload 50011 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 10:26:02,019 autoreload 50011 8488968384 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/urls.py changed, reloading.
+INFO 2025-09-21 10:26:02,432 autoreload 50024 8488968384 Watching for file changes with StatReloader
+WARNING 2025-09-21 10:31:52,462 log 50024 6198292480 Unauthorized: /api/products/app-config/
+WARNING 2025-09-21 10:31:52,463 log 50024 6215118848 Unauthorized: /api/settings/form-options/
+WARNING 2025-09-21 10:31:52,464 log 50024 6231945216 Unauthorized: /api/settings/business-config/
+WARNING 2025-09-21 10:31:52,464 basehttp 50024 6198292480 "GET /api/products/app-config/ HTTP/1.1" 401 58
+WARNING 2025-09-21 10:31:52,464 basehttp 50024 6231945216 "GET /api/settings/business-config/ HTTP/1.1" 401 58
+WARNING 2025-09-21 10:31:52,464 basehttp 50024 6215118848 "GET /api/settings/form-options/ HTTP/1.1" 401 58
+WARNING 2025-09-21 10:31:52,511 log 50024 6265597952 Unauthorized: /api/whatsapp/health/
+WARNING 2025-09-21 10:31:52,511 basehttp 50024 6265597952 "GET /api/whatsapp/health/ HTTP/1.1" 401 58
+WARNING 2025-09-21 10:31:52,678 log 50024 6248771584 Unauthorized: /api/auth/login/
+WARNING 2025-09-21 10:31:52,679 basehttp 50024 6248771584 "POST /api/auth/login/ HTTP/1.1" 401 31
+INFO 2025-09-21 10:32:00,461 basehttp 50024 6198292480 "POST /api/auth/login/ HTTP/1.1" 200 705
+INFO 2025-09-21 10:32:00,715 basehttp 50024 6299250688 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-21 10:32:00,726 basehttp 50024 6316077056 "GET /api/orders/ HTTP/1.1" 200 5122
+INFO 2025-09-21 10:32:00,752 basehttp 50024 6282424320 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-21 10:32:00,818 basehttp 50024 6198292480 "GET /api/auth/customers/ HTTP/1.1" 200 19552
+INFO 2025-09-21 10:32:00,893 basehttp 50024 6215118848 "GET /api/auth/customers/ HTTP/1.1" 200 19552
+INFO 2025-09-21 10:32:00,913 basehttp 50024 6265597952 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16666
+INFO 2025-09-21 10:32:00,925 basehttp 50024 6231945216 "GET /api/products/products/ HTTP/1.1" 200 31039
+INFO 2025-09-21 10:32:00,929 basehttp 50024 6248771584 "GET /api/products/products/ HTTP/1.1" 200 31039
+INFO 2025-09-21 10:32:02,305 basehttp 50024 6265597952 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 50
+INFO 2025-09-21 10:34:48,197 basehttp 50024 6198292480 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 576
+INFO 2025-09-21 10:34:56,707 basehttp 50024 6198292480 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 44132
+INFO 2025-09-21 10:34:56,736 basehttp 50024 6198292480 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:35:00,594 basehttp 50024 6231945216 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 576
+INFO 2025-09-21 10:35:00,632 basehttp 50024 6231945216 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 26628
+INFO 2025-09-21 10:35:00,764 basehttp 50024 6231945216 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:35:05,552 basehttp 50024 6231945216 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:35:08,153 basehttp 50024 6231945216 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:35:11,137 basehttp 50024 6231945216 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:35:11,555 basehttp 50024 6231945216 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:35:11,811 basehttp 50024 6231945216 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:35:14,485 basehttp 50024 6231945216 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:36:44,870 basehttp 50024 6231945216 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:48:20,810 autoreload 53386 8488968384 Watching for file changes with StatReloader
+INFO 2025-09-21 10:48:25,601 basehttp 53386 6165426176 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 44132
+INFO 2025-09-21 10:48:25,623 basehttp 53386 6165426176 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+WARNING 2025-09-21 10:48:28,802 log 53386 6199078912 Unauthorized: /api/products/app-config/
+WARNING 2025-09-21 10:48:28,808 log 53386 6215905280 Unauthorized: /api/settings/form-options/
+WARNING 2025-09-21 10:48:28,811 log 53386 6232731648 Unauthorized: /api/settings/business-config/
+WARNING 2025-09-21 10:48:28,820 basehttp 53386 6199078912 "GET /api/products/app-config/ HTTP/1.1" 401 58
+WARNING 2025-09-21 10:48:28,843 basehttp 53386 6215905280 "GET /api/settings/form-options/ HTTP/1.1" 401 58
+WARNING 2025-09-21 10:48:28,845 basehttp 53386 6232731648 "GET /api/settings/business-config/ HTTP/1.1" 401 58
+WARNING 2025-09-21 10:48:28,863 log 53386 6266384384 Unauthorized: /api/whatsapp/health/
+WARNING 2025-09-21 10:48:28,863 basehttp 53386 6266384384 "GET /api/whatsapp/health/ HTTP/1.1" 401 58
+WARNING 2025-09-21 10:48:29,017 log 53386 6249558016 Unauthorized: /api/auth/login/
+WARNING 2025-09-21 10:48:29,017 basehttp 53386 6249558016 "POST /api/auth/login/ HTTP/1.1" 401 31
+INFO 2025-09-21 10:48:33,546 basehttp 53386 6165426176 "POST /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 30443
+INFO 2025-09-21 10:48:36,448 basehttp 53386 6165426176 "POST /admin/whatsapp/whatsappmessage/ HTTP/1.1" 302 0
+INFO 2025-09-21 10:48:36,463 basehttp 53386 6165426176 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 29394
+INFO 2025-09-21 10:48:36,479 basehttp 53386 6165426176 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:48:48,864 basehttp 53386 6199078912 "POST /api/auth/login/ HTTP/1.1" 200 705
+INFO 2025-09-21 10:48:49,122 basehttp 53386 6266384384 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-21 10:48:49,125 basehttp 53386 6283210752 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-21 10:48:49,140 basehttp 53386 6316863488 "GET /api/orders/ HTTP/1.1" 200 5122
+INFO 2025-09-21 10:48:49,229 basehttp 53386 6199078912 "GET /api/auth/customers/ HTTP/1.1" 200 19552
+INFO 2025-09-21 10:48:49,265 basehttp 53386 6232731648 "GET /api/products/products/ HTTP/1.1" 200 31039
+INFO 2025-09-21 10:48:49,302 basehttp 53386 6215905280 "GET /api/auth/customers/ HTTP/1.1" 200 19552
+INFO 2025-09-21 10:48:49,323 basehttp 53386 6300037120 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16666
+INFO 2025-09-21 10:48:49,331 basehttp 53386 6249558016 "GET /api/products/products/ HTTP/1.1" 200 31039
+INFO 2025-09-21 10:48:58,151 basehttp 53386 6199078912 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 50
+INFO 2025-09-21 10:49:27,847 basehttp 53386 6199078912 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 576
+INFO 2025-09-21 10:49:30,719 basehttp 53386 6199078912 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 576
+INFO 2025-09-21 10:49:30,748 basehttp 53386 6199078912 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 26628
+INFO 2025-09-21 10:49:30,852 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:49:31,649 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:49:32,046 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:49:32,834 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:49:33,093 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:49:33,252 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:49:35,540 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:50:38,165 basehttp 53386 6199078912 "POST /api/whatsapp/messages/update-company/ HTTP/1.1" 200 3947
+INFO 2025-09-21 10:50:39,493 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:50:41,743 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:50:56,366 basehttp 53386 6199078912 "POST /api/whatsapp/messages/edit/ HTTP/1.1" 200 4735
+INFO 2025-09-21 10:51:03,095 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:51:06,267 basehttp 53386 6199078912 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 576
+INFO 2025-09-21 10:51:06,290 basehttp 53386 6199078912 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 27547
+INFO 2025-09-21 10:51:07,981 basehttp 53386 6215905280 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 576
+INFO 2025-09-21 10:51:08,001 basehttp 53386 6199078912 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 27547
+INFO 2025-09-21 10:51:17,810 basehttp 53386 6199078912 "POST /api/whatsapp/messages/edit/ HTTP/1.1" 200 4735
+INFO 2025-09-21 10:54:14,418 basehttp 53386 6165426176 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 44132
+INFO 2025-09-21 10:54:14,433 basehttp 53386 6165426176 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:54:19,963 basehttp 53386 6165426176 "GET /admin/whatsapp/whatsappmessage/337/change/ HTTP/1.1" 200 42153
+INFO 2025-09-21 10:54:19,983 basehttp 53386 6165426176 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:54:30,608 basehttp 53386 6165426176 "POST /admin/whatsapp/whatsappmessage/337/change/ HTTP/1.1" 200 42440
+INFO 2025-09-21 10:54:30,620 basehttp 53386 6165426176 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:54:47,989 basehttp 53386 6165426176 "POST /admin/whatsapp/whatsappmessage/337/change/ HTTP/1.1" 200 42438
+INFO 2025-09-21 10:54:48,002 basehttp 53386 6165426176 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:54:55,161 basehttp 53386 6165426176 "POST /admin/whatsapp/whatsappmessage/337/change/ HTTP/1.1" 302 0
+INFO 2025-09-21 10:54:55,192 basehttp 53386 6165426176 "GET /admin/whatsapp/whatsappmessage/337/change/ HTTP/1.1" 200 42593
+INFO 2025-09-21 10:54:55,207 basehttp 53386 6165426176 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:55:42,450 basehttp 53386 6199078912 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 576
+INFO 2025-09-21 10:55:42,476 basehttp 53386 6199078912 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 27792
+INFO 2025-09-21 10:55:42,548 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:55:42,551 basehttp 53386 6232731648 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:55:42,552 basehttp 53386 6215905280 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:55:45,348 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:55:46,411 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:55:48,276 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:55:48,952 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:55:50,663 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:55:51,278 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:55:51,879 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:55:53,110 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:55:53,327 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:55:53,558 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:56:39,708 basehttp 53386 6165426176 "POST /admin/whatsapp/whatsappmessage/337/change/ HTTP/1.1" 302 0
+INFO 2025-09-21 10:56:39,734 basehttp 53386 6165426176 "GET /admin/whatsapp/whatsappmessage/337/change/ HTTP/1.1" 200 42589
+INFO 2025-09-21 10:56:39,751 basehttp 53386 6165426176 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 10:56:59,978 basehttp 53386 6199078912 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 576
+INFO 2025-09-21 10:57:00,023 basehttp 53386 6199078912 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 27792
+INFO 2025-09-21 10:57:09,030 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:57:11,339 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:57:12,998 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:57:13,710 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:57:17,861 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 10:57:30,410 basehttp 53386 6199078912 "POST /api/whatsapp/messages/edit/ HTTP/1.1" 200 4980
+INFO 2025-09-21 10:57:37,970 basehttp 53386 6199078912 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 12:29:53,797 autoreload 57763 8488968384 Watching for file changes with StatReloader
+WARNING 2025-09-21 12:30:40,831 log 57763 6162739200 Unauthorized: /api/products/app-config/
+WARNING 2025-09-21 12:30:40,831 log 57763 6196391936 Unauthorized: /api/settings/business-config/
+WARNING 2025-09-21 12:30:40,832 log 57763 6179565568 Unauthorized: /api/settings/form-options/
+WARNING 2025-09-21 12:30:40,832 basehttp 57763 6162739200 "GET /api/products/app-config/ HTTP/1.1" 401 58
+WARNING 2025-09-21 12:30:40,832 basehttp 57763 6196391936 "GET /api/settings/business-config/ HTTP/1.1" 401 58
+WARNING 2025-09-21 12:30:40,832 basehttp 57763 6179565568 "GET /api/settings/form-options/ HTTP/1.1" 401 58
+WARNING 2025-09-21 12:30:40,883 log 57763 6230044672 Unauthorized: /api/whatsapp/health/
+WARNING 2025-09-21 12:30:40,884 basehttp 57763 6230044672 "GET /api/whatsapp/health/ HTTP/1.1" 401 58
+WARNING 2025-09-21 12:30:41,007 log 57763 6213218304 Unauthorized: /api/auth/login/
+WARNING 2025-09-21 12:30:41,008 basehttp 57763 6213218304 "POST /api/auth/login/ HTTP/1.1" 401 31
+WARNING 2025-09-21 12:30:49,830 log 57763 6162739200 Unauthorized: /api/auth/login/
+WARNING 2025-09-21 12:30:49,830 basehttp 57763 6162739200 "POST /api/auth/login/ HTTP/1.1" 401 31
+INFO 2025-09-21 12:31:00,101 basehttp 57763 6162739200 "POST /api/auth/login/ HTTP/1.1" 200 705
+INFO 2025-09-21 12:31:00,296 basehttp 57763 6230044672 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-21 12:31:00,306 basehttp 57763 6263697408 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-21 12:31:00,314 basehttp 57763 6280523776 "GET /api/orders/ HTTP/1.1" 200 5122
+INFO 2025-09-21 12:31:00,396 basehttp 57763 6162739200 "GET /api/auth/customers/ HTTP/1.1" 200 19552
+INFO 2025-09-21 12:31:00,407 basehttp 57763 6246871040 "GET /api/auth/customers/ HTTP/1.1" 200 19552
+INFO 2025-09-21 12:31:00,417 basehttp 57763 6213218304 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16666
+INFO 2025-09-21 12:31:00,421 basehttp 57763 6179565568 "GET /api/products/products/ HTTP/1.1" 200 31039
+INFO 2025-09-21 12:31:00,428 basehttp 57763 6196391936 "GET /api/products/products/ HTTP/1.1" 200 31039
+INFO 2025-09-21 12:31:05,821 basehttp 57763 6162739200 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 27792
+INFO 2025-09-21 12:31:05,925 basehttp 57763 6162739200 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 12:31:14,526 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 44132
+INFO 2025-09-21 12:31:14,579 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 12:31:19,076 basehttp 57763 6162739200 "POST /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 31132
+INFO 2025-09-21 12:31:21,558 basehttp 57763 6162739200 "POST /admin/whatsapp/whatsappmessage/ HTTP/1.1" 302 0
+INFO 2025-09-21 12:31:21,575 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 29394
+INFO 2025-09-21 12:31:21,588 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 12:31:24,916 basehttp 57763 6213218304 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 12:31:24,916 basehttp 57763 6196391936 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 50
+INFO 2025-09-21 12:31:43,397 basehttp 57763 6196391936 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 656
+INFO 2025-09-21 12:31:45,836 basehttp 57763 6196391936 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 656
+INFO 2025-09-21 12:31:45,857 basehttp 57763 6196391936 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 31152
+INFO 2025-09-21 12:31:45,901 basehttp 57763 6196391936 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 12:32:04,657 basehttp 57763 6196391936 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 12:32:17,332 basehttp 57763 6196391936 "POST /api/whatsapp/messages/edit/ HTTP/1.1" 200 1935
+INFO 2025-09-21 12:32:19,986 basehttp 57763 6213218304 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 656
+INFO 2025-09-21 12:32:20,000 basehttp 57763 6196391936 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 31503
+INFO 2025-09-21 12:32:21,572 basehttp 57763 6213218304 "POST /api/whatsapp/receive-html/ HTTP/1.1" 200 656
+INFO 2025-09-21 12:32:21,587 basehttp 57763 6196391936 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 31503
+INFO 2025-09-21 12:33:03,924 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 46606
+INFO 2025-09-21 12:33:03,985 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 12:33:04,922 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/365/change/ HTTP/1.1" 200 39671
+INFO 2025-09-21 12:33:04,946 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 12:33:21,113 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 46606
+INFO 2025-09-21 12:33:23,534 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/364/change/ HTTP/1.1" 200 39912
+INFO 2025-09-21 12:33:23,549 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 12:33:26,538 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 46606
+INFO 2025-09-21 12:33:29,728 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/359/change/ HTTP/1.1" 200 40203
+INFO 2025-09-21 12:33:29,743 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 12:33:31,936 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 46606
+INFO 2025-09-21 12:33:34,398 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/356/change/ HTTP/1.1" 200 40121
+INFO 2025-09-21 12:33:34,412 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 12:33:36,610 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 46606
+INFO 2025-09-21 12:33:38,700 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/347/change/ HTTP/1.1" 200 40601
+INFO 2025-09-21 12:33:38,717 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 12:33:45,767 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 46606
+INFO 2025-09-21 12:33:48,666 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/347/change/ HTTP/1.1" 200 40601
+INFO 2025-09-21 12:33:48,685 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 12:33:57,091 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 46606
+INFO 2025-09-21 12:33:59,155 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/349/change/ HTTP/1.1" 200 40012
+INFO 2025-09-21 12:33:59,172 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 12:34:01,953 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 46606
+INFO 2025-09-21 12:34:05,560 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/356/change/ HTTP/1.1" 200 40121
+INFO 2025-09-21 12:34:05,575 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 12:34:07,788 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 46606
+INFO 2025-09-21 12:34:13,992 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/358/change/ HTTP/1.1" 200 39895
+INFO 2025-09-21 12:34:14,012 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 12:34:18,626 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 46606
+INFO 2025-09-21 12:34:25,153 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/359/change/ HTTP/1.1" 200 40203
+INFO 2025-09-21 12:34:25,170 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 12:34:27,357 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 46606
+INFO 2025-09-21 12:34:29,100 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/361/change/ HTTP/1.1" 200 39886
+INFO 2025-09-21 12:34:29,117 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 12:34:31,414 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/ HTTP/1.1" 200 46606
+INFO 2025-09-21 12:34:32,933 basehttp 57763 6162739200 "GET /admin/whatsapp/whatsappmessage/362/change/ HTTP/1.1" 200 41360
+INFO 2025-09-21 12:34:32,952 basehttp 57763 6162739200 "GET /admin/jsi18n/ HTTP/1.1" 200 3342
+INFO 2025-09-21 20:23:57,422 autoreload 82164 8488968384 Watching for file changes with StatReloader
+WARNING 2025-09-21 20:24:50,418 log 82164 6166212608 Unauthorized: /api/products/app-config/
+WARNING 2025-09-21 20:24:50,418 log 82164 6183038976 Unauthorized: /api/settings/form-options/
+WARNING 2025-09-21 20:24:50,419 log 82164 6199865344 Unauthorized: /api/settings/business-config/
+WARNING 2025-09-21 20:24:50,419 basehttp 82164 6166212608 "GET /api/products/app-config/ HTTP/1.1" 401 58
+WARNING 2025-09-21 20:24:50,419 basehttp 82164 6183038976 "GET /api/settings/form-options/ HTTP/1.1" 401 58
+WARNING 2025-09-21 20:24:50,419 basehttp 82164 6199865344 "GET /api/settings/business-config/ HTTP/1.1" 401 58
+WARNING 2025-09-21 20:24:50,451 log 82164 6233518080 Unauthorized: /api/whatsapp/health/
+WARNING 2025-09-21 20:24:50,451 basehttp 82164 6233518080 "GET /api/whatsapp/health/ HTTP/1.1" 401 58
+WARNING 2025-09-21 20:24:50,566 log 82164 6216691712 Unauthorized: /api/auth/login/
+WARNING 2025-09-21 20:24:50,567 basehttp 82164 6216691712 "POST /api/auth/login/ HTTP/1.1" 401 31
+INFO 2025-09-21 20:25:06,296 basehttp 82164 6166212608 "POST /api/auth/login/ HTTP/1.1" 200 705
+INFO 2025-09-21 20:25:06,464 basehttp 82164 6183038976 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-21 20:25:06,475 basehttp 82164 6267170816 "GET /api/suppliers/suppliers/ HTTP/1.1" 200 2815
+INFO 2025-09-21 20:25:06,491 basehttp 82164 6283997184 "GET /api/orders/ HTTP/1.1" 200 5122
+INFO 2025-09-21 20:25:06,542 basehttp 82164 6199865344 "GET /api/auth/customers/ HTTP/1.1" 200 19552
+INFO 2025-09-21 20:25:06,545 basehttp 82164 6166212608 "GET /api/auth/customers/ HTTP/1.1" 200 19552
+INFO 2025-09-21 20:25:06,571 basehttp 82164 6250344448 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16666
+INFO 2025-09-21 20:25:06,584 basehttp 82164 6233518080 "GET /api/products/products/ HTTP/1.1" 200 31039
+INFO 2025-09-21 20:25:06,588 basehttp 82164 6216691712 "GET /api/products/products/ HTTP/1.1" 200 31039
+INFO 2025-09-21 20:25:08,944 basehttp 82164 6250344448 "GET /api/orders/ HTTP/1.1" 200 5122
+INFO 2025-09-21 20:25:34,858 basehttp 82164 6166212608 "GET /api/orders/ HTTP/1.1" 200 5122
+INFO 2025-09-21 20:25:37,327 basehttp 82164 6166212608 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 31503
+INFO 2025-09-21 20:25:37,398 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:25:50,382 basehttp 82164 6166212608 "POST /api/whatsapp/messages/edit/ HTTP/1.1" 200 1935
+INFO 2025-09-21 20:25:58,414 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:26:03,884 basehttp 82164 6166212608 "POST /api/whatsapp/messages/process/ HTTP/1.1" 200 102
+INFO 2025-09-21 20:26:03,991 basehttp 82164 6166212608 "GET /api/orders/ HTTP/1.1" 200 10344
+INFO 2025-09-21 20:29:27,410 basehttp 82164 6183038976 "GET /api/products/products/ HTTP/1.1" 200 31039
+INFO 2025-09-21 20:29:27,413 basehttp 82164 6166212608 "GET /api/auth/customers/ HTTP/1.1" 200 19563
+WARNING 2025-09-21 20:29:54,759 log 82164 6166212608 Method Not Allowed: /api/orders/
+WARNING 2025-09-21 20:29:54,760 basehttp 82164 6166212608 "POST /api/orders/ HTTP/1.1" 405 41
+INFO 2025-09-21 20:30:17,237 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:30:17,263 basehttp 82164 6183038976 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 36667
+INFO 2025-09-21 20:30:20,267 basehttp 82164 6183038976 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:30:20,294 basehttp 82164 6183038976 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:30:20,401 basehttp 82164 6183038976 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:30:20,429 basehttp 82164 6183038976 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:30:20,476 basehttp 82164 6183038976 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:30:20,506 basehttp 82164 6183038976 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:30:20,948 basehttp 82164 6183038976 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:30:20,956 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:30:21,601 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:30:21,604 basehttp 82164 6183038976 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:30:21,606 basehttp 82164 6199865344 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:30:28,205 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:30:28,747 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:30:33,088 basehttp 82164 6166212608 "POST /api/whatsapp/messages/update-type/ HTTP/1.1" 200 3211
+INFO 2025-09-21 20:30:33,124 basehttp 82164 6166212608 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 35917
+INFO 2025-09-21 20:30:37,205 basehttp 82164 6166212608 "POST /api/whatsapp/messages/edit/ HTTP/1.1" 200 3987
+INFO 2025-09-21 20:30:43,845 basehttp 82164 6166212608 "POST /api/whatsapp/messages/process-stock/ HTTP/1.1" 200 158
+INFO 2025-09-21 20:30:50,064 basehttp 82164 6183038976 "GET /api/inventory/stock-movements/?limit=50 HTTP/1.1" 200 2205
+INFO 2025-09-21 20:30:50,069 basehttp 82164 6199865344 "GET /api/inventory/alerts/ HTTP/1.1" 200 8330
+INFO 2025-09-21 20:30:50,084 basehttp 82164 6166212608 "GET /api/inventory/stock-levels/ HTTP/1.1" 200 16666
+INFO 2025-09-21 20:31:31,015 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:31:31,039 basehttp 82164 6183038976 "GET /api/whatsapp/messages/?limit=100 HTTP/1.1" 200 36743
+INFO 2025-09-21 20:31:34,067 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:31:34,124 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:31:34,223 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:31:34,327 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:31:34,475 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:31:34,698 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:20,933 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:20,935 basehttp 82164 6183038976 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:20,937 basehttp 82164 6199865344 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:20,979 basehttp 82164 6199865344 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:21,227 basehttp 82164 6199865344 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:21,636 basehttp 82164 6199865344 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:22,815 basehttp 82164 6199865344 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:23,395 basehttp 82164 6199865344 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:23,497 basehttp 82164 6199865344 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:23,515 basehttp 82164 6199865344 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:24,498 basehttp 82164 6199865344 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:28,747 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:28,994 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:42,550 basehttp 82164 6166212608 "POST /api/whatsapp/messages/edit/ HTTP/1.1" 200 3948
+INFO 2025-09-21 20:32:46,045 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:32:51,763 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892
+INFO 2025-09-21 20:33:43,625 basehttp 82164 6166212608 "GET /api/whatsapp/companies/ HTTP/1.1" 200 4892

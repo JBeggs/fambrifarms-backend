@@ -9,7 +9,7 @@ class UserSerializer(serializers.ModelSerializer):
 class RestaurantProfileSerializer(serializers.ModelSerializer):
     class Meta:
         model = RestaurantProfile
-        fields = ['business_name', 'branch_name', 'business_registration', 'address', 'city', 'postal_code', 'payment_terms']
+        fields = ['business_name', 'branch_name', 'business_registration', 'address', 'city', 'postal_code', 'payment_terms', 'is_private_customer']
 
 class CustomerSerializer(serializers.ModelSerializer):
     """Serializer for customer (restaurant) data including profile"""
@@ -22,18 +22,107 @@ class CustomerSerializer(serializers.ModelSerializer):
     payment_terms = serializers.CharField(write_only=True, max_length=50, required=False, default='Net 30')
     business_registration = serializers.CharField(write_only=True, max_length=100, required=False)
     
+    # Add computed fields for Flutter
+    name = serializers.SerializerMethodField()
+    customer_type = serializers.SerializerMethodField()
+    is_private_customer = serializers.SerializerMethodField()
+    total_orders = serializers.SerializerMethodField()
+    total_order_value = serializers.SerializerMethodField()
+    last_order_date = serializers.SerializerMethodField()
+    profile = serializers.SerializerMethodField()
+    
     class Meta:
         model = User
         fields = [
-            'id', 'email', 'first_name', 'last_name', 'phone', 'is_verified',
+            'id', 'email', 'first_name', 'last_name', 'phone', 'is_verified', 'user_type',
             'restaurant_profile', 'business_name', 'branch_name', 'address', 'city', 
-            'postal_code', 'payment_terms', 'business_registration'
+            'postal_code', 'payment_terms', 'business_registration',
+            'name', 'customer_type', 'is_private_customer', 'total_orders', 'total_order_value', 
+            'last_order_date', 'profile'
         ]
         extra_kwargs = {
             'email': {'required': True},
             'first_name': {'required': True},
             'last_name': {'required': True}
         }
+    
+    def get_name(self, obj):
+        """Return the business name from profile or user's full name"""
+        try:
+            if hasattr(obj, 'restaurantprofile') and obj.restaurantprofile.business_name:
+                return obj.restaurantprofile.business_name
+            return f"{obj.first_name} {obj.last_name}".strip() or obj.email.split('@')[0]
+        except:
+            return obj.email.split('@')[0]
+    
+    def get_customer_type(self, obj):
+        """Return customer type based on private customer flag"""
+        try:
+            if hasattr(obj, 'restaurantprofile') and obj.restaurantprofile.is_private_customer:
+                return 'private'
+            return 'restaurant'
+        except:
+            return 'restaurant'
+    
+    def get_is_private_customer(self, obj):
+        """Return whether this is a private customer"""
+        try:
+            return hasattr(obj, 'restaurantprofile') and obj.restaurantprofile.is_private_customer
+        except:
+            return False
+    
+    def get_total_orders(self, obj):
+        """Return total number of orders for this customer"""
+        try:
+            return obj.orders.count()
+        except:
+            return 0
+    
+    def get_total_order_value(self, obj):
+        """Return total value of all orders for this customer"""
+        try:
+            from django.db.models import Sum
+            total = obj.orders.aggregate(total=Sum('total_amount'))['total']
+            return float(total) if total else 0.0
+        except:
+            return 0.0
+    
+    def get_last_order_date(self, obj):
+        """Return the date of the most recent order"""
+        try:
+            last_order = obj.orders.order_by('-created_at').first()
+            return last_order.created_at.date().isoformat() if last_order else None
+        except:
+            return None
+    
+    def get_profile(self, obj):
+        """Return customer profile data in the format expected by Flutter"""
+        try:
+            if hasattr(obj, 'restaurantprofile'):
+                profile = obj.restaurantprofile
+                return {
+                    'id': profile.id,
+                    'business_name': profile.business_name,
+                    'branch_name': profile.branch_name,
+                    'delivery_address': profile.address,
+                    'delivery_notes': profile.delivery_notes,
+                    'order_pattern': profile.order_pattern,
+                    'payment_terms_days': self._extract_payment_days(profile.payment_terms),
+                }
+            return None
+        except:
+            return None
+    
+    def _extract_payment_days(self, payment_terms):
+        """Extract number of days from payment terms like 'Net 30' or '30 days'"""
+        if not payment_terms:
+            return None
+        try:
+            import re
+            match = re.search(r'(\d+)', payment_terms)
+            return int(match.group(1)) if match else None
+        except:
+            return None
     
     def create(self, validated_data):
         # Extract restaurant profile data

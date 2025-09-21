@@ -8,13 +8,17 @@ class SalesRepSerializer(serializers.ModelSerializer):
 
 class SupplierSerializer(serializers.ModelSerializer):
     sales_reps = SalesRepSerializer(many=True, read_only=True)
+    total_orders = serializers.ReadOnlyField()
+    total_order_value = serializers.ReadOnlyField()
+    last_order_date = serializers.ReadOnlyField()
     
     class Meta:
         model = Supplier
         fields = [
-            'id', 'name', 'contact_person', 'email', 'phone', 'address',
-            'registration_number', 'tax_number', 'is_active', 'payment_terms_days',
-            'lead_time_days', 'minimum_order_value', 'sales_reps'
+            'id', 'name', 'contact_person', 'email', 'phone', 'address', 'description',
+            'supplier_type', 'registration_number', 'tax_number', 'is_active', 
+            'payment_terms_days', 'lead_time_days', 'minimum_order_value', 
+            'sales_reps', 'total_orders', 'total_order_value', 'last_order_date'
         ]
 
 class SupplierProductSerializer(serializers.ModelSerializer):

@@ -192,7 +192,7 @@ class Command(BaseCommand):
                 'email': 'marco.private@gmail.com',
                 'first_name': 'Marco',
                 'last_name': 'Private Customer',
-                'phone': '+27 73 621 2471',  # Same number as Sylvia (family/shared)
+                'phone': '+27 73 621 2472',  # Fixed: Different number from Sylvia
                 'user_type': 'private',
                 'is_active': True,
                 'profile_data': {
@@ -200,7 +200,7 @@ class Command(BaseCommand):
                     'delivery_address': '963 Residential Street, Johannesburg, 2001',
                     'delivery_instructions': 'Private customer - mixed vegetables and fruits',
                     'preferred_delivery_day': 'tuesday',
-                    'whatsapp_number': '+27 73 621 2471',
+                    'whatsapp_number': '+27 73 621 2472',
                     'credit_limit': Decimal('5000.00'),
                     'order_notes': 'Tuesday orders - Personal household supplies, mixed vegetables and fruits'
                 }

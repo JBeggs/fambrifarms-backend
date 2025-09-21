@@ -41,6 +41,7 @@ class ProductListView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
+    pagination_class = None  # Disable pagination for products
     
     def get_queryset(self):
         queryset = Product.objects.select_related('department').all()

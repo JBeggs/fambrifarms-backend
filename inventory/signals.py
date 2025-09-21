@@ -339,3 +339,34 @@ def ensure_finished_inventory_exists(sender, instance, created, **kwargs):
                 'average_cost': instance.price  # Use product price as initial cost
             }
         )
+
+
+@receiver(post_save, sender=FinishedInventory)
+def update_stock_alerts(sender, instance, **kwargs):
+    """
+    Update stock alerts when FinishedInventory changes
+    """
+    from inventory.models import StockAlert
+    
+    # Clear existing alerts for this product
+    StockAlert.objects.filter(
+        product=instance.product,
+        alert_type__in=['low_stock', 'out_of_stock']
+    ).delete()
+    
+    # Create new alert if needed
+    if instance.available_quantity <= 0:
+        StockAlert.objects.create(
+            alert_type='out_of_stock',
+            product=instance.product,
+            message=f'{instance.product.name} is OUT OF STOCK! Available: {instance.available_quantity} {instance.product.unit}',
+            severity='critical'
+        )
+    elif instance.available_quantity <= instance.minimum_level:
+        severity = 'high' if instance.available_quantity <= (instance.minimum_level * Decimal('0.5')) else 'medium'
+        StockAlert.objects.create(
+            alert_type='low_stock',
+            product=instance.product,
+            message=f'{instance.product.name} is running low. Available: {instance.available_quantity} {instance.product.unit}, Minimum: {instance.minimum_level} {instance.product.unit}',
+            severity=severity
+        )

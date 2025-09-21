@@ -24,6 +24,7 @@ urlpatterns = [
     path('api/production/', include('production.urls')),
     path('api/invoices/', include('invoices.urls')),
     path('api/whatsapp/', include('whatsapp.urls')),
+    path('api/settings/', include('settings.urls')),
 ]
 
 if settings.DEBUG:

@@ -10,10 +10,13 @@ urlpatterns = [
     
     # Message processing
     path('receive-messages/', views.receive_messages, name='receive-messages'),
+    path('receive-html/', views.receive_html_messages, name='receive-html-messages'),  # New simplified endpoint
     path('messages/', views.get_messages, name='get-messages'),
     path('messages/edit/', views.edit_message, name='edit-message'),
     path('messages/update-company/', views.update_message_company, name='update-message-company'),
+    path('messages/update-type/', views.update_message_type, name='update-message-type'),
     path('messages/process/', views.process_messages_to_orders, name='process-messages'),
+    path('messages/process-stock/', views.process_stock_messages, name='process-stock-messages'),
     path('messages/<int:message_id>/', views.delete_message, name='delete-message'),
     path('messages/bulk-delete/', views.bulk_delete_messages, name='bulk-delete-messages'),
     

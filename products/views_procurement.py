@@ -333,7 +333,7 @@ def procurement_dashboard_data(request):
         
         # Get critical stock items
         critical_buffers = ProcurementBuffer.objects.select_related('product').filter(
-            product__finishedinventory__available_quantity__lte=0
+            product__inventory__available_quantity__lte=0
         )[:10]
         
         # Get products with recipes

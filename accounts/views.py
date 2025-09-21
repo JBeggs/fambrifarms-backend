@@ -76,8 +76,8 @@ class CustomerViewSet(viewsets.ModelViewSet):
     permission_classes = [AllowAny]  # Allow access for order processing
     
     def get_queryset(self):
-        """Return only restaurant users"""
-        return User.objects.filter(user_type='restaurant').select_related('restaurantprofile')
+        """Return restaurant and private customer users"""
+        return User.objects.filter(user_type__in=['restaurant', 'private']).select_related('restaurantprofile')
     
     @transaction.atomic
     def create(self, request, *args, **kwargs):

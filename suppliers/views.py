@@ -13,8 +13,13 @@ class SupplierViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Supplier.objects.all()
         is_active = self.request.query_params.get('is_active')  # None means no filter
+        supplier_type = self.request.query_params.get('supplier_type')  # None means no filter
+        
         if is_active is not None:
             queryset = queryset.filter(is_active=is_active.lower() == 'true')
+        if supplier_type is not None:
+            queryset = queryset.filter(supplier_type=supplier_type.lower())
+            
         return queryset
     
     @action(detail=True, methods=['get'])

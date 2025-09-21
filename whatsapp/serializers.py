@@ -158,6 +158,22 @@ class EditMessageSerializer(serializers.Serializer):
         return value
 
 
+class UpdateMessageTypeSerializer(serializers.Serializer):
+    """Serializer for updating message type"""
+    
+    message_id = serializers.IntegerField(help_text="Database ID of message to update")
+    message_type = serializers.ChoiceField(
+        choices=['order', 'stock', 'instruction', 'demarcation', 'other'],
+        help_text="New message type"
+    )
+    
+    def validate_message_id(self, value):
+        """Validate that message exists"""
+        if not WhatsAppMessage.objects.filter(id=value).exists():
+            raise serializers.ValidationError("Message not found")
+        return value
+
+
 class StockValidationSerializer(serializers.Serializer):
     """Serializer for stock validation results"""
     

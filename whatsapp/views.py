@@ -7,21 +7,25 @@ from django.shortcuts import get_object_or_404
 from django.db import transaction, models
 from django.utils import timezone
 from django.conf import settings
+from django.http import JsonResponse
 from datetime import datetime, timedelta
 import traceback
 import logging
+import hashlib
+from bs4 import BeautifulSoup
+import re
 
 logger = logging.getLogger(__name__)
 
 from .models import WhatsAppMessage, StockUpdate, OrderDayDemarcation, MessageProcessingLog
 from .serializers import (
     WhatsAppMessageSerializer, StockUpdateSerializer, MessageBatchSerializer,
-    ProcessMessagesSerializer, EditMessageSerializer, OrderCreationResultSerializer,
-    StockValidationSerializer
+    ProcessMessagesSerializer, EditMessageSerializer, UpdateMessageTypeSerializer, 
+    OrderCreationResultSerializer, StockValidationSerializer
 )
 from .services import (
     classify_message_type, create_order_from_message, process_stock_updates,
-    validate_order_against_stock, log_processing_action, has_order_items
+    validate_order_against_stock, log_processing_action, has_order_items, parse_stock_message
 )
 from accounts.models import RestaurantProfile
 
@@ -41,9 +45,9 @@ def health_check(request):
 @authentication_classes([FlexibleAuthentication])
 @permission_classes([IsAuthenticated])
 def get_companies(request):
-    """Get list of valid companies from RestaurantProfile"""
+    """Get list of valid companies from RestaurantProfile and WhatsApp messages"""
     try:
-        # Get all restaurant profiles, ordered by business name
+        # First, get companies from RestaurantProfile (seeded data)
         profiles = RestaurantProfile.objects.select_related('user').order_by('business_name')
         
         companies = []
@@ -60,6 +64,47 @@ def get_companies(request):
                 'payment_terms': profile.payment_terms,
             }
             companies.append(company_data)
+        
+        # If no restaurant profiles exist, fall back to WhatsApp extraction system
+        if not companies:
+            from .processors.company_extractor import get_company_extractor
+            
+            company_extractor = get_company_extractor()
+            company_aliases = company_extractor.company_aliases
+            
+            # Get unique companies from WhatsApp messages
+            unique_companies = set()
+            
+            # Add companies from CompanyExtractor aliases (canonical names)
+            for canonical_name in company_aliases.values():
+                unique_companies.add(canonical_name)
+            
+            # Also get companies that have been extracted from actual messages
+            actual_companies = WhatsAppMessage.objects.filter(
+                manual_company__isnull=False,
+                is_deleted=False
+            ).exclude(manual_company='').values_list('manual_company', flat=True).distinct()
+            
+            for company in actual_companies:
+                unique_companies.add(company)
+            
+            # Convert to list and sort
+            companies_list = sorted(list(unique_companies))
+            
+            # Format for Flutter dropdown
+            for i, company_name in enumerate(companies_list):
+                company_data = {
+                    'id': i + 1,  # Simple ID for dropdown
+                    'name': company_name,
+                    'branch_name': '',
+                    'display_name': company_name,
+                    'email': '',
+                    'phone': '',
+                    'address': '',
+                    'city': '',
+                    'payment_terms': 'Net 30',  # Default
+                }
+                companies.append(company_data)
         
         return Response({
             'status': 'success',
@@ -284,6 +329,280 @@ def receive_messages(request):
     })
 
 
+@api_view(['POST'])
+@permission_classes([AllowAny])  # Allow Python crawler without authentication
+def receive_html_messages(request):
+    """
+    Receive raw HTML messages from simplified Python WhatsApp crawler
+    
+    Expected format:
+    {
+        "messages": [
+            {
+                "id": "message_id",
+                "chat": "ORDERS Restaurants", 
+                "html": "<div>Raw HTML content</div>",
+                "timestamp": "2025-01-01T12:00:00Z",
+                "message_data": {
+                    "was_expanded": true,
+                    "expansion_failed": false,
+                    "original_preview": "truncated text..."
+                }
+            }
+        ]
+    }
+    """
+    try:
+        data = request.data
+        html_messages = data.get('messages', [])
+        
+        if not html_messages:
+            return Response({
+                'status': 'error',
+                'message': 'No messages provided'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        processed_messages = []
+        expansion_stats = {
+            'total': len(html_messages),
+            'expanded': 0,
+            'expansion_failed': 0,
+            'no_expansion_needed': 0,
+            'parsing_errors': 0
+        }
+        
+        print(f"[DJANGO][HTML] Processing {len(html_messages)} HTML messages")
+        
+        for html_msg in html_messages:
+            try:
+                message_id = html_msg.get('id')
+                chat_name = html_msg.get('chat', 'ORDERS Restaurants')
+                raw_html = html_msg.get('html', '')
+                timestamp_str = html_msg.get('timestamp')
+                message_data = html_msg.get('message_data', {})
+                
+                if not message_id or not raw_html:
+                    print(f"[DJANGO][HTML][SKIP] Missing ID or HTML: id={message_id}")
+                    continue
+                
+                # Parse timestamp
+                try:
+                    if timestamp_str:
+                        timestamp = datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
+                    else:
+                        timestamp = timezone.now()
+                except Exception as e:
+                    print(f"[DJANGO][HTML][TIMESTAMP] Error parsing timestamp: {e}")
+                    timestamp = timezone.now()
+                
+                # Parse HTML content using BeautifulSoup
+                parsed_content = parse_html_message(raw_html)
+                
+                # Track expansion statistics
+                if message_data.get('was_expanded'):
+                    expansion_stats['expanded'] += 1
+                elif message_data.get('expansion_failed'):
+                    expansion_stats['expansion_failed'] += 1
+                else:
+                    expansion_stats['no_expansion_needed'] += 1
+                
+                # Use enhanced classification if available, otherwise fallback to basic
+                if parsed_content.get('classified_type'):
+                    message_type = parsed_content['classified_type']
+                else:
+                    message_type = classify_message_type({
+                        'content': parsed_content['content'],
+                        'media_type': 'image' if parsed_content['image_urls'] else ('voice' if parsed_content['has_voice'] else 'text')
+                    })
+                
+                # Check if message already exists (by ID or content hash for deduplication)
+                content_hash = hashlib.md5(parsed_content['content'].encode('utf-8')).hexdigest()
+                
+                existing_message = WhatsAppMessage.objects.filter(
+                    models.Q(message_id=message_id) | 
+                    models.Q(content_hash=content_hash)
+                ).first()
+                
+                if existing_message:
+                    # Update existing message with new HTML data
+                    existing_message.content = parsed_content['content']
+                    existing_message.content_hash = content_hash
+                    existing_message.message_type = message_type
+                    existing_message.media_url = ', '.join(parsed_content['image_urls']) if parsed_content['image_urls'] else ''
+                    existing_message.media_type = 'image' if parsed_content['image_urls'] else ('voice' if parsed_content['has_voice'] else '')
+                    existing_message.raw_html = raw_html
+                    existing_message.was_expanded = message_data.get('was_expanded', False)
+                    existing_message.expansion_failed = message_data.get('expansion_failed', False)
+                    existing_message.original_preview = message_data.get('original_preview', '')
+                    existing_message.save()
+                    
+                    message = existing_message
+                    print(f"[DJANGO][HTML][UPDATED] id={message_id} type={message_type} hash={content_hash[:8]}")
+                else:
+                    # Create new message with enhanced data
+                    message = WhatsAppMessage.objects.create(
+                        message_id=message_id,
+                        chat_name=chat_name,
+                        sender_name="Group Member",  # Will be extracted later if needed
+                        content=parsed_content['content'],
+                        cleaned_content=parsed_content['content'],
+                        content_hash=content_hash,
+                        timestamp=timestamp,
+                        message_type=message_type,
+                        media_url=', '.join(parsed_content['image_urls']) if parsed_content['image_urls'] else '',
+                        media_type='image' if parsed_content['image_urls'] else ('voice' if parsed_content['has_voice'] else ''),
+                        media_info='',
+                        raw_html=raw_html,
+                        was_expanded=message_data.get('was_expanded', False),
+                        expansion_failed=message_data.get('expansion_failed', False),
+                        original_preview=message_data.get('original_preview', ''),
+                        # ENHANCED: Use preserved business logic results
+                        confidence_score=parsed_content.get('classification_confidence', 0.9),
+                        manual_company=parsed_content.get('extracted_company', ''),
+                    )
+                    print(f"[DJANGO][HTML][CREATED] id={message_id} type={message_type} hash={content_hash[:8]}")
+                
+                # Flag messages that failed expansion for manual review
+                if message_data.get('expansion_failed'):
+                    message.needs_manual_review = True
+                    message.review_reason = 'Truncated message expansion failed'
+                    message.save()
+                
+                # Extract company for order messages
+                if message.message_type == 'order' and not message.manual_company:
+                    company = message.extract_company_name()
+                    if company:
+                        print(f"[DJANGO][HTML][COMPANY] id={message_id} company='{company}'")
+                
+                processed_messages.append(message)
+                
+            except Exception as e:
+                expansion_stats['parsing_errors'] += 1
+                print(f"[DJANGO][HTML][ERROR] Failed to process message {html_msg.get('id', 'unknown')}: {e}")
+                continue
+        
+        print(f"[DJANGO][HTML] Processed {len(processed_messages)} messages successfully")
+        print(f"[DJANGO][HTML] Expansion stats: {expansion_stats}")
+        
+        return Response({
+            'status': 'success',
+            'processed_count': len(processed_messages),
+            'expansion_stats': expansion_stats,
+            'message_ids': [msg.message_id for msg in processed_messages]
+        })
+        
+    except Exception as e:
+        print(f"[DJANGO][HTML][CRITICAL] Error processing HTML messages: {e}")
+        import traceback
+        print(f"[DJANGO][HTML][TRACEBACK] {traceback.format_exc()}")
+        return Response({
+            'status': 'error',
+            'message': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def parse_html_message(html):
+    """
+    Enhanced HTML parsing with preserved business logic
+    Combines fast HTML extraction with intelligent content analysis
+    """
+    try:
+        soup = BeautifulSoup(html, 'html.parser')
+        
+        # FIXED: Extract text content avoiding duplicate copyable-text elements
+        # Use the same logic as the fixed frontend crawler
+        content_lines = []
+        
+        # First try to find primary copyable-text containers (avoid nested duplicates)
+        primary_copyable = soup.select('._ahy1.copyable-text, ._ahy2.copyable-text')
+        
+        if primary_copyable:
+            # Use only the first primary container to avoid duplicates
+            elem = primary_copyable[0]
+            
+            # FIXED: Get text directly from primary element to avoid nested duplication
+            # The nested selectable-text spans often contain duplicate content
+            text = elem.get_text().strip()
+            # Remove timestamps from end of text (e.g., "Pecanwood09:40" -> "Pecanwood")
+            text = re.sub(r'\d{1,2}:\d{2}$', '', text).strip()
+            if text and not re.match(r'^\d{1,2}:\d{2}$', text):
+                content_lines.append(text)
+        else:
+            # Fallback: use any .copyable-text element (but only the first one)
+            copyable_elements = soup.select('.copyable-text')
+            if copyable_elements:
+                elem = copyable_elements[0]  # Only use the first one to avoid duplicates
+                text = elem.get_text().strip()
+                # FIXED: Remove timestamps from end of text
+                text = re.sub(r'\d{1,2}:\d{2}$', '', text).strip()
+                if text and not re.match(r'^\d{1,2}:\d{2}$', text):
+                    content_lines.append(text)
+        
+        content = '\n'.join(content_lines) if content_lines else ''
+        
+        # Extract image URLs
+        image_elements = soup.select('[aria-label="Open picture"] img[src], img[src^="http"]')
+        image_urls = []
+        for img in image_elements:
+            src = img.get('src', '')
+            if src and src.startswith('http'):
+                image_urls.append(src)
+        
+        # Check for voice messages
+        voice_elements = soup.select('button[aria-label*="voice" i], [aria-label*="Voice message" i]')
+        has_voice = len(voice_elements) > 0
+        
+        # ENHANCED: Apply preserved business logic for immediate insights
+        enhanced_data = {}
+        if content:
+            try:
+                # Import preserved processors
+                from .processors.company_extractor import get_company_extractor
+                from .processors.order_item_parser import get_order_item_parser
+                from .processors.message_classifier import get_message_classifier
+                
+                # Quick classification (lightweight)
+                classifier = get_message_classifier()
+                message_type, confidence = classifier.classify_message(content)
+                enhanced_data['classified_type'] = message_type.value
+                enhanced_data['classification_confidence'] = confidence
+                
+                # Quick company extraction (if high confidence classification)
+                if confidence > 0.7:
+                    company_extractor = get_company_extractor()
+                    extracted_company = company_extractor.extract_company(content)
+                    if extracted_company:
+                        enhanced_data['extracted_company'] = extracted_company
+                
+                # Quick item detection (for order messages)
+                if message_type.value == 'order':
+                    item_parser = get_order_item_parser()
+                    has_items = any(item_parser._has_quantity_indicators(line) for line in content_lines)
+                    enhanced_data['has_order_items'] = has_items
+                
+            except Exception as e:
+                print(f"[DJANGO][HTML][ENHANCE] Error in enhanced processing: {e}")
+                # Continue with basic parsing if enhancement fails
+        
+        return {
+            'content': content,
+            'image_urls': image_urls,
+            'has_voice': has_voice,
+            'parsed_elements': len(content_lines),
+            # ENHANCED: Include preserved business logic results
+            **enhanced_data
+        }
+        
+    except Exception as e:
+        print(f"[DJANGO][HTML][PARSE] Error parsing HTML: {e}")
+        return {
+            'content': '',
+            'image_urls': [],
+            'has_voice': False,
+            'parsing_error': str(e)
+        }
+
+
 @api_view(['GET'])
 @authentication_classes([FlexibleAuthentication])
 @permission_classes([IsAuthenticated])
@@ -352,16 +671,19 @@ def edit_message(request):
         if not message.edited:
             message.original_content = message.content
         
-        # Clean the edited content by removing company names to avoid confusion
-        from .message_parser import django_message_parser
-        cleaned_content = django_message_parser.clean_message_content(edited_content)
-        
-        message.content = cleaned_content
+        # CRITICAL FIX: Do NOT clean company names from edited content
+        # Karl should be able to keep company names in messages if needed
+        # The manual_company field preserves the assignment regardless of content
+        message.content = edited_content
         message.edited = True
         
         # Update processed status if provided
         if processed is not None:
             message.processed = processed
+        
+        # CRITICAL: Preserve manual_company assignment - it should NEVER be cleared by editing
+        # Only Karl can change the customer assignment through the dropdown, not by editing content
+        # This ensures customer assignments are stable and don't get lost accidentally
         
         message.save()
         
@@ -438,6 +760,67 @@ def update_message_company(request):
             {
                 'error': 'Unable to update company assignment',
                 'message': 'An error occurred while updating the company assignment. Please try again.',
+                'details': str(e) if settings.DEBUG else None
+            }, 
+            status=status.HTTP_500_INTERNAL_SERVER_ERROR
+        )
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def update_message_type(request):
+    """Update message type (order, stock, instruction, etc.)"""
+    
+    serializer = UpdateMessageTypeSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    message_id = serializer.validated_data['message_id']
+    new_message_type = serializer.validated_data['message_type']
+    
+    try:
+        message = WhatsAppMessage.objects.get(id=message_id)
+        old_message_type = message.message_type
+        
+        # Update message type
+        message.message_type = new_message_type
+        
+        # If changing to stock type, clear any manual company assignment
+        # since stock messages shouldn't have customer assignments
+        if new_message_type == 'stock':
+            message.manual_company = ''
+        
+        # Reset processed status when changing type so it can be reprocessed
+        message.processed = False
+        
+        message.save()
+        
+        # Log the type change
+        log_processing_action(message, 'type_updated', {
+            'old_type': old_message_type,
+            'new_type': new_message_type
+        })
+        
+        serializer = WhatsAppMessageSerializer(message)
+        return Response({
+            'status': 'success',
+            'message': f'Message type updated from {old_message_type} to {new_message_type}',
+            'data': serializer.data
+        })
+        
+    except WhatsAppMessage.DoesNotExist:
+        return Response(
+            {
+                'error': 'Message not found',
+                'message': f'WhatsApp message with ID {message_id} could not be found.'
+            }, 
+            status=status.HTTP_404_NOT_FOUND
+        )
+    except Exception as e:
+        logger.error(f"Failed to update message type: {str(e)}")
+        return Response(
+            {
+                'error': 'Unable to update message type',
+                'message': 'An error occurred while updating the message type. Please try again.',
                 'details': str(e) if settings.DEBUG else None
             }, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
@@ -524,6 +907,94 @@ def process_messages_to_orders(request):
             'errors': errors,
             'warnings': warnings
         })
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def process_stock_messages(request):
+    """Process selected stock messages to update inventory levels"""
+    
+    serializer = ProcessMessagesSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    message_ids = serializer.validated_data['message_ids']
+    
+    stock_updates_created = 0
+    errors = []
+    warnings = []
+    
+    with transaction.atomic():
+        messages = WhatsAppMessage.objects.filter(
+            message_id__in=message_ids,
+            message_type='stock'
+        )
+        
+        for message in messages:
+            try:
+                # Skip if already processed
+                if message.processed:
+                    warnings.append({
+                        'message_id': message.message_id,
+                        'warning': 'Stock message already processed'
+                    })
+                    continue
+                
+                # Process stock update
+                if message.is_stock_controller():
+                    stock_data = parse_stock_message(message)
+                    if stock_data:
+                        stock_update, created = StockUpdate.objects.get_or_create(
+                            message=message,
+                            defaults={
+                                'stock_date': stock_data['date'],
+                                'order_day': stock_data['order_day'],
+                                'items': stock_data['items']
+                            }
+                        )
+                        
+                        if created:
+                            stock_updates_created += 1
+                            message.processed = True
+                            message.save()
+                            
+                            log_processing_action(message, 'stock_updated', {
+                                'items_count': len(stock_data['items']),
+                                'order_day': stock_data['order_day']
+                            })
+                        else:
+                            warnings.append({
+                                'message_id': message.message_id,
+                                'warning': 'Stock update already exists for this message'
+                            })
+                    else:
+                        errors.append({
+                            'message_id': message.message_id,
+                            'error': 'Failed to parse stock data from message'
+                        })
+                else:
+                    errors.append({
+                        'message_id': message.message_id,
+                        'error': 'Message is not from stock controller (SHALLOME)'
+                    })
+                    
+            except Exception as e:
+                errors.append({
+                    'message_id': message.message_id,
+                    'error': str(e),
+                    'traceback': traceback.format_exc()
+                })
+                
+                log_processing_action(message, 'error', {
+                    'error': str(e),
+                    'action': 'stock_processing'
+                })
+    
+    return Response({
+        'status': 'completed',
+        'stock_updates_created': stock_updates_created,
+        'errors': errors,
+        'warnings': warnings
+    })
 
 @api_view(['GET'])
 @permission_classes([AllowAny])

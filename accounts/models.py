@@ -59,6 +59,7 @@ class RestaurantProfile(models.Model):
     city = models.CharField(max_length=100)
     postal_code = models.CharField(max_length=20)
     payment_terms = models.CharField(max_length=50, default='Net 30', blank=True)
+    is_private_customer = models.BooleanField(default=False, help_text="Check if this is a private customer (individual) rather than a business")
     # WhatsApp integration fields
     delivery_notes = models.TextField(blank=True, help_text="Special delivery requirements and notes from WhatsApp orders")
     order_pattern = models.CharField(max_length=200, blank=True, help_text="Typical order pattern (e.g., 'Tuesday orders - Italian restaurant supplies')")

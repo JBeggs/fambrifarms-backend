@@ -531,21 +531,51 @@ def inventory_dashboard(request):
 @permission_classes([IsAuthenticated])
 def stock_levels(request):
     """Get current stock levels for all products"""
-    inventory = FinishedInventory.objects.select_related(
-        'product__department'
-    ).all()
+    from products.models import Product
+    
+    # Get all products with their inventory data (if it exists)
+    products = Product.objects.select_related('department').all()
     
     stock_data = []
-    for inv in inventory:
+    for product in products:
+        # Get the FinishedInventory record if it exists
+        try:
+            inventory = getattr(product, 'inventory', None)
+            if inventory:
+                available_quantity = inventory.available_quantity
+                reserved_quantity = inventory.reserved_quantity
+                minimum_level = inventory.minimum_level
+                reorder_level = inventory.reorder_level
+                needs_production = inventory.needs_production
+                average_cost = inventory.average_cost
+            else:
+                # Use product stock_level if no FinishedInventory record exists
+                available_quantity = product.stock_level or 0
+                reserved_quantity = 0
+                minimum_level = 5
+                reorder_level = 10
+                needs_production = False
+                average_cost = product.price
+        except Exception:
+            # Fallback to product stock_level
+            available_quantity = product.stock_level or 0
+            reserved_quantity = 0
+            minimum_level = 5
+            reorder_level = 10
+            needs_production = False
+            average_cost = product.price
+        
         stock_data.append({
-            'product_id': inv.product.id,
-            'product_name': inv.product.name,
-            'department': inv.product.department.name,
-            'available_quantity': inv.available_quantity,
-            'reserved_quantity': inv.reserved_quantity,
-            'reorder_level': inv.reorder_level,
-            'needs_production': inv.needs_production,
-            'average_cost': inv.average_cost
+            'product_id': product.id,
+            'product_name': product.name,
+            'department': product.department.name,
+            'unit': getattr(product, 'unit_of_measure', 'units'),
+            'available_quantity': available_quantity,
+            'reserved_quantity': reserved_quantity,
+            'minimum_level': minimum_level,
+            'reorder_level': reorder_level,
+            'needs_production': needs_production,
+            'average_cost': average_cost
         })
     
     serializer = StockLevelSerializer(stock_data, many=True)
@@ -599,6 +629,10 @@ def reserve_stock(request):
 @permission_classes([IsAuthenticated])
 def stock_adjustment(request):
     """Manual stock adjustment"""
+    import logging
+    logger = logging.getLogger('inventory')
+    
+    logger.info(f"Stock adjustment request received: {request.data}")
     serializer = StockAdjustmentSerializer(data=request.data)
     
     if serializer.is_valid():
@@ -608,18 +642,45 @@ def stock_adjustment(request):
         reason = data['reason']
         notes = data.get('notes') or ''
         
+        logger.debug(f"Validated data: movement_type={movement_type}, quantity={quantity}, reason={reason}")
+        
         try:
             if movement_type in ['finished_adjust', 'finished_waste']:
                 # Finished inventory adjustment
                 product = Product.objects.get(id=data['product_id'])
-                inventory = FinishedInventory.objects.get(product=product)
                 
+                # Get or create FinishedInventory record
+                inventory, created = FinishedInventory.objects.get_or_create(
+                    product=product,
+                    defaults={
+                        'available_quantity': product.stock_level or 0,
+                        'reserved_quantity': 0,
+                        'minimum_level': 10,  # Default minimum level
+                        'reorder_level': 20,  # Default reorder level
+                        'average_cost': product.price or 0,
+                    }
+                )
+                
+                if created:
+                    logger.info(f"Created new FinishedInventory record for product {product.name} (ID: {product.id})")
+                
+                logger.info(f"Adjusting stock for product {product.name} (ID: {product.id})")
+                logger.debug(f"Before adjustment - Product stock: {product.stock_level}, Inventory available: {inventory.available_quantity}")
+                
+                # Update FinishedInventory first, then sync Product
                 if movement_type == 'finished_adjust':
                     inventory.available_quantity += quantity
                 else:  # waste
                     inventory.available_quantity -= quantity
                 
+                # Sync Product stock_level to match FinishedInventory
+                product.stock_level = inventory.available_quantity
+                
+                # Save both models
                 inventory.save()
+                product.save()
+                
+                logger.info(f"Stock adjustment completed. New levels - Product: {product.stock_level}, Inventory: {inventory.available_quantity}")
                 
                 # Create movement record
                 StockMovement.objects.create(
@@ -680,7 +741,7 @@ def stock_adjustment(request):
                 {
                     'error': 'Unable to adjust inventory',
                     'message': 'An error occurred while adjusting inventory levels. Please verify your input and try again.',
-                    'details': str(e) if settings.DEBUG else None
+                    'details': str(e)
                 },
                 status=status.HTTP_400_BAD_REQUEST
             )
