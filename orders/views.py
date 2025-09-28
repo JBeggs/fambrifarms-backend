@@ -15,10 +15,9 @@ User = get_user_model()
 
 class OrderListView(generics.ListAPIView):
     serializer_class = OrderSerializer
-    permission_classes = [AllowAny]  # Temporarily allow access for development
+    permission_classes = [AllowAny]
     
     def get_queryset(self):
-        # For development - return all orders since we don't have auth
         return Order.objects.select_related(
             'restaurant', 
             'restaurant__restaurantprofile'
@@ -28,10 +27,9 @@ class OrderListView(generics.ListAPIView):
 
 class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     serializer_class = OrderSerializer
-    permission_classes = [AllowAny]  # Temporarily allow access for development
+    permission_classes = [AllowAny]
     
     def get_queryset(self):
-        # For development - return all orders since we don't have auth
         return Order.objects.select_related(
             'restaurant', 
             'restaurant__restaurantprofile'
@@ -42,7 +40,7 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
 class CustomerOrdersView(generics.ListAPIView):
     """Get orders for a specific customer"""
     serializer_class = OrderSerializer
-    permission_classes = [AllowAny]  # Temporarily allow access for development
+    permission_classes = [AllowAny]
     
     def get_queryset(self):
         customer_id = self.kwargs.get('customer_id')
@@ -175,7 +173,7 @@ def update_order_status(request, order_id):
     return Response(serializer.data)
 
 @api_view(['POST'])
-@permission_classes([AllowAny])  # Light security for now
+@permission_classes([AllowAny])
 def create_order_from_whatsapp(request):
     """
     Endpoint for social-hub to create orders from WhatsApp messages
@@ -451,4 +449,137 @@ def find_product_by_name(product_name):
             if product:
                 return product
     
-    return None 
+    return None
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def add_order_item(request, order_id):
+    """Add a new item to an existing order"""
+    try:
+        order = get_object_or_404(Order, id=order_id)
+        
+        product_name = request.data.get('product_name', '').strip()
+        quantity = request.data.get('quantity')
+        unit = request.data.get('unit', 'piece').strip()
+        price = request.data.get('price')
+        
+        # Validate required fields
+        if not product_name:
+            return Response({'error': 'product_name is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if quantity is None:
+            return Response({'error': 'quantity is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if price is None:
+            return Response({'error': 'price is required'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            from decimal import Decimal
+            quantity = Decimal(str(quantity))
+            price = Decimal(str(price))
+        except (ValueError, TypeError):
+            return Response({'error': 'quantity and price must be valid numbers'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if quantity <= 0:
+            return Response({'error': 'quantity must be greater than 0'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if price < 0:
+            return Response({'error': 'price cannot be negative'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Try to find existing product or create new one
+        product = Product.objects.filter(name__iexact=product_name).first()
+        
+        if not product:
+            # Create new product
+            product = Product.objects.create(
+                name=product_name,
+                price=price,
+                unit=unit,
+                is_active=True
+            )
+        
+        # Create order item
+        order_item = OrderItem.objects.create(
+            order=order,
+            product=product,
+            quantity=quantity,
+            unit=unit,
+            price=price,
+            manually_corrected=True,
+            original_text=f"Manual: {quantity} {unit} {product_name}"
+        )
+        
+        # Recalculate order totals
+        order.subtotal = sum(item.total_price for item in order.items.all())
+        order.total_amount = order.subtotal
+        order.save()
+        
+        # Return the created item
+        from .serializers import OrderItemSerializer
+        return Response(OrderItemSerializer(order_item).data, status=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        return Response({'error': f'Failed to add item: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['PUT', 'PATCH', 'DELETE'])
+@permission_classes([AllowAny])
+def order_item_detail(request, order_id, item_id):
+    """Handle order item update and delete operations"""
+    try:
+        order = get_object_or_404(Order, id=order_id)
+        order_item = get_object_or_404(OrderItem, id=item_id, order=order)
+        
+        if request.method == 'DELETE':
+            # Delete the item
+            order_item.delete()
+            
+            # Recalculate order totals
+            order.subtotal = sum(item.total_price for item in order.items.all())
+            order.total_amount = order.subtotal
+            order.save()
+            
+            return Response({'message': 'Order item deleted successfully'}, status=status.HTTP_200_OK)
+        
+        elif request.method in ['PUT', 'PATCH']:
+            # Update fields if provided
+            if 'quantity' in request.data:
+                try:
+                    from decimal import Decimal
+                    quantity = Decimal(str(request.data['quantity']))
+                    if quantity <= 0:
+                        return Response({'error': 'quantity must be greater than 0'}, status=status.HTTP_400_BAD_REQUEST)
+                    order_item.quantity = quantity
+                except (ValueError, TypeError):
+                    return Response({'error': 'quantity must be a valid number'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if 'price' in request.data:
+                try:
+                    from decimal import Decimal
+                    price = Decimal(str(request.data['price']))
+                    if price < 0:
+                        return Response({'error': 'price cannot be negative'}, status=status.HTTP_400_BAD_REQUEST)
+                    order_item.price = price
+                except (ValueError, TypeError):
+                    return Response({'error': 'price must be a valid number'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            if 'unit' in request.data:
+                order_item.unit = request.data['unit'].strip()
+            
+            if 'notes' in request.data:
+                order_item.notes = request.data['notes']
+            
+            # Mark as manually corrected
+            order_item.manually_corrected = True
+            order_item.save()
+            
+            # Recalculate order totals
+            order.subtotal = sum(item.total_price for item in order.items.all())
+            order.total_amount = order.subtotal
+            order.save()
+            
+            # Return updated item
+            from .serializers import OrderItemSerializer
+            return Response(OrderItemSerializer(order_item).data)
+        
+    except Exception as e:
+        return Response({'error': f'Failed to process item: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

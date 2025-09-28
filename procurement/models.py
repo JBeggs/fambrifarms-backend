@@ -60,11 +60,37 @@ class PurchaseOrder(models.Model):
         supplier_name = self.supplier.name if self.supplier else 'No Supplier'
         return f"{self.po_number} ({supplier_name})"
     
+    @classmethod
+    def create_from_order(cls, order, supplier=None, inherit_dates=True):
+        """
+        Create a purchase order from an existing order with optional date inheritance
+        
+        Args:
+            order: Order instance to create PO from
+            supplier: Supplier instance (optional)
+            inherit_dates: Whether to inherit dates from the order for backdating
+        """
+        po = cls(
+            order=order,
+            supplier=supplier,
+            notes=f"Generated from order {order.order_number}"
+        )
+        
+        if inherit_dates:
+            po._inherit_order_dates = True
+            po.order_date = order.order_date
+            po.expected_delivery_date = order.delivery_date
+        
+        po.save()
+        return po
+    
     def save(self, *args, **kwargs):
         if not self.po_number:
-            # Generate PO number
+            # Generate PO number - use order date if available for historical accuracy
+            po_year = self.order.order_date.year if self.order else timezone.now().year
+            
             last_po = PurchaseOrder.objects.filter(
-                po_number__startswith=f"PO{timezone.now().year}"
+                po_number__startswith=f"PO{po_year}"
             ).order_by('-po_number').first()
             
             if last_po:
@@ -73,7 +99,18 @@ class PurchaseOrder(models.Model):
             else:
                 new_num = 1
                 
-            self.po_number = f"PO{timezone.now().year}-{new_num:04d}"
+            self.po_number = f"PO{po_year}-{new_num:04d}"
+        
+        # Inherit dates from related order for historical accuracy
+        if self.order and hasattr(self, '_inherit_order_dates'):
+            # Use order date as PO date for backdating
+            if not hasattr(self, '_order_date_set'):
+                self.order_date = self.order.order_date
+                self._order_date_set = True
+            
+            # Set expected delivery date based on order delivery date
+            if not self.expected_delivery_date:
+                self.expected_delivery_date = self.order.delivery_date
         
         super().save(*args, **kwargs)
 

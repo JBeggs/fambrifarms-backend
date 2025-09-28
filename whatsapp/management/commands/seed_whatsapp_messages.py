@@ -9,6 +9,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.utils import timezone
 from whatsapp.models import WhatsAppMessage
 from whatsapp.services import classify_message_type
+from whatsapp.views import clean_timestamp_from_text
 
 
 class Command(BaseCommand):
@@ -109,7 +110,14 @@ class Command(BaseCommand):
                         if timestamp_str:
                             try:
                                 # Try different timestamp formats
-                                for fmt in ['%Y-%m-%d %H:%M:%S', '%Y-%m-%dT%H:%M:%S', '%Y-%m-%d %H:%M']:
+                                formats = [
+                                    '%Y-%m-%d %H:%M:%S',     # Standard format
+                                    '%Y-%m-%dT%H:%M:%S',     # ISO format
+                                    '%Y-%m-%d %H:%M',        # Without seconds
+                                    '%H:%M, %d/%m/%Y',       # WhatsApp format: "12:46, 27/08/2025"
+                                ]
+                                
+                                for fmt in formats:
                                     try:
                                         timestamp = datetime.strptime(timestamp_str, fmt)
                                         timestamp = timezone.make_aware(timestamp)
@@ -124,10 +132,14 @@ class Command(BaseCommand):
                         else:
                             timestamp = timezone.now()
 
+                        # Clean content from timestamps before processing
+                        raw_content = msg_data.get('text', msg_data.get('content', ''))
+                        cleaned_content = clean_timestamp_from_text(raw_content)
+                        
                         # Classify message type - map JSON fields to expected format
                         classification_data = {
                             'id': msg_data['id'],
-                            'content': msg_data.get('text', msg_data.get('content', '')),
+                            'content': cleaned_content,
                             'sender': msg_data.get('sender', 'Unknown')
                         }
                         message_type = classify_message_type(classification_data)
@@ -145,8 +157,8 @@ class Command(BaseCommand):
                             chat_name=msg_data.get('chat_name', 'ORDERS Restaurants'),
                             sender_name=msg_data.get('sender', 'Unknown'),
                             sender_phone=msg_data.get('sender_phone', ''),
-                            content=msg_data.get('text', msg_data.get('content', '')),
-                            cleaned_content=msg_data.get('cleanedContent', ''),
+                            content=cleaned_content,  # Use cleaned content without timestamps
+                            cleaned_content=cleaned_content,  # Also set cleaned_content field
                             timestamp=timestamp,
                             message_type=message_type,
                             media_url=msg_data.get('media_url', ''),

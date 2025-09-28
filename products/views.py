@@ -3,10 +3,13 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
+from django.contrib.auth import get_user_model
 from .models import Product, Department, ProductAlert, Recipe
 from .models_business_settings import BusinessSettings
 from .serializers import ProductSerializer, DepartmentSerializer
 from .serializers_business_settings import AppConfigSerializer
+
+User = get_user_model()
 
 @api_view(['GET'])
 def api_overview(request):
@@ -41,7 +44,7 @@ class ProductListView(generics.ListCreateAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
-    pagination_class = None  # Disable pagination for products
+    pagination_class = None
     
     def get_queryset(self):
         queryset = Product.objects.select_related('department').all()
@@ -63,6 +66,38 @@ class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
     permission_classes = [AllowAny]
+    
+    def update(self, request, *args, **kwargs):
+        """Enhanced update with better error handling"""
+        try:
+            partial = kwargs.pop('partial', False)
+            instance = self.get_object()
+            serializer = self.get_serializer(instance, data=request.data, partial=partial)
+            
+            if not serializer.is_valid():
+                # Log validation errors for debugging
+                print(f"[PRODUCT_UPDATE] Validation errors: {serializer.errors}")
+                print(f"[PRODUCT_UPDATE] Request data: {request.data}")
+                return Response({
+                    'error': 'Validation failed',
+                    'details': serializer.errors
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            self.perform_update(serializer)
+            
+            if getattr(instance, '_prefetched_objects_cache', None):
+                instance._prefetched_objects_cache = {}
+                
+            return Response(serializer.data)
+            
+        except Exception as e:
+            print(f"[PRODUCT_UPDATE] Unexpected error: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return Response({
+                'error': 'Internal server error',
+                'details': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 class DepartmentListView(generics.ListCreateAPIView):
     """List all departments or create a new department"""
@@ -101,3 +136,45 @@ def resolve_alert(request, alert_id):
     alert.save()
     
     return Response({'message': 'Alert resolved successfully'})
+
+@api_view(['GET'])
+def get_customer_price(request, product_id):
+    """Get customer-specific price for a product"""
+    try:
+        product = get_object_or_404(Product, id=product_id)
+        customer_id = request.GET.get('customer_id')
+        
+        if not customer_id:
+            return Response({
+                'error': 'customer_id parameter is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            customer = User.objects.get(id=customer_id)
+        except User.DoesNotExist:
+            return Response({
+                'error': 'Customer not found'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # Get customer-specific price using the product method
+        customer_price = product.get_customer_price(customer)
+        
+        # Get pricing context for debugging
+        from whatsapp.services import determine_customer_segment, get_customer_specific_price
+        customer_segment = determine_customer_segment(customer)
+        
+        return Response({
+            'product_id': product.id,
+            'product_name': product.name,
+            'base_price': float(product.price),
+            'customer_price': float(customer_price),
+            'customer_id': customer.id,
+            'customer_segment': customer_segment,
+            'price_difference': float(customer_price - product.price),
+            'has_custom_pricing': customer_price != product.price,
+        })
+        
+    except Exception as e:
+        return Response({
+            'error': f'Failed to get customer price: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

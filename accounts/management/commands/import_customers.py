@@ -139,6 +139,30 @@ class Command(BaseCommand):
                 'delivery_notes': 'Bar supplies - lemons, oranges, pineapples',
                 'order_pattern': 'Tuesday orders - Bar fruit supplies',
             },
+            {
+                'name': 'Leopard Lodge',  # NEW - Found in WhatsApp messages
+                'type': 'hospitality',
+                'contact_person': 'Lodge Manager',
+                'phone': '+27 11 555 0018',
+                'email': 'orders@leopardlodge.co.za',
+                'address': '456 Safari Road, Johannesburg, 2001',
+                'credit_limit': 25000.00,
+                'payment_terms_days': 30,
+                'delivery_notes': 'Lodge orders - avocados, baby marrow, bananas, broccoli, butternut, carrots, cauliflower',
+                'order_pattern': 'Thursday orders - Lodge catering supplies',
+            },
+            {
+                'name': 'Luma',  # NEW - Found in WhatsApp messages
+                'type': 'restaurant',
+                'contact_person': 'Restaurant Manager',
+                'phone': '+27 76 655 4873',  # Real WhatsApp number from messages
+                'email': 'orders@luma.co.za',
+                'address': '789 Restaurant Street, Johannesburg, 2001',
+                'credit_limit': 15000.00,
+                'payment_terms_days': 21,
+                'delivery_notes': 'Regular orders - mint packets, strawberries, lemons, lettuce, cherry tomatoes, micro herbs, red peppers',
+                'order_pattern': 'Tuesday orders - Fresh herbs and vegetables',
+            },
             
             # HOSPITALITY & INSTITUTIONS
             {
@@ -202,20 +226,20 @@ class Command(BaseCommand):
             #     'payment_terms_days': 7,
             #     'delivery_notes': 'Simple orders - "Arthur box x2"',
             #     'order_pattern': 'Tuesday orders - Box orders',
-            # },
+            #             },
             
-            # INTERNAL CUSTOMERS
+            # ENTERTAINMENT VENUES
             {
-                'name': 'SHALLOME',  # Stock management customer
-                'type': 'internal',
-                'contact_person': 'Hazvinei',  # Real contact from WhatsApp
-                'phone': '+27 61 674 9368',  # Real WhatsApp number
-                'email': 'hazvinei@fambrifarms.co.za',
-                'address': '357 Fambri Farms, Farm Road, Pretoria, 0001',
-                'credit_limit': 50000.00,  # High limit for internal
-                'payment_terms_days': 0,  # Internal - no payment terms
-                'delivery_notes': 'Stock Taker - manages inventory counts and stock takes',
-                'order_pattern': 'Daily stock updates and inventory management - SHALLOME stock reports',
+                'name': 'Shebeen',
+                'type': 'entertainment',
+                'contact_person': 'Tavern Manager',
+                'phone': '+27 11 555 0019',
+                'email': 'orders@shebeen.co.za',
+                'address': '123 Township Road, Soweto, 1818',
+                'credit_limit': 12000.00,
+                'payment_terms_days': 14,  # Shorter payment terms for tavern
+                'delivery_notes': 'Tavern/shebeen - potatoes, onions, tomatoes, basic vegetables',
+                'order_pattern': 'Tuesday orders - Basic fresh produce for tavern meals',
             },
         ]
 
@@ -281,7 +305,8 @@ class Command(BaseCommand):
             )
         )
         self.stdout.write(f'📊 Customer profiles: {created_count} created, {updated_count} updated')
-        self.stdout.write(f'📱 Real WhatsApp contacts: Hazvinei (+27 61 674 9368) - Stock Taker, Sylvia (+27 73 621 2471)')
-        self.stdout.write(f'🏪 Customer types: Restaurants, Entertainment, Hospitality, Private, Internal')
+        self.stdout.write(f'📱 Real WhatsApp contacts: Sylvia (+27 73 621 2471), Marco, Arthur')
+        self.stdout.write(f'🏪 Customer types: Restaurants, Entertainment (including Shebeen), Hospitality, Institution')
         self.stdout.write(f'📋 Enhanced with: Order patterns, delivery notes, real contact details')
         self.stdout.write(f'✅ Phase 3A Complete: Real contact data extracted and integrated')
+        self.stdout.write(f'ℹ️  Note: SHALLOME is not a customer - it\'s managed by Hazvinei (Stock Taker) in the farm staff system')

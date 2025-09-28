@@ -594,7 +594,7 @@ class PricingRuleSerializer(serializers.ModelSerializer):
             'is_active', 'effective_from', 'effective_until', 'is_effective_now',
             'created_at', 'updated_at', 'created_by', 'created_by_name'
         ]
-        read_only_fields = ['created_at', 'updated_at', 'is_effective_now']
+        read_only_fields = ['created_at', 'updated_at', 'is_effective_now', 'created_by']
     
     def get_is_effective_now(self, obj):
         """Check if the rule is currently effective"""

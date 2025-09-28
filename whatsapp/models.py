@@ -53,6 +53,7 @@ class WhatsAppMessage(models.Model):
     
     # Processing status
     processed = models.BooleanField(default=False)
+    processing_notes = models.TextField(blank=True, help_text="Processing status, errors, and results")
     order = models.ForeignKey('orders.Order', null=True, blank=True, on_delete=models.SET_NULL)
     # Soft delete flag
     is_deleted = models.BooleanField(default=False)
@@ -92,6 +93,7 @@ class WhatsAppMessage(models.Model):
     def is_stock_controller(self):
         """Check if message is from SHALLOME (stock controller)"""
         return ('+27 61 674 9368' in self.sender_phone or 
+                '+27 61 674 9368' in self.sender_name or  # Also check sender_name
                 'SHALLOME' in self.sender_name.upper() or
                 self.content.upper().startswith('SHALLOME') or
                 '+27 61 674 9368' in self.content)

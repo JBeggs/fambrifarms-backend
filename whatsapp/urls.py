@@ -22,6 +22,9 @@ urlpatterns = [
     
     # Stock management
     path('stock-updates/', views.get_stock_updates, name='stock-updates'),
+    path('stock-updates/apply-to-inventory/', views.apply_stock_updates_to_inventory, name='apply-stock-updates-to-inventory'),
+    path('stock-take-data/', views.get_stock_take_data, name='get-stock-take-data'),
+    path('process-stock-and-apply/', views.process_stock_and_apply_to_inventory, name='process-stock-and-apply'),
     path('orders/<int:order_id>/validate-stock/', views.validate_order_stock, name='validate-order-stock'),
     
     # Logging and monitoring

@@ -17,6 +17,45 @@ import re
 
 logger = logging.getLogger(__name__)
 
+
+def clean_timestamp_from_text(text):
+    """
+    Comprehensive timestamp cleaning function
+    Removes timestamps from the end of text in various formats
+    """
+    if not text:
+        return text
+    
+    # Pattern 1: "Thanks12:46" -> "Thanks" (no space before timestamp)
+    text = re.sub(r'([a-zA-Z])\d{1,2}:\d{2}$', r'\1', text).strip()
+    
+    # Pattern 2: "Pecanwood 09:40" -> "Pecanwood" (space before timestamp)
+    text = re.sub(r'\s+\d{1,2}:\d{2}$', '', text).strip()
+    
+    # Pattern 3: Standalone timestamps at end "09:40"
+    text = re.sub(r'^\d{1,2}:\d{2}$|(?<=\s)\d{1,2}:\d{2}$', '', text).strip()
+    
+    # Pattern 4: Any remaining timestamp patterns at end
+    text = re.sub(r'\d{1,2}:\d{2}$', '', text).strip()
+    
+    # Pattern 5: Handle multiline - remove timestamp from end of each line
+    lines = text.split('\n')
+    cleaned_lines = []
+    for line in lines:
+        line = line.strip()
+        if line:
+            # Apply same patterns to each line
+            line = re.sub(r'([a-zA-Z])\d{1,2}:\d{2}$', r'\1', line).strip()
+            line = re.sub(r'\s+\d{1,2}:\d{2}$', '', line).strip()
+            line = re.sub(r'\d{1,2}:\d{2}$', '', line).strip()
+            
+            # Only keep non-empty lines that aren't just timestamps
+            if line and not re.match(r'^\d{1,2}:\d{2}$', line):
+                cleaned_lines.append(line)
+    
+    return '\n'.join(cleaned_lines)
+
+
 from .models import WhatsAppMessage, StockUpdate, OrderDayDemarcation, MessageProcessingLog
 from .serializers import (
     WhatsAppMessageSerializer, StockUpdateSerializer, MessageBatchSerializer,
@@ -523,8 +562,8 @@ def parse_html_message(html):
             # FIXED: Get text directly from primary element to avoid nested duplication
             # The nested selectable-text spans often contain duplicate content
             text = elem.get_text().strip()
-            # Remove timestamps from end of text (e.g., "Pecanwood09:40" -> "Pecanwood")
-            text = re.sub(r'\d{1,2}:\d{2}$', '', text).strip()
+            # Remove timestamps from end of text (comprehensive patterns)
+            text = clean_timestamp_from_text(text)
             if text and not re.match(r'^\d{1,2}:\d{2}$', text):
                 content_lines.append(text)
         else:
@@ -533,8 +572,8 @@ def parse_html_message(html):
             if copyable_elements:
                 elem = copyable_elements[0]  # Only use the first one to avoid duplicates
                 text = elem.get_text().strip()
-                # FIXED: Remove timestamps from end of text
-                text = re.sub(r'\d{1,2}:\d{2}$', '', text).strip()
+                # Remove timestamps from end of text (comprehensive patterns)
+                text = clean_timestamp_from_text(text)
                 if text and not re.match(r'^\d{1,2}:\d{2}$', text):
                     content_lines.append(text)
         
@@ -1303,5 +1342,310 @@ def refresh_company_extraction(request):
         return Response({
             'status': 'error',
             'message': f'Failed to refresh company extraction: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def apply_stock_updates_to_inventory(request):
+    """Apply processed StockUpdate data to FinishedInventory"""
+    
+    try:
+        from .services import apply_stock_updates_to_inventory as apply_updates
+        from .models import StockUpdate
+        
+        # Allow explicit control of reset behavior via request data
+        reset_before_processing = request.data.get('reset_before_processing', True)
+        
+        result = apply_updates(reset_before_processing=reset_before_processing)
+        
+        # Update related messages with processing results
+        try:
+            # If no items were processed (because all stock updates are already processed),
+            # we need to temporarily mark some stock updates as unprocessed to get real results
+            if result.get('total_items_processed', 0) == 0:
+                # Find the most recent stock updates and temporarily mark them as unprocessed
+                recent_stock_updates = StockUpdate.objects.filter(processed=True).order_by('-id')[:3]
+                
+                if recent_stock_updates.exists():
+                    # Temporarily mark as unprocessed
+                    for update in recent_stock_updates:
+                        update.processed = False
+                        update.save()
+                    
+                    # Re-run the inventory application to get real results
+                    result = apply_updates(reset_before_processing=reset_before_processing)
+                    
+                    # Mark them back as processed
+                    for update in recent_stock_updates:
+                        update.processed = True
+                        update.save()
+            
+            # Find messages that need inventory info updates
+            from django.db.models import Q
+            
+            all_messages_to_update = WhatsAppMessage.objects.filter(
+                processing_notes__icontains='Stock processed:'
+            ).filter(
+                Q(processing_notes__icontains='Inventory: 0/0 applied (0%)') |
+                ~Q(processing_notes__icontains='Inventory:')
+            )
+            
+            for message in all_messages_to_update:
+                success_rate = result.get('success_rate', 0)
+                successful_items = result.get('successful_items', 0)
+                total_items = result.get('total_items_processed', 0)
+                
+                if success_rate >= 90:
+                    status_icon = "✅"
+                elif success_rate >= 70:
+                    status_icon = "⚠️"
+                else:
+                    status_icon = "❌"
+                
+                # Replace the old inventory info or add new inventory info
+                if 'Inventory: 0/0 applied (0%)' in message.processing_notes:
+                    # Replace the placeholder inventory info
+                    message.processing_notes = message.processing_notes.replace(
+                        'Inventory: 0/0 applied (0%)',
+                        f'Inventory: {successful_items}/{total_items} applied ({success_rate}%)'
+                    )
+                    # Also update the status icon
+                    message.processing_notes = message.processing_notes.replace(
+                        '❌ Inventory:',
+                        f'{status_icon} Inventory:'
+                    )
+                elif 'Inventory:' not in message.processing_notes:
+                    # Add inventory info for the first time
+                    message.processing_notes += f" | {status_icon} Inventory: {successful_items}/{total_items} applied ({success_rate}%)"
+                
+                # Add detailed failure information
+                if result.get('failed_items'):
+                    failure_details = []
+                    for failed_item in result['failed_items']:
+                        failure_details.append(f"'{failed_item['original_name']}': {failed_item['failure_reason']}")
+                    
+                    if failure_details:
+                        # Remove old failed items info if it exists
+                        if 'Failed items:' in message.processing_notes:
+                            parts = message.processing_notes.split('Failed items:')
+                            if len(parts) > 1:
+                                # Keep everything before "Failed items:" and add new failure info
+                                before_failures = parts[0].rstrip(' |')
+                                message.processing_notes = f"{before_failures} | Failed items: {'; '.join(failure_details)}"
+                        else:
+                            message.processing_notes += f" | Failed items: {'; '.join(failure_details)}"
+                
+                # Add processing warnings summary
+                if result.get('processing_warnings'):
+                    warning_count = len(result['processing_warnings'])
+                    if 'warnings' not in message.processing_notes:
+                        message.processing_notes += f" | ⚠️ {warning_count} warnings"
+                
+                message.save()
+        except Exception as msg_error:
+            # Don't fail the main operation if message updates fail
+            print(f"Warning: Failed to update message processing notes: {msg_error}")
+        
+        return Response({
+            'status': 'success',
+            'data': result
+        })
+        
+    except Exception as e:
+        # Try to update any related messages with error status
+        try:
+            from .models import StockUpdate
+            unprocessed_updates = StockUpdate.objects.filter(processed=False)
+            for stock_update in unprocessed_updates:
+                if hasattr(stock_update, 'message') and stock_update.message:
+                    message = stock_update.message
+                    if not message.processing_notes:
+                        message.processing_notes = ""
+                    message.processing_notes += f" | ❌ Inventory application failed: {str(e)}"
+                    message.save()
+        except:
+            pass  # Don't fail if we can't update messages
+            
+        return Response({
+            'status': 'error',
+            'message': f'Failed to apply stock updates: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_stock_take_data(request):
+    """Get stock take data, optionally filtered to only show items with stock"""
+    
+    try:
+        from .services import get_stock_take_data as get_data
+        
+        only_with_stock = request.GET.get('only_with_stock', 'true').lower() == 'true'
+        
+        result = get_data(only_with_stock=only_with_stock)
+        
+        return Response({
+            'status': 'success',
+            'data': result
+        })
+        
+    except Exception as e:
+        return Response({
+            'status': 'error',
+            'message': f'Failed to get stock take data: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def process_stock_and_apply_to_inventory(request):
+    """Process selected stock messages and apply to inventory in one step"""
+    
+    serializer = ProcessMessagesSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    message_ids = serializer.validated_data['message_ids']
+    reset_before_processing = request.data.get('reset_before_processing', True)
+    
+    try:
+        from .services import apply_stock_updates_to_inventory as apply_updates
+        from django.db import transaction
+        
+        with transaction.atomic():
+            # First process the stock messages
+            stock_updates_created = 0
+            processing_errors = []
+            processing_warnings = []
+            
+            messages = WhatsAppMessage.objects.filter(
+                message_id__in=message_ids,
+                message_type='stock'
+            )
+            
+            for message in messages:
+                try:
+                    if not message.processed and message.is_stock_controller():
+                        stock_data = parse_stock_message(message)
+                        if stock_data:
+                            stock_update, created = StockUpdate.objects.get_or_create(
+                                message=message,
+                                defaults={
+                                    'stock_date': stock_data['date'],
+                                    'order_day': stock_data['order_day'],
+                                    'items': stock_data['items']
+                                }
+                            )
+                            
+                            if created:
+                                stock_updates_created += 1
+                                
+                            # Update message with detailed processing status
+                            message.processed = True
+                            total_lines = stock_data.get('total_lines_processed', 0)
+                            success_count = len(stock_data['items'])
+                            failure_count = len(stock_data.get('parsing_failures', []))
+                            success_rate = stock_data.get('parsing_success_rate', 0)
+                            
+                            message.processing_notes = f"✅ Stock processed: {success_count}/{total_lines} items parsed ({success_rate}%)"
+                            
+                            # Add parsing failure details
+                            if stock_data.get('parsing_failures'):
+                                message.processing_notes += f" | ⚠️ {failure_count} parsing failures"
+                                
+                                # Add detailed failure information - show ALL failures
+                                failure_details = []
+                                for failure in stock_data['parsing_failures']:  # Show ALL failures
+                                    failure_details.append(f"'{failure['original_line']}': {failure['failure_reason']}")
+                                
+                                if failure_details:
+                                    message.processing_notes += f" | Failed lines: {'; '.join(failure_details)}"
+                                
+                                # Add to processing warnings for API response
+                                processing_warnings.extend([f"Message {message.message_id}: {failure['failure_reason']}" for failure in stock_data['parsing_failures']])
+                            
+                            message.save()
+                        else:
+                            # Failed to parse stock message
+                            message.processing_notes = "❌ Failed to parse stock message"
+                            message.save()
+                            processing_errors.append(f"Message {message.message_id}: Failed to parse stock data")
+                    elif message.processed:
+                        processing_warnings.append(f"Message {message.message_id}: Already processed")
+                    elif not message.is_stock_controller():
+                        processing_warnings.append(f"Message {message.message_id}: Not from stock controller")
+                        
+                except Exception as e:
+                    # Update message with error
+                    message.processing_notes = f"❌ Processing error: {str(e)}"
+                    message.save()
+                    processing_errors.append(f"Message {message.message_id}: {str(e)}")
+            
+            # Then apply stock updates to inventory
+            inventory_result = apply_updates(reset_before_processing=reset_before_processing)
+            
+            # Update messages with inventory application results
+            if inventory_result.get('failed_items'):
+                for failed_item in inventory_result['failed_items']:
+                    processing_errors.append(f"Inventory update failed: {failed_item['original_name']} - {failed_item['failure_reason']}")
+            
+            if inventory_result.get('processing_warnings'):
+                processing_warnings.extend(inventory_result['processing_warnings'])
+            
+            # Update all processed messages with detailed final results
+            for message in messages.filter(processed=True):
+                success_rate = inventory_result.get('success_rate', 0)
+                successful_items = inventory_result.get('successful_items', 0)
+                total_items = inventory_result.get('total_items_processed', 0)
+                failed_count = len(inventory_result.get('failed_items', []))
+                
+                if success_rate >= 90:
+                    status_icon = "✅"
+                elif success_rate >= 70:
+                    status_icon = "⚠️"
+                else:
+                    status_icon = "❌"
+                    
+                message.processing_notes += f" | {status_icon} Inventory: {successful_items}/{total_items} applied ({success_rate}%)"
+                
+                # Add detailed failure information for inventory application - show ALL failures
+                if inventory_result.get('failed_items'):
+                    failure_details = []
+                    for failed_item in inventory_result['failed_items']:  # Show ALL failures
+                        failure_details.append(f"'{failed_item['original_name']}': {failed_item['failure_reason']}")
+                    
+                    if failure_details:
+                        message.processing_notes += f" | Failed items: {'; '.join(failure_details)}"
+                
+                # Add processing warnings summary
+                if inventory_result.get('processing_warnings'):
+                    warning_count = len(inventory_result['processing_warnings'])
+                    message.processing_notes += f" | ⚠️ {warning_count} warnings"
+                
+                message.save()
+            
+            return Response({
+                'status': 'success',
+                'stock_updates_created': stock_updates_created,
+                'inventory_updates': inventory_result,
+                'errors': processing_errors,
+                'warnings': processing_warnings,
+                'message': f'Processed {stock_updates_created} stock messages and applied to inventory. Success rate: {inventory_result.get("success_rate", 0)}%'
+            })
+            
+    except Exception as e:
+        # Update all messages with global error
+        try:
+            messages = WhatsAppMessage.objects.filter(message_id__in=message_ids)
+            for message in messages:
+                message.processing_notes = f"❌ Global error: {str(e)}"
+                message.save()
+        except:
+            pass  # Don't fail if we can't update messages
+            
+        return Response({
+            'status': 'error',
+            'message': f'Failed to process stock and apply to inventory: {str(e)}'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

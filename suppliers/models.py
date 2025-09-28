@@ -18,7 +18,6 @@ class Supplier(models.Model):
     address = models.TextField(blank=True)
     description = models.TextField(blank=True, help_text="Description of supplier and specialties")
     
-    # Supplier type - only internal or external as requested
     supplier_type = models.CharField(
         max_length=20, 
         choices=SUPPLIER_TYPE_CHOICES, 
@@ -26,11 +25,9 @@ class Supplier(models.Model):
         help_text="Type of supplier - internal farm or external supplier"
     )
     
-    # Business details
     registration_number = models.CharField(max_length=50, blank=True)
     tax_number = models.CharField(max_length=50, blank=True)
     
-    # Status and settings
     is_active = models.BooleanField(default=True)
     payment_terms_days = models.PositiveIntegerField(default=30, help_text="Payment terms in days")
     lead_time_days = models.PositiveIntegerField(default=3, help_text="Lead time in days")
@@ -40,7 +37,6 @@ class Supplier(models.Model):
         validators=[MinValueValidator(Decimal('0.00'))]
     )
     
-    # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -97,7 +93,6 @@ class SalesRep(models.Model):
     total_orders = models.PositiveIntegerField(default=0)
     last_contact_date = models.DateField(null=True, blank=True)
     
-    # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -143,7 +138,6 @@ class SupplierProduct(models.Model):
     )
     last_order_date = models.DateField(null=True, blank=True)
     
-    # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

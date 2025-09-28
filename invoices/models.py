@@ -2,7 +2,7 @@ from django.db import models
 from django.core.validators import MinValueValidator
 from decimal import Decimal
 from django.utils import timezone
-from datetime import timedelta
+from datetime import timedelta, date
 
 class Invoice(models.Model):
     """
@@ -22,7 +22,7 @@ class Invoice(models.Model):
     customer = models.ForeignKey('accounts.User', on_delete=models.CASCADE, related_name='invoices')
     
     # Dates
-    invoice_date = models.DateField(default=timezone.now)
+    invoice_date = models.DateField(default=date.today)
     due_date = models.DateField()
     paid_date = models.DateField(null=True, blank=True)
     
@@ -91,7 +91,10 @@ class Invoice(models.Model):
         
         if not self.due_date:
             # Default to 30 days from invoice date
-            self.due_date = self.invoice_date + timedelta(days=30)
+            invoice_date = self.invoice_date
+            if hasattr(invoice_date, 'date'):
+                invoice_date = invoice_date.date()
+            self.due_date = invoice_date + timedelta(days=30)
         
         # Calculate totals
         self.tax_amount = (self.subtotal - self.discount_amount) * (self.tax_rate / 100)
@@ -105,12 +108,18 @@ class Invoice(models.Model):
     
     @property
     def is_overdue(self):
-        return self.due_date < timezone.now().date() and self.status not in ['paid', 'cancelled']
+        due_date = self.due_date
+        if hasattr(due_date, 'date'):
+            due_date = due_date.date()
+        return due_date < timezone.now().date() and self.status not in ['paid', 'cancelled']
     
     @property
     def days_overdue(self):
         if self.is_overdue:
-            return (timezone.now().date() - self.due_date).days
+            due_date = self.due_date
+            if hasattr(due_date, 'date'):
+                due_date = due_date.date()
+            return (timezone.now().date() - due_date).days
         return 0
 
 class InvoiceItem(models.Model):

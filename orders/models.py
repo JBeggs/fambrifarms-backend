@@ -48,7 +48,6 @@ class Order(models.Model):
         ('cancelled', 'Cancelled'),
     ]
     
-    # Basic order info
     restaurant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     order_number = models.CharField(max_length=20, unique=True)
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
@@ -57,16 +56,13 @@ class Order(models.Model):
     order_date = models.DateField(validators=[validate_order_date])
     delivery_date = models.DateField(validators=[validate_delivery_date])
     
-    # WhatsApp integration
     whatsapp_message_id = models.CharField(max_length=100, null=True, blank=True)
     original_message = models.TextField(blank=True)
     parsed_by_ai = models.BooleanField(default=False)
     
-    # Pricing
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     
-    # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
@@ -136,12 +132,10 @@ class OrderItem(models.Model):
     price = models.DecimalField(max_digits=10, decimal_places=2)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
     
-    # AI parsing tracking
     original_text = models.CharField(max_length=200, blank=True)  # "1 x onions"
     confidence_score = models.FloatField(default=1.0)  # AI parsing confidence
     manually_corrected = models.BooleanField(default=False)
     
-    # Notes
     notes = models.TextField(blank=True)
     
     def save(self, *args, **kwargs):

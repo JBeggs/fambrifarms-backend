@@ -201,20 +201,26 @@ class Command(BaseCommand):
 
         created_count = 0
         for rule_data in pricing_rules_data:
-            pricing_rule, created = PricingRule.objects.get_or_create(
+            # Check for existing rule by name and customer_segment to prevent duplicates
+            existing_rule = PricingRule.objects.filter(
                 name=rule_data['name'],
-                defaults={
-                    **rule_data,
-                    'effective_from': date.today(),
-                    'effective_until': date.today() + timedelta(days=365),  # 1 year validity
-                    'created_by': admin_user,
-                    'is_active': True
-                }
+                customer_segment=rule_data['customer_segment']
+            ).first()
+            
+            if existing_rule:
+                self.stdout.write(f'⚠️  Pricing rule already exists: {existing_rule.name} ({existing_rule.base_markup_percentage}% base markup)')
+                continue
+            
+            pricing_rule = PricingRule.objects.create(
+                **rule_data,
+                effective_from=date.today(),
+                effective_until=date.today() + timedelta(days=365),  # 1 year validity
+                created_by=admin_user,
+                is_active=True
             )
             
-            if created:
-                created_count += 1
-                self.stdout.write(f'🎯 Created pricing rule: {pricing_rule.name} ({pricing_rule.base_markup_percentage}% base markup)')
+            created_count += 1
+            self.stdout.write(f'🎯 Created pricing rule: {pricing_rule.name} ({pricing_rule.base_markup_percentage}% base markup)')
 
         self.stdout.write(f'📋 Created {created_count} intelligent pricing rules based on customer segments')
 
@@ -349,13 +355,16 @@ class Command(BaseCommand):
                 if not customer_user:
                     continue
                 
+                # Generate customer display name for price list
+                customer_display_name = customer_user.get_full_name() or customer_user.email.split('@')[0]
+                
                 # Create weekly price list
                 price_list, created = CustomerPriceList.objects.get_or_create(
                     customer=customer_user,
                     effective_from=date.today(),
                     defaults={
                         'pricing_rule': pricing_rule,
-                        'list_name': f'Weekly Price List - {customer_name} - {date.today().strftime("%Y-%m-%d")}',
+                        'list_name': f'Weekly Price List - {customer_display_name} - {date.today().strftime("%Y-%m-%d")}',
                         'effective_until': date.today() + timedelta(days=7),
                         'generated_by': admin_user,
                         'based_on_market_data': date.today(),

@@ -5,6 +5,7 @@ Django management command to clean timestamps from existing WhatsApp messages
 import re
 from django.core.management.base import BaseCommand
 from whatsapp.models import WhatsAppMessage
+from whatsapp.views import clean_timestamp_from_text
 
 
 class Command(BaseCommand):
@@ -53,18 +54,8 @@ class Command(BaseCommand):
         for message in messages_with_timestamps:
             original_content = message.content
             
-            # Remove timestamps from end of lines
-            cleaned_content = re.sub(r'\d{1,2}:\d{2}$', '', original_content, flags=re.MULTILINE).strip()
-            
-            # Remove standalone timestamp lines
-            lines = cleaned_content.split('\n')
-            cleaned_lines = []
-            for line in lines:
-                line = line.strip()
-                if line and not re.match(r'^\d{1,2}:\d{2}$', line):
-                    cleaned_lines.append(line)
-            
-            cleaned_content = '\n'.join(cleaned_lines)
+            # Use comprehensive timestamp cleaning function
+            cleaned_content = clean_timestamp_from_text(original_content)
             
             if cleaned_content != original_content:
                 self.stdout.write(

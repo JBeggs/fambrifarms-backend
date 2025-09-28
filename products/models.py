@@ -51,7 +51,6 @@ class Product(models.Model):
             today = date.today()
             price_item = CustomerPriceListItem.objects.filter(
                 price_list__customer=customer,
-                price_list__is_current=True,
                 price_list__effective_from__lte=today,
                 price_list__effective_until__gte=today,
                 price_list__status='active',
@@ -60,8 +59,9 @@ class Product(models.Model):
             
             if price_item:
                 return price_item.customer_price_incl_vat
-        except Exception:
+        except Exception as e:
             # If any error occurs, fall back to base price
+            print(f"[PRODUCT_PRICING] Error getting customer price: {e}")
             pass
         
         # Fallback to base product price

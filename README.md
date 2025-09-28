@@ -95,6 +95,9 @@ python manage.py test tests.integration.test_system_validation -v 2
 - ✅ **Customer Segmentation** - Premium (35%), Standard (25%), Budget (18%), Private (15%)
 - ✅ **Tuesday/Thursday Cycles** - Real farm delivery schedule enforcement
 - ✅ **Procurement Intelligence** - Smart recommendations with urgency levels
+- ✅ **Enhanced Order Management** - Add/edit order items with real-time price calculation
+- ✅ **Customer Pricing System** - Dynamic pricing rules with manual overrides
+- ✅ **Irregular Message Handling** - Automatic detection and correction of WhatsApp format issues
 - ✅ **Performance Optimized** - Sub-second queries, mobile-ready API
 - ✅ **Comprehensive Testing** - Integration tests with real data validation
 
@@ -113,29 +116,92 @@ All Django migrations are up-to-date ✅
 python manage.py showmigrations
 
 # All apps have current migrations:
-# accounts: 5 migrations ✅
-# inventory: 7 migrations ✅  
-# orders: 2 migrations ✅
-# whatsapp: 4 migrations ✅
+# accounts: 10 migrations ✅
+# inventory: 11 migrations ✅  
+# orders: 3 migrations ✅
+# whatsapp: 6 migrations ✅
+# products: 12 migrations ✅
+# suppliers: 6 migrations ✅
 # All other apps: Current ✅
 ```
 
-## 🔗 Integration Points
+## 🔗 Integration Points & API Documentation
 
-### Flutter Desktop App
-- **Message Processing**: Receives WhatsApp messages via `/api/whatsapp/receive-messages/`
-- **Order Creation**: Converts messages to orders via `/api/whatsapp/messages/process/`
-- **Product Catalog**: Accesses products via `/api/products/products/`
-- **Customer Management**: Manages customers via `/api/auth/customers/`
+### 📚 **Complete API Reference**
+Interactive API documentation available at: **`http://localhost:8000/api/docs/`** (when server is running)
 
-### Python WhatsApp Scraper
-- **Message Submission**: Sends scraped messages to Django backend
-- **Health Checks**: Monitors system status via `/api/whatsapp/health/`
+### 🎯 **Core API Endpoints**
 
-### Production Deployment
-- **PythonAnywhere**: Production-ready deployment configuration
-- **MySQL Database**: Production database setup
-- **Environment Configuration**: Secure settings management
+#### Authentication & Users
+```bash
+POST   /api/auth/login/           # User authentication
+POST   /api/auth/register/        # User registration  
+GET    /api/auth/profile/         # User profile
+GET    /api/auth/customers/       # Customer management
+```
+
+#### Products & Catalog
+```bash
+GET    /api/products/             # Product catalog
+GET    /api/products/{id}/        # Product details
+GET    /api/products/departments/ # Product departments
+GET    /api/products/app-config/  # App configuration
+```
+
+#### Orders & Order Management
+```bash
+GET    /api/orders/               # List orders
+POST   /api/orders/               # Create order
+GET    /api/orders/{id}/          # Order details
+PATCH  /api/orders/{id}/          # Update order
+DELETE /api/orders/{id}/          # Delete order
+POST   /api/orders/{id}/items/    # Add order item
+PUT    /api/orders/{id}/items/{item_id}/ # Update order item
+```
+
+#### Inventory & Stock Management
+```bash
+GET    /api/inventory/dashboard/         # Inventory dashboard
+GET    /api/inventory/stock-levels/     # Current stock levels
+GET    /api/inventory/alerts/           # Stock alerts
+POST   /api/inventory/actions/reserve-stock/    # Reserve stock
+POST   /api/inventory/actions/stock-adjustment/ # Stock adjustments
+GET    /api/inventory/pricing-rules/    # Pricing rules
+GET    /api/inventory/customer-price-lists/ # Customer price lists
+```
+
+#### Suppliers & Procurement
+```bash
+GET    /api/suppliers/suppliers/        # Supplier list
+GET    /api/suppliers/supplier-products/ # Supplier products
+GET    /api/suppliers/best-prices/      # Best price comparison
+```
+
+#### WhatsApp Integration
+```bash
+POST   /api/whatsapp/receive-messages/  # Receive WhatsApp messages
+POST   /api/whatsapp/messages/process/  # Process messages to orders
+GET    /api/whatsapp/health/            # Health check
+GET    /api/whatsapp/companies/         # Available companies
+```
+
+### 🚀 **Flutter Desktop App Integration**
+- **Message Processing**: Real-time WhatsApp message handling
+- **Order Management**: Complete CRUD with item-level operations
+- **Dynamic Pricing**: Customer-specific pricing with market intelligence
+- **Stock Monitoring**: Live inventory alerts and procurement recommendations
+- **Customer Management**: Full customer lifecycle management
+
+### 🐍 **Python WhatsApp Scraper Integration**
+- **Message Submission**: Automated message ingestion
+- **Health Monitoring**: System status validation
+- **Error Handling**: Robust failure recovery
+
+### 🏭 **Production Deployment Ready**
+- **PythonAnywhere**: Production-ready configuration
+- **MySQL Database**: Scalable database setup
+- **Environment Management**: Secure configuration handling
+- **SSL/HTTPS**: Production security implementation
 
 ## 📊 **DIGITAL TRANSFORMATION METRICS**
 

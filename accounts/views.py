@@ -138,10 +138,13 @@ class CustomerViewSet(viewsets.ModelViewSet):
         """Update customer with error handling"""
         try:
             customer = self.get_object()
+            print(f"[accounts] Updating customer {customer.id} with data: {request.data}")
             serializer = self.get_serializer(customer, data=request.data, partial=True)
             if serializer.is_valid():
                 customer = serializer.save()
+                print(f"[accounts] Customer {customer.id} updated successfully")
                 return Response(CustomerSerializer(customer).data)
+            print(f"[accounts] Validation errors: {serializer.errors}")
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
         except User.DoesNotExist:
             return Response(

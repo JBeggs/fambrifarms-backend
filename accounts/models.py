@@ -38,7 +38,6 @@ class User(AbstractUser):
     user_type = models.CharField(max_length=20, choices=USER_TYPES, default='restaurant')
     phone = models.CharField(max_length=20, blank=True)
     is_verified = models.BooleanField(default=False)
-    # Multi-role support
     roles = models.JSONField(default=list, blank=True)
     restaurant_roles = models.JSONField(default=list, blank=True)
     
@@ -60,9 +59,17 @@ class RestaurantProfile(models.Model):
     postal_code = models.CharField(max_length=20)
     payment_terms = models.CharField(max_length=50, default='Net 30', blank=True)
     is_private_customer = models.BooleanField(default=False, help_text="Check if this is a private customer (individual) rather than a business")
-    # WhatsApp integration fields
     delivery_notes = models.TextField(blank=True, help_text="Special delivery requirements and notes from WhatsApp orders")
     order_pattern = models.CharField(max_length=200, blank=True, help_text="Typical order pattern (e.g., 'Tuesday orders - Italian restaurant supplies')")
+    
+    # Pricing configuration
+    preferred_pricing_rule = models.ForeignKey(
+        'inventory.PricingRule',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        help_text="Override automatic pricing rule selection with a specific rule"
+    )
     
     def __str__(self):
         if self.branch_name:

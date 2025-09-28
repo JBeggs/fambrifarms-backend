@@ -23,17 +23,17 @@ class Command(BaseCommand):
             self.stdout.write(self.style.SUCCESS('Existing product data cleared.'))
 
         self.create_departments()
-        self.create_comprehensive_products()
+        self.create_whatsapp_based_products()
 
         self.stdout.write(
             self.style.SUCCESS(
                 f'\n🎉 FAMBRI PRODUCT CATALOG SEEDED SUCCESSFULLY!'
             )
         )
-        self.stdout.write(f'📊 Product catalog based on real SHALLOME stock data')
-        self.stdout.write(f'🌱 Comprehensive inventory from actual farm operations')
-        self.stdout.write(f'💰 Realistic pricing based on market rates and WhatsApp data')
-        self.stdout.write(f'✅ Phase 4 Complete: Comprehensive product catalog created')
+        self.stdout.write(f'📊 Products based on actual customer orders from WhatsApp')
+        self.stdout.write(f'🛒 Real products that customers actually order')
+        self.stdout.write(f'💰 Pricing based on market rates and order frequency')
+        self.stdout.write(f'✅ Validated product catalog from real order data')
 
     def create_departments(self):
         """Create product departments based on SHALLOME stock categories"""
@@ -75,7 +75,7 @@ class Command(BaseCommand):
 
         return departments
 
-    def create_comprehensive_products(self):
+    def create_whatsapp_based_products(self):
         """Create comprehensive product catalog from SHALLOME stock data"""
         departments = {dept.name: dept for dept in Department.objects.all()}
         

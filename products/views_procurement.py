@@ -60,20 +60,23 @@ def generate_market_recommendation(request):
     
     POST /api/products/procurement/generate-recommendation/
     Body: {
-        "for_date": "2025-01-20" (optional, defaults to today)
+        "for_date": "2025-01-20" (optional, defaults to today or earliest order date),
+        "use_historical_dates": true (optional, defaults to true for backdating)
     }
     """
     try:
         # Parse request data
         for_date_str = request.data.get('for_date')
+        use_historical_dates = request.data.get('use_historical_dates', True)
+        
         if for_date_str:
             for_date = datetime.strptime(for_date_str, '%Y-%m-%d').date()
         else:
-            for_date = timezone.now().date()
+            for_date = None  # Let service determine the date
         
         # Generate recommendation
         service = ProcurementIntelligenceService()
-        recommendation = service.generate_market_recommendation(for_date)
+        recommendation = service.generate_market_recommendation(for_date, use_historical_dates)
         
         # Serialize response
         serializer = MarketProcurementRecommendationSerializer(recommendation)

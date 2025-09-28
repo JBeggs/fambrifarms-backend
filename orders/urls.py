@@ -11,4 +11,7 @@ urlpatterns = [
     path('from-whatsapp/', views.create_order_from_whatsapp, name='create_order_from_whatsapp'),
     # Customer orders endpoint
     path('customer/<int:customer_id>/', views.CustomerOrdersView.as_view(), name='customer_orders'),
+    # Order item management endpoints
+    path('<int:order_id>/items/', views.add_order_item, name='add_order_item'),
+    path('<int:order_id>/items/<int:item_id>/', views.order_item_detail, name='order_item_detail'),
 ] 

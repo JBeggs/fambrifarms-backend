@@ -155,7 +155,8 @@ def create_order_from_message(message):
         )
         
         # Parse and create order items
-        items_created = create_order_items(order, message)
+        items_result = create_order_items(order, message)
+        items_created = items_result['items_created']
         
         if items_created > 0:
             # Calculate totals
@@ -163,19 +164,70 @@ def create_order_from_message(message):
             order.total_amount = order.subtotal  # Add tax/fees later if needed
             order.save()
             
+            # Update message with detailed processing status
+            success_rate = items_result['success_rate']
+            failed_products = items_result['failed_products']
+            parsing_failures = items_result['parsing_failures']
+            
+            status_icon = "✅" if success_rate >= 90 else ("⚠️" if success_rate >= 70 else "❌")
+            message.processing_notes = f"{status_icon} Order created: {items_created}/{items_result['total_attempts']} items processed ({success_rate}%)"
+            
+            if failed_products:
+                message.processing_notes += f" | ⚠️ {len(failed_products)} products not found"
+                failure_details = []
+                for failed_item in failed_products[:3]:  # Show first 3
+                    failure_details.append(f"'{failed_item['original_name']}': {failed_item['failure_reason']}")
+                if failure_details:
+                    message.processing_notes += f" | Missing products: {'; '.join(failure_details)}"
+                if len(failed_products) > 3:
+                    message.processing_notes += f" (and {len(failed_products) - 3} more)"
+            
+            if parsing_failures:
+                message.processing_notes += f" | ⚠️ {len(parsing_failures)} parsing failures"
+            
+            message.processed = True
+            message.order = order
+            message.save()
+            
             log_processing_action(message, 'order_created', {
                 'order_number': order.order_number,
                 'items_count': items_created,
-                'total_amount': float(order.total_amount or 0)
+                'total_amount': float(order.total_amount or 0),
+                'success_rate': success_rate,
+                'failed_products_count': len(failed_products),
+                'parsing_failures_count': len(parsing_failures)
             })
             
             return order
         else:
-            # No valid items found, delete order
+            # No valid items found, delete order but update message with failure details
+            failed_products = items_result['failed_products']
+            parsing_failures = items_result['parsing_failures']
+            
+            message.processing_notes = f"❌ Order creation failed: 0/{items_result['total_attempts']} items processed"
+            
+            if failed_products:
+                message.processing_notes += f" | ⚠️ {len(failed_products)} products not found"
+                failure_details = []
+                for failed_item in failed_products[:3]:  # Show first 3
+                    failure_details.append(f"'{failed_item['original_name']}': {failed_item['failure_reason']}")
+                if failure_details:
+                    message.processing_notes += f" | Missing products: {'; '.join(failure_details)}"
+                if len(failed_products) > 3:
+                    message.processing_notes += f" (and {len(failed_products) - 3} more)"
+            
+            if parsing_failures:
+                message.processing_notes += f" | ⚠️ {len(parsing_failures)} parsing failures"
+            
+            message.processed = False  # Mark as not processed since order creation failed
+            message.save()
+            
             order.delete()
             log_processing_action(message, 'error', {
                 'error': 'No valid items found in message',
-                'action': 'order_creation'
+                'action': 'order_creation',
+                'failed_products_count': len(failed_products),
+                'parsing_failures_count': len(parsing_failures)
             })
             return None
             
@@ -269,26 +321,52 @@ def get_or_create_customer(company_name, sender_name):
     
     # ENHANCEMENT 3: Create customer with better defaults and logging
     try:
+        # Extract proper first and last names from company name
+        name_parts = company_name.strip().split()
+        if len(name_parts) >= 2:
+            first_name = name_parts[0]
+            last_name = ' '.join(name_parts[1:])
+        else:
+            first_name = company_name
+            last_name = 'Restaurant'
+        
         customer = User.objects.create(
             email=email,
-            first_name=company_name,
-            last_name=f"(via {sender_name})",
+            first_name=first_name,
+            last_name=last_name,
             user_type='restaurant',
             is_active=True,
             phone=''  # Will be updated when we get phone info
         )
         
+        # Determine customer segment and assign pricing rule
+        customer_segment = 'standard'  # Default segment for new restaurant customers
+        
         # Create a basic RestaurantProfile for new customers
-        RestaurantProfile.objects.create(
+        profile = RestaurantProfile.objects.create(
             user=customer,
             business_name=company_name,
             address='',  # To be updated
             city='Pretoria',  # Default based on Fambri Farms location
-            payment_terms=30,  # Default payment terms
-            credit_limit=5000.00,  # Default credit limit
+            payment_terms='Net 30',  # Default payment terms
             delivery_notes=f"Auto-created from WhatsApp message via {sender_name}",
             order_pattern="To be determined from order history"
         )
+        
+        # Assign default pricing rule based on customer segment
+        try:
+            from inventory.models import PricingRule
+            default_pricing_rule = PricingRule.objects.filter(
+                customer_segment=customer_segment,
+                is_active=True
+            ).first()
+            
+            if default_pricing_rule:
+                profile.preferred_pricing_rule = default_pricing_rule
+                profile.save()
+                print(f"[PRICING] Assigned pricing rule '{default_pricing_rule.name}' to new customer {company_name}")
+        except Exception as e:
+            print(f"[PRICING] Failed to assign pricing rule to new customer: {e}")
         
         # Customer creation logged below with print statement
         
@@ -336,31 +414,54 @@ def get_valid_order_date(message_date):
 
 def create_order_items(order, message):
     """
-    Parse message content and create order items
+    Parse message content and create order items with fallback to notes
     
     Args:
         order: Order instance
         message: WhatsAppMessage instance
         
     Returns:
-        int: Number of items created
+        dict: Results including items_created, failed_products, parsing_failures
     """
     content = message.content
     items_created = 0
+    failed_products = []
+    parsing_failures = []
+    unparseable_lines = []
     
     # Parse items from message content
     parsed_items = parse_order_items(content)
     
+    # Track lines that couldn't be parsed for fallback notes
+    content_lines = [line.strip() for line in content.split('\n') if line.strip()]
+    parsed_line_texts = [item['original_text'] for item in parsed_items]
+    
+    for line in content_lines:
+        # Skip company names and common headers
+        if (not any(parsed_text in line for parsed_text in parsed_line_texts) and
+            not message.extract_company_name() in line and
+            not re.match(r'^(good\s+morning|hi|hello|order|please)', line.lower()) and
+            len(line) > 3):  # Ignore very short lines
+            unparseable_lines.append(line)
+    
     for item_data in parsed_items:
         try:
-            # Find or create product
-            product = get_or_create_product(item_data['product_name'])
+            # Find product (don't auto-create)
+            product = get_or_create_product(item_data['product_name'], auto_create=False)
             
             if not product:
+                failed_products.append({
+                    'original_name': item_data['product_name'],
+                    'normalized_name': normalize_product_name_for_matching(item_data['product_name']),
+                    'failure_reason': 'Product not found in database',
+                    'original_text': item_data['original_text'],
+                    'quantity': item_data['quantity'],
+                    'unit': item_data['unit']
+                })
                 log_processing_action(message, 'error', {
-                    'error': f"Failed to create/find product: {item_data['product_name']}",
+                    'error': f"Product not found: {item_data['product_name']}",
                     'item_data': item_data,
-                    'action': 'product_creation'
+                    'action': 'product_lookup'
                 })
                 continue
             
@@ -392,6 +493,12 @@ def create_order_items(order, message):
             })
             
         except Exception as e:
+            parsing_failures.append({
+                'original_name': item_data['product_name'],
+                'failure_reason': f"Failed to create item: {str(e)}",
+                'original_text': item_data['original_text'],
+                'error_type': 'item_creation_error'
+            })
             log_processing_action(message, 'error', {
                 'error': f"Failed to create item: {str(e)}",
                 'item_data': item_data,
@@ -399,7 +506,76 @@ def create_order_items(order, message):
             })
             continue
     
-    return items_created
+    # Add unparseable lines as notes if any items were created successfully
+    if unparseable_lines and items_created > 0:
+        notes_text = "Unparsed items (added as notes):\n" + "\n".join(f"• {line}" for line in unparseable_lines)
+        
+        # Add to order notes or create a special note item
+        if hasattr(order, 'notes'):
+            existing_notes = order.notes or ""
+            order.notes = f"{existing_notes}\n\n{notes_text}".strip()
+            order.save()
+        
+        log_processing_action(message, 'unparsed_lines_added_as_notes', {
+            'unparsed_lines': unparseable_lines,
+            'count': len(unparseable_lines),
+            'action': 'fallback_notes'
+        })
+    
+    # If no items were parsed but there are unparseable lines, create a note-only order
+    elif not items_created and unparseable_lines:
+        # Create a special "Notes" product for unparseable content
+        notes_product, created = Product.objects.get_or_create(
+            name="Order Notes",
+            defaults={
+                'price': Decimal('0.00'),
+                'unit': 'note',
+                'department': 'Special',
+                'is_active': True
+            }
+        )
+        
+        notes_content = "\n".join(unparseable_lines)
+        OrderItem.objects.create(
+            order=order,
+            product=notes_product,
+            quantity=1,
+            unit='note',
+            price=Decimal('0.00'),
+            total_price=Decimal('0.00'),
+            original_text=f"Unparsed content: {notes_content[:100]}...",
+            confidence_score=0.1,  # Low confidence since it's unparsed
+            notes=notes_content
+        )
+        items_created = 1
+        
+        log_processing_action(message, 'created_note_item_for_unparsed_content', {
+            'unparsed_content': notes_content,
+            'action': 'fallback_note_item'
+        })
+    
+    # Add unparseable lines to parsing failures if no items were created
+    if not items_created and unparseable_lines:
+        for line in unparseable_lines:
+            parsing_failures.append({
+                'original_name': line,
+                'failure_reason': 'Could not parse as order item',
+                'original_text': line,
+                'error_type': 'parsing_failure'
+            })
+    
+    # Calculate success rate
+    total_attempts = len(parsed_items) + len(unparseable_lines)
+    success_rate = round((items_created / total_attempts * 100), 1) if total_attempts > 0 else 0
+    
+    return {
+        'items_created': items_created,
+        'failed_products': failed_products,
+        'parsing_failures': parsing_failures,
+        'unparseable_lines': unparseable_lines,
+        'total_attempts': total_attempts,
+        'success_rate': success_rate
+    }
 
 def parse_order_items(content):
     """
@@ -426,6 +602,74 @@ def parse_order_items(content):
     
     return items
 
+def detect_and_correct_irregular_format(line):
+    """
+    Detect and correct irregular message formats where items and quantities appear flipped
+    
+    This handles cases like:
+    - "Basil 200g" -> "200g Basil" (product name followed by weight)
+    - "Carrots 10kg" -> "10kg Carrots" (product name followed by weight)
+    - "Green peppers 1box" -> "1 box Green peppers" (product name followed by unit)
+    - "20piece @ R18.75" -> "20 piece" (pricing format)
+    
+    Args:
+        line: Original line from message
+        
+    Returns:
+        str: Corrected line or original if no correction needed
+    """
+    if not line or not line.strip():
+        return line
+    
+    original_line = line.strip()
+    
+    # Pattern 1: Handle "20piece @ R18.75" format - extract quantity and unit, ignore pricing
+    price_pattern = r'^(\d+(?:\.\d+)?)\s*(piece|kg|g|gram|box|boxes|bag|bags|bunch|bunches|head|heads|punnets?|packets?)\s*@\s*R[\d.,]+'
+    match = re.search(price_pattern, original_line, re.IGNORECASE)
+    if match:
+        quantity = match.group(1)
+        unit = match.group(2)
+        corrected = f"{quantity} {unit}"
+        return corrected
+    
+    # Pattern 2: Handle "300g @ R31.25" format - weight with price, ignore pricing
+    weight_price_pattern = r'^(\d+(?:\.\d+)?)\s*(g|gram|kg|kilos?)\s*@\s*R[\d.,]+'
+    match = re.search(weight_price_pattern, original_line, re.IGNORECASE)
+    if match:
+        quantity = match.group(1)
+        unit = match.group(2)
+        corrected = f"{quantity}{unit}"
+        return corrected
+    
+    # Pattern 3: Handle "Product Name 200g" format - product followed by weight
+    product_weight_pattern = r'^([A-Za-z][A-Za-z\s]+?)\s+(\d+(?:\.\d+)?)\s*(g|gram|kg|kilos?)$'
+    match = re.search(product_weight_pattern, original_line, re.IGNORECASE)
+    if match:
+        product_name = match.group(1).strip()
+        quantity = match.group(2)
+        unit = match.group(3)
+        
+        # Only correct if the product name doesn't look like a quantity itself
+        if not re.match(r'^\d+', product_name):
+            corrected = f"{quantity}{unit} {product_name}"
+            return corrected
+    
+    # Pattern 4: Handle "Product Name 1box" format - product followed by unit quantity
+    product_unit_pattern = r'^([A-Za-z][A-Za-z\s]+?)\s+(\d+)\s*(box|boxes|bag|bags|bunch|bunches|head|heads|punnets?|packets?|piece|pieces)$'
+    match = re.search(product_unit_pattern, original_line, re.IGNORECASE)
+    if match:
+        product_name = match.group(1).strip()
+        quantity = match.group(2)
+        unit = match.group(3)
+        
+        # Only correct if the product name doesn't look like a quantity itself
+        if not re.match(r'^\d+', product_name):
+            corrected = f"{quantity} {unit} {product_name}"
+            return corrected
+    
+    # If no irregular format detected, return original
+    return original_line
+
 def parse_single_item(line):
     """
     Parse single order item line
@@ -438,6 +682,12 @@ def parse_single_item(line):
     """
     original_line = line
     line = line.strip()
+    
+    # ENHANCEMENT: Detect and correct irregular format where items and quantities are flipped
+    corrected_line = detect_and_correct_irregular_format(line)
+    if corrected_line != line:
+        print(f"[PARSER] Detected irregular format, corrected: '{line}' -> '{corrected_line}'")
+        line = corrected_line
     
     # Patterns for different quantity formats
     patterns = [
@@ -549,38 +799,37 @@ def clean_product_name(name):
     name = re.sub(r'\s+', ' ', name)
     name = re.sub(r'^[^\w]+|[^\w]+$', '', name)
     
-    # Normalize common product variations
+    # Normalize common product variations - only for exact matches to avoid double replacements
     replacements = {
         'tomatos': 'tomatoes',
         'tomatoe': 'tomatoes',
         'onion': 'onions',
         'potato': 'potatoes',
         'potatos': 'potatoes',
-        'lettuce': 'lettuce',
-        'spinach': 'spinach',
         'mushroom': 'mushrooms',
         'carrot': 'carrots',
     }
     
     name_lower = name.lower()
     for old, new in replacements.items():
-        if old in name_lower:
-            name = name_lower.replace(old, new).title()
+        if old == name_lower:  # Only exact matches to avoid "tomatoes" -> "tomatoess"
+            name = new.title()
             break
     else:
         name = name.title()
     
     return name.strip()
 
-def get_or_create_product(product_name):
+def get_or_create_product(product_name, auto_create=False):
     """
     Get or create product by name using enhanced product matching with seeded data
     
     Args:
         product_name: Name of the product
+        auto_create: Whether to create new products if not found (default: False)
         
     Returns:
-        Product instance
+        Product instance or None if not found and auto_create=False
     """
     # ENHANCEMENT 1: Smart product name normalization
     normalized_name = normalize_product_name_for_matching(product_name)
@@ -629,35 +878,68 @@ def get_or_create_product(product_name):
             'thyme': 'thyme'
         }
         
-        # Check if input matches any alias
+        # Check if input matches any alias - prioritize exact matches
         normalized_lower = normalized_name.lower()
         for alias, canonical in product_aliases.items():
-            if alias in normalized_lower or normalized_lower in alias:
+            if normalized_lower == alias:  # Exact alias match
                 try:
+                    # Try exact match first
+                    product = Product.objects.filter(name__iexact=canonical).first()
+                    if product:
+                        return product
+                    # Fall back to contains match
                     product = Product.objects.filter(name__icontains=canonical).first()
                     if product:
-                        # Product alias match found
                         return product
                 except Exception as e:
                     print(f"[PRODUCT] Error in alias matching: {e}")
         
-        # Try partial matching with existing products
+        # Try partial matching with existing products - prioritize exact word matches
         partial_matches = Product.objects.filter(name__icontains=normalized_name)
         if partial_matches.exists():
-            best_match = partial_matches.first()
-        # Logging disabled to prevent transaction errors            return best_match
+            # Prioritize exact matches first
+            for product in partial_matches:
+                # Check if the normalized name matches the product name exactly (ignoring case)
+                if normalized_name.lower() == product.name.lower():
+                    return product
+                # Check if the normalized name is a complete word in the product name
+                product_words = product.name.lower().split()
+                if normalized_name.lower() in product_words:
+                    return product
             
-        # Try reverse matching (product name contains input)
-        reverse_matches = Product.objects.filter(name__icontains=product_name[:8])  # First 8 chars
-        if reverse_matches.exists():
-            best_match = reverse_matches.first()
-        # Logging disabled to prevent transaction errors            
-        return best_match
+            # If no exact word match, use the first partial match
+            best_match = partial_matches.first()
+            # Logging disabled to prevent transaction errors
+            return best_match
+            
+        # Try reverse matching (product name contains input) - but be more specific
+        # Only do reverse matching if the input is reasonably long and specific
+        if len(product_name) >= 10:  # Only for longer product names
+            reverse_matches = Product.objects.filter(name__icontains=product_name[:10])  # First 10 chars
+            # Filter out matches that are clearly wrong (different main product type)
+            filtered_matches = []
+            main_word = product_name.split()[-1].lower()  # Get the main product word (last word)
+            
+            for match in reverse_matches:
+                match_words = match.name.lower().split()
+                # Only include if the main product word appears in the match
+                if main_word in match_words or any(main_word in word for word in match_words):
+                    filtered_matches.append(match)
+            
+            if filtered_matches:
+                best_match = filtered_matches[0]
+                # Logging disabled to prevent transaction errors
+                return best_match
             
     except Exception as e:
         print(f"[PRODUCT] Error in enhanced matching: {e}")
     
-    # ENHANCEMENT 4: Create new product with intelligent defaults
+    # Only create new products if explicitly requested
+    if not auto_create:
+        print(f"[PRODUCT] No match found for '{normalized_name}' and auto_create=False")
+        return None
+    
+    # ENHANCEMENT 4: Create new product with intelligent defaults (only if auto_create=True)
     try:
         from products.models import Department
         
@@ -718,6 +1000,17 @@ def normalize_product_name_for_matching(name):
     """Normalize product name for better matching"""
     if not name:
         return ''
+    
+    # Remove quantities first (e.g., "x3", "3x", "2kg", etc.)
+    name = re.sub(r'\s*[xX×]\s*\d+\s*$', '', name)  # Remove "x3", "X3", "×3" at end
+    name = re.sub(r'^\d+\s*[xX×]\s*', '', name)     # Remove "3x", "3X", "3×" at start
+    name = re.sub(r'\s*\d+\s*(kg|g|ml|l|pcs?|pieces?|box|boxes?|bag|bags?|punnet|punnets?|heads?)\s*$', '', name, flags=re.IGNORECASE)
+    
+    # Remove standalone quantity + unit patterns (e.g., "10 heads", "5 kg")
+    name = re.sub(r'^\d+\s+(heads?|kg|g|ml|l|pcs?|pieces?|box|boxes?|bag|bags?|punnet|punnets?)\s+', '', name, flags=re.IGNORECASE)
+    
+    # Remove standalone unit patterns without numbers (e.g., "heads broccoli" -> "broccoli")
+    name = re.sub(r'^(heads?|kg|g|ml|l|pcs?|pieces?|box|boxes?|bag|bags?|punnet|punnets?)\s+', '', name, flags=re.IGNORECASE)
     
     # Remove common prefixes/suffixes
     name = re.sub(r'^(fresh|organic|local|good|quality|farm)\s+', '', name, flags=re.IGNORECASE)
@@ -832,15 +1125,20 @@ def get_customer_specific_price(product, customer):
         
         # Try to get customer-specific price from price list
         try:
+            from datetime import date
+            today = date.today()
+            
             price_item = CustomerPriceListItem.objects.filter(
-                customer=customer,
+                price_list__customer=customer,
                 product=product,
-                is_active=True
-            ).first()
+                price_list__status='active',
+                price_list__effective_from__lte=today,
+                price_list__effective_until__gte=today
+            ).select_related('price_list').first()
             
             if price_item:
                 # Customer price list item found
-                return price_item.price
+                return price_item.customer_price_incl_vat
         except Exception as e:
             print(f"[PRICING] Error getting customer price list: {e}")
         
@@ -856,15 +1154,20 @@ def get_customer_specific_price(product, customer):
             
             if pricing_rule and product.price:
                 # Apply markup/discount
-                if pricing_rule.markup_percentage:
-                    adjusted_price = product.price * (1 + pricing_rule.markup_percentage / 100)
-                elif pricing_rule.discount_percentage:
+                if pricing_rule.base_markup_percentage:
+                    adjusted_price = product.price * (1 + pricing_rule.base_markup_percentage / 100)
+                    print(f"[PRICING] Applied {pricing_rule.base_markup_percentage}% markup to {product.name}: {product.price} -> {adjusted_price}")
+                    return adjusted_price
+                elif hasattr(pricing_rule, 'discount_percentage') and pricing_rule.discount_percentage:
                     adjusted_price = product.price * (1 - pricing_rule.discount_percentage / 100)
+                    print(f"[PRICING] Applied {pricing_rule.discount_percentage}% discount to {product.name}: {product.price} -> {adjusted_price}")
+                    return adjusted_price
                 else:
-                    adjusted_price = product.price
+                    print(f"[PRICING] No markup/discount configured for pricing rule: {pricing_rule.name}")
+                    return product.price
+            else:
+                print(f"[PRICING] No pricing rule found for segment '{customer_segment}' or product has no price")
                 
-        # Logging disabled to prevent transaction errors                
-                return adjusted_price
         except Exception as e:
             print(f"[PRICING] Error applying pricing rule: {e}")
         
@@ -887,27 +1190,40 @@ def determine_customer_segment(customer):
         str: Customer segment
     """
     try:
-        from accounts.models import RestaurantProfile, PrivateCustomerProfile
+        from accounts.models import RestaurantProfile
         
-        # Check if it's a private customer
-        if hasattr(customer, 'privatecustomerprofile'):
-            return 'private'
+        # Check user type first
+        if customer.user_type == 'private':
+            return 'retail'  # Private customers use retail pricing
         
-        # Check restaurant profile for segment determination
+        # Check if customer has a preferred pricing rule set
         if hasattr(customer, 'restaurantprofile'):
             profile = customer.restaurantprofile
             
-            # Segment based on credit limit and payment terms (from seeded data)
-            if profile.credit_limit >= 10000:
-                return 'premium'  # High credit limit customers
-            elif profile.credit_limit >= 5000:
-                return 'standard'  # Standard customers
-            elif profile.payment_terms <= 7:
-                return 'wholesale'  # Quick payment customers
+            # If customer has a preferred pricing rule, use its segment
+            if hasattr(profile, 'preferred_pricing_rule') and profile.preferred_pricing_rule:
+                return profile.preferred_pricing_rule.customer_segment
+            
+            # Segment based on payment terms and business characteristics
+            payment_terms = profile.payment_terms.lower() if profile.payment_terms else ''
+            
+            # Wholesale customers (quick payment, bulk orders)
+            if 'net 7' in payment_terms or '7 days' in payment_terms:
+                return 'wholesale'
+            
+            # Premium customers (longer payment terms, established businesses)
+            elif 'net 60' in payment_terms or '60 days' in payment_terms:
+                return 'premium'
+            
+            # Budget customers (private or small businesses)
+            elif hasattr(profile, 'is_private_customer') and profile.is_private_customer:
+                return 'budget'
+            
+            # Standard customers (default business customers)
             else:
-                return 'budget'  # Budget customers
+                return 'standard'
         
-        # Default segment
+        # Default segment for customers without profiles
         return 'standard'
         
     except Exception as e:
@@ -995,29 +1311,73 @@ def parse_stock_message(message):
                 except ValueError:
                     continue
     
+    # If no date found in header, use message timestamp date as fallback
     if not stock_date:
-        return None
+        if message.timestamp:
+            stock_date = message.timestamp.date()
+        else:
+            # Last resort: use today's date
+            stock_date = timezone.now().date()
     
-    # Parse numbered stock items
+    # Parse stock items (both numbered and unnumbered) with detailed tracking
     items = {}
+    parsing_failures = []
+    total_lines_processed = 0
+    
     for line in lines:
         line = line.strip()
-        if re.match(r'^\d+\.', line):  # Lines starting with number.
+        if not line:
+            continue
+            
+        # Skip header lines and non-stock lines
+        skip_patterns = [
+            r'^hazvinei',  # Contact info
+            r'^stock as at',  # Date header
+            r'^temp \d+',  # Temperature
+            r'^sorry',  # Apology text
+            r'we have enough',  # Availability notes
+            r'^\+27',  # Phone numbers
+            r'^SHALLOME$',  # Company name alone
+        ]
+        
+        should_skip = any(re.match(pattern, line, re.IGNORECASE) for pattern in skip_patterns)
+        if should_skip:
+            continue
+        
+        # Try to parse as stock item if it contains quantity patterns
+        has_quantity = re.search(r'\d+(?:\.\d+)?\s*(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)', line, re.IGNORECASE)
+        
+        if has_quantity:
+            total_lines_processed += 1
             item = parse_stock_item(line)
             if item:
                 items[item['name']] = {
                     'quantity': item['quantity'],
-                    'unit': item['unit']
+                    'unit': item['unit'],
+                    'original_line': line
                 }
+            else:
+                # Track parsing failures
+                parsing_failures.append({
+                    'original_line': line,
+                    'failure_reason': 'Failed to parse quantity/unit pattern',
+                    'error_type': 'parsing_failure'
+                })
     
-    if not items:
+    if not items and not parsing_failures:
         return None
     
-    return {
+    result = {
         'date': stock_date,
         'order_day': determine_order_day(message.timestamp.date()),
-        'items': items
+        'items': items,
+        'total_lines_processed': total_lines_processed,
+        'successful_parses': len(items),
+        'parsing_failures': parsing_failures,
+        'parsing_success_rate': round((len(items) / (len(items) + len(parsing_failures)) * 100), 1) if (len(items) + len(parsing_failures)) > 0 else 0
     }
+    
+    return result
 
 def parse_stock_item(line):
     """
@@ -1032,8 +1392,14 @@ def parse_stock_item(line):
     # Remove number prefix: "1.Spinach 3kg" -> "Spinach 3kg"
     line = re.sub(r'^\d+\.', '', line).strip()
     
-    # Parse quantity and unit at the end
-    match = re.search(r'(.+?)\s+(\d+(?:\.\d+)?)\s*(kg|pun|box|bag|bunch|head|g|punnet)s?$', line, re.IGNORECASE)
+    # Parse quantity and unit at the end - enhanced with more units and flexible spacing
+    # Try with space first: "Green Grapes 3 pun"
+    match = re.search(r'(.+?)\s+(\d+(?:\.\d+)?)\s*(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?$', line, re.IGNORECASE)
+    
+    # If no match, try without space: "Green Grapes3pun" or "Parsley1.5kg"
+    if not match:
+        match = re.search(r'(.+?)(\d+(?:\.\d+)?)\s*(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?$', line, re.IGNORECASE)
+    
     if match:
         name = match.group(1).strip()
         quantity = float(match.group(2))
@@ -1046,6 +1412,141 @@ def parse_stock_item(line):
         }
     
     return None
+
+def get_product_alias(product_name):
+    """
+    Get product alias for better matching
+    
+    Args:
+        product_name: Original product name from stock message
+        
+    Returns:
+        str: Aliased product name or original if no alias
+    """
+    # Common aliases for stock items
+    aliases = {
+        # Avocados
+        'avo': 'Avocados',
+        'avos': 'Avocados',
+        'avocado': 'Avocados',
+        
+        # Vegetables
+        'brinjals': 'Eggplant',
+        'brinjal': 'Eggplant',
+        'aubergine': 'Eggplant',
+        
+        # Lettuce varieties
+        'iceberg': 'Iceberg Lettuce',
+        'mixed lettuce': 'Mixed Lettuce',
+        'crispy lettuce': 'Crispy Lettuce',
+        
+        # Mushrooms
+        'mushroom': 'Brown Mushrooms',  # Default to most common
+        'mushrooms': 'Brown Mushrooms',
+        
+        # Cabbage
+        'cabbage': 'Green Cabbage',  # Default to green
+        
+        # Onions
+        'onion': 'Onions',
+        'onions': 'Onions',
+        'red onion': 'Red Onions',
+        'white onion': 'White Onions',
+        'spring onion': 'Spring Onions',
+        
+        # Peppers
+        'red pepper': 'Red Peppers',
+        'green pepper': 'Green Peppers',
+        'yellow pepper': 'Yellow Peppers',
+        
+        # Chillies
+        'red chilli': 'Red Chillies',
+        'green chilli': 'Green Chillies',
+        'red chillies': 'Red Chillies',
+        'green chillies': 'Green Chillies',
+        
+        # Fruits
+        'naartjies': 'Naartjies',
+        'naartjie': 'Naartjies',
+        'pine apple': 'Pineapple',
+        'pineapple': 'Pineapple',
+        'paw paw': 'Papaya',
+        'pawpaw': 'Papaya',
+        'sweet mellon': 'Sweet Melon',
+        'water mellon': 'Watermelon',
+        
+        # Berries
+        'blue berries': 'Blueberries',
+        'blueberries': 'Blueberries',
+        
+        # Corn
+        'sweet corn': 'Sweet Corn',
+        'baby corn': 'Baby Corn',
+        
+        # Spinach
+        'deveined spinarch': 'Deveined Spinach',  # Common typo
+        'deveined spinach': 'Deveined Spinach',
+        'spinach': 'Spinach',
+        
+        # Marrow
+        'baby marrow': 'Baby Marrow',
+        'baby marrow normal size': 'Baby Marrow',
+        'baby marrow medium': 'Baby Marrow',
+    }
+    
+    # Try exact match first, then case-insensitive
+    if product_name in aliases:
+        return aliases[product_name]
+    
+    for alias, target in aliases.items():
+        if product_name.lower() == alias.lower():
+            return target
+    
+    return product_name
+
+def select_best_product_match(product_name, products):
+    """
+    Select the best product match when multiple products are found
+    
+    Args:
+        product_name: Original product name from stock
+        products: QuerySet of matching products
+        
+    Returns:
+        Product: Best matching product
+    """
+    product_name_lower = product_name.lower().strip()
+    
+    # Strategy 1: Exact lowercase match
+    for p in products:
+        if p.name.lower().strip() == product_name_lower:
+            return p
+    
+    # Strategy 2: Prefer products without parentheses (more generic)
+    simple_products = [p for p in products if '(' not in p.name]
+    if simple_products:
+        return simple_products[0]
+    
+    # Strategy 3: For avocados, prefer "Hard" as default
+    if 'avo' in product_name_lower:
+        for p in products:
+            if 'hard' in p.name.lower():
+                return p
+    
+    # Strategy 4: For mushrooms, prefer "Brown" as default
+    if 'mushroom' in product_name_lower:
+        for p in products:
+            if 'brown' in p.name.lower():
+                return p
+    
+    # Strategy 5: For cabbage, prefer "Green" as default
+    if 'cabbage' in product_name_lower:
+        for p in products:
+            if 'green' in p.name.lower():
+                return p
+    
+    # Fallback: Return first match
+    return products.first()
 
 def determine_order_day(message_date):
     """
@@ -1184,3 +1685,322 @@ def log_processing_action(message, action, details=None):
     except Exception as e:
         # Don't let logging errors break the main flow
         print(f"Failed to log action {action} for message {message.message_id}: {e}")
+
+
+def reset_all_stock_levels():
+    """
+    Reset all product stock levels to 0 before processing new stock updates
+    This prevents old stock levels from interfering with fresh stock data
+    
+    Returns:
+        dict: Summary of reset operation
+    """
+    from inventory.models import FinishedInventory
+    from products.models import Product
+    from django.db import transaction
+    
+    reset_count = 0
+    
+    with transaction.atomic():
+        # Reset all product stock levels
+        products_updated = Product.objects.filter(stock_level__gt=0).update(stock_level=0)
+        
+        # Reset all finished inventory quantities
+        inventory_updated = FinishedInventory.objects.filter(available_quantity__gt=0).update(available_quantity=0)
+        
+        reset_count = products_updated + inventory_updated
+    
+    return {
+        'products_reset': products_updated,
+        'inventory_reset': inventory_updated,
+        'total_reset': reset_count,
+        'message': f'Reset {products_updated} products and {inventory_updated} inventory records to 0'
+    }
+
+def apply_stock_updates_to_inventory(reset_before_processing=True):
+    """
+    Apply processed StockUpdate data to FinishedInventory
+    
+    This bridges the gap between WhatsApp stock updates and inventory management.
+    It transfers stock data from SHALLOME messages to the inventory system.
+    
+    Args:
+        reset_before_processing: If True, reset all stock levels to 0 first
+    
+    Returns:
+        dict: Detailed summary with parsed items, failed items, and processing stats
+    """
+    from inventory.models import FinishedInventory, StockMovement
+    from products.models import Product
+    from django.db import transaction
+    from django.contrib.auth import get_user_model
+    
+    User = get_user_model()
+    
+    # Reset all stock levels to 0 before processing if requested
+    reset_summary = None
+    if reset_before_processing:
+        reset_summary = reset_all_stock_levels()
+        print(f"[STOCK] Reset {reset_summary['total_reset']} items to 0 before processing new stock take")
+    
+    # Get unprocessed stock updates
+    unprocessed_updates = StockUpdate.objects.filter(processed=False)
+    
+    if not unprocessed_updates.exists():
+        return {
+            'applied_updates': 0,
+            'products_updated': 0,
+            'errors': [],
+            'message': 'No unprocessed stock updates found'
+        }
+    
+    applied_updates = 0
+    products_updated = 0
+    errors = []
+    parsed_items = []
+    failed_items = []
+    processing_warnings = []
+    
+    # Get system user for stock movements
+    try:
+        system_user = User.objects.filter(is_staff=True).first()
+        if not system_user:
+            system_user = User.objects.first()
+    except:
+        system_user = None
+    
+    with transaction.atomic():
+        for stock_update in unprocessed_updates:
+            try:
+                stock_update_items = []
+                stock_update_failed = []
+                
+                for product_name, stock_data in stock_update.items.items():
+                    quantity = stock_data.get('quantity', 0)
+                    unit = stock_data.get('unit', '')
+                    
+                    # Create item tracking record
+                    item_record = {
+                        'original_name': product_name,
+                        'quantity': quantity,
+                        'unit': unit,
+                        'stock_date': stock_update.stock_date.isoformat(),
+                        'message_id': stock_update.message.message_id if stock_update.message else None
+                    }
+                    
+                    # Try to match product by name with enhanced matching logic
+                    product = None
+                    matching_info = []
+                    matching_method = None
+                    
+                    # Step 1: Try exact match
+                    try:
+                        product = Product.objects.get(name__iexact=product_name)
+                        matching_method = 'exact_match'
+                    except Product.DoesNotExist:
+                        # Step 2: Try with aliases
+                        aliased_name = get_product_alias(product_name)
+                        if aliased_name != product_name:
+                            try:
+                                product = Product.objects.get(name__iexact=aliased_name)
+                                matching_method = 'alias_match'
+                                matching_info.append(f"Used alias: '{product_name}' -> '{aliased_name}'")
+                            except Product.DoesNotExist:
+                                pass
+                        
+                        # Step 3: Try partial match if no alias worked
+                        if not product:
+                            products = Product.objects.filter(name__icontains=product_name)
+                            if products.count() == 1:
+                                product = products.first()
+                                matching_method = 'partial_match'
+                            elif products.count() > 1:
+                                # Multiple matches - use smart selection
+                                product = select_best_product_match(product_name, products)
+                                matching_method = 'smart_selection'
+                                matching_info.append(f"Multiple matches found: {[p.name for p in products]}")
+                                matching_info.append(f"Smart selection chose: '{product.name}'")
+                                processing_warnings.append(f"Multiple matches for '{product_name}': {[p.name for p in products]}. Selected: '{product.name}'")
+                    
+                    if not product:
+                        # Enhanced error reporting for failed items
+                        similar_products = Product.objects.filter(name__icontains=product_name[:3])[:3]
+                        failure_reason = "Product not found"
+                        suggestions = []
+                        
+                        if similar_products:
+                            suggestions = [p.name for p in similar_products]
+                            failure_reason += f". Similar products: {suggestions}"
+                        else:
+                            failure_reason += ". No similar products found."
+                        
+                        # Add to failed items
+                        failed_item = {
+                            **item_record,
+                            'failure_reason': failure_reason,
+                            'suggestions': suggestions,
+                            'error_type': 'product_not_found'
+                        }
+                        failed_items.append(failed_item)
+                        stock_update_failed.append(failed_item)
+                        errors.append(failure_reason)
+                        continue
+                    
+                    # Get or create FinishedInventory record
+                    inventory, created = FinishedInventory.objects.get_or_create(
+                        product=product,
+                        defaults={
+                            'available_quantity': 0,
+                            'reserved_quantity': 0,
+                            'minimum_level': product.minimum_stock or 10,
+                            'reorder_level': product.minimum_stock or 20,
+                            'average_cost': product.price or 0,
+                        }
+                    )
+                    
+                    # Calculate the difference
+                    old_quantity = inventory.available_quantity or 0
+                    new_quantity = quantity
+                    difference = new_quantity - old_quantity
+                    
+                    # Create successful item record
+                    parsed_item = {
+                        **item_record,
+                        'matched_product_id': product.id,
+                        'matched_product_name': product.name,
+                        'matching_method': matching_method,
+                        'matching_info': matching_info,
+                        'old_quantity': float(old_quantity),
+                        'new_quantity': float(new_quantity),
+                        'quantity_difference': float(difference),
+                        'inventory_created': created,
+                        'status': 'updated' if difference != 0 else 'no_change'
+                    }
+                    
+                    if difference != 0:
+                        # Update inventory
+                        inventory.available_quantity = new_quantity
+                        inventory.save()
+                        
+                        # Update product stock level to match
+                        product.stock_level = new_quantity
+                        product.save()
+                        
+                        # Create stock movement record
+                        movement_reference = f"SHALLOME-{stock_update.stock_date.strftime('%Y%m%d')}"
+                        if system_user:
+                            StockMovement.objects.create(
+                                movement_type='finished_adjust',
+                                reference_number=movement_reference,
+                                product=product,
+                                quantity=difference,
+                                user=system_user,
+                                notes=f"Stock update from SHALLOME message on {stock_update.stock_date}. "
+                                      f"Updated from {old_quantity} to {new_quantity} {unit}"
+                            )
+                        
+                        parsed_item['movement_reference'] = movement_reference
+                        products_updated += 1
+                    
+                    # Add to parsed items
+                    parsed_items.append(parsed_item)
+                    stock_update_items.append(parsed_item)
+                
+                # Mark stock update as processed
+                stock_update.processed = True
+                stock_update.save()
+                applied_updates += 1
+                
+            except Exception as e:
+                errors.append(f"Error processing stock update {stock_update.id}: {str(e)}")
+    
+    # Calculate summary statistics
+    total_items_processed = len(parsed_items) + len(failed_items)
+    success_rate = (len(parsed_items) / total_items_processed * 100) if total_items_processed > 0 else 0
+    
+    result = {
+        'applied_updates': applied_updates,
+        'products_updated': products_updated,
+        'total_items_processed': total_items_processed,
+        'successful_items': len(parsed_items),
+        'failed_items_count': len(failed_items),
+        'success_rate': round(success_rate, 1),
+        'parsed_items': parsed_items,
+        'failed_items': failed_items,
+        'processing_warnings': processing_warnings,
+        'errors': errors,
+        'message': f"Applied {applied_updates} stock updates, updated {products_updated} products. Success rate: {success_rate:.1f}% ({len(parsed_items)}/{total_items_processed})"
+    }
+    
+    # Add reset summary if stock was reset
+    if reset_summary:
+        result['reset_summary'] = reset_summary
+        result['message'] = f"Reset {reset_summary['total_reset']} items to 0, then applied {applied_updates} stock updates, updated {products_updated} products. Success rate: {success_rate:.1f}% ({len(parsed_items)}/{total_items_processed})"
+    
+    return result
+
+
+def get_stock_take_data(only_with_stock=True):
+    """
+    Get stock take data, optionally filtered to only show items with stock
+    
+    Args:
+        only_with_stock (bool): If True, only return products with stock > 0
+        
+    Returns:
+        dict: Stock take data with products and latest stock updates
+    """
+    from inventory.models import FinishedInventory
+    from products.models import Product
+    from django.db.models import Q
+    
+    # Get products with inventory records
+    query = Product.objects.select_related('inventory').filter(
+        inventory__isnull=False
+    )
+    
+    if only_with_stock:
+        query = query.filter(
+            Q(inventory__available_quantity__gt=0) | 
+            Q(stock_level__gt=0)
+        )
+    
+    products_data = []
+    
+    for product in query:
+        inventory = product.inventory
+        
+        # Get latest stock update for this product
+        latest_stock_update = None
+        for stock_update in StockUpdate.objects.filter(processed=True).order_by('-stock_date'):
+            for item_name, item_data in stock_update.items.items():
+                if item_name.lower().strip() == product.name.lower().strip():
+                    latest_stock_update = {
+                        'date': stock_update.stock_date,
+                        'quantity': item_data.get('quantity', 0),
+                        'unit': item_data.get('unit', ''),
+                        'order_day': stock_update.order_day
+                    }
+                    break
+            if latest_stock_update:
+                break
+        
+        products_data.append({
+            'id': product.id,
+            'name': product.name,
+            'current_stock': inventory.available_quantity or 0,
+            'reserved_stock': inventory.reserved_quantity or 0,
+            'minimum_stock': inventory.minimum_level or 0,
+            'unit': product.unit,
+            'price': product.price,
+            'department': product.department.name if product.department else None,
+            'latest_shallome_update': latest_stock_update,
+            'needs_attention': (inventory.available_quantity or 0) <= (inventory.minimum_level or 0)
+        })
+    
+    return {
+        'products': products_data,
+        'total_products': len(products_data),
+        'products_needing_attention': len([p for p in products_data if p['needs_attention']]),
+        'last_updated': StockUpdate.objects.filter(processed=True).order_by('-stock_date').first()
+    }

@@ -25,11 +25,27 @@ class ProcurementIntelligenceService:
     def __init__(self):
         self.tshwane_market = None
         try:
-            self.tshwane_market = Supplier.objects.get(name='Tshwane Fresh Produce Market')
-        except Supplier.DoesNotExist:
-            logger.warning("Tshwane Fresh Produce Market supplier not found")
+            # Ensure supplier exists or create it
+            self.tshwane_market, created = Supplier.objects.get_or_create(
+                name='Tshwane Fresh Produce Market',
+                defaults={
+                    'contact_person': 'Market Manager',
+                    'phone': '+27 12 358 8000',
+                    'email': 'info@tshwanemarket.co.za',
+                    'address': 'Tshwane Fresh Produce Market, Pretoria',
+                    'supplier_type': 'market',
+                    'is_active': True
+                }
+            )
+            if created:
+                logger.info("Created Tshwane Fresh Produce Market supplier")
+            else:
+                logger.info("Using existing Tshwane Fresh Produce Market supplier")
+        except Exception as e:
+            logger.error(f"Error setting up Tshwane Market supplier: {e}")
+            # Continue without supplier - system will still work but without supplier-specific features
     
-    def generate_market_recommendation(self, for_date: datetime.date = None) -> MarketProcurementRecommendation:
+    def generate_market_recommendation(self, for_date: datetime.date = None, use_historical_dates: bool = True) -> MarketProcurementRecommendation:
         """
         Generate intelligent market procurement recommendation based on:
         1. Current stock levels
@@ -37,9 +53,27 @@ class ProcurementIntelligenceService:
         3. Historical patterns
         4. Recipe requirements
         5. Wastage/spoilage buffers
+        
+        Args:
+            for_date: Target date for recommendation (defaults to today or earliest order date)
+            use_historical_dates: If True, use order dates for historical analysis
         """
         if not for_date:
-            for_date = timezone.now().date()
+            if use_historical_dates:
+                # Use earliest order date from recent orders for historical analysis
+                from orders.models import Order
+                recent_orders = Order.objects.filter(
+                    status__in=['confirmed', 'processing', 'received']
+                ).order_by('order_date')[:10]
+                
+                if recent_orders.exists():
+                    for_date = recent_orders.first().order_date
+                    logger.info(f"Using historical date from earliest order: {for_date}")
+                else:
+                    for_date = timezone.now().date()
+                    logger.info(f"No orders found, using current date: {for_date}")
+            else:
+                for_date = timezone.now().date()
         
         logger.info(f"Generating market recommendation for {for_date}")
         
@@ -140,13 +174,28 @@ class ProcurementIntelligenceService:
         return recommendation
     
     def _get_upcoming_orders(self, from_date: datetime.date, days_ahead: int = 5) -> List[Order]:
-        """Get orders for the next few days"""
+        """Get orders for the next few days or recent orders that need procurement"""
         end_date = from_date + timedelta(days=days_ahead)
-        return Order.objects.filter(
+        
+        # First try to get future orders
+        future_orders = Order.objects.filter(
             delivery_date__gte=from_date,
             delivery_date__lte=end_date,
-            status__in=['confirmed', 'processing']
+            status__in=['confirmed', 'processing', 'received']  # Include received orderspython manage.py seed_whatsapp_messages --day Tuesday_27_08_2025python manage.py seed_whatsapp_messages --day Tuesday_27_08_2025
         ).prefetch_related('items__product')
+        
+        # If no future orders, get recent orders (last 30 days) for procurement planning
+        if not future_orders.exists():
+            recent_start = from_date - timedelta(days=30)
+            recent_orders = Order.objects.filter(
+                delivery_date__gte=recent_start,
+                status__in=['confirmed', 'processing', 'received']
+            ).prefetch_related('items__product')
+            
+            logger.info(f"No future orders found, using {recent_orders.count()} recent orders for procurement planning")
+            return list(recent_orders)
+        
+        return list(future_orders)
     
     def _calculate_product_requirements(self, orders: List[Order]) -> Dict:
         """Calculate total product requirements from orders, including recipe breakdowns"""

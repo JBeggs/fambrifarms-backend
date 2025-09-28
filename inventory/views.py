@@ -43,8 +43,8 @@ from products.models import Product
 class UnitOfMeasureViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = UnitOfMeasure.objects.all()
     serializer_class = UnitOfMeasureSerializer
-    permission_classes = []  # Public endpoint for reference data
-    pagination_class = None  # Disable pagination for reference data
+    permission_classes = []
+    pagination_class = None
     
     def get_queryset(self):
         queryset = UnitOfMeasure.objects.all()
@@ -1521,10 +1521,13 @@ class CustomerPriceListViewSet(viewsets.ModelViewSet):
                 effective_from = date.today()
                 effective_until = effective_from + timedelta(days=7)  # Weekly price lists
                 
+                # Generate customer name for price list
+                customer_display_name = customer.get_full_name() or customer.email.split('@')[0]
+                
                 price_list = CustomerPriceList.objects.create(
                     customer=customer,
                     pricing_rule=pricing_rule,
-                    list_name=f"Weekly Price List - {effective_from}",
+                    list_name=f"Weekly Price List - {customer_display_name} - {effective_from}",
                     effective_from=effective_from,
                     effective_until=effective_until,
                     based_on_market_data=market_date,
@@ -1563,7 +1566,7 @@ class CustomerPriceListViewSet(viewsets.ModelViewSet):
         }, status=status.HTTP_201_CREATED if generated_lists else status.HTTP_400_BAD_REQUEST)
     
     def _generate_price_list_items(self, price_list, market_date):
-        """Generate price list items from market data"""
+        """Generate price list items from market data or product base prices"""
         items_created = 0
         
         # Debug: Check total market prices available
@@ -1581,6 +1584,11 @@ class CustomerPriceListViewSet(viewsets.ModelViewSet):
         import logging
         logger = logging.getLogger(__name__)
         logger.info(f"Market price analysis: Total={total_market_prices}, Matched={matched_market_prices}")
+        
+        # ENHANCEMENT: Fallback to product base prices if no market data available
+        if matched_market_prices == 0:
+            logger.info("No market price data found, using product base prices as fallback")
+            return self._generate_price_list_items_from_products(price_list)
         
         # Get latest market prices for the date
         market_prices = MarketPrice.objects.filter(
@@ -1647,6 +1655,57 @@ class CustomerPriceListViewSet(viewsets.ModelViewSet):
         
         logger.info(f"Created {items_created} price list items for customer {price_list.customer.email}")
         
+        return items_created
+    
+    def _generate_price_list_items_from_products(self, price_list):
+        """Generate price list items from product base prices (fallback when no market data)"""
+        items_created = 0
+        
+        # Get all active products
+        from products.models import Product
+        products = Product.objects.filter(is_active=True)[:50]  # Limit to 50 products for testing
+        
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Creating price list items from {products.count()} products")
+        
+        for product in products:
+            try:
+                # Use product base price as market price
+                market_price_excl_vat = product.price
+                market_price_incl_vat = product.price * Decimal('1.15')  # Add 15% VAT
+                
+                # Calculate markup using pricing rule
+                markup_percentage = price_list.pricing_rule.base_markup_percentage
+                
+                # Calculate customer prices
+                customer_price_excl_vat = market_price_excl_vat * (1 + markup_percentage / 100)
+                customer_price_incl_vat = market_price_incl_vat * (1 + markup_percentage / 100)
+                
+                # Create price list item
+                CustomerPriceListItem.objects.create(
+                    price_list=price_list,
+                    product=product,
+                    market_price_excl_vat=market_price_excl_vat,
+                    market_price_incl_vat=market_price_incl_vat,
+                    market_price_date=price_list.effective_from,
+                    markup_percentage=markup_percentage,
+                    customer_price_excl_vat=customer_price_excl_vat,
+                    customer_price_incl_vat=customer_price_incl_vat,
+                    unit_of_measure=product.unit,
+                    product_category=product.department.name if product.department else 'General',
+                    is_volatile=False,
+                    is_seasonal=False,
+                    is_premium=False
+                )
+                
+                items_created += 1
+                
+            except Exception as e:
+                logger.error(f"Error creating price list item for product {product.name}: {e}")
+                continue
+        
+        logger.info(f"Created {items_created} price list items from product base prices")
         return items_created
     
     def _calculate_product_volatility(self, product):

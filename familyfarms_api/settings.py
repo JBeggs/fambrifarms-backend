@@ -24,7 +24,6 @@ INSTALLED_APPS = [
     'products',
     'orders',
     'inventory',
-    # Restored apps for full system functionality
     'suppliers',
     'procurement',
     'production',
@@ -129,7 +128,7 @@ REST_FRAMEWORK = {
         'familyfarms_api.authentication.WhatsAppAPIKeyAuthentication',
     ],
     'DEFAULT_PERMISSION_CLASSES': [
-        'rest_framework.permissions.IsAuthenticated',  # Changed from AllowAny
+        'rest_framework.permissions.IsAuthenticated',
     ],
     'DEFAULT_RENDERER_CLASSES': [
         'rest_framework.renderers.JSONRenderer',
@@ -137,15 +136,6 @@ REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'PAGE_SIZE': 20,
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
-    # Temporarily disabled throttling for development
-    # 'DEFAULT_THROTTLE_CLASSES': [
-    #     'rest_framework.throttling.AnonRateThrottle',
-    #     'rest_framework.throttling.UserRateThrottle'
-    # ],
-    # 'DEFAULT_THROTTLE_RATES': {
-    #     'anon': '100/hour',
-    #     'user': '1000/hour'
-    # }
 }
 
 SIMPLE_JWT = {
@@ -186,22 +176,20 @@ SPECTACULAR_SETTINGS = {
 }
 
 # CORS/CSRF configuration
-# Allowlist specific origins; can be overridden via environment for production
 CORS_ALLOWED_ORIGINS = config(
     'CORS_ALLOWED_ORIGINS',
     default='http://localhost:3000,http://127.0.0.1:3000',
     cast=Csv()
 )
 
-# For development, allow all origins from local network
 CORS_ALLOWED_ORIGIN_REGEXES = [] if PRODUCTION else [
-    r"^http://192\.168\.\d+\.\d+:3000$",  # Any 192.168.x.x:3000
-    r"^http://10\.\d+\.\d+\.\d+:3000$",   # Any 10.x.x.x:3000 (common local network)
-    r"^http://172\.16\.\d+\.\d+:3000$",   # Any 172.16.x.x:3000 (common local network)
+    r"^http://192\.168\.\d+\.\d+:3000$",
+    r"^http://10\.\d+\.\d+\.\d+:3000$",
+    r"^http://172\.16\.\d+\.\d+:3000$",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_ALL_ORIGINS = False  # Keep this False for security
+CORS_ALLOW_ALL_ORIGINS = False
 CORS_ALLOW_HEADERS = [
     "accept",
     "accept-encoding",

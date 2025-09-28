@@ -20,7 +20,7 @@ class WhatsAppMessageSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'message_id', 'chat_name', 'sender_name', 'sender_phone',
             'content', 'cleaned_content', 'cleanedContent', 'timestamp', 'scraped_at',
-            'message_type', 'confidence_score', 'processed', 'order_details',
+            'message_type', 'confidence_score', 'processed', 'processing_notes', 'order_details',
             'parsed_items', 'instructions', 'edited', 'original_content', 'manual_company',
             'order_day', 'company_name', 'is_stock_controller',
             # Media fields
