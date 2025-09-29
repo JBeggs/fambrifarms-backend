@@ -781,6 +781,9 @@ def parse_single_item(line):
     
     # Simplified patterns using database units
     patterns = [
+        # Special pattern for packet items: "3 x mint packet 100g" -> extract 100g as the key info
+        (rf'(\d+(?:\.\d+)?)\s*[x×]\s*(.+?)\s+packet\s+(\d+(?:\.\d+)?)\s*g', 'qty_x_product_packet_grams'),
+        
         # Product x Quantity Unit: "Carrots x 10kg", "Onions x 20kg" 
         (rf'(.+?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*({units_pattern})', 'product_x_qty_unit'),
         
@@ -809,7 +812,18 @@ def parse_single_item(line):
             groups = match.groups()
             
             try:
-                if pattern_type == 'product_x_qty_unit':
+                if pattern_type == 'qty_x_product_packet_grams':
+                    # "3 x mint packet 100g" -> qty=100, unit=packet, product=mint (ignore the 3x)
+                    # We want the packet size (100g) as the key quantity, not the multiplier (3x)
+                    multiplier = float(groups[0])  # The "3" in "3 x"
+                    product_name = groups[1].strip()  # The "mint" part
+                    packet_size = float(groups[2])  # The "100" in "100g"
+                    
+                    # Use packet size as quantity and packet as unit
+                    quantity = packet_size
+                    unit = 'packet'
+                    
+                elif pattern_type == 'product_x_qty_unit':
                     # "Carrots x 10kg" -> product=Carrots, qty=10, unit=kg
                     product_name = groups[0].strip()
                     quantity = float(groups[1])
