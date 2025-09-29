@@ -977,11 +977,27 @@ def match_size_specific_product(product_name, quantity, unit):
     Args:
         product_name: Base product name (e.g., "Red Onions", "Basil")
         quantity: Quantity from parsing (e.g., 2, 100)
-        unit: Unit from parsing (e.g., "bag", "packet")
+        unit: Unit from parsing (e.g., "bag", "packet", "g")
         
     Returns:
         Product instance or None
     """
+    # Handle gram quantities that should match packet products
+    if unit == 'g' and quantity in [50, 100, 200, 500]:
+        # Check if product name contains "packet" - if so, treat as packet unit
+        if 'packet' in product_name.lower():
+            # Remove "packet" from product name and treat as packet unit
+            clean_name = re.sub(r'\s*packet\s*', ' ', product_name, flags=re.IGNORECASE).strip()
+            return match_size_specific_product(clean_name, quantity, 'packet')
+        
+        # Also try direct packet matching for herbs/spices
+        herb_names = ['basil', 'parsley', 'thyme', 'mint', 'coriander', 'rosemary', 'oregano', 'sage', 'micro herbs', 'edible flowers', 'wild rocket', 'rocket']
+        if any(herb in product_name.lower() for herb in herb_names):
+            # Try matching as packet
+            packet_match = match_size_specific_product(product_name, quantity, 'packet')
+            if packet_match:
+                return packet_match
+    
     if unit not in ['bag', 'packet']:
         return None
     
@@ -1037,8 +1053,8 @@ def get_or_create_product(product_name, auto_create=False, preferred_unit=None, 
     # ENHANCEMENT 1: Smart product name normalization
     normalized_name = normalize_product_name_for_matching(product_name)
     
-    # ENHANCEMENT 1.5: Try size-specific matching first if unit is bag or packet
-    if unit in ['bag', 'packet'] and quantity is not None:
+    # ENHANCEMENT 1.5: Try size-specific matching first if unit is bag, packet, or g (for packet products)
+    if quantity is not None and (unit in ['bag', 'packet'] or (unit == 'g' and quantity in [50, 100, 200, 500])):
         size_product = match_size_specific_product(normalized_name, quantity, unit)
         if size_product:
             return size_product
@@ -1110,6 +1126,7 @@ def get_or_create_product(product_name, auto_create=False, preferred_unit=None, 
             'tomatos': 'tomatoes',
             'potato': 'potatoes',
             'potatos': 'potatoes',
+            'potatoe': 'potatoes',
             'onion': 'onions',
             'mushroom': 'mushrooms',
             'porta': 'portabellini',
@@ -1142,6 +1159,11 @@ def get_or_create_product(product_name, auto_create=False, preferred_unit=None, 
             'avocado': 'avocados',
             'avos': 'avocados',
             'avo': 'avocados',
+            'semi-ripe': 'semi ripe',
+            'semi-ripe avocado': 'avocados (semi-ripe)',
+            'semi ripe avocado': 'avocados (semi-ripe)',
+            'avocado semi-ripe': 'avocados (semi-ripe)',
+            'avocado semi ripe': 'avocados (semi-ripe)',
             'lemon': 'lemons',
             'lime': 'limes',
             'orange': 'oranges',
@@ -1830,6 +1852,24 @@ def get_product_alias(product_name):
         'soft avocado': 'Avocados (Soft)',
         'soft avocados': 'Avocados (Soft)',
         
+        # Avocados - Semi-ripe variations
+        'avo semi-ripe': 'Avocados (Semi-Ripe)',
+        'avos semi-ripe': 'Avocados (Semi-Ripe)',
+        'avocado semi-ripe': 'Avocados (Semi-Ripe)',
+        'avocados semi-ripe': 'Avocados (Semi-Ripe)',
+        'avo semi ripe': 'Avocados (Semi-Ripe)',
+        'avos semi ripe': 'Avocados (Semi-Ripe)',
+        'avocado semi ripe': 'Avocados (Semi-Ripe)',
+        'avocados semi ripe': 'Avocados (Semi-Ripe)',
+        'semi-ripe avo': 'Avocados (Semi-Ripe)',
+        'semi-ripe avos': 'Avocados (Semi-Ripe)',
+        'semi-ripe avocado': 'Avocados (Semi-Ripe)',
+        'semi-ripe avocados': 'Avocados (Semi-Ripe)',
+        'semi ripe avo': 'Avocados (Semi-Ripe)',
+        'semi ripe avos': 'Avocados (Semi-Ripe)',
+        'semi ripe avocado': 'Avocados (Semi-Ripe)',
+        'semi ripe avocados': 'Avocados (Semi-Ripe)',
+        
         # Vegetables
         'brinjals': 'Eggplant',
         'brinjal': 'Eggplant',
@@ -1910,6 +1950,12 @@ def get_product_alias(product_name):
         'baby marrow normal size': 'Baby Marrow',
         'baby marrow medium': 'Baby Marrow',
         
+        # Potatoes (smart handling to exclude sweet potatoes)
+        'potato': 'Potatoes',
+        'potatos': 'Potatoes',
+        'potatoe': 'Potatoes',
+        'potatoes': 'Potatoes',
+        
         # Herbs & Spices (packet variations)
         'fresh basil': 'Basil',
         'dried basil': 'Basil',
@@ -1930,6 +1976,23 @@ def get_product_alias(product_name):
         'fresh sage': 'Sage',
         'dried sage': 'Sage',
     }
+    
+    # Smart handling for potato variations
+    product_lower = product_name.lower()
+    
+    # Handle sweet potato separately (don't convert to regular potatoes)
+    if 'sweet' in product_lower and any(p in product_lower for p in ['potato', 'potatos', 'potatoe']):
+        # Keep sweet potato variations as-is or map to specific sweet potato products
+        sweet_potato_aliases = {
+            'sweet potato': 'Sweet Potatoes',
+            'sweet potatos': 'Sweet Potatoes', 
+            'sweet potatoe': 'Sweet Potatoes',
+            'sweet potatoes': 'Sweet Potatoes',
+        }
+        for sweet_alias, sweet_target in sweet_potato_aliases.items():
+            if product_lower == sweet_alias:
+                return sweet_target
+        return product_name  # Return as-is if no specific sweet potato match
     
     # Try exact match first, then case-insensitive
     if product_name in aliases:
