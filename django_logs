@@ -61,3 +61,53 @@ INFO 2025-09-29 04:00:43,396 autoreload 4837 8314151104 /Users/jodybeggs/Documen
 INFO 2025-09-29 04:00:44,473 autoreload 5679 8314151104 Watching for file changes with StatReloader
 INFO 2025-09-29 04:01:04,685 autoreload 5679 8314151104 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/migrations/0007_expand_action_column.py changed, reloading.
 INFO 2025-09-29 04:01:05,356 autoreload 5705 8314151104 Watching for file changes with StatReloader
+INFO 2025-09-29 04:01:47,736 autoreload 5705 8314151104 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/migrations/0007_expand_action_column.py changed, reloading.
+INFO 2025-09-29 04:01:49,636 autoreload 5863 8314151104 Watching for file changes with StatReloader
+INFO 2025-09-29 04:02:50,144 autoreload 5863 8314151104 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/migrations/0007_expand_action_column.py changed, reloading.
+INFO 2025-09-29 04:02:50,797 autoreload 6142 8314151104 Watching for file changes with StatReloader
+INFO 2025-09-29 08:06:32,648 autoreload 3330 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 08:07:10,302 autoreload 4080 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 08:25:18,531 autoreload 8111 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 08:45:48,687 autoreload 8111 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-29 08:45:49,625 autoreload 10687 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 08:46:43,785 autoreload 10687 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-29 08:46:44,298 autoreload 10816 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 08:47:08,429 autoreload 10816 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-29 08:47:08,937 autoreload 10833 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 08:58:16,428 autoreload 10833 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-29 08:58:17,209 autoreload 11935 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 08:59:10,259 autoreload 11935 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-29 08:59:11,060 autoreload 11995 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:04:55,292 autoreload 11995 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-29 09:04:56,045 autoreload 12222 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:09:41,332 autoreload 12222 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-29 09:09:41,869 autoreload 12365 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:16:14,158 autoreload 12365 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-29 09:16:14,933 autoreload 12666 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:16:44,065 autoreload 12666 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-29 09:16:44,571 autoreload 12720 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:18:18,852 autoreload 12720 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/products/urls.py changed, reloading.
+INFO 2025-09-29 09:18:19,432 autoreload 12824 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:18:27,974 autoreload 12824 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/products/urls.py changed, reloading.
+INFO 2025-09-29 09:18:28,567 autoreload 12849 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:18:37,368 autoreload 12849 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/products/views.py changed, reloading.
+INFO 2025-09-29 09:18:38,051 autoreload 12862 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:19:00,901 autoreload 12862 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/products/views.py changed, reloading.
+INFO 2025-09-29 09:19:01,464 autoreload 12887 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:19:32,570 autoreload 12887 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/products/views.py changed, reloading.
+INFO 2025-09-29 09:19:33,118 autoreload 12961 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:19:44,534 basehttp 12961 6190510080 "POST /api/products/products/quick-create/ HTTP/1.1" 201 442
+INFO 2025-09-29 09:20:32,339 autoreload 12961 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/products/views.py changed, reloading.
+INFO 2025-09-29 09:20:32,851 autoreload 13040 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:20:47,685 autoreload 13040 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/products/views.py changed, reloading.
+INFO 2025-09-29 09:20:48,244 autoreload 13051 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:31:03,639 autoreload 13051 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-29 09:31:04,206 autoreload 14061 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:31:26,025 autoreload 14061 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-29 09:31:26,542 autoreload 14079 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:32:18,085 autoreload 14079 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-29 09:32:18,617 autoreload 14187 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:32:29,223 autoreload 14187 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-29 09:32:29,743 autoreload 14200 8708579520 Watching for file changes with StatReloader
+INFO 2025-09-29 09:50:43,829 autoreload 14200 8708579520 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/services.py changed, reloading.
+INFO 2025-09-29 09:50:44,294 autoreload 17104 8708579520 Watching for file changes with StatReloader

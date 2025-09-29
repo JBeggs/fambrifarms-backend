@@ -5,6 +5,7 @@ from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from decimal import Decimal
+from django.db import transaction
 from .models import Product, Department, ProductAlert, Recipe
 from .models_business_settings import BusinessSettings
 from .serializers import ProductSerializer, DepartmentSerializer
@@ -296,4 +297,90 @@ def get_supplier_recommendations(request, product_id):
     except Exception as e:
         return Response({
             'error': f'Failed to get supplier recommendations: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def quick_create_product(request):
+    """
+    Quick create product for missing items during order processing
+    POST data: {'name': str, 'unit': str, 'price': float, 'department_name': str (optional)}
+    """
+    try:
+        name = request.data.get('name', '').strip()
+        unit = request.data.get('unit', '').strip()
+        price = request.data.get('price')
+        department_name = request.data.get('department_name', 'Vegetables').strip()
+        
+        # Validation
+        if not name:
+            return Response({
+                'error': 'Product name is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
+        if not unit:
+            return Response({
+                'error': 'Unit is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+            
+        if price is None:
+            return Response({
+                'error': 'Price is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Validate unit is in allowed choices
+        valid_units = [choice[0] for choice in Product.UNIT_CHOICES]
+        if unit not in valid_units:
+            return Response({
+                'error': f'Invalid unit. Must be one of: {", ".join(valid_units)}'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            price_decimal = Decimal(str(price))
+            if price_decimal < 0:
+                return Response({
+                    'error': 'Price must be positive'
+                }, status=status.HTTP_400_BAD_REQUEST)
+        except (ValueError, TypeError):
+            return Response({
+                'error': 'Invalid price format'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check if product with same name and unit already exists
+        existing_product = Product.objects.filter(name__iexact=name, unit=unit).first()
+        if existing_product:
+            return Response({
+                'error': f'Product "{name}" with unit "{unit}" already exists',
+                'existing_product': ProductSerializer(existing_product).data
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Get or create department
+        department, created = Department.objects.get_or_create(
+            name=department_name,
+            defaults={'description': f'Auto-created for {name}'}
+        )
+        
+        # Create product
+        with transaction.atomic():
+            product = Product.objects.create(
+                name=name,
+                unit=unit,
+                price=price_decimal,
+                department=department,
+                stock_level=Decimal('0.00'),
+                minimum_stock=Decimal('5.00'),
+                is_active=True,
+                needs_setup=False,  # Since we're providing all required info
+                description=f'Quick-created product for order processing'
+            )
+        
+        return Response({
+            'success': True,
+            'message': f'Product "{name}" created successfully',
+            'product': ProductSerializer(product).data
+        }, status=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        return Response({
+            'error': f'Failed to create product: {str(e)}'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

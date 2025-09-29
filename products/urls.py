@@ -7,6 +7,7 @@ urlpatterns = [
     path('app-config/', views.app_config, name='app_config'),
     path('products/', views.ProductListView.as_view(), name='product_list'),
     path('products/<int:pk>/', views.ProductDetailView.as_view(), name='product_detail'),
+    path('products/quick-create/', views.quick_create_product, name='quick_create_product'),
     path('products/<int:product_id>/customer-price/', views.get_customer_price, name='get_customer_price'),
     path('departments/', views.DepartmentListView.as_view(), name='department_list'),
     path('alerts/', views.product_alerts, name='product_alerts'),

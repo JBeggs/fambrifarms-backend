@@ -727,9 +727,35 @@ def detect_and_correct_irregular_format(line):
     # If no irregular format detected, return original
     return original_line
 
+def get_database_units():
+    """Get all units from database for regex patterns"""
+    from products.models import Product
+    units = list(Product.objects.values_list('unit', flat=True).distinct())
+    # Add common variations
+    unit_variations = []
+    for unit in units:
+        unit_variations.append(unit)
+        if unit == 'kg':
+            unit_variations.extend(['kilos', 'kilogram', 'kilo'])
+        elif unit == 'piece':
+            unit_variations.extend(['pieces', 'pcs', 'pc'])
+        elif unit == 'box':
+            unit_variations.append('boxes')
+        elif unit == 'bag':
+            unit_variations.append('bags')
+        elif unit == 'bunch':
+            unit_variations.append('bunches')
+        elif unit == 'head':
+            unit_variations.append('heads')
+        elif unit == 'punnet':
+            unit_variations.extend(['punnets', 'pun'])
+        elif unit == 'packet':
+            unit_variations.append('packets')
+    return unit_variations
+
 def parse_single_item(line):
     """
-    Parse single order item line
+    Simplified parsing using database units and product names
     
     Args:
         line: Single line of text containing an item
@@ -740,38 +766,32 @@ def parse_single_item(line):
     original_line = line
     line = line.strip()
     
-    # Simple fix: Replace both * and × symbols with 'x' for easier parsing
-    # "2 * boxes avos" or "2 × boxes avos" becomes "2 x boxes avos"
+    # Normalize symbols
     line = re.sub(r'\s*[×*]\s*', ' x ', line)
     
-    # ENHANCEMENT: Detect and correct irregular format where items and quantities are flipped
-    corrected_line = detect_and_correct_irregular_format(line)
-    if corrected_line != line:
-        print(f"[PARSER] Detected irregular format, corrected: '{line}' -> '{corrected_line}'")
-        line = corrected_line
+    # Get database units for regex
+    db_units = get_database_units()
+    units_pattern = '|'.join(re.escape(unit) for unit in db_units)
     
-    # Patterns for different quantity formats
+    # Simplified patterns using database units
     patterns = [
-        # 2×5kg Tomatoes, 3x10kg Onions
-        (r'(\d+)\s*(?:×|x)\s*(\d+)\s*(kg|kilos?|kilogram)\s*(.+)', 'multiply_kg'),
+        # Product x Quantity Unit: "Carrots x 10kg", "Onions x 20kg" 
+        (rf'(.+?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*({units_pattern})', 'product_x_qty_unit'),
         
-        # 5kg Tomatoes, 10 kilos Onions
-        (r'(\d+(?:\.\d+)?)\s*(kg|kilos?|kilogram)\s*(.+)', 'simple_kg'),
+        # Product x Quantity: "Cucumber x 10", "Broccoli x 5 heads"
+        (rf'(.+?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*({units_pattern})?', 'product_x_qty'),
         
-        # 2 x boxes avos (after asterisk replacement: number x unit product)
-        (r'(\d+)\s+x\s+(box|boxes|pun|punnet|punnets|bag|bags|packet|packets|bunch|bunches|head|heads)\s+(.+)', 'number_x_unit'),
+        # Quantity x Unit Product: "2x box lemons", "1 x bag oranges"
+        (rf'(\d+(?:\.\d+)?)\s*[x×]\s*({units_pattern})\s+(.+)', 'qty_x_unit_product'),
         
-        # 3 boxes Lettuce, 5 punnets Strawberries
-        (r'(\d+)\s+(box|boxes|pun|punnet|punnets|bag|bags|packet|packets|bunch|bunches|head|heads)\s+(.+)', 'simple_unit'),
+        # Quantity Unit Product: "2 box lemons", "5 kg tomatoes"  
+        (rf'(\d+(?:\.\d+)?)\s+({units_pattern})\s+(.+)', 'qty_unit_product'),
         
-        # 1 x green beans, 2 x tomatoes (number x product)
-        (r'(\d+)\s+x\s+(.+)', 'quantity_x_product'),
+        # Quantity x Product: "2x lemons", "5 × tomatoes"
+        (rf'(\d+(?:\.\d+)?)\s*[x×]\s*(.+)', 'qty_x_product'),
         
-        # Tomatoes x3, Onions ×5
-        (r'(.+?)\s*(?:×|x)\s*(\d+)\s*(.+)?', 'product_multiply'),
-        
-        # 5 Tomatoes, 10 Onions (simple number)
-        (r'(\d+)\s*(.+)', 'simple_number'),
+        # Simple Quantity Product: "5 tomatoes", "10 lemons"
+        (rf'(\d+(?:\.\d+)?)\s+(.+)', 'qty_product'),
     ]
     
     for pattern, pattern_type in patterns:
@@ -780,42 +800,39 @@ def parse_single_item(line):
             groups = match.groups()
             
             try:
-                if pattern_type == 'multiply_kg':
-                    quantity = int(groups[0]) * int(groups[1])
-                    unit = groups[2].lower()
-                    product_name = groups[3].strip()
+                if pattern_type == 'product_x_qty_unit':
+                    # "Carrots x 10kg" -> product=Carrots, qty=10, unit=kg
+                    product_name = groups[0].strip()
+                    quantity = float(groups[1])
+                    unit = normalize_unit(groups[2])
                     
-                elif pattern_type == 'simple_kg':
+                elif pattern_type == 'product_x_qty':
+                    # "Cucumber x 10" or "Broccoli x 5 heads" -> product=Cucumber, qty=10, unit=piece/heads
+                    product_name = groups[0].strip()
+                    quantity = float(groups[1])
+                    unit = normalize_unit(groups[2]) if groups[2] else 'piece'
+                    
+                elif pattern_type == 'qty_x_unit_product':
+                    # "2x box lemons" -> qty=2, unit=box, product=lemons
                     quantity = float(groups[0])
-                    unit = 'kg'
-                    product_name = groups[2].strip()
-                    
-                elif pattern_type == 'number_x_unit':
-                    quantity = int(groups[0])
                     unit = normalize_unit(groups[1])
                     product_name = groups[2].strip()
                     
-                elif pattern_type == 'simple_unit':
-                    quantity = int(groups[0])
+                elif pattern_type == 'qty_unit_product':
+                    # "2 box lemons" -> qty=2, unit=box, product=lemons
+                    quantity = float(groups[0])
                     unit = normalize_unit(groups[1])
                     product_name = groups[2].strip()
                     
-                elif pattern_type == 'quantity_x_product':
-                    quantity = int(groups[0])
+                elif pattern_type == 'qty_x_product':
+                    # "2x lemons" -> qty=2, product=lemons, unit=piece (default)
+                    quantity = float(groups[0])
                     product_name = groups[1].strip()
                     unit = 'piece'  # Default unit
                     
-                elif pattern_type == 'product_multiply':
-                    product_name = groups[0].strip()
-                    quantity = int(groups[1])
-                    # Use unit from third group if available, otherwise default to 'piece'
-                    if len(groups) > 2 and groups[2] and groups[2].strip():
-                        unit = normalize_unit(groups[2].strip())
-                    else:
-                        unit = 'piece'  # Default unit
-                    
-                elif pattern_type == 'simple_number':
-                    quantity = int(groups[0])
+                elif pattern_type == 'qty_product':
+                    # "5 tomatoes" -> qty=5, product=tomatoes, unit=piece (default)
+                    quantity = float(groups[0])
                     product_name = groups[1].strip()
                     unit = 'piece'  # Default unit
                     
@@ -1196,6 +1213,10 @@ def normalize_product_name_for_matching(name):
     # Remove quantities first (e.g., "x3", "3x", "2kg", etc.)
     name = re.sub(r'\s*[xX×]\s*\d+\s*$', '', name)  # Remove "x3", "X3", "×3" at end
     name = re.sub(r'^\d+\s*[xX×]\s*', '', name)     # Remove "3x", "3X", "3×" at start
+    
+    # Remove standalone "X" at end (e.g., "Carrots X" -> "Carrots")
+    name = re.sub(r'\s+[xX]\s*$', '', name)
+    
     name = re.sub(r'\s*\d+\s*(kg|g|ml|l|pcs?|pieces?|box|boxes?|bag|bags?|punnet|punnets?|heads?)\s*$', '', name, flags=re.IGNORECASE)
     
     # Remove standalone quantity + unit patterns (e.g., "10 heads", "5 kg")
