@@ -14,6 +14,7 @@ import logging
 import hashlib
 from bs4 import BeautifulSoup
 import re
+from .utils import safe_html_content
 
 logger = logging.getLogger(__name__)
 
@@ -322,6 +323,9 @@ def receive_messages(request):
                         if not existing_message.edited:
                             existing_message.content = msg_data['content']
                             existing_message.cleaned_content = msg_data.get('cleanedContent', '')
+                            print(f"[DJANGO][RECEIVE][CONTENT_UPDATE] id={existing_message.message_id} - Updated content (not edited)")
+                        else:
+                            print(f"[DJANGO][RECEIVE][CONTENT_PROTECTED] id={existing_message.message_id} - Preserving edited content")
                         
                         existing_message.media_url = msg_data.get('media_url', '')
                         existing_message.media_type = msg_data.get('media_type', '')
@@ -520,7 +524,7 @@ def receive_html_messages(request):
                     existing_message.message_type = message_type
                     existing_message.media_url = ', '.join(parsed_content['image_urls']) if parsed_content['image_urls'] else ''
                     existing_message.media_type = 'image' if parsed_content['image_urls'] else ('voice' if parsed_content['has_voice'] else '')
-                    existing_message.raw_html = raw_html
+                    existing_message.raw_html = safe_html_content(raw_html)
                     existing_message.was_expanded = message_data.get('was_expanded', False)
                     existing_message.expansion_failed = message_data.get('expansion_failed', False)
                     existing_message.original_preview = message_data.get('original_preview', '')
@@ -542,7 +546,7 @@ def receive_html_messages(request):
                         media_url=', '.join(parsed_content['image_urls']) if parsed_content['image_urls'] else '',
                         media_type='image' if parsed_content['image_urls'] else ('voice' if parsed_content['has_voice'] else ''),
                         media_info='',
-                        raw_html=raw_html,
+                        raw_html=safe_html_content(raw_html),
                         was_expanded=message_data.get('was_expanded', False),
                         expansion_failed=message_data.get('expansion_failed', False),
                         original_preview=message_data.get('original_preview', ''),
@@ -766,6 +770,7 @@ def edit_message(request):
         # The manual_company field preserves the assignment regardless of content
         message.content = edited_content
         message.edited = True
+        print(f"[DJANGO][EDIT] id={message.message_id} - Message marked as edited")
         
         # Update processed status if provided
         if processed is not None:
