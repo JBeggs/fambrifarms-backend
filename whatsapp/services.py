@@ -784,8 +784,11 @@ def parse_single_item(line):
         # Quantity x Unit Product: "2x box lemons", "1 x bag oranges"
         (rf'(\d+(?:\.\d+)?)\s*[x×]\s*({units_pattern})\s+(.+)', 'qty_x_unit_product'),
         
-        # Quantity Unit Product: "2 box lemons", "5 kg tomatoes"  
+        # Quantity Unit Product (with space): "2 box lemons", "5 kg tomatoes"  
         (rf'(\d+(?:\.\d+)?)\s+({units_pattern})\s+(.+)', 'qty_unit_product'),
+        
+        # Quantity Unit Product (no space): "3kg carrots", "2kg tomato"
+        (rf'(\d+(?:\.\d+)?)({units_pattern})\s+(.+)', 'qty_unit_product_nospace'),
         
         # Quantity x Product: "2x lemons", "5 × tomatoes"
         (rf'(\d+(?:\.\d+)?)\s*[x×]\s*(.+)', 'qty_x_product'),
@@ -820,6 +823,12 @@ def parse_single_item(line):
                     
                 elif pattern_type == 'qty_unit_product':
                     # "2 box lemons" -> qty=2, unit=box, product=lemons
+                    quantity = float(groups[0])
+                    unit = normalize_unit(groups[1])
+                    product_name = groups[2].strip()
+                    
+                elif pattern_type == 'qty_unit_product_nospace':
+                    # "3kg carrots" -> qty=3, unit=kg, product=carrots
                     quantity = float(groups[0])
                     unit = normalize_unit(groups[1])
                     product_name = groups[2].strip()
@@ -1687,6 +1696,9 @@ def get_product_alias(product_name):
         # Mushrooms
         'mushroom': 'Button Mushrooms',  # Default to punnet unit (most common for retail)
         'mushrooms': 'Button Mushrooms',
+        'porta': 'Portabellini',
+        'porta mushroom': 'Portabellini',
+        'porta mushrooms': 'Portabellini',
         
         # Cabbage
         'cabbage': 'Green Cabbage',  # Default to green
