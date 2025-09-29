@@ -66,51 +66,14 @@ SECURE_BROWSER_XSS_FILTER = True
 SECURE_CONTENT_TYPE_NOSNIFF = True
 X_FRAME_OPTIONS = 'DENY'
 
-# Session configuration
-SESSION_COOKIE_SECURE = True
-CSRF_COOKIE_SECURE = True
+# Session configuration - Disabled SSL requirements for PythonAnywhere
+# SESSION_COOKIE_SECURE = True  # Requires HTTPS
+# CSRF_COOKIE_SECURE = True     # Requires HTTPS
 SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 
-# Logging configuration
-# LOGGING = {
-#     'version': 1,
-#     'disable_existing_loggers': False,
-#     'formatters': {
-#         'verbose': {
-#             'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
-#             'style': '{',
-#         },
-#         'simple': {
-#             'format': '{levelname} {message}',
-#             'style': '{',
-#         },
-#     },
-#     'handlers': {
-#         'file': {
-#             'level': 'INFO',
-#             'class': 'logging.FileHandler',
-#             'filename': f'/home/{PYTHONANYWHERE_USERNAME}/logs/django.log',
-#             'formatter': 'verbose',
-#         },
-#         'console': {
-#             'level': 'INFO',
-#             'class': 'logging.StreamHandler',
-#             'formatter': 'simple',
-#         },
-#     },
-#     'root': {
-#         'handlers': ['file', 'console'],
-#         'level': 'INFO',
-#     },
-#     'loggers': {
-#         'django': {
-#             'handlers': ['file', 'console'],
-#             'level': 'INFO',
-#             'propagate': False,
-#         },
-#     },
-# }
+# Logging configuration - Use PythonAnywhere's default logging
+# PythonAnywhere handles logging automatically, no custom configuration needed
 
 # Email configuration (optional - for error reporting)
 # EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

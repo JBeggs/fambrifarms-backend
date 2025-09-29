@@ -9,6 +9,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
 class ProductSerializer(serializers.ModelSerializer):
     department_name = serializers.CharField(source='department.name', read_only=True)
     alert_count = serializers.SerializerMethodField()
+    stock_level = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     
     class Meta:
         model = Product
@@ -17,9 +18,18 @@ class ProductSerializer(serializers.ModelSerializer):
             'price', 'unit', 'stock_level', 'minimum_stock', 'is_active',
             'needs_setup', 'alert_count', 'created_at', 'updated_at'
         ]
+        read_only_fields = ['stock_level']  # Prevent direct stock level updates
     
     def get_alert_count(self, obj):
         return obj.alerts.filter(is_resolved=False).count()
+    
+    def validate(self, data):
+        """Prevent stock_level updates through API"""
+        if 'stock_level' in data:
+            raise serializers.ValidationError({
+                'stock_level': 'Stock levels can only be updated through inventory management or WhatsApp stock updates.'
+            })
+        return data
 
 class ProductAlertSerializer(serializers.ModelSerializer):
     product_name = serializers.CharField(source='product.name', read_only=True)
