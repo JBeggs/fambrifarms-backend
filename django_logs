@@ -57,3 +57,7 @@ INFO 2025-09-29 03:50:16,600 autoreload 4818 8314151104 /Users/jodybeggs/Documen
 INFO 2025-09-29 03:50:17,634 autoreload 4825 8314151104 Watching for file changes with StatReloader
 INFO 2025-09-29 03:50:20,218 autoreload 4825 8314151104 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/models.py changed, reloading.
 INFO 2025-09-29 03:50:20,721 autoreload 4837 8314151104 Watching for file changes with StatReloader
+INFO 2025-09-29 04:00:43,396 autoreload 4837 8314151104 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/migrations/0007_expand_action_column.py changed, reloading.
+INFO 2025-09-29 04:00:44,473 autoreload 5679 8314151104 Watching for file changes with StatReloader
+INFO 2025-09-29 04:01:04,685 autoreload 5679 8314151104 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/migrations/0007_expand_action_column.py changed, reloading.
+INFO 2025-09-29 04:01:05,356 autoreload 5705 8314151104 Watching for file changes with StatReloader
