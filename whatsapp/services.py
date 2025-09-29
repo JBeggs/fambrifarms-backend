@@ -802,6 +802,12 @@ def parse_single_item(line):
         # Quantity x Product: "2x lemons", "5 × tomatoes"
         (rf'(\d+(?:\.\d+)?)\s*[x×]\s*(.+)', 'qty_x_product'),
         
+        # Product Quantity Each: "Cucumber 2 each", "Pineapple 1 each"
+        (rf'(.+?)\s+(\d+(?:\.\d+)?)\s+each', 'product_qty_each'),
+        
+        # Product Quantity (no unit): "Potato 6", "Onion 3" -> assume piece/each
+        (rf'(.+?)\s+(\d+(?:\.\d+)?)$', 'product_qty_nounit'),
+        
         # Simple Quantity Product: "5 tomatoes", "10 lemons"
         (rf'(\d+(?:\.\d+)?)\s+(.+)', 'qty_product'),
     ]
@@ -858,6 +864,23 @@ def parse_single_item(line):
                     quantity = float(groups[0])
                     product_name = groups[1].strip()
                     unit = 'piece'  # Default unit
+                    
+                elif pattern_type == 'product_qty_each':
+                    # "Cucumber 2 each" -> product=Cucumber, qty=2, unit=each
+                    product_name = groups[0].strip()
+                    quantity = float(groups[1])
+                    unit = 'each'
+                    
+                elif pattern_type == 'product_qty_nounit':
+                    # "Potato 6" -> product=Potato, qty=6, unit=piece (default, but prefer each if exists)
+                    product_name = groups[0].strip()
+                    quantity = float(groups[1])
+                    # For items that commonly come as individual pieces, prefer 'each'
+                    each_items = ['cucumber', 'pineapple', 'watermelon', 'melon', 'avocado', 'avo']
+                    if any(item in product_name.lower() for item in each_items):
+                        unit = 'each'
+                    else:
+                        unit = 'piece'  # Default
                     
                 elif pattern_type == 'qty_product':
                     # "5 tomatoes" -> qty=5, product=tomatoes, unit=piece (default)
