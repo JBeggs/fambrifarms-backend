@@ -10,6 +10,8 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+PYTHONANYWHERE_USERNAME = "fambridevops"
+
 # Security settings from environment
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 PRODUCTION = os.getenv('PRODUCTION', 'True').lower() == 'true'
