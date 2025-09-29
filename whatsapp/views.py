@@ -1269,7 +1269,7 @@ def _reevaluate_company_assignments_after_deletion(deleted_message, deleted_comp
         # Manual assignments should persist even if the company name message is deleted
         if message.manual_company == deleted_company:
             # Log that we found a manual assignment but are preserving it
-            log_processing_action(message, 'manual_company_preserved_after_deletion', {
+            log_processing_action(message, 'manual_company_preserved', {
                 'deleted_company': deleted_company,
                 'deleted_message_id': deleted_message.id,
                 'preserved_manual_company': message.manual_company
@@ -1288,7 +1288,7 @@ def _reevaluate_company_assignments_after_deletion(deleted_message, deleted_comp
                 
                 # Log the change if company actually changed
                 if new_company != deleted_company:
-                    log_processing_action(message, 'context_company_changed_after_deletion', {
+                    log_processing_action(message, 'context_company_changed', {
                         'deleted_company': deleted_company,
                         'deleted_message_id': deleted_message.id,
                         'new_company': new_company

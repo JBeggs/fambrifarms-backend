@@ -274,10 +274,21 @@ class MessageProcessingLog(models.Model):
         ('stock_updated', 'Stock Updated'),
         ('edited', 'Message Edited'),
         ('error', 'Processing Error'),
+        ('dynamic_pricing_applied', 'Dynamic Pricing Applied'),
+        ('product_created', 'Product Auto-Created'),
+        ('customer_assigned', 'Customer Assigned'),
+        ('validation_failed', 'Validation Failed'),
+        ('partial_rejected', 'Partial Processing Rejected'),
+        ('unparsed_as_notes', 'Unparsed Lines Added as Notes'),
+        ('note_item_created', 'Note Item Created for Unparsed'),
+        ('manual_company_preserved', 'Manual Company Preserved'),
+        ('context_company_changed', 'Context Company Changed'),
+        ('company_updated', 'Company Assignment Updated'),
+        ('type_updated', 'Message Type Updated'),
     ]
     
     message = models.ForeignKey(WhatsAppMessage, on_delete=models.CASCADE, related_name='processing_logs')
-    action = models.CharField(max_length=20, choices=ACTIONS)
+    action = models.CharField(max_length=50, choices=ACTIONS)
     details = models.JSONField(default=dict)
     timestamp = models.DateTimeField(auto_now_add=True)
     

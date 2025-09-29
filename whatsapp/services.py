@@ -222,7 +222,7 @@ def create_order_from_message(message):
             message.save()
             
             order.delete()  # Delete the empty order
-            log_processing_action(message, 'partial_processing_rejected', {
+            log_processing_action(message, 'partial_rejected', {
                 'error': 'Order rejected due to partial processing - all items must be processed successfully',
                 'action': 'order_creation',
                 'items_processed': items_created,
@@ -569,7 +569,7 @@ def create_order_items(order, message):
             order.notes = f"{existing_notes}\n\n{notes_text}".strip()
             order.save()
         
-        log_processing_action(message, 'unparsed_lines_added_as_notes', {
+        log_processing_action(message, 'unparsed_as_notes', {
             'unparsed_lines': unparseable_lines,
             'count': len(unparseable_lines),
             'action': 'fallback_notes'
@@ -602,7 +602,7 @@ def create_order_items(order, message):
         )
         items_created = 1
         
-        log_processing_action(message, 'created_note_item_for_unparsed_content', {
+        log_processing_action(message, 'note_item_created', {
             'unparsed_content': notes_content,
             'action': 'fallback_note_item'
         })
@@ -1910,14 +1910,31 @@ def log_processing_action(message, action, details=None):
         details: Additional details dictionary
     """
     try:
-        MessageProcessingLog.objects.create(
-            message=message,
-            action=action,
-            details=details or {},
-        )
+        # Use a separate transaction to prevent rollback cascade
+        from django.db import transaction
+        with transaction.atomic():
+            MessageProcessingLog.objects.create(
+                message=message,
+                action=action,
+                details=details or {},
+            )
     except Exception as e:
         # Don't let logging errors break the main flow
+        # Log to console instead of database if database logging fails
         print(f"Failed to log action {action} for message {message.message_id}: {e}")
+        
+        # Try to log the error in a separate transaction
+        try:
+            with transaction.atomic():
+                MessageProcessingLog.objects.create(
+                    message=message,
+                    action='error',
+                    details={'original_action': action, 'logging_error': str(e)},
+                    error_message=f"Failed to log action '{action}': {str(e)}"
+                )
+        except Exception as nested_e:
+            # If even error logging fails, just print to console
+            print(f"Failed to log error for message {message.message_id}: {nested_e}")
 
 
 def reset_all_stock_levels():
