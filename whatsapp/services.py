@@ -499,8 +499,14 @@ def create_order_items(order, message):
     
     for item_data in parsed_items:
         try:
-            # Find product (don't auto-create) with unit preference
-            product = get_or_create_product(item_data['product_name'], auto_create=False, preferred_unit=item_data.get('unit'))
+            # Find product (don't auto-create) with unit preference and bag size matching
+            product = get_or_create_product(
+                item_data['product_name'], 
+                auto_create=False, 
+                preferred_unit=item_data.get('unit'),
+                quantity=item_data.get('quantity'),
+                unit=item_data.get('unit')
+            )
             
             if not product:
                 failed_products.append({
@@ -927,7 +933,59 @@ def clean_product_name(name):
     
     return name.strip()
 
-def get_or_create_product(product_name, auto_create=False, preferred_unit=None):
+def match_size_specific_product(product_name, quantity, unit):
+    """
+    Match products with specific sizes based on quantity and unit
+    
+    Args:
+        product_name: Base product name (e.g., "Red Onions", "Basil")
+        quantity: Quantity from parsing (e.g., 2, 100)
+        unit: Unit from parsing (e.g., "bag", "packet")
+        
+    Returns:
+        Product instance or None
+    """
+    if unit not in ['bag', 'packet']:
+        return None
+    
+    # Determine size format based on unit
+    if unit == 'bag':
+        # Format: "Red Onions (2kg bag)" for quantity=2, unit=bag
+        size_specific_name = f"{product_name} ({int(quantity)}kg bag)"
+        variations = [
+            f"{product_name} ({int(quantity)}kg bag)",
+            f"{product_name} ({quantity}kg bag)",
+            f"{product_name} {int(quantity)}kg bag",
+            f"{product_name} {quantity}kg bag",
+        ]
+    elif unit == 'packet':
+        # Format: "Basil (100g packet)" for quantity=100, unit=packet
+        size_specific_name = f"{product_name} ({int(quantity)}g packet)"
+        variations = [
+            f"{product_name} ({int(quantity)}g packet)",
+            f"{product_name} ({quantity}g packet)",
+            f"{product_name} {int(quantity)}g packet",
+            f"{product_name} {quantity}g packet",
+        ]
+    
+    # Try exact match first
+    try:
+        product = Product.objects.get(name=size_specific_name, is_active=True)
+        print(f"[PRODUCT] {unit.title()} size match: '{product_name}' {quantity}{unit} -> {product.name}")
+        return product
+    except Product.DoesNotExist:
+        # Try variations with different formatting
+        for variation in variations:
+            try:
+                product = Product.objects.get(name=variation, is_active=True)
+                print(f"[PRODUCT] {unit.title()} size variation match: '{product_name}' {quantity}{unit} -> {product.name}")
+                return product
+            except Product.DoesNotExist:
+                continue
+    
+    return None
+
+def get_or_create_product(product_name, auto_create=False, preferred_unit=None, quantity=None, unit=None):
     """
     Get or create product by name using enhanced product matching with seeded data
     
@@ -941,6 +999,22 @@ def get_or_create_product(product_name, auto_create=False, preferred_unit=None):
     """
     # ENHANCEMENT 1: Smart product name normalization
     normalized_name = normalize_product_name_for_matching(product_name)
+    
+    # ENHANCEMENT 1.5: Try size-specific matching first if unit is bag or packet
+    if unit in ['bag', 'packet'] and quantity is not None:
+        size_product = match_size_specific_product(normalized_name, quantity, unit)
+        if size_product:
+            return size_product
+    
+    # ENHANCEMENT 1.6: Try gram-to-packet conversion for herbs/spices
+    if unit == 'g' and quantity in [50, 100, 200] and quantity is not None:
+        # Check if this is a herb/spice that might come in packets
+        herb_names = ['basil', 'parsley', 'thyme', 'mint', 'coriander', 'rosemary', 'oregano', 'sage', 'micro herbs', 'edible flowers']
+        if any(herb in normalized_name.lower() for herb in herb_names):
+            packet_product = match_size_specific_product(normalized_name, quantity, 'packet')
+            if packet_product:
+                print(f"[PRODUCT] Gram-to-packet conversion: '{normalized_name}' {quantity}g -> {packet_product.name}")
+                return packet_product
     
     # ENHANCEMENT 2: Unit-aware matching for products with multiple units (PRIORITY when unit specified)
     if preferred_unit:
@@ -1047,7 +1121,27 @@ def get_or_create_product(product_name, auto_create=False, preferred_unit=None):
             'jumbo eggs': 'eggs (jumbo)',
             'free range eggs': 'free range eggs',
             'butter nut': 'butternut',
-            'butternut': 'butternut', 
+            'butternut': 'butternut',
+            'blueberry': 'blueberries',
+            'blue berry': 'blueberries',
+            'fresh basil': 'basil',
+            'dried basil': 'basil',
+            'fresh parsley': 'parsley',
+            'flat leaf parsley': 'parsley',
+            'curly parsley': 'parsley',
+            'fresh thyme': 'thyme',
+            'dried thyme': 'thyme',
+            'fresh mint': 'mint',
+            'spearmint': 'mint',
+            'peppermint': 'mint',
+            'fresh coriander': 'coriander',
+            'cilantro': 'coriander',
+            'fresh rosemary': 'rosemary',
+            'dried rosemary': 'rosemary',
+            'fresh oregano': 'oregano',
+            'dried oregano': 'oregano',
+            'fresh sage': 'sage',
+            'dried sage': 'sage',
             'lemon': 'lemons',
             'whole tomatoes': 'tomatoes',
             'carrot': 'carrots',
@@ -1624,6 +1718,19 @@ def parse_stock_item(line):
     # Remove number prefix: "1.Spinach 3kg" -> "Spinach 3kg"
     line = re.sub(r'^\d+\.', '', line).strip()
     
+    # First try to handle complex format: "Red onions 2bag (18kg)" or "Parsley 3kg( Fresh)"
+    complex_match = re.search(r'(.+?)\s+(\d+(?:\.\d+)?)\s*(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?\s*\([^)]*\)', line, re.IGNORECASE)
+    if complex_match:
+        name = complex_match.group(1).strip()
+        quantity = float(complex_match.group(2))
+        unit = normalize_unit(complex_match.group(3))
+        
+        return {
+            'name': clean_product_name(name),
+            'quantity': quantity,
+            'unit': unit
+        }
+    
     # Parse quantity and unit at the end - enhanced with more units and flexible spacing
     # Try with space first: "Green Grapes 3 pun"
     match = re.search(r'(.+?)\s+(\d+(?:\.\d+)?)\s*(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?$', line, re.IGNORECASE)
@@ -1710,7 +1817,9 @@ def get_product_alias(product_name):
         'onion': 'Onions',
         'onions': 'Onions',
         'red onion': 'Red Onions',
+        'red onions': 'Red Onions',
         'white onion': 'White Onions',
+        'white onions': 'White Onions',
         'spring onion': 'Spring Onions',
         
         # Peppers
@@ -1747,6 +1856,8 @@ def get_product_alias(product_name):
         # Berries
         'blue berries': 'Blueberries',
         'blueberries': 'Blueberries',
+        'blueberry': 'Blueberries',
+        'blue berry': 'Blueberries',
         
         # Corn
         'sweet corn': 'Sweet Corn',
@@ -1761,6 +1872,26 @@ def get_product_alias(product_name):
         'baby marrow': 'Baby Marrow',
         'baby marrow normal size': 'Baby Marrow',
         'baby marrow medium': 'Baby Marrow',
+        
+        # Herbs & Spices (packet variations)
+        'fresh basil': 'Basil',
+        'dried basil': 'Basil',
+        'fresh parsley': 'Parsley',
+        'flat leaf parsley': 'Parsley',
+        'curly parsley': 'Parsley',
+        'fresh thyme': 'Thyme',
+        'dried thyme': 'Thyme',
+        'fresh mint': 'Mint',
+        'spearmint': 'Mint',
+        'peppermint': 'Mint',
+        'fresh coriander': 'Coriander',
+        'cilantro': 'Coriander',
+        'fresh rosemary': 'Rosemary',
+        'dried rosemary': 'Rosemary',
+        'fresh oregano': 'Oregano',
+        'dried oregano': 'Oregano',
+        'fresh sage': 'Sage',
+        'dried sage': 'Sage',
     }
     
     # Try exact match first, then case-insensitive
