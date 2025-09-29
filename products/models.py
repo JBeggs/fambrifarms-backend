@@ -22,11 +22,18 @@ class Product(models.Model):
         ('kg', 'Kilogram'),
         ('g', 'Gram'),
         ('piece', 'Piece'),
-        ('box', 'Box'),
-        ('punnet', 'Punnet'),
-        ('bag', 'Bag'),
-        ('bunch', 'Bunch'),
+        ('each', 'Each'),
         ('head', 'Head'),
+        ('bunch', 'Bunch'),
+        ('box', 'Box'),
+        ('bag', 'Bag'),
+        ('punnet', 'Punnet'),
+        ('packet', 'Packet'),
+        ('crate', 'Crate'),
+        ('tray', 'Tray'),
+        ('bundle', 'Bundle'),
+        ('L', 'Liter'),
+        ('ml', 'Milliliter'),
     ]
     
     name = models.CharField(max_length=200)
@@ -72,7 +79,7 @@ class Product(models.Model):
     
     class Meta:
         ordering = ['department__name', 'name']
-        unique_together = ['name', 'department']
+        unique_together = ['name', 'department', 'unit']
 
 class ProductAlert(models.Model):
     ALERT_TYPES = [
@@ -234,13 +241,47 @@ class MarketProcurementItem(models.Model):
     )
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     
+    # INTEGRATION: Link to supplier products for unified procurement
+    preferred_supplier = models.ForeignKey(
+        'suppliers.Supplier', 
+        on_delete=models.SET_NULL, 
+        null=True, blank=True,
+        help_text="Recommended supplier based on Fambri-first logic"
+    )
+    supplier_product = models.ForeignKey(
+        'suppliers.SupplierProduct',
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        help_text="Specific supplier product with pricing and availability"
+    )
+    
     # Quantities
     needed_quantity = models.DecimalField(max_digits=10, decimal_places=2)
     recommended_quantity = models.DecimalField(max_digits=10, decimal_places=2)
     
-    # Pricing
+    # Pricing (now supplier-aware)
     estimated_unit_price = models.DecimalField(max_digits=10, decimal_places=2)
     estimated_total_cost = models.DecimalField(max_digits=10, decimal_places=2)
+    supplier_unit_price = models.DecimalField(
+        max_digits=10, decimal_places=2, 
+        null=True, blank=True,
+        help_text="Actual supplier price if available"
+    )
+    
+    # Supplier metrics integration
+    supplier_quality_rating = models.DecimalField(
+        max_digits=3, decimal_places=2,
+        null=True, blank=True,
+        help_text="Quality rating from supplier performance tracking"
+    )
+    supplier_lead_time_days = models.PositiveIntegerField(
+        null=True, blank=True,
+        help_text="Lead time from supplier"
+    )
+    is_fambri_available = models.BooleanField(
+        default=False,
+        help_text="Whether Fambri Internal can supply this item"
+    )
     
     # Reasoning
     reasoning = models.TextField(help_text="Why this quantity is recommended")
@@ -259,6 +300,19 @@ class MarketProcurementItem(models.Model):
     source_orders = models.JSONField(
         default=list,
         help_text="Order IDs that drove this recommendation"
+    )
+    
+    # Procurement method tracking
+    procurement_method = models.CharField(
+        max_length=20,
+        choices=[
+            ('market', 'Market Purchase'),
+            ('supplier', 'Direct Supplier'),
+            ('fambri', 'Fambri Internal'),
+            ('mixed', 'Multi-Supplier Split'),
+        ],
+        default='market',
+        help_text="Recommended procurement method"
     )
     
     def __str__(self):

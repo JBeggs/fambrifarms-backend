@@ -1,13 +1,16 @@
 from rest_framework import generics, viewsets, status
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework.permissions import AllowAny, IsAuthenticated
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
+from decimal import Decimal
 from .models import Product, Department, ProductAlert, Recipe
 from .models_business_settings import BusinessSettings
 from .serializers import ProductSerializer, DepartmentSerializer
 from .serializers_business_settings import AppConfigSerializer
+from .services import ProcurementIntelligenceService
+from .unified_procurement_service import UnifiedProcurementService
 
 User = get_user_model()
 
@@ -177,4 +180,120 @@ def get_customer_price(request, product_id):
     except Exception as e:
         return Response({
             'error': f'Failed to get customer price: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+# Supplier Optimization Endpoints
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def calculate_supplier_split(request):
+    """
+    Calculate optimal supplier split for a single product
+    POST data: {'product_id': int, 'quantity': float}
+    """
+    try:
+        product_id = request.data.get('product_id')
+        quantity = request.data.get('quantity')
+        
+        if not product_id or not quantity:
+            return Response({
+                'error': 'product_id and quantity are required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        product = get_object_or_404(Product, id=product_id)
+        quantity_decimal = Decimal(str(quantity))
+        
+        # Initialize unified procurement service
+        procurement_service = UnifiedProcurementService()
+        
+        # Calculate optimal split using unified logic
+        result = procurement_service.calculate_optimal_supplier_split(product, quantity_decimal)
+        
+        return Response(result, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({
+            'error': f'Failed to calculate supplier split: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def calculate_order_optimization(request):
+    """
+    Calculate optimal supplier split for an entire order
+    POST data: {'order_items': [{'product_id': int, 'quantity': float}, ...]}
+    """
+    try:
+        order_items = request.data.get('order_items', [])
+        
+        if not order_items:
+            return Response({
+                'error': 'order_items array is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Validate order items format
+        for item in order_items:
+            if 'product_id' not in item or 'quantity' not in item:
+                return Response({
+                    'error': 'Each order item must have product_id and quantity'
+                }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Initialize procurement service
+        procurement_service = ProcurementIntelligenceService()
+        
+        # Calculate order optimization
+        result = procurement_service.calculate_order_supplier_optimization(order_items)
+        
+        return Response(result, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({
+            'error': f'Failed to calculate order optimization: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_supplier_recommendations(request, product_id):
+    """
+    Get supplier recommendations for a specific product
+    Query params: ?quantity=float
+    """
+    try:
+        quantity = request.query_params.get('quantity', '1')
+        quantity_decimal = Decimal(str(quantity))
+        
+        product = get_object_or_404(Product, id=product_id)
+        
+        # Initialize unified procurement service
+        procurement_service = UnifiedProcurementService()
+        
+        # Get supplier recommendations using unified logic
+        supplier_option = procurement_service.get_best_supplier_for_product(product, quantity_decimal)
+        
+        # Convert to expected format
+        if supplier_option:
+            recommendations = [{
+                'supplier_id': supplier_option['supplier'].id,
+                'supplier_name': supplier_option['supplier'].name,
+                'supplier_type': 'internal' if supplier_option['is_fambri'] else 'external',
+                'unit_price': float(supplier_option['unit_price']),
+                'available_quantity': float(supplier_option['available_quantity']),
+                'can_fulfill_full_order': supplier_option['can_fulfill_full_order'],
+                'total_cost': float(supplier_option['total_cost']),
+                'lead_time_days': supplier_option['lead_time_days'],
+                'quality_rating': float(supplier_option['quality_rating']),
+                'priority': 1 if supplier_option['is_fambri'] else 2
+            }]
+        else:
+            recommendations = []
+        
+        return Response({
+            'product_id': product_id,
+            'product_name': product.name,
+            'quantity_requested': float(quantity_decimal),
+            'suppliers': recommendations
+        }, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({
+            'error': f'Failed to get supplier recommendations: {str(e)}'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

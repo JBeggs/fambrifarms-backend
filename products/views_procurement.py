@@ -187,6 +187,119 @@ def approve_market_recommendation(request, recommendation_id):
             'error': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_market_recommendation(request, recommendation_id):
+    """
+    Update a market recommendation and its items
+    
+    PUT /api/products/procurement/recommendations/{id}/
+    Body: {
+        "for_date": "2025-09-04",
+        "items": [
+            {
+                "id": 1,  // Optional - if provided, updates existing item
+                "product_id": 5,
+                "needed_quantity": 10.0,
+                "recommended_quantity": 12.0,
+                "estimated_unit_price": 15.75,
+                "priority": "high"
+            }
+        ]
+    }
+    """
+    try:
+        recommendation = MarketProcurementRecommendation.objects.get(id=recommendation_id)
+        
+        if recommendation.status == 'approved':
+            return Response({
+                'success': False,
+                'error': 'Cannot edit approved recommendations'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        with transaction.atomic():
+            # Update recommendation metadata
+            if 'for_date' in request.data:
+                recommendation.for_date = request.data['for_date']
+            
+            # Update items if provided
+            if 'items' in request.data:
+                items_data = request.data['items']
+                total_cost = 0
+                
+                # Track existing item IDs to know which ones to keep
+                updated_item_ids = []
+                
+                for item_data in items_data:
+                    item_id = item_data.get('id')
+                    
+                    if item_id:
+                        # Update existing item
+                        try:
+                            item = MarketProcurementItem.objects.get(
+                                id=item_id, 
+                                recommendation=recommendation
+                            )
+                            item.needed_quantity = item_data.get('needed_quantity', item.needed_quantity)
+                            item.recommended_quantity = item_data.get('recommended_quantity', item.recommended_quantity)
+                            item.estimated_unit_price = item_data.get('estimated_unit_price', item.estimated_unit_price)
+                            item.priority = item_data.get('priority', item.priority)
+                            item.estimated_total_cost = item.recommended_quantity * item.estimated_unit_price
+                            item.save()
+                            updated_item_ids.append(item.id)
+                            total_cost += float(item.estimated_total_cost)
+                        except MarketProcurementItem.DoesNotExist:
+                            continue
+                    else:
+                        # Create new item
+                        product = Product.objects.get(id=item_data['product_id'])
+                        estimated_total = float(item_data['recommended_quantity']) * float(item_data['estimated_unit_price'])
+                        
+                        item = MarketProcurementItem.objects.create(
+                            recommendation=recommendation,
+                            product=product,
+                            needed_quantity=item_data['needed_quantity'],
+                            recommended_quantity=item_data['recommended_quantity'],
+                            estimated_unit_price=item_data['estimated_unit_price'],
+                            estimated_total_cost=estimated_total,
+                            priority=item_data.get('priority', 'medium'),
+                            reasoning=item_data.get('reasoning', f'Updated item for {product.name}')
+                        )
+                        updated_item_ids.append(item.id)
+                        total_cost += estimated_total
+                
+                # Remove items that weren't included in the update
+                recommendation.items.exclude(id__in=updated_item_ids).delete()
+                
+                # Update total cost
+                recommendation.total_estimated_cost = total_cost
+                recommendation.items_count = len(updated_item_ids)
+            
+            recommendation.save()
+        
+        return Response({
+            'success': True,
+            'message': 'Recommendation updated successfully',
+            'recommendation': MarketProcurementRecommendationSerializer(recommendation).data
+        })
+        
+    except MarketProcurementRecommendation.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Recommendation not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Product.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Product not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error(f"Error updating recommendation: {e}")
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_procurement_buffers(request):

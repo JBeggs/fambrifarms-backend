@@ -91,7 +91,8 @@ class MessageParser:
             r'\d+\s*boxes',         # 3boxes
             r'x\d+',                # x3, x12
             r'\d+x',                # 3x, 12x
-            r'\d+\*',               # 3*, 5*
+            r'\d+\s*[×*]\s*\w+',    # 2 × boxes, 2 * boxes (both × and * symbols with spaces)
+            r'\d+[×*]',             # 3×, 3* (both symbols without spaces)
             r'\d+\s*pcs',           # 5pcs, 10 pcs
             r'\d+\s*pieces',        # 5pieces
             r'\d+\s*pkts',          # 6pkts

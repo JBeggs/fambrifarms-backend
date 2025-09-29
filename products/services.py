@@ -272,45 +272,380 @@ class ProcurementIntelligenceService:
         return stock_analysis
     
     def _get_default_buffer_settings(self, product: Product) -> Dict:
-        """Get default buffer settings based on product type"""
-        # Default settings - can be customized per product
+        """Get default buffer settings based on product type and business settings"""
+        from .models_business_settings import BusinessSettings
+        
+        # Get business settings
+        business_settings = BusinessSettings.get_settings()
+        
+        # Start with global defaults
         defaults = {
-            'spoilage_rate': Decimal('0.15'),  # 15% spoilage
-            'cutting_waste_rate': Decimal('0.10'),  # 10% cutting waste
-            'quality_rejection_rate': Decimal('0.05'),  # 5% quality rejection
-            'market_pack_size': Decimal('5.0'),  # 5kg standard pack
-            'market_pack_unit': 'kg'
+            'spoilage_rate': business_settings.default_spoilage_rate,
+            'cutting_waste_rate': business_settings.default_cutting_waste_rate,
+            'quality_rejection_rate': business_settings.default_quality_rejection_rate,
+            'market_pack_size': business_settings.default_market_pack_size,
+            'market_pack_unit': 'kg',
+            'is_seasonal': False,
+            'peak_season_months': [],
+            'peak_season_buffer_multiplier': business_settings.default_peak_season_multiplier
         }
         
-        # Adjust based on product department
-        if product.department:
-            dept_name = product.department.name.lower()
-            if 'fruit' in dept_name:
-                defaults['spoilage_rate'] = Decimal('0.20')  # Fruits spoil faster
-                defaults['market_pack_size'] = Decimal('10.0')  # Larger packs
-            elif 'herb' in dept_name or 'spice' in dept_name:
-                defaults['spoilage_rate'] = Decimal('0.05')  # Herbs last longer
-                defaults['cutting_waste_rate'] = Decimal('0.02')  # Less waste
-                defaults['market_pack_size'] = Decimal('1.0')  # Smaller packs
-            elif 'mushroom' in dept_name:
-                defaults['spoilage_rate'] = Decimal('0.25')  # Mushrooms very perishable
-                defaults['market_pack_size'] = Decimal('2.5')  # Small packs
+        # Override with department-specific settings if available
+        if product.department and business_settings.department_buffer_settings:
+            dept_settings = business_settings.department_buffer_settings.get(product.department.name)
+            if dept_settings:
+                for key, value in dept_settings.items():
+                    if key in ['spoilage_rate', 'cutting_waste_rate', 'quality_rejection_rate', 
+                              'market_pack_size', 'peak_season_buffer_multiplier']:
+                        defaults[key] = Decimal(str(value))
+                    else:
+                        defaults[key] = value
         
         return defaults
     
     def _get_estimated_market_price(self, product: Product) -> Decimal:
-        """Get estimated market price for product"""
+        """Get estimated market price for product with supplier priority"""
         try:
-            # Use product's base price with wholesale discount (70% of retail)
+            # PRIORITY 1: Check Fambri Internal first (preferred supplier)
+            fambri_supplier = self._get_fambri_internal_supplier()
+            if fambri_supplier:
+                fambri_product = product.supplier_products.filter(supplier=fambri_supplier).first()
+                if fambri_product and fambri_product.is_available and fambri_product.stock_quantity > 0:
+                    return fambri_product.supplier_price
+            
+            # PRIORITY 2: Check other suppliers if Fambri not available
+            other_suppliers = product.supplier_products.filter(
+                is_available=True,
+                stock_quantity__gt=0
+            ).exclude(supplier=fambri_supplier).order_by('supplier_price')
+            
+            if other_suppliers.exists():
+                return other_suppliers.first().supplier_price
+            
+            # FALLBACK: Use product's base price with wholesale discount (70% of retail)
             if product.price:
                 return product.price * Decimal('0.7')  # 30% wholesale discount
             
-            # Fallback - estimate based on department
+            # Final fallback - estimate based on department
             return self._estimate_price_by_department(product)
             
         except Exception as e:
             logger.warning(f"Could not get market price for {product.name}: {e}")
             return Decimal('10.00')  # Safe fallback
+    
+    def _get_fambri_internal_supplier(self):
+        """Get Fambri Farms Internal supplier"""
+        try:
+            from suppliers.models import Supplier
+            return Supplier.objects.filter(name__icontains='Fambri').first()
+        except Exception:
+            return None
+    
+    def get_supplier_recommendations(self, product: Product, quantity_needed: Decimal) -> List[Dict]:
+        """
+        Get supplier recommendations with Fambri Internal priority
+        Returns list of suppliers with pricing and availability info
+        """
+        recommendations = []
+        fambri_supplier = self._get_fambri_internal_supplier()
+        
+        # Get all available suppliers for this product
+        supplier_products = product.supplier_products.filter(
+            is_available=True
+        ).select_related('supplier').order_by('supplier_price')
+        
+        for sp in supplier_products:
+            # Calculate if supplier can fulfill the order
+            can_fulfill_full_order = (sp.stock_quantity or 0) >= quantity_needed
+            available_quantity = min(sp.stock_quantity or 0, quantity_needed)
+            
+            # Determine priority
+            is_fambri = sp.supplier == fambri_supplier
+            priority = 1 if is_fambri else 2
+            
+            # Calculate total cost
+            total_cost = sp.supplier_price * available_quantity
+            
+            recommendation = {
+                'supplier_id': sp.supplier.id,
+                'supplier_name': sp.supplier.name,
+                'supplier_type': 'internal' if is_fambri else 'external',
+                'priority': priority,
+                'unit_price': float(sp.supplier_price),
+                'available_quantity': float(available_quantity),
+                'can_fulfill_full_order': can_fulfill_full_order,
+                'total_cost': float(total_cost),
+                'lead_time_days': sp.get_effective_lead_time(),
+                'quality_rating': float(sp.quality_rating or 0),
+                'minimum_order_quantity': sp.minimum_order_quantity or 1,
+                'stock_quantity': sp.stock_quantity or 0,
+                'last_order_date': sp.last_order_date.isoformat() if sp.last_order_date else None,
+            }
+            
+            recommendations.append(recommendation)
+        
+        # Sort by priority (Fambri first), then by price
+        recommendations.sort(key=lambda x: (x['priority'], x['unit_price']))
+        
+        return recommendations
+    
+    def calculate_optimal_supplier_split(self, product: Product, quantity_needed: Decimal) -> Dict:
+        """
+        Calculate optimal supplier split for a product order
+        Returns the best combination of suppliers to fulfill the order
+        """
+        recommendations = self.get_supplier_recommendations(product, quantity_needed)
+        
+        if not recommendations:
+            return {
+                'success': False,
+                'error': 'No suppliers available for this product',
+                'product_name': product.name,
+                'quantity_needed': float(quantity_needed)
+            }
+        
+        # Try single supplier first (preferred)
+        for rec in recommendations:
+            if rec['can_fulfill_full_order']:
+                return {
+                    'success': True,
+                    'strategy': 'single_supplier',
+                    'product_name': product.name,
+                    'quantity_needed': float(quantity_needed),
+                    'suppliers': [rec],
+                    'total_cost': rec['total_cost'],
+                    'cost_per_unit': rec['unit_price'],
+                    'lead_time_days': rec['lead_time_days'],
+                    'quality_score': rec['quality_rating']
+                }
+        
+        # Multi-supplier optimization needed
+        return self._calculate_multi_supplier_split(product, quantity_needed, recommendations)
+    
+    def _calculate_multi_supplier_split(self, product: Product, quantity_needed: Decimal, recommendations: List[Dict]) -> Dict:
+        """
+        Calculate optimal multi-supplier split using greedy algorithm with Fambri priority
+        """
+        remaining_quantity = quantity_needed
+        selected_suppliers = []
+        total_cost = Decimal('0.00')
+        
+        # Sort by priority (Fambri first), then by price
+        sorted_suppliers = sorted(recommendations, key=lambda x: (x['priority'], x['unit_price']))
+        
+        for supplier in sorted_suppliers:
+            if remaining_quantity <= 0:
+                break
+                
+            available_qty = Decimal(str(supplier['available_quantity']))
+            if available_qty <= 0:
+                continue
+            
+            # Take what we can from this supplier
+            qty_from_supplier = min(remaining_quantity, available_qty)
+            supplier_cost = Decimal(str(supplier['unit_price'])) * qty_from_supplier
+            
+            selected_suppliers.append({
+                'supplier_id': supplier['supplier_id'],
+                'supplier_name': supplier['supplier_name'],
+                'supplier_type': supplier['supplier_type'],
+                'priority': supplier['priority'],
+                'quantity': float(qty_from_supplier),
+                'unit_price': supplier['unit_price'],
+                'total_cost': float(supplier_cost),
+                'lead_time_days': supplier['lead_time_days'],
+                'quality_rating': supplier['quality_rating'],
+                'percentage_of_order': float((qty_from_supplier / quantity_needed) * 100)
+            })
+            
+            total_cost += supplier_cost
+            remaining_quantity -= qty_from_supplier
+        
+        # Calculate results
+        fulfilled_quantity = quantity_needed - remaining_quantity
+        fulfillment_rate = (fulfilled_quantity / quantity_needed) * 100
+        
+        # Calculate weighted averages
+        total_fulfilled = sum(s['quantity'] for s in selected_suppliers)
+        avg_price = float(total_cost / fulfilled_quantity) if fulfilled_quantity > 0 else 0
+        avg_lead_time = sum(s['lead_time_days'] * s['quantity'] for s in selected_suppliers) / total_fulfilled if total_fulfilled > 0 else 0
+        avg_quality = sum((s['quality_rating'] or 0) * s['quantity'] for s in selected_suppliers) / total_fulfilled if total_fulfilled > 0 else 0
+        
+        return {
+            'success': fulfillment_rate >= 100,
+            'strategy': 'multi_supplier',
+            'product_name': product.name,
+            'quantity_needed': float(quantity_needed),
+            'quantity_fulfilled': float(fulfilled_quantity),
+            'quantity_shortfall': float(remaining_quantity),
+            'fulfillment_rate': round(fulfillment_rate, 1),
+            'suppliers': selected_suppliers,
+            'supplier_count': len(selected_suppliers),
+            'total_cost': float(total_cost),
+            'cost_per_unit': avg_price,
+            'weighted_avg_lead_time': round(avg_lead_time, 1),
+            'weighted_avg_quality': round(avg_quality, 2),
+            'fambri_percentage': sum(s['percentage_of_order'] for s in selected_suppliers if s['supplier_type'] == 'internal'),
+            'external_percentage': sum(s['percentage_of_order'] for s in selected_suppliers if s['supplier_type'] == 'external'),
+            'cost_breakdown': {
+                'fambri_cost': sum(s['total_cost'] for s in selected_suppliers if s['supplier_type'] == 'internal'),
+                'external_cost': sum(s['total_cost'] for s in selected_suppliers if s['supplier_type'] == 'external')
+            }
+        }
+    
+    def calculate_order_supplier_optimization(self, order_items: List[Dict]) -> Dict:
+        """
+        Calculate optimal supplier split for an entire order
+        order_items: [{'product_id': int, 'quantity': Decimal}, ...]
+        """
+        results = {
+            'success': True,
+            'total_items': len(order_items),
+            'items_processed': 0,
+            'items_fully_fulfilled': 0,
+            'items_partially_fulfilled': 0,
+            'items_unfulfilled': 0,
+            'total_cost': 0.0,
+            'total_fambri_cost': 0.0,
+            'total_external_cost': 0.0,
+            'fambri_percentage': 0.0,
+            'external_percentage': 0.0,
+            'supplier_summary': {},
+            'item_details': [],
+            'procurement_recommendations': []
+        }
+        
+        for item in order_items:
+            try:
+                product = Product.objects.get(id=item['product_id'])
+                quantity = Decimal(str(item['quantity']))
+                
+                # Calculate optimal split for this item
+                split_result = self.calculate_optimal_supplier_split(product, quantity)
+                
+                results['items_processed'] += 1
+                results['total_cost'] += split_result.get('total_cost', 0)
+                
+                if split_result['success']:
+                    if split_result.get('fulfillment_rate', 0) >= 100:
+                        results['items_fully_fulfilled'] += 1
+                    else:
+                        results['items_partially_fulfilled'] += 1
+                else:
+                    results['items_unfulfilled'] += 1
+                
+                # Add to supplier summary
+                for supplier_info in split_result.get('suppliers', []):
+                    supplier_name = supplier_info['supplier_name']
+                    if supplier_name not in results['supplier_summary']:
+                        results['supplier_summary'][supplier_name] = {
+                            'supplier_type': supplier_info['supplier_type'],
+                            'total_cost': 0.0,
+                            'item_count': 0,
+                            'total_quantity': 0.0,
+                            'avg_quality': 0.0,
+                            'avg_lead_time': 0.0
+                        }
+                    
+                    summary = results['supplier_summary'][supplier_name]
+                    summary['total_cost'] += supplier_info['total_cost']
+                    summary['item_count'] += 1
+                    summary['total_quantity'] += supplier_info['quantity']
+                    summary['avg_quality'] = (summary['avg_quality'] + supplier_info['quality_rating']) / 2
+                    summary['avg_lead_time'] = (summary['avg_lead_time'] + supplier_info['lead_time_days']) / 2
+                
+                # Track Fambri vs External costs
+                fambri_cost = split_result.get('cost_breakdown', {}).get('fambri_cost', 0)
+                external_cost = split_result.get('cost_breakdown', {}).get('external_cost', 0)
+                results['total_fambri_cost'] += fambri_cost
+                results['total_external_cost'] += external_cost
+                
+                results['item_details'].append(split_result)
+                
+            except Product.DoesNotExist:
+                results['success'] = False
+                results['item_details'].append({
+                    'success': False,
+                    'error': f'Product with ID {item["product_id"]} not found',
+                    'product_id': item['product_id'],
+                    'quantity_needed': float(item['quantity'])
+                })
+            except Exception as e:
+                results['success'] = False
+                results['item_details'].append({
+                    'success': False,
+                    'error': str(e),
+                    'product_id': item.get('product_id'),
+                    'quantity_needed': float(item.get('quantity', 0))
+                })
+        
+        # Calculate final percentages
+        if results['total_cost'] > 0:
+            results['fambri_percentage'] = round((results['total_fambri_cost'] / results['total_cost']) * 100, 1)
+            results['external_percentage'] = round((results['total_external_cost'] / results['total_cost']) * 100, 1)
+        
+        # Generate procurement recommendations
+        results['procurement_recommendations'] = self._generate_procurement_recommendations(results)
+        
+        return results
+    
+    def _generate_procurement_recommendations(self, order_results: Dict) -> List[Dict]:
+        """Generate actionable procurement recommendations based on order analysis"""
+        recommendations = []
+        
+        # Recommendation 1: Fambri utilization
+        fambri_pct = order_results.get('fambri_percentage', 0)
+        if fambri_pct < 70:
+            recommendations.append({
+                'type': 'fambri_utilization',
+                'priority': 'high',
+                'title': 'Low Fambri Internal Utilization',
+                'description': f'Only {fambri_pct}% of order from internal stock. Consider increasing Fambri inventory.',
+                'action': 'Review internal stock levels and production capacity'
+            })
+        elif fambri_pct > 90:
+            recommendations.append({
+                'type': 'fambri_utilization',
+                'priority': 'low',
+                'title': 'Excellent Fambri Utilization',
+                'description': f'{fambri_pct}% of order fulfilled internally. Great cost efficiency!',
+                'action': 'Maintain current stock levels'
+            })
+        
+        # Recommendation 2: Unfulfilled items
+        unfulfilled = order_results.get('items_unfulfilled', 0)
+        if unfulfilled > 0:
+            recommendations.append({
+                'type': 'supply_shortage',
+                'priority': 'urgent',
+                'title': f'{unfulfilled} Items Cannot Be Fulfilled',
+                'description': 'Some items have no available suppliers or insufficient stock.',
+                'action': 'Contact suppliers immediately or find alternative products'
+            })
+        
+        # Recommendation 3: Supplier diversification
+        supplier_count = len(order_results.get('supplier_summary', {}))
+        if supplier_count > 3:
+            recommendations.append({
+                'type': 'supplier_complexity',
+                'priority': 'medium',
+                'title': f'Order Requires {supplier_count} Suppliers',
+                'description': 'Multiple suppliers increase coordination complexity.',
+                'action': 'Consider consolidating with fewer suppliers if possible'
+            })
+        
+        # Recommendation 4: Cost optimization
+        total_cost = order_results.get('total_cost', 0)
+        if total_cost > 1000:
+            recommendations.append({
+                'type': 'cost_optimization',
+                'priority': 'medium',
+                'title': 'Large Order - Review Bulk Discounts',
+                'description': f'Order total: R{total_cost:.2f}. May qualify for bulk pricing.',
+                'action': 'Negotiate bulk discounts with primary suppliers'
+            })
+        
+        return recommendations
     
     def _estimate_price_by_department(self, product: Product) -> Decimal:
         """Estimate price based on product department"""

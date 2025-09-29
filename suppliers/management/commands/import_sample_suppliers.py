@@ -35,13 +35,18 @@ class Command(BaseCommand):
         if options['create_products']:
             self.create_sample_products()
 
-        # Create sample supplier
+        # DISABLED: No longer creating sample suppliers - only real suppliers from seed_fambri_suppliers.py
+        self.stdout.write(self.style.WARNING('Sample supplier creation disabled - use seed_fambri_suppliers.py for real suppliers'))
+        self.stdout.write(self.style.SUCCESS('Use update_supplier_products.py to update supplier product offerings'))
+        return
+
+        # Create sample supplier (avoiding duplication with Tshwane Fresh Produce Market)
         supplier_data = {
-            'name': 'Pretoria Fresh Market',
+            'name': 'Johannesburg Fresh Market',
             'contact_person': 'John Smith',
-            'email': 'orders@pretoriafresh.co.za',
-            'phone': '+27 12 555 1001',
-            'address': '123 Market Street, Pretoria, 0001',
+            'email': 'orders@jhbfresh.co.za',
+            'phone': '+27 11 555 1001',
+            'address': '123 Market Street, Johannesburg, 2001',
             'payment_terms_days': 30,
             'lead_time_days': 2,
             'minimum_order_value': Decimal('500.00'),
@@ -52,24 +57,24 @@ class Command(BaseCommand):
         sales_reps_data = [
             {
                 'name': 'John Smith',
-                'email': 'john.smith@pretoriafresh.co.za',
-                'phone': '+27 12 555 1001',
+                'email': 'john.smith@jhbfresh.co.za',
+                'phone': '+27 11 555 1001',
                 'position': 'General Manager',
                 'is_primary': True,
                 'is_active': True,
             },
             {
                 'name': 'Sarah Johnson',
-                'email': 'sarah.johnson@pretoriafresh.co.za',
-                'phone': '+27 12 555 1002',
+                'email': 'sarah.johnson@jhbfresh.co.za',
+                'phone': '+27 11 555 1002',
                 'position': 'Sales Representative',
                 'is_primary': False,
                 'is_active': True,
             },
             {
                 'name': 'Mike Williams',
-                'email': 'mike.williams@pretoriafresh.co.za',
-                'phone': '+27 12 555 1003',
+                'email': 'mike.williams@jhbfresh.co.za',
+                'phone': '+27 11 555 1003',
                 'position': 'Account Manager',
                 'is_primary': False,
                 'is_active': True,

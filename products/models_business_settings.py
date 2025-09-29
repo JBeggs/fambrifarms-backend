@@ -209,6 +209,74 @@ class BusinessSettings(models.Model):
         help_text="Default limit for stock updates API pagination"
     )
     
+    # Procurement Buffer Settings
+    default_spoilage_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=3,
+        default=Decimal('0.15'),
+        validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('1'))],
+        help_text="Default spoilage rate for new products (0.15 = 15%)"
+    )
+    
+    default_cutting_waste_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=3,
+        default=Decimal('0.10'),
+        validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('1'))],
+        help_text="Default cutting waste rate for new products (0.10 = 10%)"
+    )
+    
+    default_quality_rejection_rate = models.DecimalField(
+        max_digits=5,
+        decimal_places=3,
+        default=Decimal('0.05'),
+        validators=[MinValueValidator(Decimal('0')), MaxValueValidator(Decimal('1'))],
+        help_text="Default quality rejection rate for new products (0.05 = 5%)"
+    )
+    
+    default_market_pack_size = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        default=Decimal('5.0'),
+        validators=[MinValueValidator(Decimal('0.01'))],
+        help_text="Default market pack size for new products"
+    )
+    
+    default_peak_season_multiplier = models.DecimalField(
+        max_digits=4,
+        decimal_places=2,
+        default=Decimal('1.3'),
+        validators=[MinValueValidator(Decimal('1.0'))],
+        help_text="Default peak season buffer multiplier"
+    )
+    
+    # Department-specific buffer settings (JSON for flexibility)
+    department_buffer_settings = models.JSONField(
+        default=dict,
+        help_text="Department-specific buffer settings as JSON"
+    )
+    
+    # Global procurement settings
+    enable_seasonal_adjustments = models.BooleanField(
+        default=True,
+        help_text="Enable seasonal buffer adjustments"
+    )
+    
+    auto_create_buffers = models.BooleanField(
+        default=True,
+        help_text="Automatically create procurement buffers for new products"
+    )
+    
+    buffer_calculation_method = models.CharField(
+        max_length=20,
+        choices=[
+            ('additive', 'Additive (sum all rates)'),
+            ('multiplicative', 'Multiplicative (compound rates)'),
+        ],
+        default='additive',
+        help_text="Method for calculating total buffer rates"
+    )
+    
     # Timestamps
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -236,7 +304,49 @@ class BusinessSettings(models.Model):
         settings, created = cls.objects.get_or_create(
             pk=1,
             defaults={
-                'customer_segments': ['premium', 'standard', 'budget']
+                'customer_segments': ['premium', 'standard', 'budget'],
+                'department_buffer_settings': {
+                    'Vegetables': {
+                        'spoilage_rate': 0.15,
+                        'cutting_waste_rate': 0.12,
+                        'quality_rejection_rate': 0.08,
+                        'market_pack_size': 5.0,
+                        'market_pack_unit': 'kg',
+                        'is_seasonal': True,
+                        'peak_season_months': [11, 12, 1, 2, 3],
+                        'peak_season_buffer_multiplier': 1.3
+                    },
+                    'Fruits': {
+                        'spoilage_rate': 0.20,
+                        'cutting_waste_rate': 0.08,
+                        'quality_rejection_rate': 0.12,
+                        'market_pack_size': 10.0,
+                        'market_pack_unit': 'kg',
+                        'is_seasonal': True,
+                        'peak_season_months': [10, 11, 12, 1, 2],
+                        'peak_season_buffer_multiplier': 1.4
+                    },
+                    'Herbs & Spices': {
+                        'spoilage_rate': 0.08,
+                        'cutting_waste_rate': 0.05,
+                        'quality_rejection_rate': 0.03,
+                        'market_pack_size': 1.0,
+                        'market_pack_unit': 'kg',
+                        'is_seasonal': False,
+                        'peak_season_months': [],
+                        'peak_season_buffer_multiplier': 1.0
+                    },
+                    'Mushrooms': {
+                        'spoilage_rate': 0.25,
+                        'cutting_waste_rate': 0.10,
+                        'quality_rejection_rate': 0.15,
+                        'market_pack_size': 2.5,
+                        'market_pack_unit': 'kg',
+                        'is_seasonal': False,
+                        'peak_season_months': [],
+                        'peak_season_buffer_multiplier': 1.0
+                    }
+                }
             }
         )
         if created:

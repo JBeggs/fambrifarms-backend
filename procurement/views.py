@@ -4,10 +4,14 @@ from rest_framework.response import Response
 from rest_framework.permissions import AllowAny
 from django.db import transaction
 from django.utils import timezone
+from django.shortcuts import get_object_or_404
 from .models import PurchaseOrder, PurchaseOrderItem
 from suppliers.models import Supplier, SalesRep
 from products.models import Product
+from orders.models import Order
 from rest_framework import serializers
+from .services import FambriFirstProcurementService
+from products.unified_procurement_service import UnifiedProcurementService
 
 class PurchaseOrderSerializer(serializers.ModelSerializer):
     class Meta:
@@ -176,3 +180,86 @@ def create_simple_purchase_order(request):
             {'error': f'Failed to create purchase order: {str(e)}'}, 
             status=status.HTTP_500_INTERNAL_SERVER_ERROR
         )
+
+# Fambri-First Procurement Workflow Endpoints
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def analyze_order_procurement(request):
+    """
+    Analyze an order for procurement using Fambri-first logic
+    POST data: {'order_id': int}
+    """
+    try:
+        order_id = request.data.get('order_id')
+        if not order_id:
+            return Response({
+                'error': 'order_id is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        order = get_object_or_404(Order, id=order_id)
+        
+        # Initialize unified procurement service
+        procurement_service = UnifiedProcurementService()
+        
+        # Analyze order procurement using unified logic
+        result = procurement_service.create_procurement_from_order(order)
+        
+        return Response(result, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({
+            'error': f'Failed to analyze order procurement: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def process_order_workflow(request):
+    """
+    Process complete procurement workflow for an order
+    POST data: {'order_id': int, 'auto_create_pos': bool}
+    """
+    try:
+        order_id = request.data.get('order_id')
+        auto_create_pos = request.data.get('auto_create_pos', False)
+        
+        if not order_id:
+            return Response({
+                'error': 'order_id is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        order = get_object_or_404(Order, id=order_id)
+        
+        # Initialize procurement service
+        procurement_service = FambriFirstProcurementService()
+        
+        # Process complete workflow
+        result = procurement_service.process_order_procurement_workflow(
+            order, auto_create_pos=auto_create_pos
+        )
+        
+        return Response(result, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({
+            'error': f'Failed to process order workflow: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_low_stock_recommendations(request):
+    """
+    Get procurement recommendations for products with low stock
+    """
+    try:
+        # Initialize procurement service
+        procurement_service = FambriFirstProcurementService()
+        
+        # Get low stock recommendations
+        result = procurement_service.get_procurement_recommendations_for_low_stock()
+        
+        return Response(result, status=status.HTTP_200_OK)
+        
+    except Exception as e:
+        return Response({
+            'error': f'Failed to get low stock recommendations: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

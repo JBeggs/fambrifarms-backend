@@ -157,33 +157,21 @@ def create_order_from_message(message):
         # Parse and create order items
         items_result = create_order_items(order, message)
         items_created = items_result['items_created']
+        failed_products = items_result['failed_products']
+        parsing_failures = items_result['parsing_failures']
+        unparseable_lines = items_result.get('unparseable_lines', [])
         
-        if items_created > 0:
-            # Calculate totals
+        # NEW LOGIC: Only create order if ALL items are successfully processed
+        total_failures = len(failed_products) + len(parsing_failures) + len(unparseable_lines)
+        
+        if items_created > 0 and total_failures == 0:
+            # SUCCESS: All items processed successfully, create the order
             order.subtotal = sum(item.total_price for item in order.items.all())
             order.total_amount = order.subtotal  # Add tax/fees later if needed
             order.save()
             
-            # Update message with detailed processing status
             success_rate = items_result['success_rate']
-            failed_products = items_result['failed_products']
-            parsing_failures = items_result['parsing_failures']
-            
-            status_icon = "✅" if success_rate >= 90 else ("⚠️" if success_rate >= 70 else "❌")
-            message.processing_notes = f"{status_icon} Order created: {items_created}/{items_result['total_attempts']} items processed ({success_rate}%)"
-            
-            if failed_products:
-                message.processing_notes += f" | ⚠️ {len(failed_products)} products not found"
-                failure_details = []
-                for failed_item in failed_products[:3]:  # Show first 3
-                    failure_details.append(f"'{failed_item['original_name']}': {failed_item['failure_reason']}")
-                if failure_details:
-                    message.processing_notes += f" | Missing products: {'; '.join(failure_details)}"
-                if len(failed_products) > 3:
-                    message.processing_notes += f" (and {len(failed_products) - 3} more)"
-            
-            if parsing_failures:
-                message.processing_notes += f" | ⚠️ {len(parsing_failures)} parsing failures"
+            message.processing_notes = f"✅ Order created: {items_created}/{items_result['total_attempts']} items processed (100%)"
             
             message.processed = True
             message.order = order
@@ -194,30 +182,95 @@ def create_order_from_message(message):
                 'items_count': items_created,
                 'total_amount': float(order.total_amount or 0),
                 'success_rate': success_rate,
-                'failed_products_count': len(failed_products),
-                'parsing_failures_count': len(parsing_failures)
+                'failed_products_count': 0,
+                'parsing_failures_count': 0
             })
             
             return order
+            
+        elif items_created > 0 and total_failures > 0:
+            # PARTIAL SUCCESS: Some items processed but some failed - DON'T create order
+            success_rate = items_result['success_rate']
+            failed_items_count = items_result['total_attempts'] - items_created
+            
+            message.processing_notes = f"❌ Order NOT created: {items_created}/{items_result['total_attempts']} items processed ({success_rate}%) - All items must be processed successfully"
+            message.processing_notes += f" | ⚠️ {failed_items_count} items failed"
+            
+            # Show all types of failures
+            all_failure_details = []
+            
+            # Add failed products
+            if failed_products:
+                for failed_item in failed_products:  # Show ALL failed products
+                    all_failure_details.append(f"'{failed_item['original_name']}': {failed_item['failure_reason']}")
+            
+            # Add parsing failures
+            if parsing_failures:
+                for failure in parsing_failures:  # Show ALL parsing failures
+                    all_failure_details.append(f"'{failure['original_name']}': {failure['failure_reason']}")
+            
+            # Add unparseable lines
+            if unparseable_lines:
+                for line in unparseable_lines:  # Show ALL unparseable lines
+                    all_failure_details.append(f"'{line}': Could not parse as order item")
+            
+            # Display all failure details
+            if all_failure_details:
+                message.processing_notes += f" | Failed items: {'; '.join(all_failure_details)}"
+            
+            message.processed = False  # Mark as not processed since order creation failed
+            message.save()
+            
+            order.delete()  # Delete the empty order
+            log_processing_action(message, 'partial_processing_rejected', {
+                'error': 'Order rejected due to partial processing - all items must be processed successfully',
+                'action': 'order_creation',
+                'items_processed': items_created,
+                'items_failed': failed_items_count,
+                'success_rate': success_rate,
+                'failed_products_count': len(failed_products),
+                'parsing_failures_count': len(parsing_failures)
+            })
+            return None
         else:
             # No valid items found, delete order but update message with failure details
             failed_products = items_result['failed_products']
             parsing_failures = items_result['parsing_failures']
+            failed_items_count = items_result['total_attempts']
             
             message.processing_notes = f"❌ Order creation failed: 0/{items_result['total_attempts']} items processed"
             
-            if failed_products:
-                message.processing_notes += f" | ⚠️ {len(failed_products)} products not found"
-                failure_details = []
-                for failed_item in failed_products[:3]:  # Show first 3
-                    failure_details.append(f"'{failed_item['original_name']}': {failed_item['failure_reason']}")
-                if failure_details:
-                    message.processing_notes += f" | Missing products: {'; '.join(failure_details)}"
-                if len(failed_products) > 3:
-                    message.processing_notes += f" (and {len(failed_products) - 3} more)"
-            
-            if parsing_failures:
-                message.processing_notes += f" | ⚠️ {len(parsing_failures)} parsing failures"
+            if failed_items_count > 0:
+                message.processing_notes += f" | ⚠️ {failed_items_count} items failed"
+                
+                # Show all types of failures
+                all_failure_details = []
+                
+                # Add failed products
+                if failed_products:
+                    for failed_item in failed_products[:3]:  # Show first 3
+                        all_failure_details.append(f"'{failed_item['original_name']}': {failed_item['failure_reason']}")
+                
+                # Add parsing failures
+                if parsing_failures:
+                    for failure in parsing_failures[:2]:  # Show first 2 parsing failures
+                        all_failure_details.append(f"'{failure['original_name']}': {failure['failure_reason']}")
+                
+                # Add unparseable lines (these are also failures)
+                unparseable_lines = items_result.get('unparseable_lines', [])
+                if unparseable_lines:
+                    for line in unparseable_lines[:2]:  # Show first 2 unparseable lines
+                        all_failure_details.append(f"'{line}': Could not parse as order item")
+                
+                # Display all failure details
+                if all_failure_details:
+                    message.processing_notes += f" | Failed items: {'; '.join(all_failure_details)}"
+                    
+                    # Show count of additional failures if there are more
+                    total_shown = len(all_failure_details)
+                    total_failures = len(failed_products) + len(parsing_failures) + len(unparseable_lines)
+                    if total_failures > total_shown:
+                        message.processing_notes += f" (and {total_failures - total_shown} more)"
             
             message.processed = False  # Mark as not processed since order creation failed
             message.save()
@@ -446,8 +499,8 @@ def create_order_items(order, message):
     
     for item_data in parsed_items:
         try:
-            # Find product (don't auto-create)
-            product = get_or_create_product(item_data['product_name'], auto_create=False)
+            # Find product (don't auto-create) with unit preference
+            product = get_or_create_product(item_data['product_name'], auto_create=False, preferred_unit=item_data.get('unit'))
             
             if not product:
                 failed_products.append({
@@ -655,6 +708,7 @@ def detect_and_correct_irregular_format(line):
             return corrected
     
     # Pattern 4: Handle "Product Name 1box" format - product followed by unit quantity
+    # BUT avoid correcting lines with "x" multiplier (e.g., "Lemon x 1 box")
     product_unit_pattern = r'^([A-Za-z][A-Za-z\s]+?)\s+(\d+)\s*(box|boxes|bag|bags|bunch|bunches|head|heads|punnets?|packets?|piece|pieces)$'
     match = re.search(product_unit_pattern, original_line, re.IGNORECASE)
     if match:
@@ -663,7 +717,10 @@ def detect_and_correct_irregular_format(line):
         unit = match.group(3)
         
         # Only correct if the product name doesn't look like a quantity itself
-        if not re.match(r'^\d+', product_name):
+        # AND doesn't contain "x" multiplier (avoid correcting "Lemon x 1 box")
+        if (not re.match(r'^\d+', product_name) and 
+            'x' not in product_name.lower() and 
+            '×' not in product_name):
             corrected = f"{quantity} {unit} {product_name}"
             return corrected
     
@@ -683,6 +740,10 @@ def parse_single_item(line):
     original_line = line
     line = line.strip()
     
+    # Simple fix: Replace both * and × symbols with 'x' for easier parsing
+    # "2 * boxes avos" or "2 × boxes avos" becomes "2 x boxes avos"
+    line = re.sub(r'\s*[×*]\s*', ' x ', line)
+    
     # ENHANCEMENT: Detect and correct irregular format where items and quantities are flipped
     corrected_line = detect_and_correct_irregular_format(line)
     if corrected_line != line:
@@ -697,8 +758,14 @@ def parse_single_item(line):
         # 5kg Tomatoes, 10 kilos Onions
         (r'(\d+(?:\.\d+)?)\s*(kg|kilos?|kilogram)\s*(.+)', 'simple_kg'),
         
+        # 2 x boxes avos (after asterisk replacement: number x unit product)
+        (r'(\d+)\s+x\s+(box|boxes|pun|punnet|punnets|bag|bags|packet|packets|bunch|bunches|head|heads)\s+(.+)', 'number_x_unit'),
+        
         # 3 boxes Lettuce, 5 punnets Strawberries
-        (r'(\d+)\s*(box|boxes|pun|punnet|punnets|bag|bags|packet|packets|bunch|bunches|head|heads)\s*(.+)', 'simple_unit'),
+        (r'(\d+)\s+(box|boxes|pun|punnet|punnets|bag|bags|packet|packets|bunch|bunches|head|heads)\s+(.+)', 'simple_unit'),
+        
+        # 1 x green beans, 2 x tomatoes (number x product)
+        (r'(\d+)\s+x\s+(.+)', 'quantity_x_product'),
         
         # Tomatoes x3, Onions ×5
         (r'(.+?)\s*(?:×|x)\s*(\d+)\s*(.+)?', 'product_multiply'),
@@ -723,15 +790,29 @@ def parse_single_item(line):
                     unit = 'kg'
                     product_name = groups[2].strip()
                     
+                elif pattern_type == 'number_x_unit':
+                    quantity = int(groups[0])
+                    unit = normalize_unit(groups[1])
+                    product_name = groups[2].strip()
+                    
                 elif pattern_type == 'simple_unit':
                     quantity = int(groups[0])
                     unit = normalize_unit(groups[1])
                     product_name = groups[2].strip()
                     
+                elif pattern_type == 'quantity_x_product':
+                    quantity = int(groups[0])
+                    product_name = groups[1].strip()
+                    unit = 'piece'  # Default unit
+                    
                 elif pattern_type == 'product_multiply':
                     product_name = groups[0].strip()
                     quantity = int(groups[1])
-                    unit = 'piece'  # Default unit
+                    # Use unit from third group if available, otherwise default to 'piece'
+                    if len(groups) > 2 and groups[2] and groups[2].strip():
+                        unit = normalize_unit(groups[2].strip())
+                    else:
+                        unit = 'piece'  # Default unit
                     
                 elif pattern_type == 'simple_number':
                     quantity = int(groups[0])
@@ -820,13 +901,14 @@ def clean_product_name(name):
     
     return name.strip()
 
-def get_or_create_product(product_name, auto_create=False):
+def get_or_create_product(product_name, auto_create=False, preferred_unit=None):
     """
     Get or create product by name using enhanced product matching with seeded data
     
     Args:
         product_name: Name of the product
         auto_create: Whether to create new products if not found (default: False)
+        preferred_unit: Preferred unit to match when multiple products exist (e.g., 'box', 'kg')
         
     Returns:
         Product instance or None if not found and auto_create=False
@@ -834,12 +916,52 @@ def get_or_create_product(product_name, auto_create=False):
     # ENHANCEMENT 1: Smart product name normalization
     normalized_name = normalize_product_name_for_matching(product_name)
     
-    # ENHANCEMENT 2: Try exact match with normalized name first
+    # ENHANCEMENT 2: Unit-aware matching for products with multiple units (PRIORITY when unit specified)
+    if preferred_unit:
+        # Try to find product with specific unit preference
+        unit_aware_matches = Product.objects.filter(name__icontains=normalized_name, unit=preferred_unit)
+        if unit_aware_matches.exists():
+            # Prefer exact name match with correct unit
+            for product in unit_aware_matches:
+                if normalized_name.lower() in product.name.lower():
+                    print(f"[PRODUCT] Unit-aware match: '{normalized_name}' + unit '{preferred_unit}' -> {product.name} ({product.unit})")
+                    return product
+            # If no exact match, return first unit match
+            product = unit_aware_matches.first()
+            print(f"[PRODUCT] Unit-aware fallback: '{normalized_name}' + unit '{preferred_unit}' -> {product.name} ({product.unit})")
+            return product
+        
+        # Try compound name matching (e.g., "Lemons" + "box" -> "Lemons box")
+        compound_name = f"{normalized_name} {preferred_unit}"
+        try:
+            product = Product.objects.get(name__iexact=compound_name)
+            print(f"[PRODUCT] Compound name match: '{compound_name}' -> {product.name}")
+            return product
+        except Product.DoesNotExist:
+            # Try partial compound match
+            compound_matches = Product.objects.filter(name__icontains=compound_name)
+            if compound_matches.exists():
+                product = compound_matches.first()
+                print(f"[PRODUCT] Partial compound match: '{compound_name}' -> {product.name}")
+                return product
+    
+    # ENHANCEMENT 2.5: Try exact match with normalized name (after unit-aware matching)
     try:
-        product = Product.objects.get(name__iexact=normalized_name)
-        # Product exact match found
-        return product
-    except Product.DoesNotExist:
+        products = Product.objects.filter(name__iexact=normalized_name)
+        if products.count() == 1:
+            # Single exact match found
+            return products.first()
+        elif products.count() > 1:
+            # Multiple matches - prefer kg unit as default, then first available
+            kg_product = products.filter(unit='kg').first()
+            if kg_product:
+                print(f"[PRODUCT] Multiple matches for '{normalized_name}', defaulting to kg unit: {kg_product.name}")
+                return kg_product
+            else:
+                print(f"[PRODUCT] Multiple matches for '{normalized_name}', using first: {products.first().name}")
+                return products.first()
+    except Exception as e:
+        print(f"[PRODUCT] Error in exact match: {e}")
         pass
     
     # ENHANCEMENT 3: Try fuzzy matching with seeded products (63 products from SHALLOME)
@@ -857,6 +979,20 @@ def get_or_create_product(product_name, auto_create=False):
             'pepper': 'peppers',
             'chilli': 'chillies',
             'chili': 'chillies',
+            'red chili': 'red chillies',
+            'green chili': 'green chillies',
+            'chilli red': 'red chillies',
+            'chilli green': 'green chillies',
+            'red chilli': 'red chillies',
+            'green chilli': 'green chillies',
+            
+            # Fix the failing stock items
+            'cauliflower heads': 'cauliflower',
+            'cauliflower head': 'cauliflower',
+            'straw berry': 'strawberries',
+            'strawberry': 'strawberries',
+            'grape fruits': 'grapefruit',
+            'grape fruit': 'grapefruit',
             'lettuce': 'lettuce',
             'spinach': 'spinach',
             'broccoli': 'broccoli',
@@ -864,12 +1000,28 @@ def get_or_create_product(product_name, auto_create=False):
             'cabbage': 'cabbage',
             'cucumber': 'cucumbers',
             'avocado': 'avocados',
+            'avos': 'avocados',
+            'avo': 'avocados',
             'lemon': 'lemons',
             'lime': 'limes',
             'orange': 'oranges',
             'banana': 'bananas',
-            'apple': 'apples',
             'strawberry': 'strawberries',
+            'mix peppers': 'mixed peppers',
+            'red apple': 'red apples',
+            'baby potato': 'baby potatoes',
+            'egg': 'eggs',
+            'eggs box': 'eggs',
+            'egg box': 'eggs',
+            'large eggs': 'eggs (large)',
+            'medium eggs': 'eggs (medium)',
+            'jumbo eggs': 'eggs (jumbo)',
+            'free range eggs': 'free range eggs',
+            'butter nut': 'butternut',
+            'butternut': 'butternut', 
+            'lemon': 'lemons',
+            'whole tomatoes': 'tomatoes',
+            'carrot': 'carrots',
             'basil': 'basil',
             'parsley': 'parsley',
             'coriander': 'coriander',
@@ -878,8 +1030,48 @@ def get_or_create_product(product_name, auto_create=False):
             'thyme': 'thyme'
         }
         
-        # Check if input matches any alias - prioritize exact matches
+        # Special handling for avocados with descriptors
         normalized_lower = normalized_name.lower()
+        if 'avos' in normalized_lower or 'avocado' in normalized_lower or normalized_lower.startswith('avo'):
+            # Handle avocado descriptors
+            if 'semi' in normalized_lower and 'ripe' in normalized_lower:
+                # "avos semi ripe" -> "Avocados (Semi-Ripe)"
+                try:
+                    product = Product.objects.filter(name__icontains='avocados').filter(name__icontains='semi').first()
+                    if product:
+                        print(f"[PRODUCT] Avocado semi-ripe match: '{normalized_name}' -> {product.name}")
+                        return product
+                except Exception as e:
+                    print(f"[PRODUCT] Error in avocado semi-ripe matching: {e}")
+            elif 'hard' in normalized_lower:
+                # "avos hard" -> "Avocados (Hard)"
+                try:
+                    product = Product.objects.filter(name__icontains='avocados').filter(name__icontains='hard').first()
+                    if product:
+                        print(f"[PRODUCT] Avocado hard match: '{normalized_name}' -> {product.name}")
+                        return product
+                except Exception as e:
+                    print(f"[PRODUCT] Error in avocado hard matching: {e}")
+            elif 'soft' in normalized_lower:
+                # "avos soft" -> "Avocados (Soft)"
+                try:
+                    product = Product.objects.filter(name__icontains='avocados').filter(name__icontains='soft').first()
+                    if product:
+                        print(f"[PRODUCT] Avocado soft match: '{normalized_name}' -> {product.name}")
+                        return product
+                except Exception as e:
+                    print(f"[PRODUCT] Error in avocado soft matching: {e}")
+            elif normalized_lower in ['avos', 'avo', 'avocado'] or ('boxes' in normalized_lower and 'avos' in normalized_lower):
+                # "avos" or "boxes avos" (no descriptor) -> default to "Avocados (Hard)"
+                try:
+                    product = Product.objects.filter(name__icontains='avocados').filter(name__icontains='hard').first()
+                    if product:
+                        print(f"[PRODUCT] Avocado default to hard: '{normalized_name}' -> {product.name}")
+                        return product
+                except Exception as e:
+                    print(f"[PRODUCT] Error in avocado default matching: {e}")
+        
+        # Check if input matches any alias - prioritize exact matches
         for alias, canonical in product_aliases.items():
             if normalized_lower == alias:  # Exact alias match
                 try:
@@ -1011,6 +1203,13 @@ def normalize_product_name_for_matching(name):
     
     # Remove standalone unit patterns without numbers (e.g., "heads broccoli" -> "broccoli")
     name = re.sub(r'^(heads?|kg|g|ml|l|pcs?|pieces?|box|boxes?|bag|bags?|punnet|punnets?)\s+', '', name, flags=re.IGNORECASE)
+    
+    # Remove single letter prefixes that are likely quantity descriptors (e.g., "S Broccoli" -> "Broccoli")
+    # This handles cases where "S Broccoli Head" becomes "S Broccoli" after removing "Head"
+    name = re.sub(r'^[A-Z]\s+', '', name)
+    
+    # Remove unit suffixes that might remain (e.g., "Broccoli Head" -> "Broccoli")
+    name = re.sub(r'\s+(heads?|kg|g|ml|l|pcs?|pieces?|box|boxes?|bag|bags?|punnet|punnets?)$', '', name, flags=re.IGNORECASE)
     
     # Remove common prefixes/suffixes
     name = re.sub(r'^(fresh|organic|local|good|quality|farm)\s+', '', name, flags=re.IGNORECASE)
@@ -1400,6 +1599,20 @@ def parse_stock_item(line):
     if not match:
         match = re.search(r'(.+?)(\d+(?:\.\d+)?)\s*(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?$', line, re.IGNORECASE)
     
+    # If still no match, try without unit (default to "piece"): "Avo Soft 5"
+    if not match:
+        match = re.search(r'(.+?)\s+(\d+(?:\.\d+)?)$', line, re.IGNORECASE)
+        if match:
+            name = match.group(1).strip()
+            quantity = float(match.group(2))
+            unit = 'piece'  # Default unit when none specified
+            
+            return {
+                'name': clean_product_name(name),
+                'quantity': quantity,
+                'unit': unit
+            }
+    
     if match:
         name = match.group(1).strip()
         quantity = float(match.group(2))
@@ -1425,10 +1638,20 @@ def get_product_alias(product_name):
     """
     # Common aliases for stock items
     aliases = {
-        # Avocados
-        'avo': 'Avocados',
-        'avos': 'Avocados',
-        'avocado': 'Avocados',
+        # Avocados (default to hard)
+        'avo': 'Avocados (Hard)',
+        'avos': 'Avocados (Hard)',
+        'avocado': 'Avocados (Hard)',
+        
+        # Avocados - Soft variations
+        'avo soft': 'Avocados (Soft)',
+        'avos soft': 'Avocados (Soft)',
+        'soft avo': 'Avocados (Soft)',
+        'soft avos': 'Avocados (Soft)',
+        'avocado soft': 'Avocados (Soft)',
+        'avocados soft': 'Avocados (Soft)',
+        'soft avocado': 'Avocados (Soft)',
+        'soft avocados': 'Avocados (Soft)',
         
         # Vegetables
         'brinjals': 'Eggplant',
@@ -1441,8 +1664,8 @@ def get_product_alias(product_name):
         'crispy lettuce': 'Crispy Lettuce',
         
         # Mushrooms
-        'mushroom': 'Brown Mushrooms',  # Default to most common
-        'mushrooms': 'Brown Mushrooms',
+        'mushroom': 'Button Mushrooms',  # Default to punnet unit (most common for retail)
+        'mushrooms': 'Button Mushrooms',
         
         # Cabbage
         'cabbage': 'Green Cabbage',  # Default to green
@@ -1463,6 +1686,16 @@ def get_product_alias(product_name):
         'red chilli': 'Red Chillies',
         'green chilli': 'Green Chillies',
         'red chillies': 'Red Chillies',
+        
+        # Fix the failing stock items
+        'cauliflower heads': 'Cauliflower',
+        'cauliflower head': 'Cauliflower',
+        'straw berry': 'Strawberries',
+        'strawberry': 'Strawberries',
+        'grape fruits': 'Grapefruit',
+        'grape fruit': 'Grapefruit',
+        'tumeric': 'Turmeric',
+        'turmeric': 'Turmeric',
         'green chillies': 'Green Chillies',
         
         # Fruits
@@ -1795,14 +2028,38 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
                     
                     # Step 1: Try exact match
                     try:
-                        product = Product.objects.get(name__iexact=product_name)
-                        matching_method = 'exact_match'
+                        products = Product.objects.filter(name__iexact=product_name)
+                        if products.count() == 1:
+                            product = products.first()
+                            matching_method = 'exact_match'
+                        elif products.count() > 1:
+                            # Multiple matches - prefer kg unit as default
+                            kg_product = products.filter(unit='kg').first()
+                            if kg_product:
+                                product = kg_product
+                                matching_method = 'exact_match_kg_preferred'
+                            else:
+                                product = products.first()
+                                matching_method = 'exact_match_first'
+                        else:
+                            raise Product.DoesNotExist()
                     except Product.DoesNotExist:
                         # Step 2: Try with aliases
                         aliased_name = get_product_alias(product_name)
                         if aliased_name != product_name:
                             try:
-                                product = Product.objects.get(name__iexact=aliased_name)
+                                alias_products = Product.objects.filter(name__iexact=aliased_name)
+                                if alias_products.count() == 1:
+                                    product = alias_products.first()
+                                elif alias_products.count() > 1:
+                                    # Multiple matches - prefer kg unit as default
+                                    kg_product = alias_products.filter(unit='kg').first()
+                                    if kg_product:
+                                        product = kg_product
+                                    else:
+                                        product = alias_products.first()
+                                else:
+                                    raise Product.DoesNotExist()
                                 matching_method = 'alias_match'
                                 matching_info.append(f"Used alias: '{product_name}' -> '{aliased_name}'")
                             except Product.DoesNotExist:

@@ -84,15 +84,15 @@ def health_check(request):
 @authentication_classes([FlexibleAuthentication])
 @permission_classes([IsAuthenticated])
 def get_companies(request):
-    """Get list of valid companies from RestaurantProfile and WhatsApp messages"""
+    """Get list of valid companies from RestaurantProfile, PrivateCustomerProfile and WhatsApp messages"""
     try:
+        companies = []
+        
         # First, get companies from RestaurantProfile (seeded data)
         profiles = RestaurantProfile.objects.select_related('user').order_by('business_name')
-        
-        companies = []
         for profile in profiles:
             company_data = {
-                'id': profile.id,
+                'id': f'restaurant_{profile.id}',
                 'name': profile.business_name,
                 'branch_name': profile.branch_name,
                 'display_name': str(profile),  # Uses __str__ method
@@ -101,6 +101,57 @@ def get_companies(request):
                 'address': profile.address,
                 'city': profile.city,
                 'payment_terms': profile.payment_terms,
+                'customer_type': 'restaurant',
+            }
+            companies.append(company_data)
+        
+        # Add private customers
+        from accounts.models import PrivateCustomerProfile, User
+        
+        # Get private customers with profiles
+        private_profiles = PrivateCustomerProfile.objects.select_related('user').order_by('user__first_name')
+        for profile in private_profiles:
+            display_name = f"{profile.user.first_name} {profile.user.last_name}".strip()
+            if not display_name:
+                display_name = profile.user.email.split('@')[0]  # Use email username as fallback
+            
+            company_data = {
+                'id': f'private_{profile.id}',
+                'name': display_name,
+                'branch_name': '',
+                'display_name': display_name,
+                'email': profile.user.email,
+                'phone': profile.whatsapp_number or profile.user.phone,
+                'address': profile.delivery_address,
+                'city': '',
+                'payment_terms': 'Net 30',  # Default for private customers
+                'customer_type': 'private',
+            }
+            companies.append(company_data)
+        
+        # Also add private users without profiles (like Sylvia)
+        private_users_without_profiles = User.objects.filter(
+            user_type='private'
+        ).exclude(
+            id__in=private_profiles.values_list('user_id', flat=True)
+        ).order_by('first_name')
+        
+        for user in private_users_without_profiles:
+            display_name = f"{user.first_name} {user.last_name}".strip()
+            if not display_name:
+                display_name = user.email.split('@')[0]  # Use email username as fallback
+            
+            company_data = {
+                'id': f'private_user_{user.id}',
+                'name': display_name,
+                'branch_name': '',
+                'display_name': display_name,
+                'email': user.email,
+                'phone': user.phone,
+                'address': '',
+                'city': '',
+                'payment_terms': 'Net 30',  # Default for private customers
+                'customer_type': 'private',
             }
             companies.append(company_data)
         
@@ -719,6 +770,20 @@ def edit_message(request):
         # Update processed status if provided
         if processed is not None:
             message.processed = processed
+            
+            # STOCK UPDATE FIX: If this is a stock message being marked as unprocessed,
+            # also mark the associated StockUpdate as unprocessed so it can be reapplied to inventory
+            if message.message_type == 'stock' and processed == False:
+                try:
+                    from .models import StockUpdate
+                    stock_update = StockUpdate.objects.get(message=message)
+                    stock_update.processed = False
+                    stock_update.save()
+                    print(f"[STOCK FIX] Marked StockUpdate {stock_update.id} as unprocessed for message {message.message_id}")
+                except StockUpdate.DoesNotExist:
+                    print(f"[STOCK FIX] No StockUpdate found for message {message.message_id}")
+                except Exception as e:
+                    print(f"[STOCK FIX] Error updating StockUpdate: {e}")
         
         # CRITICAL: Preserve manual_company assignment - it should NEVER be cleared by editing
         # Only Karl can change the customer assignment through the dropdown, not by editing content
@@ -897,19 +962,12 @@ def process_messages_to_orders(request):
                     })
                     continue
                 
-                # Create order from message
+                # Create order from message (this handles message.processed, message.order, and message.save())
                 order = create_order_from_message(message)
                 
                 if order:
                     orders_created.append(order)
-                    message.processed = True
-                    message.order = order
-                    message.save()
-                    
-                    log_processing_action(message, 'order_created', {
-                        'order_number': order.order_number,
-                        'items_count': order.items.count()
-                    })
+                    # Note: message.processed, message.order, and message.save() are already handled in create_order_from_message()
                 else:
                     errors.append({
                         'message_id': message.message_id,
@@ -1540,6 +1598,13 @@ def process_stock_and_apply_to_inventory(request):
                             
                             if created:
                                 stock_updates_created += 1
+                            else:
+                                # If StockUpdate already exists, update it and mark as unprocessed for reprocessing
+                                stock_update.stock_date = stock_data['date']
+                                stock_update.order_day = stock_data['order_day']
+                                stock_update.items = stock_data['items']
+                                stock_update.processed = False  # Mark as unprocessed so it can be applied to inventory
+                                stock_update.save()
                                 
                             # Update message with detailed processing status
                             message.processed = True
