@@ -503,14 +503,23 @@ def create_order_items(order, message):
     
     for item_data in parsed_items:
         try:
-            # Find product (don't auto-create) with unit preference and bag size matching
-            product = get_or_create_product_enhanced(
+            # Find product using smart matcher with production data
+            match_result = get_or_create_product_smart(
                 item_data['product_name'], 
-                auto_create=False, 
-                preferred_unit=item_data.get('unit'),
                 quantity=item_data.get('quantity'),
                 unit=item_data.get('unit')
             )
+            
+            # Handle the tuple return from smart matcher
+            if match_result and isinstance(match_result, tuple):
+                product, matched_quantity, matched_unit = match_result
+                # Update item data with matched values if they're more specific
+                if matched_quantity and matched_quantity != item_data.get('quantity'):
+                    item_data['quantity'] = matched_quantity
+                if matched_unit and matched_unit != item_data.get('unit'):
+                    item_data['unit'] = matched_unit
+            else:
+                product = match_result
             
             if not product:
                 failed_products.append({

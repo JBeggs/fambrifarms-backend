@@ -192,9 +192,23 @@ class SmartProductMatcher:
         # Split message into lines and items
         lines = [line.strip() for line in message.split('\n') if line.strip()]
         
+        # Skip the first line if it looks like a company name
+        # Common patterns: "Restaurant Name", "Company Ltd", etc.
+        if len(lines) > 1:
+            first_line = lines[0]
+            # Skip if first line contains typical company indicators or is very short
+            company_indicators = ['restaurant', 'bar', 'cafe', 'hotel', 'ltd', 'pty', 'inc', 'co.']
+            if (any(indicator in first_line for indicator in company_indicators) or 
+                len(first_line.split()) <= 2):  # Short names are likely company names
+                lines = lines[1:]  # Skip first line
+        
         for line in lines:
-            # Split by common separators
+            # First try standard separators (commas, semicolons)
             items = re.split(r'[,;]', line)
+            
+            # If no separators found, try to detect multiple product names
+            if len(items) == 1:
+                items = self._split_multiple_products(line)
             
             for item in items:
                 item = item.strip()
@@ -206,6 +220,56 @@ class SmartProductMatcher:
                     results.append(parsed)
         
         return results
+    
+    def _split_multiple_products(self, line: str) -> List[str]:
+        """Split a line that might contain multiple product names"""
+        words = line.split()
+        
+        if len(words) <= 1:
+            return [line]
+        
+        # Look for sequences of known product names
+        items = []
+        current_item = []
+        
+        i = 0
+        while i < len(words):
+            word = words[i]
+            
+            # Check if this word starts a known product name
+            found_product = False
+            
+            # Try 1-word, 2-word, and 3-word product names
+            for word_count in [3, 2, 1]:  # Check longer names first
+                if i + word_count <= len(words):
+                    potential_product = ' '.join(words[i:i+word_count])
+                    
+                    # Check if this matches a known product name
+                    if potential_product in self.product_names:
+                        # If we have a current item, save it
+                        if current_item:
+                            items.append(' '.join(current_item))
+                            current_item = []
+                        
+                        # Add the found product
+                        items.append(potential_product)
+                        i += word_count
+                        found_product = True
+                        break
+            
+            if not found_product:
+                current_item.append(word)
+                i += 1
+        
+        # Add any remaining words as the last item
+        if current_item:
+            items.append(' '.join(current_item))
+        
+        # If we didn't find multiple products, return the original line
+        if len(items) <= 1:
+            return [line]
+        
+        return items
     
     def _parse_single_item(self, item: str) -> Optional[ParsedMessage]:
         """Parse a single item using space splitting approach"""
