@@ -37,13 +37,41 @@ class SmartMatchSuggestions:
 class SmartProductMatcher:
     def __init__(self):
         """Initialize with dynamic database analysis"""
+        # Initialize scoring weights
+        self.scoring_weights = {
+            'exact_name_match': 50,
+            'partial_name_match': 30,
+            'fuzzy_match': 15,
+            'unit_match': 20,
+            'weight_match': 15,
+            'quantity_match': 10,
+            'alias_match': 25
+        }
+        
         self._load_database_info()
         self._build_aliases()
     
     def _load_database_info(self):
-        """Load and analyze all products from database"""
-        # Get all products
-        all_products = Product.objects.all()
+        """Load and analyze all products from database and production data"""
+        # Try to load production products first
+        production_products = self._load_production_products()
+        
+        if production_products:
+            print(f"Using production products data ({len(production_products)} products)")
+            all_products_data = production_products
+        else:
+            print("Using local database products")
+            # Fallback to local database
+            all_products = Product.objects.all()
+            all_products_data = [
+                {
+                    'id': p.id,
+                    'name': p.name,
+                    'unit': p.unit,
+                    'price': float(p.price) if p.price else 0.0
+                }
+                for p in all_products
+            ]
         
         # Extract all unique units
         self.valid_units = set()
@@ -54,18 +82,20 @@ class SmartProductMatcher:
         self.product_names = set()
         self.product_descriptions = {}  # product_name -> list of descriptions
         
-        for product in all_products:
+        for product_data in all_products_data:
+            unit = product_data['unit'].lower()
+            
             # Add unit
-            self.valid_units.add(product.unit.lower())
+            self.valid_units.add(unit)
             
             # Categorize units
-            if product.unit.lower() in ['bag', 'packet', 'box', 'bunch', 'head', 'punnet', 'tray', 'pack']:
-                self.container_units.add(product.unit.lower())
-            elif product.unit.lower() in ['kg', 'g', 'ml', 'l']:
-                self.weight_units.add(product.unit.lower())
+            if unit in ['bag', 'packet', 'box', 'bunch', 'head', 'punnet', 'tray', 'pack']:
+                self.container_units.add(unit)
+            elif unit in ['kg', 'g', 'ml', 'l']:
+                self.weight_units.add(unit)
             
             # Extract base product name and descriptions
-            name = product.name
+            name = product_data['name']
             base_name, descriptions = self._extract_name_and_descriptions(name)
             
             self.product_names.add(base_name.lower())
@@ -76,10 +106,38 @@ class SmartProductMatcher:
             for desc in descriptions:
                 self.product_descriptions[base_name.lower()].add(desc.lower())
         
-        print(f"Loaded {len(all_products)} products")
+        print(f"Loaded {len(all_products_data)} products")
         print(f"Found {len(self.valid_units)} units: {sorted(self.valid_units)}")
         print(f"Found {len(self.container_units)} container units: {sorted(self.container_units)}")
         print(f"Found {len(self.product_names)} unique product names")
+    
+    def _load_production_products(self):
+        """Load production products from JSON file"""
+        import os
+        import json
+        
+        # Try different possible locations for the production products file
+        possible_paths = [
+            'data/production_products_analysis.json',
+            'production_products_analysis.json',
+            'whatsapp/production_products_analysis.json',
+            os.path.join(os.path.dirname(__file__), 'production_products_analysis.json'),
+            os.path.join(os.path.dirname(__file__), '..', 'data', 'production_products_analysis.json'),
+        ]
+        
+        for path in possible_paths:
+            try:
+                if os.path.exists(path):
+                    with open(path, 'r') as f:
+                        products = json.load(f)
+                    print(f"✓ Loaded production products from: {path}")
+                    return products
+            except Exception as e:
+                print(f"Failed to load from {path}: {e}")
+                continue
+        
+        print("⚠ Production products file not found, using local database")
+        return None
     
     def _extract_name_and_descriptions(self, product_name: str) -> Tuple[str, List[str]]:
         """Extract base name and descriptions from product name"""
@@ -303,7 +361,97 @@ class SmartProductMatcher:
         return ' '.join(result_words)
     
     def find_matches(self, parsed_message: ParsedMessage) -> List[SmartMatchResult]:
-        """Find matching products using Django Q queries"""
+        """Find matching products using production data or Django Q queries"""
+        product_name = parsed_message.product_name
+        quantity = parsed_message.quantity
+        unit = parsed_message.unit
+        extra_descriptions = parsed_message.extra_descriptions
+        
+        # Try to use production data first
+        production_products = self._load_production_products()
+        
+        if production_products:
+            return self._find_matches_from_data(parsed_message, production_products)
+        else:
+            return self._find_matches_from_database(parsed_message)
+    
+    def _find_matches_from_data(self, parsed_message: ParsedMessage, products_data: List[Dict]) -> List[SmartMatchResult]:
+        """Find matches from production data"""
+        product_name = parsed_message.product_name
+        quantity = parsed_message.quantity
+        unit = parsed_message.unit
+        extra_descriptions = parsed_message.extra_descriptions
+        
+        # Split product name into words for flexible matching
+        name_words = product_name.split()
+        
+        candidates = []
+        
+        # Filter products based on name matching
+        for product_data in products_data:
+            product_name_lower = product_data['name'].lower()
+            
+            # Check if any word matches or full name matches
+            name_match = False
+            if product_name.lower() in product_name_lower or product_name_lower in product_name.lower():
+                name_match = True
+            else:
+                for word in name_words:
+                    if word.lower() in product_name_lower:
+                        name_match = True
+                        break
+            
+            if name_match:
+                candidates.append(product_data)
+        
+        # Filter by unit if specified
+        if unit and candidates:
+            unit_candidates = [p for p in candidates if p['unit'].lower() == unit.lower()]
+            if unit_candidates:
+                candidates = unit_candidates
+        
+        # Filter by extra descriptions
+        if extra_descriptions and candidates:
+            for desc in extra_descriptions:
+                desc_candidates = [p for p in candidates if desc.lower() in p['name'].lower()]
+                if desc_candidates:
+                    candidates = desc_candidates
+                    break
+        
+        # Score and rank candidates
+        results = []
+        for product_data in candidates:
+            score = self._calculate_score_from_data(product_data, parsed_message)
+            if score > 0:
+                # Create a mock product object for compatibility
+                mock_product = type('MockProduct', (), {
+                    'id': product_data['id'],
+                    'name': product_data['name'],
+                    'unit': product_data['unit'],
+                    'price': product_data.get('price', 0)
+                })()
+                
+                results.append(SmartMatchResult(
+                    product=mock_product,
+                    quantity=quantity,
+                    unit=unit or product_data['unit'],
+                    confidence_score=score,
+                    match_details={
+                        'parsed_name': product_name,
+                        'matched_name': product_data['name'],
+                        'unit_match': unit == product_data['unit'] if unit else False,
+                        'description_matches': [d for d in extra_descriptions if d in product_data['name'].lower()],
+                        'name_word_matches': [w for w in name_words if w in product_data['name'].lower()]
+                    }
+                ))
+        
+        # Sort by confidence score
+        results.sort(key=lambda x: x.confidence_score, reverse=True)
+        
+        return results
+    
+    def _find_matches_from_database(self, parsed_message: ParsedMessage) -> List[SmartMatchResult]:
+        """Find matches from Django database (fallback)"""
         product_name = parsed_message.product_name
         quantity = parsed_message.quantity
         unit = parsed_message.unit
@@ -404,6 +552,36 @@ class SmartProductMatcher:
         
         return min(score, 100)  # Cap at 100
     
+    def _calculate_score_from_data(self, product_data: Dict, parsed_message: ParsedMessage) -> float:
+        """Calculate confidence score for a product match from data"""
+        score = 0
+        product_name_lower = product_data['name'].lower()
+        parsed_name = parsed_message.product_name.lower()
+        
+        # Name matching
+        if parsed_name == product_name_lower:
+            score += self.scoring_weights['exact_name_match']
+        elif parsed_name in product_name_lower or product_name_lower in parsed_name:
+            score += self.scoring_weights['partial_name_match']
+        elif self._fuzzy_match(parsed_name, product_name_lower):
+            score += self.scoring_weights['fuzzy_match']
+        else:
+            return 0  # No name match, skip
+        
+        # Unit matching
+        if parsed_message.unit:
+            if parsed_message.unit == product_data['unit']:
+                score += self.scoring_weights['unit_match']
+            elif self._compatible_units(parsed_message.unit, product_data['unit']):
+                score += self.scoring_weights['unit_match'] * 0.7
+        
+        # Extra description matching
+        for desc in parsed_message.extra_descriptions:
+            if desc in product_name_lower:
+                score += self.scoring_weights['weight_match']
+        
+        return min(score, 100)  # Cap at 100
+    
     def _compatible_units(self, unit1: str, unit2: str) -> bool:
         """Check if units are compatible"""
         compatible_groups = [
@@ -476,6 +654,121 @@ class SmartProductMatcher:
     
     def _get_fuzzy_suggestions(self, parsed_message: ParsedMessage, max_suggestions: int) -> List[SmartMatchResult]:
         """Get fuzzy suggestions when exact matching fails"""
+        product_name = parsed_message.product_name
+        quantity = parsed_message.quantity
+        unit = parsed_message.unit
+        
+        # Try to use production data first
+        production_products = self._load_production_products()
+        
+        if production_products:
+            return self._get_fuzzy_suggestions_from_data(parsed_message, max_suggestions, production_products)
+        else:
+            return self._get_fuzzy_suggestions_from_database(parsed_message, max_suggestions)
+    
+    def _get_fuzzy_suggestions_from_data(self, parsed_message: ParsedMessage, max_suggestions: int, products_data: List[Dict]) -> List[SmartMatchResult]:
+        """Get fuzzy suggestions from production data"""
+        product_name = parsed_message.product_name
+        quantity = parsed_message.quantity
+        unit = parsed_message.unit
+        
+        fuzzy_matches = []
+        
+        # Strategy 1: Match individual words
+        words = product_name.split()
+        for word in words:
+            if len(word) > 2:  # Skip short words
+                word_matches = [p for p in products_data if word.lower() in p['name'].lower()][:10]
+                for product_data in word_matches:
+                    score = self._calculate_fuzzy_score_from_data(product_data, parsed_message, 'word_match')
+                    if score > 0:
+                        mock_product = type('MockProduct', (), {
+                            'id': product_data['id'],
+                            'name': product_data['name'],
+                            'unit': product_data['unit'],
+                            'price': product_data.get('price', 0)
+                        })()
+                        
+                        fuzzy_matches.append(SmartMatchResult(
+                            product=mock_product,
+                            quantity=quantity,
+                            unit=unit or product_data['unit'],
+                            confidence_score=score,
+                            match_details={
+                                'strategy': 'word_match',
+                                'matched_word': word,
+                                'product_name': product_data['name']
+                            }
+                        ))
+        
+        # Strategy 2: Match by unit if specified
+        if unit:
+            unit_matches = [p for p in products_data if p['unit'].lower() == unit.lower()][:15]
+            for product_data in unit_matches:
+                score = self._calculate_fuzzy_score_from_data(product_data, parsed_message, 'unit_match')
+                if score > 0:
+                    mock_product = type('MockProduct', (), {
+                        'id': product_data['id'],
+                        'name': product_data['name'],
+                        'unit': product_data['unit'],
+                        'price': product_data.get('price', 0)
+                    })()
+                    
+                    fuzzy_matches.append(SmartMatchResult(
+                        product=mock_product,
+                        quantity=quantity,
+                        unit=unit,
+                        confidence_score=score,
+                        match_details={
+                            'strategy': 'unit_match',
+                            'matched_unit': unit,
+                            'product_name': product_data['name']
+                        }
+                    ))
+        
+        # Strategy 3: Match by extra descriptions
+        for desc in parsed_message.extra_descriptions:
+            desc_matches = [p for p in products_data if desc.lower() in p['name'].lower()][:10]
+            for product_data in desc_matches:
+                score = self._calculate_fuzzy_score_from_data(product_data, parsed_message, 'description_match')
+                if score > 0:
+                    mock_product = type('MockProduct', (), {
+                        'id': product_data['id'],
+                        'name': product_data['name'],
+                        'unit': product_data['unit'],
+                        'price': product_data.get('price', 0)
+                    })()
+                    
+                    fuzzy_matches.append(SmartMatchResult(
+                        product=mock_product,
+                        quantity=quantity,
+                        unit=unit or product_data['unit'],
+                        confidence_score=score,
+                        match_details={
+                            'strategy': 'description_match',
+                            'matched_description': desc,
+                            'product_name': product_data['name']
+                        }
+                    ))
+        
+        # Strategy 4: Similar sounding products (basic phonetic matching)
+        if len(product_name) > 3:
+            similar_matches = self._get_phonetic_matches_from_data(product_name, parsed_message, products_data)
+            fuzzy_matches.extend(similar_matches)
+        
+        # Remove duplicates and sort by confidence
+        seen_ids = set()
+        unique_matches = []
+        for match in fuzzy_matches:
+            if match.product.id not in seen_ids:
+                seen_ids.add(match.product.id)
+                unique_matches.append(match)
+        
+        unique_matches.sort(key=lambda x: x.confidence_score, reverse=True)
+        return unique_matches[:max_suggestions]
+    
+    def _get_fuzzy_suggestions_from_database(self, parsed_message: ParsedMessage, max_suggestions: int) -> List[SmartMatchResult]:
+        """Get fuzzy suggestions from Django database (fallback)"""
         product_name = parsed_message.product_name
         quantity = parsed_message.quantity
         unit = parsed_message.unit
@@ -619,6 +912,76 @@ class SmartProductMatcher:
         
         return matches
     
+    def _calculate_fuzzy_score_from_data(self, product_data: Dict, parsed_message: ParsedMessage, strategy: str) -> float:
+        """Calculate confidence score for fuzzy matches from data"""
+        score = 0
+        product_name_lower = product_data['name'].lower()
+        parsed_name = parsed_message.product_name.lower()
+        
+        # Base score depends on strategy
+        if strategy == 'word_match':
+            score = 15
+        elif strategy == 'unit_match':
+            score = 10
+        elif strategy == 'description_match':
+            score = 20
+        elif strategy == 'phonetic_match':
+            score = 8
+        
+        # Boost for better name matching
+        if parsed_name in product_name_lower:
+            score += 10
+        elif any(word in product_name_lower for word in parsed_name.split()):
+            score += 5
+        
+        # Unit compatibility
+        if parsed_message.unit and parsed_message.unit == product_data['unit']:
+            score += 8
+        
+        # Extra descriptions
+        for desc in parsed_message.extra_descriptions:
+            if desc in product_name_lower:
+                score += 5
+        
+        return min(score, 50)  # Cap fuzzy scores lower
+    
+    def _get_phonetic_matches_from_data(self, product_name: str, parsed_message: ParsedMessage, products_data: List[Dict]) -> List[SmartMatchResult]:
+        """Get phonetically similar product matches from data"""
+        matches = []
+        
+        # Simple phonetic matching - look for products with similar starting letters
+        first_letters = product_name[:2].lower()
+        
+        phonetic_products = [p for p in products_data if p['name'].lower().startswith(first_letters)][:10]
+        
+        for product_data in phonetic_products:
+            # Calculate similarity based on common characters
+            similarity = self._calculate_string_similarity(product_name.lower(), product_data['name'].lower())
+            
+            if similarity > 0.3:  # At least 30% similarity
+                score = similarity * 20  # Convert to confidence score
+                
+                mock_product = type('MockProduct', (), {
+                    'id': product_data['id'],
+                    'name': product_data['name'],
+                    'unit': product_data['unit'],
+                    'price': product_data.get('price', 0)
+                })()
+                
+                matches.append(SmartMatchResult(
+                    product=mock_product,
+                    quantity=parsed_message.quantity,
+                    unit=parsed_message.unit or product_data['unit'],
+                    confidence_score=score,
+                    match_details={
+                        'strategy': 'phonetic_match',
+                        'similarity': similarity,
+                        'product_name': product_data['name']
+                    }
+                ))
+        
+        return matches
+    
     def _calculate_string_similarity(self, str1: str, str2: str) -> float:
         """Calculate simple string similarity (Jaccard similarity)"""
         set1 = set(str1.lower())
@@ -631,6 +994,10 @@ class SmartProductMatcher:
             return 0.0
         
         return len(intersection) / len(union)
+    
+    def _fuzzy_match(self, str1: str, str2: str) -> bool:
+        """Check if two strings are fuzzy matches"""
+        return self._calculate_string_similarity(str1, str2) > 0.4
 
 def test_smart_matcher():
     """Test the smart matcher"""

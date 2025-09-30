@@ -1,6 +1,14 @@
 from pathlib import Path
 from decouple import config, Csv
 from datetime import timedelta
+import os
+
+# Configure PyMySQL to work with Django
+try:
+    import pymysql
+    pymysql.install_as_MySQLdb()
+except ImportError:
+    pass
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
