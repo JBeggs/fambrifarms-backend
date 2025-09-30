@@ -1,3 +1,8 @@
+"""
+WhatsApp message processing services
+Handles classification, parsing, and order creation from WhatsApp messages
+"""
+
 from django.contrib.auth import get_user_model
 from django.utils import timezone
 from datetime import datetime, date, timedelta
@@ -5,19 +10,10 @@ from decimal import Decimal
 import re
 import traceback
 import logging
+
 from .models import WhatsAppMessage, StockUpdate, MessageProcessingLog
 from orders.models import Order, OrderItem
 from products.models import Product
-from .production_matcher import get_production_matcher
-
-from .smart_product_matcher import SmartProductMatcher, ParsedMessage
-
-"""
-WhatsApp message processing services
-Handles classification, parsing, and order creation from WhatsApp messages
-"""
-
-
 
 User = get_user_model()
 
@@ -504,7 +500,7 @@ def create_order_items(order, message):
     for item_data in parsed_items:
         try:
             # Find product (don't auto-create) with unit preference and bag size matching
-            product = get_or_create_product_enhanced(
+            product = get_or_create_product(
                 item_data['product_name'], 
                 auto_create=False, 
                 preferred_unit=item_data.get('unit'),
@@ -1042,116 +1038,7 @@ def match_size_specific_product(product_name, quantity, unit):
     
     return None
 
-
-
-def get_or_create_product_smart(product_name, quantity, unit, customer=None):
-    """
-    Smart product matching using database-driven analysis
-    No hardcoded regex patterns - dynamically analyzes message components
-    """
-    from .smart_product_matcher import SmartProductMatcher, ParsedMessage
-    from products.models import Product
-    import logging
-    
-    logger = logging.getLogger(__name__)
-    
-    try:
-        # Get or create smart matcher instance
-        if not hasattr(get_or_create_product_smart, '_matcher'):
-            get_or_create_product_smart._matcher = SmartProductMatcher()
-        
-        matcher = get_or_create_product_smart._matcher
-        
-        # Create a test message for parsing
-        if unit and unit not in ['piece', 'each']:
-            test_message = f"{quantity} {unit} {product_name}"
-        else:
-            test_message = f"{product_name} {quantity}"
-        
-        # Parse and match
-        parsed_messages = matcher.parse_message(test_message)
-        
-        if parsed_messages:
-            parsed = parsed_messages[0]  # Take first parsed result
-            matches = matcher.find_matches(parsed)
-            
-            if matches:
-                best_match = matches[0]
-                
-                # Use matches above 50% confidence
-                if best_match.confidence_score >= 50:
-                    logger.info(f"Smart matcher: '{product_name}' -> '{best_match.product.name}' "
-                              f"({best_match.confidence_score:.1f}% confidence)")
-                    
-                    return best_match.product, best_match.quantity, best_match.unit
-                
-                # Log medium confidence matches
-                elif best_match.confidence_score >= 30:
-                    logger.info(f"Medium confidence match: '{product_name}' -> '{best_match.product.name}' "
-                              f"({best_match.confidence_score:.1f}%)")
-                    
-                    return best_match.product, best_match.quantity, best_match.unit
-                
-                # Log low confidence matches
-                else:
-                    logger.warning(f"Low confidence match: '{product_name}' -> '{best_match.product.name}' "
-                                 f"({best_match.confidence_score:.1f}%)")
-    
-    except Exception as e:
-        logger.error(f"Smart matcher error: {e}")
-    
-    # Fall back to original logic if no good matches
-    return get_or_create_product_original(product_name, quantity, unit, customer)
-
-def get_or_create_product_enhanced(product_name, quantity, unit, customer=None):
-    """
-    Enhanced product matching using production-optimized matcher
-    96% success rate with 210 production products
-    """
-    try:
-        # Get production matcher
-        matcher = get_production_matcher()
-        
-        # Create test message for matcher
-        if unit and unit not in ['piece', 'each']:
-            test_message = f"{quantity} {product_name} {unit}"
-        else:
-            test_message = f"{product_name} {quantity}"
-        
-        # Get matches
-        matches = matcher.parse_message(test_message)
-        
-        if matches:
-            # Get best match
-            best_match = max(matches, key=lambda x: x.confidence_score)
-            
-            # Use matches above 40% confidence (production-tuned threshold)
-            if best_match.confidence_score >= 40:
-                try:
-                    from products.models import Product
-                    product = Product.objects.get(name=best_match.product_name)
-                    
-                    # Log successful match
-                    logger.info(f"Production matcher: '{product_name}' -> '{product.name}' "
-                              f"({best_match.confidence_score:.1f}%, {best_match.match_details['pattern']})")
-                    
-                    return product, best_match.quantity, best_match.unit
-                    
-                except Product.DoesNotExist:
-                    logger.warning(f"Production matcher found '{best_match.product_name}' but product doesn't exist in DB")
-            
-            # Log lower confidence matches
-            elif best_match.confidence_score >= 25:
-                logger.info(f"Low confidence match: '{product_name}' -> '{best_match.product_name}' "
-                          f"({best_match.confidence_score:.1f}%)")
-    
-    except Exception as e:
-        logger.error(f"Production matcher error: {e}")
-    
-    # Fall back to original logic
-    return get_or_create_product_original(product_name, quantity, unit, customer)
-
-def get_or_create_product_original(product_name, auto_create=False, preferred_unit=None, quantity=None, unit=None):
+def get_or_create_product(product_name, auto_create=False, preferred_unit=None, quantity=None, unit=None):
     """
     Get or create product by name using enhanced product matching with seeded data
     

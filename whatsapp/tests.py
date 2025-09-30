@@ -6,7 +6,10 @@ from django.core.management import call_command
 from datetime import datetime, timezone as dt_tz, timedelta
 from .models import WhatsAppMessage
 from .services import classify_message_type, has_order_items
+from .smart_product_matcher import SmartProductMatcher
 from accounts.models import User, RestaurantProfile
+from products.models import Product, Department
+from decimal import Decimal
 
 
 class ReceiveMessagesTests(TestCase):
@@ -485,4 +488,77 @@ class CompanyAssignmentTests(TestCase):
         outside_api = self._get_message_from_api(outside_order.id)
         self.assertEqual(outside_api['company_name'], '')
         self.assertIn(outside_api['manual_company'], [None, '', 'None'])
+
+
+class SmartProductMatcherTestCase(TestCase):
+    """Test cases for the Smart Product Matcher"""
+
+    def setUp(self):
+        """Set up test data"""
+        # Create test department
+        self.department = Department.objects.create(
+            name='Test Department',
+            description='Test department for smart matcher tests'
+        )
+
+        # Create test products
+        self.products = [
+            Product.objects.create(
+                name='Carrots',
+                unit='kg',
+                price=Decimal('25.00'),
+                department=self.department
+            ),
+            Product.objects.create(
+                name='Rosemary (200g packet)',
+                unit='packet',
+                price=Decimal('25.00'),
+                department=self.department
+            ),
+            Product.objects.create(
+                name='Cucumber',
+                unit='each',
+                price=Decimal('8.00'),
+                department=self.department
+            ),
+        ]
+
+        self.matcher = SmartProductMatcher()
+
+    def test_perfect_packet_match(self):
+        """Test perfect packet matching with weight specification"""
+        message = "packet rosemary 200g"
+        suggestions = self.matcher.get_suggestions(message)
+        
+        self.assertIsNotNone(suggestions.best_match)
+        self.assertEqual(suggestions.best_match.product.name, 'Rosemary (200g packet)')
+        self.assertGreaterEqual(suggestions.best_match.confidence_score, 50)
+
+    def test_each_unit_matching(self):
+        """Test matching with 'each' unit"""
+        message = "cucumber 5 each"
+        suggestions = self.matcher.get_suggestions(message)
+        
+        self.assertIsNotNone(suggestions.best_match)
+        self.assertEqual(suggestions.best_match.product.name, 'Cucumber')
+        self.assertEqual(suggestions.best_match.unit, 'each')
+
+    def test_suggestions_for_ambiguous_input(self):
+        """Test suggestions for ambiguous input"""
+        message = "carrot"  # Should match 'Carrots'
+        suggestions = self.matcher.get_suggestions(message, min_confidence=10.0)
+        
+        # Should find carrot-related products
+        self.assertGreater(len(suggestions.suggestions), 0)
+
+    def test_confidence_scoring(self):
+        """Test that confidence scores are reasonable"""
+        message = "carrots"
+        suggestions = self.matcher.get_suggestions(message)
+        
+        if suggestions.best_match:
+            self.assertGreaterEqual(suggestions.best_match.confidence_score, 50)
+        
+        for suggestion in suggestions.suggestions:
+            self.assertGreater(suggestion.confidence_score, 0)
 
