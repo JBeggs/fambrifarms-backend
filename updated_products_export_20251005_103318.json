@@ -1,0 +1,2156 @@
+{
+  "export_timestamp": "2025-10-05T10:33:18.731587",
+  "total_products": 215,
+  "products": [
+    {
+      "id": 1,
+      "name": "Avocados (Hard)",
+      "unit": "box",
+      "price": 85.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.735888+00:00",
+      "updated_at": "2025-10-05T08:32:29.749798+00:00"
+    },
+    {
+      "id": 2,
+      "name": "Avocados (Hard)",
+      "unit": "kg",
+      "price": 85.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.741273+00:00",
+      "updated_at": "2025-10-05T08:32:29.750271+00:00"
+    },
+    {
+      "id": 3,
+      "name": "Avocados (Hard)",
+      "unit": "piece",
+      "price": 85.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.742386+00:00",
+      "updated_at": "2025-10-05T08:32:29.750733+00:00"
+    },
+    {
+      "id": 4,
+      "name": "Avocados (Semi-Ripe)",
+      "unit": "box",
+      "price": 110.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.743364+00:00",
+      "updated_at": "2025-09-28T20:37:16.743369+00:00"
+    },
+    {
+      "id": 5,
+      "name": "Avocados (Soft)",
+      "unit": "box",
+      "price": 120.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.744324+00:00",
+      "updated_at": "2025-09-28T21:01:53.993757+00:00"
+    },
+    {
+      "id": 6,
+      "name": "Bananas",
+      "unit": "kg",
+      "price": 220.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.745259+00:00",
+      "updated_at": "2025-10-05T08:32:29.677922+00:00"
+    },
+    {
+      "id": 7,
+      "name": "Black Grapes",
+      "unit": "kg",
+      "price": 60.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.746196+00:00",
+      "updated_at": "2025-09-28T20:37:16.746201+00:00"
+    },
+    {
+      "id": 8,
+      "name": "Blueberries",
+      "unit": "punnet",
+      "price": 240.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.747111+00:00",
+      "updated_at": "2025-10-05T08:32:29.706860+00:00"
+    },
+    {
+      "id": 9,
+      "name": "Box Pineapple",
+      "unit": "kg",
+      "price": 25.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.748043+00:00",
+      "updated_at": "2025-09-28T20:37:16.748047+00:00"
+    },
+    {
+      "id": 133,
+      "name": "Box Pineapple",
+      "unit": "box",
+      "price": 25.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-29T07:19:44.524134+00:00",
+      "updated_at": "2025-10-05T08:32:29.752251+00:00"
+    },
+    {
+      "id": 212,
+      "name": "Grape",
+      "unit": "punnet",
+      "price": 45.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-10-04T20:56:38.593529+00:00",
+      "updated_at": "2025-10-04T20:56:38.593536+00:00"
+    },
+    {
+      "id": 10,
+      "name": "Grapefruit",
+      "unit": "kg",
+      "price": 28.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.748943+00:00",
+      "updated_at": "2025-09-28T21:01:53.995407+00:00"
+    },
+    {
+      "id": 211,
+      "name": "Grapes",
+      "unit": "punnet",
+      "price": 45.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-10-04T20:56:38.591856+00:00",
+      "updated_at": "2025-10-04T20:56:38.591865+00:00"
+    },
+    {
+      "id": 11,
+      "name": "Green Grapes",
+      "unit": "punnet",
+      "price": 45.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.749839+00:00",
+      "updated_at": "2025-09-28T21:01:53.956177+00:00"
+    },
+    {
+      "id": 213,
+      "name": "Kiwi (200g punnet)",
+      "unit": "punnet",
+      "price": 25.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-10-05T08:03:08.175663+00:00",
+      "updated_at": "2025-10-05T08:03:08.176265+00:00"
+    },
+    {
+      "id": 214,
+      "name": "Kiwi (500g punnet)",
+      "unit": "punnet",
+      "price": 45.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-10-05T08:03:08.183705+00:00",
+      "updated_at": "2025-10-05T08:03:08.183718+00:00"
+    },
+    {
+      "id": 215,
+      "name": "Kiwi (box)",
+      "unit": "box",
+      "price": 120.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-10-05T08:03:08.185406+00:00",
+      "updated_at": "2025-10-05T08:03:08.185413+00:00"
+    },
+    {
+      "id": 12,
+      "name": "Lemon",
+      "unit": "kg",
+      "price": 40.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.750746+00:00",
+      "updated_at": "2025-10-05T08:32:29.673331+00:00"
+    },
+    {
+      "id": 13,
+      "name": "Lemons",
+      "unit": "kg",
+      "price": 40.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.751638+00:00",
+      "updated_at": "2025-10-05T08:32:29.674093+00:00"
+    },
+    {
+      "id": 14,
+      "name": "Lemons",
+      "unit": "box",
+      "price": 40.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.752531+00:00",
+      "updated_at": "2025-10-05T08:32:29.674735+00:00"
+    },
+    {
+      "id": 15,
+      "name": "Lemons",
+      "unit": "bag",
+      "price": 40.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.753472+00:00",
+      "updated_at": "2025-10-05T08:32:29.675318+00:00"
+    },
+    {
+      "id": 16,
+      "name": "Lemons box",
+      "unit": "box",
+      "price": 40.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.754379+00:00",
+      "updated_at": "2025-10-05T08:32:29.675974+00:00"
+    },
+    {
+      "id": 17,
+      "name": "Lime",
+      "unit": "bag",
+      "price": 25.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.755270+00:00",
+      "updated_at": "2025-09-28T20:37:16.755275+00:00"
+    },
+    {
+      "id": 18,
+      "name": "Naartjies",
+      "unit": "box",
+      "price": 45.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.756462+00:00",
+      "updated_at": "2025-09-28T20:37:16.756469+00:00"
+    },
+    {
+      "id": 19,
+      "name": "Oranges",
+      "unit": "kg",
+      "price": 25.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.757512+00:00",
+      "updated_at": "2025-09-28T20:37:16.757517+00:00"
+    },
+    {
+      "id": 20,
+      "name": "Oranges",
+      "unit": "box",
+      "price": 27.5,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.758473+00:00",
+      "updated_at": "2025-09-28T20:37:16.758478+00:00"
+    },
+    {
+      "id": 21,
+      "name": "Oranges",
+      "unit": "bag",
+      "price": 23.75,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.759417+00:00",
+      "updated_at": "2025-09-28T20:37:16.759422+00:00"
+    },
+    {
+      "id": 22,
+      "name": "Papaya",
+      "unit": "punnet",
+      "price": 30.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.760349+00:00",
+      "updated_at": "2025-09-28T20:37:16.760354+00:00"
+    },
+    {
+      "id": 23,
+      "name": "Paw Paw",
+      "unit": "punnet",
+      "price": 25.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.761273+00:00",
+      "updated_at": "2025-09-28T21:01:53.968006+00:00"
+    },
+    {
+      "id": 24,
+      "name": "Pineapple",
+      "unit": "each",
+      "price": 25.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.762199+00:00",
+      "updated_at": "2025-09-28T20:37:16.762204+00:00"
+    },
+    {
+      "id": 25,
+      "name": "Red Apples",
+      "unit": "kg",
+      "price": 35.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.763114+00:00",
+      "updated_at": "2025-09-28T21:01:53.977261+00:00"
+    },
+    {
+      "id": 26,
+      "name": "Red Grapes",
+      "unit": "punnet",
+      "price": 45.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.764014+00:00",
+      "updated_at": "2025-09-28T21:01:53.958380+00:00"
+    },
+    {
+      "id": 27,
+      "name": "Strawberries",
+      "unit": "punnet",
+      "price": 400.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.764920+00:00",
+      "updated_at": "2025-10-05T08:32:29.669578+00:00"
+    },
+    {
+      "id": 28,
+      "name": "Strawberries",
+      "unit": "kg",
+      "price": 400.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.765863+00:00",
+      "updated_at": "2025-10-05T08:32:29.670931+00:00"
+    },
+    {
+      "id": 29,
+      "name": "Strawberries",
+      "unit": "box",
+      "price": 400.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.766775+00:00",
+      "updated_at": "2025-10-05T08:32:29.671494+00:00"
+    },
+    {
+      "id": 210,
+      "name": "Strawberry",
+      "unit": "punnet",
+      "price": 25.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-10-04T20:56:38.585508+00:00",
+      "updated_at": "2025-10-04T20:56:38.585736+00:00"
+    },
+    {
+      "id": 30,
+      "name": "Sweet Melon",
+      "unit": "each",
+      "price": 40.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.767668+00:00",
+      "updated_at": "2025-09-28T20:37:16.767673+00:00"
+    },
+    {
+      "id": 31,
+      "name": "Water Melon",
+      "unit": "each",
+      "price": 50.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.768560+00:00",
+      "updated_at": "2025-09-28T20:37:16.768565+00:00"
+    },
+    {
+      "id": 32,
+      "name": "Watermelon",
+      "unit": "each",
+      "price": 50.0,
+      "department": "Fruits",
+      "department_id": 1,
+      "created_at": "2025-09-28T20:37:16.769457+00:00",
+      "updated_at": "2025-09-28T20:37:16.769462+00:00"
+    },
+    {
+      "id": 33,
+      "name": "Baby Spinach",
+      "unit": "kg",
+      "price": 45.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.770370+00:00",
+      "updated_at": "2025-09-28T20:37:16.770375+00:00"
+    },
+    {
+      "id": 34,
+      "name": "Basil",
+      "unit": "g",
+      "price": 15.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.771266+00:00",
+      "updated_at": "2025-09-28T23:34:47.782550+00:00"
+    },
+    {
+      "id": 178,
+      "name": "Basil (100g packet)",
+      "unit": "packet",
+      "price": 15.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.036349+00:00",
+      "updated_at": "2025-09-29T09:58:53.036359+00:00"
+    },
+    {
+      "id": 179,
+      "name": "Basil (200g packet)",
+      "unit": "packet",
+      "price": 30.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.037761+00:00",
+      "updated_at": "2025-09-29T09:58:53.037770+00:00"
+    },
+    {
+      "id": 177,
+      "name": "Basil (50g packet)",
+      "unit": "packet",
+      "price": 7.5,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.034768+00:00",
+      "updated_at": "2025-09-29T09:58:53.034777+00:00"
+    },
+    {
+      "id": 35,
+      "name": "Chives",
+      "unit": "piece",
+      "price": 35.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.772179+00:00",
+      "updated_at": "2025-09-28T20:37:16.772185+00:00"
+    },
+    {
+      "id": 36,
+      "name": "Coriander",
+      "unit": "bunch",
+      "price": 90.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.773345+00:00",
+      "updated_at": "2025-10-05T08:32:29.725141+00:00"
+    },
+    {
+      "id": 184,
+      "name": "Coriander (100g packet)",
+      "unit": "packet",
+      "price": 90.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.045105+00:00",
+      "updated_at": "2025-10-05T08:32:29.726880+00:00"
+    },
+    {
+      "id": 185,
+      "name": "Coriander (200g packet)",
+      "unit": "packet",
+      "price": 90.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.046436+00:00",
+      "updated_at": "2025-10-05T08:32:29.727813+00:00"
+    },
+    {
+      "id": 183,
+      "name": "Coriander (50g packet)",
+      "unit": "packet",
+      "price": 90.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.043723+00:00",
+      "updated_at": "2025-10-05T08:32:29.728838+00:00"
+    },
+    {
+      "id": 37,
+      "name": "Crushed Garlic",
+      "unit": "kg",
+      "price": 90.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.774403+00:00",
+      "updated_at": "2025-09-28T21:01:54.007456+00:00"
+    },
+    {
+      "id": 38,
+      "name": "Dill",
+      "unit": "bunch",
+      "price": 15.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.775347+00:00",
+      "updated_at": "2025-09-28T21:01:53.984692+00:00"
+    },
+    {
+      "id": 202,
+      "name": "Edible Flowers (100g packet)",
+      "unit": "packet",
+      "price": 70.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.071314+00:00",
+      "updated_at": "2025-09-29T09:58:53.071323+00:00"
+    },
+    {
+      "id": 203,
+      "name": "Edible Flowers (200g packet)",
+      "unit": "packet",
+      "price": 140.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.072667+00:00",
+      "updated_at": "2025-09-29T09:58:53.072676+00:00"
+    },
+    {
+      "id": 201,
+      "name": "Edible Flowers (50g packet)",
+      "unit": "packet",
+      "price": 35.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.069971+00:00",
+      "updated_at": "2025-09-29T09:58:53.069980+00:00"
+    },
+    {
+      "id": 39,
+      "name": "Garlic Cloves",
+      "unit": "kg",
+      "price": 80.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.776352+00:00",
+      "updated_at": "2025-09-28T20:37:16.776358+00:00"
+    },
+    {
+      "id": 40,
+      "name": "Ginger",
+      "unit": "kg",
+      "price": 800.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.777275+00:00",
+      "updated_at": "2025-10-05T08:32:29.748784+00:00"
+    },
+    {
+      "id": 41,
+      "name": "Green Chili",
+      "unit": "kg",
+      "price": 45.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.778240+00:00",
+      "updated_at": "2025-09-28T20:37:16.778245+00:00"
+    },
+    {
+      "id": 199,
+      "name": "Micro Herbs (100g packet)",
+      "unit": "packet",
+      "price": 50.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.067100+00:00",
+      "updated_at": "2025-09-29T09:58:53.067109+00:00"
+    },
+    {
+      "id": 200,
+      "name": "Micro Herbs (200g packet)",
+      "unit": "packet",
+      "price": 100.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.068444+00:00",
+      "updated_at": "2025-09-29T09:58:53.068453+00:00"
+    },
+    {
+      "id": 198,
+      "name": "Micro Herbs (50g packet)",
+      "unit": "packet",
+      "price": 25.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.065700+00:00",
+      "updated_at": "2025-09-29T09:58:53.065709+00:00"
+    },
+    {
+      "id": 42,
+      "name": "Mint",
+      "unit": "bunch",
+      "price": 10.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.779159+00:00",
+      "updated_at": "2025-09-28T21:01:53.983404+00:00"
+    },
+    {
+      "id": 187,
+      "name": "Mint (100g packet)",
+      "unit": "packet",
+      "price": 25.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.049390+00:00",
+      "updated_at": "2025-09-29T09:58:53.049399+00:00"
+    },
+    {
+      "id": 188,
+      "name": "Mint (200g packet)",
+      "unit": "packet",
+      "price": 50.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.050793+00:00",
+      "updated_at": "2025-09-29T09:58:53.050802+00:00"
+    },
+    {
+      "id": 186,
+      "name": "Mint (50g packet)",
+      "unit": "packet",
+      "price": 12.5,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.047988+00:00",
+      "updated_at": "2025-09-29T09:58:53.047997+00:00"
+    },
+    {
+      "id": 193,
+      "name": "Oregano (100g packet)",
+      "unit": "packet",
+      "price": 35.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.057849+00:00",
+      "updated_at": "2025-09-29T09:58:53.057858+00:00"
+    },
+    {
+      "id": 194,
+      "name": "Oregano (200g packet)",
+      "unit": "packet",
+      "price": 70.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.059267+00:00",
+      "updated_at": "2025-09-29T09:58:53.059275+00:00"
+    },
+    {
+      "id": 192,
+      "name": "Oregano (50g packet)",
+      "unit": "packet",
+      "price": 17.5,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.056529+00:00",
+      "updated_at": "2025-09-29T09:58:53.056538+00:00"
+    },
+    {
+      "id": 43,
+      "name": "Packets Mint",
+      "unit": "bunch",
+      "price": 25.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.780066+00:00",
+      "updated_at": "2025-09-28T20:37:16.780072+00:00"
+    },
+    {
+      "id": 44,
+      "name": "Packets Rosemary",
+      "unit": "kg",
+      "price": 25.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.780984+00:00",
+      "updated_at": "2025-09-28T20:37:16.780989+00:00"
+    },
+    {
+      "id": 46,
+      "name": "Parsley",
+      "unit": "bunch",
+      "price": 100.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.782807+00:00",
+      "updated_at": "2025-10-05T08:32:29.719747+00:00"
+    },
+    {
+      "id": 181,
+      "name": "Parsley (100g packet)",
+      "unit": "packet",
+      "price": 100.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.040794+00:00",
+      "updated_at": "2025-10-05T08:32:29.720431+00:00"
+    },
+    {
+      "id": 182,
+      "name": "Parsley (200g packet)",
+      "unit": "packet",
+      "price": 100.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.042202+00:00",
+      "updated_at": "2025-10-05T08:32:29.720955+00:00"
+    },
+    {
+      "id": 180,
+      "name": "Parsley (50g packet)",
+      "unit": "packet",
+      "price": 100.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.039421+00:00",
+      "updated_at": "2025-10-05T08:32:29.721493+00:00"
+    },
+    {
+      "id": 47,
+      "name": "Red Chili",
+      "unit": "kg",
+      "price": 80.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.783709+00:00",
+      "updated_at": "2025-09-28T20:37:16.783714+00:00"
+    },
+    {
+      "id": 48,
+      "name": "Rocket",
+      "unit": "kg",
+      "price": 120.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.784605+00:00",
+      "updated_at": "2025-09-28T21:01:53.987411+00:00"
+    },
+    {
+      "id": 49,
+      "name": "Rosemary",
+      "unit": "bunch",
+      "price": 12.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.785501+00:00",
+      "updated_at": "2025-09-28T21:01:53.978780+00:00"
+    },
+    {
+      "id": 190,
+      "name": "Rosemary (100g packet)",
+      "unit": "packet",
+      "price": 40.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.053667+00:00",
+      "updated_at": "2025-09-29T09:58:53.053675+00:00"
+    },
+    {
+      "id": 191,
+      "name": "Rosemary (200g packet)",
+      "unit": "packet",
+      "price": 80.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.055008+00:00",
+      "updated_at": "2025-09-29T09:58:53.055017+00:00"
+    },
+    {
+      "id": 189,
+      "name": "Rosemary (50g packet)",
+      "unit": "packet",
+      "price": 20.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.052334+00:00",
+      "updated_at": "2025-09-29T09:58:53.052342+00:00"
+    },
+    {
+      "id": 196,
+      "name": "Sage (100g packet)",
+      "unit": "packet",
+      "price": 45.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.062747+00:00",
+      "updated_at": "2025-09-29T09:58:53.062757+00:00"
+    },
+    {
+      "id": 197,
+      "name": "Sage (200g packet)",
+      "unit": "packet",
+      "price": 90.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.064152+00:00",
+      "updated_at": "2025-09-29T09:58:53.064161+00:00"
+    },
+    {
+      "id": 195,
+      "name": "Sage (50g packet)",
+      "unit": "packet",
+      "price": 22.5,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.061183+00:00",
+      "updated_at": "2025-09-29T09:58:53.061194+00:00"
+    },
+    {
+      "id": 45,
+      "name": "Thyme",
+      "unit": "packet",
+      "price": 25.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.781889+00:00",
+      "updated_at": "2025-09-28T21:06:36.370254+00:00"
+    },
+    {
+      "id": 50,
+      "name": "Thyme",
+      "unit": "g",
+      "price": 12.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.786397+00:00",
+      "updated_at": "2025-09-28T21:06:16.662110+00:00"
+    },
+    {
+      "id": 175,
+      "name": "Thyme (100g packet)",
+      "unit": "packet",
+      "price": 50.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.031116+00:00",
+      "updated_at": "2025-09-29T09:58:53.031132+00:00"
+    },
+    {
+      "id": 176,
+      "name": "Thyme (200g packet)",
+      "unit": "packet",
+      "price": 100.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.032853+00:00",
+      "updated_at": "2025-09-29T09:58:53.032863+00:00"
+    },
+    {
+      "id": 174,
+      "name": "Thyme (50g packet)",
+      "unit": "packet",
+      "price": 25.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-29T09:58:53.024043+00:00",
+      "updated_at": "2025-09-29T09:58:53.024067+00:00"
+    },
+    {
+      "id": 51,
+      "name": "Turmeric",
+      "unit": "kg",
+      "price": 150.0,
+      "department": "Herbs & Spices",
+      "department_id": 2,
+      "created_at": "2025-09-28T20:37:16.787298+00:00",
+      "updated_at": "2025-09-28T21:01:54.003917+00:00"
+    },
+    {
+      "id": 52,
+      "name": "Brown Mushrooms",
+      "unit": "kg",
+      "price": 80.0,
+      "department": "Mushrooms",
+      "department_id": 3,
+      "created_at": "2025-09-28T20:37:16.788195+00:00",
+      "updated_at": "2025-09-28T20:37:16.788200+00:00"
+    },
+    {
+      "id": 53,
+      "name": "Button Mushrooms",
+      "unit": "punnet",
+      "price": 25.0,
+      "department": "Mushrooms",
+      "department_id": 3,
+      "created_at": "2025-09-28T20:37:16.789137+00:00",
+      "updated_at": "2025-09-28T20:37:16.789143+00:00"
+    },
+    {
+      "id": 54,
+      "name": "Portabellini Mushrooms",
+      "unit": "kg",
+      "price": 90.0,
+      "department": "Mushrooms",
+      "department_id": 3,
+      "created_at": "2025-09-28T20:37:16.790158+00:00",
+      "updated_at": "2025-09-28T20:37:16.790163+00:00"
+    },
+    {
+      "id": 55,
+      "name": "Cherry Tomatoes",
+      "unit": "punnet",
+      "price": 75.0,
+      "department": "Specialty Items",
+      "department_id": 4,
+      "created_at": "2025-09-28T20:37:16.791092+00:00",
+      "updated_at": "2025-10-05T08:32:29.700830+00:00"
+    },
+    {
+      "id": 56,
+      "name": "Edible Flowers",
+      "unit": "packet",
+      "price": 35.0,
+      "department": "Specialty Items",
+      "department_id": 4,
+      "created_at": "2025-09-28T20:37:16.792044+00:00",
+      "updated_at": "2025-09-28T20:37:16.792048+00:00"
+    },
+    {
+      "id": 57,
+      "name": "Eggs (Jumbo)",
+      "unit": "tray",
+      "price": 75.0,
+      "department": "Specialty Items",
+      "department_id": 4,
+      "created_at": "2025-09-28T20:37:16.792938+00:00",
+      "updated_at": "2025-09-28T21:45:16.889986+00:00"
+    },
+    {
+      "id": 58,
+      "name": "Eggs (Large)",
+      "unit": "tray",
+      "price": 65.0,
+      "department": "Specialty Items",
+      "department_id": 4,
+      "created_at": "2025-09-28T20:37:16.793832+00:00",
+      "updated_at": "2025-09-28T21:43:56.958281+00:00"
+    },
+    {
+      "id": 59,
+      "name": "Eggs (Medium)",
+      "unit": "tray",
+      "price": 55.0,
+      "department": "Specialty Items",
+      "department_id": 4,
+      "created_at": "2025-09-28T20:37:16.794732+00:00",
+      "updated_at": "2025-09-28T21:43:52.919490+00:00"
+    },
+    {
+      "id": 60,
+      "name": "Free Range Eggs",
+      "unit": "tray",
+      "price": 85.0,
+      "department": "Specialty Items",
+      "department_id": 4,
+      "created_at": "2025-09-28T20:37:16.795625+00:00",
+      "updated_at": "2025-09-28T21:43:48.609587+00:00"
+    },
+    {
+      "id": 61,
+      "name": "Large Veggie Box",
+      "unit": "box",
+      "price": 320.0,
+      "department": "Specialty Items",
+      "department_id": 4,
+      "created_at": "2025-09-28T20:37:16.796532+00:00",
+      "updated_at": "2025-09-28T20:37:16.796537+00:00"
+    },
+    {
+      "id": 62,
+      "name": "Micro Greens",
+      "unit": "kg",
+      "price": 40.0,
+      "department": "Specialty Items",
+      "department_id": 4,
+      "created_at": "2025-09-28T20:37:16.797431+00:00",
+      "updated_at": "2025-09-28T20:37:16.797436+00:00"
+    },
+    {
+      "id": 63,
+      "name": "Micro Herbs",
+      "unit": "packet",
+      "price": 25.0,
+      "department": "Specialty Items",
+      "department_id": 4,
+      "created_at": "2025-09-28T20:37:16.798332+00:00",
+      "updated_at": "2025-09-28T20:37:16.798337+00:00"
+    },
+    {
+      "id": 64,
+      "name": "Small Veggie Box",
+      "unit": "box",
+      "price": 180.0,
+      "department": "Specialty Items",
+      "department_id": 4,
+      "created_at": "2025-09-28T20:37:16.799237+00:00",
+      "updated_at": "2025-09-28T20:37:16.799242+00:00"
+    },
+    {
+      "id": 66,
+      "name": "Artichokes",
+      "unit": "kg",
+      "price": 45.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.801099+00:00",
+      "updated_at": "2025-09-28T23:32:31.102597+00:00"
+    },
+    {
+      "id": 67,
+      "name": "Aubergine",
+      "unit": "kg",
+      "price": 55.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.802010+00:00",
+      "updated_at": "2025-09-28T20:37:16.802015+00:00"
+    },
+    {
+      "id": 68,
+      "name": "Aubergine box",
+      "unit": "box",
+      "price": 120.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.802917+00:00",
+      "updated_at": "2025-09-28T20:37:16.802922+00:00"
+    },
+    {
+      "id": 69,
+      "name": "Baby Corn",
+      "unit": "punnet",
+      "price": 20.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.803811+00:00",
+      "updated_at": "2025-09-28T20:37:16.803816+00:00"
+    },
+    {
+      "id": 70,
+      "name": "Baby Marrow",
+      "unit": "kg",
+      "price": 35.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.804715+00:00",
+      "updated_at": "2025-09-28T21:01:53.949945+00:00"
+    },
+    {
+      "id": 71,
+      "name": "Baby Potatoes",
+      "unit": "kg",
+      "price": 20.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.805664+00:00",
+      "updated_at": "2025-10-05T08:32:29.692739+00:00"
+    },
+    {
+      "id": 72,
+      "name": "Beetroot",
+      "unit": "kg",
+      "price": 25.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.806709+00:00",
+      "updated_at": "2025-09-28T21:01:53.996929+00:00"
+    },
+    {
+      "id": 73,
+      "name": "Box Cucumber",
+      "unit": "kg",
+      "price": 100.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.807709+00:00",
+      "updated_at": "2025-10-05T08:32:29.739156+00:00"
+    },
+    {
+      "id": 74,
+      "name": "Broccoli",
+      "unit": "head",
+      "price": 200.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.808647+00:00",
+      "updated_at": "2025-10-05T08:32:29.743172+00:00"
+    },
+    {
+      "id": 75,
+      "name": "Broccoli",
+      "unit": "kg",
+      "price": 200.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.809567+00:00",
+      "updated_at": "2025-10-05T08:32:29.743801+00:00"
+    },
+    {
+      "id": 76,
+      "name": "Broccoli",
+      "unit": "box",
+      "price": 200.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.810531+00:00",
+      "updated_at": "2025-10-05T08:32:29.744335+00:00"
+    },
+    {
+      "id": 77,
+      "name": "Brussels Sprouts",
+      "unit": "kg",
+      "price": 50.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.811440+00:00",
+      "updated_at": "2025-09-28T20:37:16.811445+00:00"
+    },
+    {
+      "id": 78,
+      "name": "Butter Nut",
+      "unit": "kg",
+      "price": 22.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.812342+00:00",
+      "updated_at": "2025-09-28T20:37:16.812346+00:00"
+    },
+    {
+      "id": 79,
+      "name": "Butternut",
+      "unit": "kg",
+      "price": 65.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.813242+00:00",
+      "updated_at": "2025-10-05T08:32:29.708453+00:00"
+    },
+    {
+      "id": 80,
+      "name": "Carrots",
+      "unit": "kg",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.814137+00:00",
+      "updated_at": "2025-10-05T08:32:29.709882+00:00"
+    },
+    {
+      "id": 81,
+      "name": "Carrots",
+      "unit": "bag",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.815037+00:00",
+      "updated_at": "2025-10-05T08:32:29.710500+00:00"
+    },
+    {
+      "id": 82,
+      "name": "Carrots",
+      "unit": "bunch",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.815946+00:00",
+      "updated_at": "2025-10-05T08:32:29.711432+00:00"
+    },
+    {
+      "id": 173,
+      "name": "Carrots (10kg)",
+      "unit": "bag",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.857528+00:00",
+      "updated_at": "2025-10-05T08:32:29.712020+00:00"
+    },
+    {
+      "id": 83,
+      "name": "Carrots (1kg Packed)",
+      "unit": "kg",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.816837+00:00",
+      "updated_at": "2025-10-05T08:32:29.712509+00:00"
+    },
+    {
+      "id": 164,
+      "name": "Carrots (1kg)",
+      "unit": "bag",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.845369+00:00",
+      "updated_at": "2025-10-05T08:32:29.712945+00:00"
+    },
+    {
+      "id": 165,
+      "name": "Carrots (2kg)",
+      "unit": "bag",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.846651+00:00",
+      "updated_at": "2025-10-05T08:32:29.713434+00:00"
+    },
+    {
+      "id": 166,
+      "name": "Carrots (3kg)",
+      "unit": "bag",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.847927+00:00",
+      "updated_at": "2025-10-05T08:32:29.713960+00:00"
+    },
+    {
+      "id": 167,
+      "name": "Carrots (4kg)",
+      "unit": "bag",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.849204+00:00",
+      "updated_at": "2025-10-05T08:32:29.714590+00:00"
+    },
+    {
+      "id": 168,
+      "name": "Carrots (5kg)",
+      "unit": "bag",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.850488+00:00",
+      "updated_at": "2025-10-05T08:32:29.715211+00:00"
+    },
+    {
+      "id": 169,
+      "name": "Carrots (6kg)",
+      "unit": "bag",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.851838+00:00",
+      "updated_at": "2025-10-05T08:32:29.715883+00:00"
+    },
+    {
+      "id": 170,
+      "name": "Carrots (7kg)",
+      "unit": "bag",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.853119+00:00",
+      "updated_at": "2025-10-05T08:32:29.716415+00:00"
+    },
+    {
+      "id": 171,
+      "name": "Carrots (8kg)",
+      "unit": "bag",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.854539+00:00",
+      "updated_at": "2025-10-05T08:32:29.717406+00:00"
+    },
+    {
+      "id": 172,
+      "name": "Carrots (9kg)",
+      "unit": "bag",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.856122+00:00",
+      "updated_at": "2025-10-05T08:32:29.718079+00:00"
+    },
+    {
+      "id": 84,
+      "name": "Carrots (Loose)",
+      "unit": "kg",
+      "price": 128.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.817734+00:00",
+      "updated_at": "2025-10-05T08:32:29.718621+00:00"
+    },
+    {
+      "id": 85,
+      "name": "Cauliflower",
+      "unit": "head",
+      "price": 80.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.818641+00:00",
+      "updated_at": "2025-10-05T08:32:29.745387+00:00"
+    },
+    {
+      "id": 86,
+      "name": "Cauliflower",
+      "unit": "kg",
+      "price": 80.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.819545+00:00",
+      "updated_at": "2025-10-05T08:32:29.745928+00:00"
+    },
+    {
+      "id": 87,
+      "name": "Cauliflower",
+      "unit": "box",
+      "price": 80.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.820441+00:00",
+      "updated_at": "2025-10-05T08:32:29.746560+00:00"
+    },
+    {
+      "id": 88,
+      "name": "Celery",
+      "unit": "kg",
+      "price": 40.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.821380+00:00",
+      "updated_at": "2025-09-28T21:01:53.975545+00:00"
+    },
+    {
+      "id": 89,
+      "name": "Cocktail Tomatoes",
+      "unit": "punnet",
+      "price": 5.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.822385+00:00",
+      "updated_at": "2025-10-05T08:32:29.705546+00:00"
+    },
+    {
+      "id": 90,
+      "name": "Crispy Lettuce",
+      "unit": "box",
+      "price": 200.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.823546+00:00",
+      "updated_at": "2025-10-05T08:32:29.730542+00:00"
+    },
+    {
+      "id": 91,
+      "name": "Cucumber",
+      "unit": "each",
+      "price": 100.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.824557+00:00",
+      "updated_at": "2025-10-05T08:32:29.739609+00:00"
+    },
+    {
+      "id": 92,
+      "name": "Cucumber",
+      "unit": "kg",
+      "price": 100.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.825514+00:00",
+      "updated_at": "2025-10-05T08:32:29.740586+00:00"
+    },
+    {
+      "id": 93,
+      "name": "Cucumber",
+      "unit": "box",
+      "price": 100.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.826458+00:00",
+      "updated_at": "2025-10-05T08:32:29.741146+00:00"
+    },
+    {
+      "id": 94,
+      "name": "Cucumber Box",
+      "unit": "box",
+      "price": 100.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.827399+00:00",
+      "updated_at": "2025-10-05T08:32:29.741738+00:00"
+    },
+    {
+      "id": 95,
+      "name": "Deveined Spinach",
+      "unit": "kg",
+      "price": 25.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.828335+00:00",
+      "updated_at": "2025-09-28T20:37:16.828340+00:00"
+    },
+    {
+      "id": 96,
+      "name": "Eggplant",
+      "unit": "kg",
+      "price": 45.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.829250+00:00",
+      "updated_at": "2025-09-28T21:01:53.970036+00:00"
+    },
+    {
+      "id": 97,
+      "name": "Green Beans",
+      "unit": "kg",
+      "price": 45.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.830160+00:00",
+      "updated_at": "2025-09-28T20:37:16.830165+00:00"
+    },
+    {
+      "id": 98,
+      "name": "Green Cabbage",
+      "unit": "head",
+      "price": 50.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.831080+00:00",
+      "updated_at": "2025-10-05T08:32:29.747687+00:00"
+    },
+    {
+      "id": 99,
+      "name": "Green Chillies",
+      "unit": "kg",
+      "price": 75.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.832037+00:00",
+      "updated_at": "2025-09-28T20:37:16.832042+00:00"
+    },
+    {
+      "id": 100,
+      "name": "Green Peppers",
+      "unit": "kg",
+      "price": 129.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.832969+00:00",
+      "updated_at": "2025-10-05T08:32:29.735950+00:00"
+    },
+    {
+      "id": 101,
+      "name": "Green Peppers",
+      "unit": "box",
+      "price": 129.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.833885+00:00",
+      "updated_at": "2025-10-05T08:32:29.736679+00:00"
+    },
+    {
+      "id": 102,
+      "name": "Green Peppers",
+      "unit": "piece",
+      "price": 129.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.834802+00:00",
+      "updated_at": "2025-10-05T08:32:29.737174+00:00"
+    },
+    {
+      "id": 103,
+      "name": "Iceberg Lettuce",
+      "unit": "head",
+      "price": 25.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.835725+00:00",
+      "updated_at": "2025-09-28T20:37:16.835730+00:00"
+    },
+    {
+      "id": 208,
+      "name": "Istent",
+      "unit": "kg",
+      "price": 25.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-30T21:41:32.405259+00:00",
+      "updated_at": "2025-09-30T21:41:32.405671+00:00"
+    },
+    {
+      "id": 104,
+      "name": "Lettuce Head",
+      "unit": "head",
+      "price": 15.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.836632+00:00",
+      "updated_at": "2025-09-28T20:37:16.836636+00:00"
+    },
+    {
+      "id": 105,
+      "name": "Lettuce Head",
+      "unit": "kg",
+      "price": 27.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.837552+00:00",
+      "updated_at": "2025-09-28T20:37:16.837557+00:00"
+    },
+    {
+      "id": 106,
+      "name": "Lettuce Head",
+      "unit": "box",
+      "price": 21.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.838451+00:00",
+      "updated_at": "2025-09-28T20:37:16.838456+00:00"
+    },
+    {
+      "id": 107,
+      "name": "Mixed Lettuce",
+      "unit": "kg",
+      "price": 35.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.839515+00:00",
+      "updated_at": "2025-09-28T20:37:16.839522+00:00"
+    },
+    {
+      "id": 108,
+      "name": "Mixed Lettuce",
+      "unit": "box",
+      "price": 25.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.840544+00:00",
+      "updated_at": "2025-09-28T20:37:16.840549+00:00"
+    },
+    {
+      "id": 109,
+      "name": "Mixed Peppers",
+      "unit": "kg",
+      "price": 50.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.841522+00:00",
+      "updated_at": "2025-09-28T20:37:16.841532+00:00"
+    },
+    {
+      "id": 209,
+      "name": "None",
+      "unit": "kg",
+      "price": 25.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-30T21:41:32.415320+00:00",
+      "updated_at": "2025-09-30T21:41:32.415332+00:00"
+    },
+    {
+      "id": 110,
+      "name": "Packets Dill",
+      "unit": "kg",
+      "price": 25.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.842502+00:00",
+      "updated_at": "2025-09-28T20:37:16.842511+00:00"
+    },
+    {
+      "id": 111,
+      "name": "Packets Rocket",
+      "unit": "kg",
+      "price": 25.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.843436+00:00",
+      "updated_at": "2025-09-28T20:37:16.843440+00:00"
+    },
+    {
+      "id": 112,
+      "name": "Patty Pan",
+      "unit": "each",
+      "price": 8.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.844356+00:00",
+      "updated_at": "2025-09-28T20:37:16.844361+00:00"
+    },
+    {
+      "id": 115,
+      "name": "Potatoes",
+      "unit": "box",
+      "price": 20.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.847129+00:00",
+      "updated_at": "2025-10-05T08:32:29.693273+00:00"
+    },
+    {
+      "id": 163,
+      "name": "Potatoes (10kg)",
+      "unit": "bag",
+      "price": 20.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.843902+00:00",
+      "updated_at": "2025-10-05T08:32:29.694158+00:00"
+    },
+    {
+      "id": 154,
+      "name": "Potatoes (1kg)",
+      "unit": "bag",
+      "price": 20.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.831725+00:00",
+      "updated_at": "2025-10-05T08:32:29.694723+00:00"
+    },
+    {
+      "id": 155,
+      "name": "Potatoes (2kg)",
+      "unit": "bag",
+      "price": 20.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.833133+00:00",
+      "updated_at": "2025-10-05T08:32:29.695265+00:00"
+    },
+    {
+      "id": 156,
+      "name": "Potatoes (3kg)",
+      "unit": "bag",
+      "price": 20.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.834447+00:00",
+      "updated_at": "2025-10-05T08:32:29.695813+00:00"
+    },
+    {
+      "id": 157,
+      "name": "Potatoes (4kg)",
+      "unit": "bag",
+      "price": 20.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.835741+00:00",
+      "updated_at": "2025-10-05T08:32:29.696234+00:00"
+    },
+    {
+      "id": 158,
+      "name": "Potatoes (5kg)",
+      "unit": "bag",
+      "price": 20.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.837191+00:00",
+      "updated_at": "2025-10-05T08:32:29.696658+00:00"
+    },
+    {
+      "id": 159,
+      "name": "Potatoes (6kg)",
+      "unit": "bag",
+      "price": 20.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.838648+00:00",
+      "updated_at": "2025-10-05T08:32:29.697230+00:00"
+    },
+    {
+      "id": 160,
+      "name": "Potatoes (7kg)",
+      "unit": "bag",
+      "price": 20.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.839982+00:00",
+      "updated_at": "2025-10-05T08:32:29.697709+00:00"
+    },
+    {
+      "id": 161,
+      "name": "Potatoes (8kg)",
+      "unit": "bag",
+      "price": 20.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.841293+00:00",
+      "updated_at": "2025-10-05T08:32:29.698333+00:00"
+    },
+    {
+      "id": 162,
+      "name": "Potatoes (9kg)",
+      "unit": "bag",
+      "price": 20.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.842608+00:00",
+      "updated_at": "2025-10-05T08:32:29.698882+00:00"
+    },
+    {
+      "id": 116,
+      "name": "Punnets Strawberries",
+      "unit": "kg",
+      "price": 400.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.848027+00:00",
+      "updated_at": "2025-10-05T08:32:29.672050+00:00"
+    },
+    {
+      "id": 117,
+      "name": "Red Cabbage",
+      "unit": "head",
+      "price": 25.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.848924+00:00",
+      "updated_at": "2025-09-28T20:37:16.848929+00:00"
+    },
+    {
+      "id": 118,
+      "name": "Red Chillies",
+      "unit": "kg",
+      "price": 80.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.849812+00:00",
+      "updated_at": "2025-09-28T20:37:16.849817+00:00"
+    },
+    {
+      "id": 119,
+      "name": "Red Onions",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.850710+00:00",
+      "updated_at": "2025-10-05T08:32:29.679159+00:00"
+    },
+    {
+      "id": 143,
+      "name": "Red Onions (10kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.815809+00:00",
+      "updated_at": "2025-10-05T08:32:29.679659+00:00"
+    },
+    {
+      "id": 134,
+      "name": "Red Onions (1kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.795710+00:00",
+      "updated_at": "2025-10-05T08:32:29.680113+00:00"
+    },
+    {
+      "id": 135,
+      "name": "Red Onions (2kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.803674+00:00",
+      "updated_at": "2025-10-05T08:32:29.680582+00:00"
+    },
+    {
+      "id": 136,
+      "name": "Red Onions (3kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.805475+00:00",
+      "updated_at": "2025-10-05T08:32:29.681100+00:00"
+    },
+    {
+      "id": 137,
+      "name": "Red Onions (4kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.807299+00:00",
+      "updated_at": "2025-10-05T08:32:29.681614+00:00"
+    },
+    {
+      "id": 138,
+      "name": "Red Onions (5kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.808775+00:00",
+      "updated_at": "2025-10-05T08:32:29.682363+00:00"
+    },
+    {
+      "id": 139,
+      "name": "Red Onions (6kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.810318+00:00",
+      "updated_at": "2025-10-05T08:32:29.682921+00:00"
+    },
+    {
+      "id": 140,
+      "name": "Red Onions (7kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.811728+00:00",
+      "updated_at": "2025-10-05T08:32:29.683412+00:00"
+    },
+    {
+      "id": 141,
+      "name": "Red Onions (8kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.813108+00:00",
+      "updated_at": "2025-10-05T08:32:29.683860+00:00"
+    },
+    {
+      "id": 142,
+      "name": "Red Onions (9kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.814494+00:00",
+      "updated_at": "2025-10-05T08:32:29.684363+00:00"
+    },
+    {
+      "id": 120,
+      "name": "Red Peppers",
+      "unit": "kg",
+      "price": 150.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.851598+00:00",
+      "updated_at": "2025-10-05T08:32:29.732086+00:00"
+    },
+    {
+      "id": 121,
+      "name": "Red Peppers",
+      "unit": "box",
+      "price": 150.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.852551+00:00",
+      "updated_at": "2025-10-05T08:32:29.733474+00:00"
+    },
+    {
+      "id": 122,
+      "name": "Red Peppers",
+      "unit": "piece",
+      "price": 150.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.853468+00:00",
+      "updated_at": "2025-10-05T08:32:29.734731+00:00"
+    },
+    {
+      "id": 216,
+      "name": "Snap Peas (packet)",
+      "unit": "packet",
+      "price": 15.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-10-05T08:03:08.186937+00:00",
+      "updated_at": "2025-10-05T08:03:08.186943+00:00"
+    },
+    {
+      "id": 123,
+      "name": "Spring Onions",
+      "unit": "kg",
+      "price": 25.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.854390+00:00",
+      "updated_at": "2025-09-28T20:37:16.854395+00:00"
+    },
+    {
+      "id": 217,
+      "name": "Squash (kg)",
+      "unit": "kg",
+      "price": 30.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-10-05T08:03:08.188276+00:00",
+      "updated_at": "2025-10-05T08:03:08.188281+00:00"
+    },
+    {
+      "id": 218,
+      "name": "Sun Dried Tomatoes (packet)",
+      "unit": "packet",
+      "price": 40.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-10-05T08:03:08.189812+00:00",
+      "updated_at": "2025-10-05T08:32:29.754607+00:00"
+    },
+    {
+      "id": 124,
+      "name": "Sweet Corn",
+      "unit": "punnet",
+      "price": 15.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.855302+00:00",
+      "updated_at": "2025-09-28T20:37:16.855306+00:00"
+    },
+    {
+      "id": 125,
+      "name": "Sweet Potatoes",
+      "unit": "kg",
+      "price": 20.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.856332+00:00",
+      "updated_at": "2025-10-05T08:32:29.699678+00:00"
+    },
+    {
+      "id": 126,
+      "name": "Tomatoes",
+      "unit": "kg",
+      "price": 75.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.857331+00:00",
+      "updated_at": "2025-10-05T08:32:29.702614+00:00"
+    },
+    {
+      "id": 127,
+      "name": "Tomatoes",
+      "unit": "box",
+      "price": 75.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.858296+00:00",
+      "updated_at": "2025-10-05T08:32:29.703152+00:00"
+    },
+    {
+      "id": 128,
+      "name": "Tomatoes",
+      "unit": "punnet",
+      "price": 75.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.859237+00:00",
+      "updated_at": "2025-10-05T08:32:29.703730+00:00"
+    },
+    {
+      "id": 129,
+      "name": "White Onions",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.860193+00:00",
+      "updated_at": "2025-10-05T08:32:29.685548+00:00"
+    },
+    {
+      "id": 153,
+      "name": "White Onions (10kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.830244+00:00",
+      "updated_at": "2025-10-05T08:32:29.686127+00:00"
+    },
+    {
+      "id": 144,
+      "name": "White Onions (1kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.817322+00:00",
+      "updated_at": "2025-10-05T08:32:29.686750+00:00"
+    },
+    {
+      "id": 145,
+      "name": "White Onions (2kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.818631+00:00",
+      "updated_at": "2025-10-05T08:32:29.687587+00:00"
+    },
+    {
+      "id": 146,
+      "name": "White Onions (3kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.820501+00:00",
+      "updated_at": "2025-10-05T08:32:29.688102+00:00"
+    },
+    {
+      "id": 147,
+      "name": "White Onions (4kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.821994+00:00",
+      "updated_at": "2025-10-05T08:32:29.688616+00:00"
+    },
+    {
+      "id": 148,
+      "name": "White Onions (5kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.823445+00:00",
+      "updated_at": "2025-10-05T08:32:29.689147+00:00"
+    },
+    {
+      "id": 149,
+      "name": "White Onions (6kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.824962+00:00",
+      "updated_at": "2025-10-05T08:32:29.689659+00:00"
+    },
+    {
+      "id": 150,
+      "name": "White Onions (7kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.826327+00:00",
+      "updated_at": "2025-10-05T08:32:29.690249+00:00"
+    },
+    {
+      "id": 151,
+      "name": "White Onions (8kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.827629+00:00",
+      "updated_at": "2025-10-05T08:32:29.690875+00:00"
+    },
+    {
+      "id": 152,
+      "name": "White Onions (9kg)",
+      "unit": "bag",
+      "price": 175.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T09:41:46.828944+00:00",
+      "updated_at": "2025-10-05T08:32:29.691438+00:00"
+    },
+    {
+      "id": 130,
+      "name": "Whole Tomatoes",
+      "unit": "kg",
+      "price": 75.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.861117+00:00",
+      "updated_at": "2025-10-05T08:32:29.704214+00:00"
+    },
+    {
+      "id": 205,
+      "name": "Wild Rocket (100g packet)",
+      "unit": "packet",
+      "price": 2.5,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T12:22:30.542977+00:00",
+      "updated_at": "2025-09-29T12:22:30.542991+00:00"
+    },
+    {
+      "id": 206,
+      "name": "Wild Rocket (200g packet)",
+      "unit": "packet",
+      "price": 5.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T12:22:30.546832+00:00",
+      "updated_at": "2025-09-29T12:22:30.546846+00:00"
+    },
+    {
+      "id": 207,
+      "name": "Wild Rocket (500g packet)",
+      "unit": "packet",
+      "price": 12.5,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T12:22:30.550132+00:00",
+      "updated_at": "2025-09-29T12:22:30.550143+00:00"
+    },
+    {
+      "id": 204,
+      "name": "Wild Rocket (50g packet)",
+      "unit": "packet",
+      "price": 1.25,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-29T12:22:30.533649+00:00",
+      "updated_at": "2025-09-29T12:22:30.534127+00:00"
+    },
+    {
+      "id": 131,
+      "name": "Wild Rocket (bulk kg)",
+      "unit": "kg",
+      "price": 25.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.862016+00:00",
+      "updated_at": "2025-09-29T12:30:33.700550+00:00"
+    },
+    {
+      "id": 132,
+      "name": "Yellow Peppers",
+      "unit": "kg",
+      "price": 250.0,
+      "department": "Vegetables",
+      "department_id": 5,
+      "created_at": "2025-09-28T20:37:16.863034+00:00",
+      "updated_at": "2025-10-05T08:32:29.738166+00:00"
+    }
+  ]
+}

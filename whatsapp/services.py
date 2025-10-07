@@ -108,17 +108,26 @@ def has_order_items(content):
     Returns:
         bool: True if message appears to contain order items
     """
-    # Patterns that indicate order items
-    quantity_patterns = [
-        r'\d+\s*(?:kg|kilos?|kilogram)',           # 5kg, 10 kilos
-        r'\d+\s*(?:×|x)\s*\d+\s*kg',              # 2×5kg, 3x10kg
-        r'\d+\s*(?:box|boxes|pun|punnet|punnets)', # 5 boxes, 3 punnets
-        r'\d+\s*(?:bag|bags|packet|packets)',      # 2 bags, 5 packets
-        r'\d+\s*(?:bunch|bunches|head|heads)',     # 3 bunches, 2 heads
-        r'\d+\s*(?:piece|pieces)',                 # 10 pieces
-        r'(?:×|x)\s*\d+',                          # x3, ×5
-        r'\d+\s*(?:×|x)\b',                       # 2x, 3× (quantity with x suffix)
-    ]
+    # Get database units dynamically
+    try:
+        database_units = get_database_units()
+        units_pattern = '|'.join(re.escape(unit) for unit in database_units)
+        
+        # Dynamic patterns using database units
+        quantity_patterns = [
+            rf'\d+\s*(?:{units_pattern})',           # 5kg, 10 boxes, etc.
+            rf'\d+\s*(?:×|x)\s*\d+\s*(?:{units_pattern})',  # 2×5kg, 3x10boxes
+            r'(?:×|x)\s*\d+',                        # x3, ×5
+            r'\d+\s*(?:×|x)\b',                     # 2x, 3×
+        ]
+    except Exception as e:
+        # Fallback to basic patterns if database query fails
+        quantity_patterns = [
+            r'\d+\s*(?:kg|g|box|bag|bunch|each|piece)',
+            r'\d+\s*(?:×|x)\s*\d+\s*(?:kg|g|box|bag)',
+            r'(?:×|x)\s*\d+',
+            r'\d+\s*(?:×|x)\b',
+        ]
     
     for pattern in quantity_patterns:
         if re.search(pattern, content, re.IGNORECASE):
@@ -144,9 +153,22 @@ def create_order_from_message(message):
         
         # Get or create customer
         customer = get_or_create_customer(company_name, message.sender_name)
+        if not customer:
+            return {
+                'status': 'failed',
+                'message': f'Could not find or create customer for company: {company_name}',
+                'failed_products': [],
+                'parsing_failures': [],
+                'unparseable_lines': []
+            }
         
         # Determine valid order date
-        order_date = get_valid_order_date(message.timestamp.date())
+        from datetime import datetime
+        if isinstance(message.timestamp, str):
+            timestamp_dt = datetime.fromisoformat(message.timestamp.replace('Z', '+00:00'))
+        else:
+            timestamp_dt = message.timestamp
+        order_date = get_valid_order_date(timestamp_dt.date())
         
         # Create order
         order = Order.objects.create(
@@ -158,6 +180,9 @@ def create_order_from_message(message):
             parsed_by_ai=True
         )
         
+        # Save the order first so we can access its relationships
+        order.save()
+        
         # Parse and create order items
         items_result = create_order_items(order, message)
         items_created = items_result['items_created']
@@ -165,11 +190,12 @@ def create_order_from_message(message):
         parsing_failures = items_result['parsing_failures']
         unparseable_lines = items_result.get('unparseable_lines', [])
         
-        # NEW LOGIC: Only create order if ALL items are successfully processed
+        # CORRECT LOGIC: Only create order if ALL items are successfully processed
         total_failures = len(failed_products) + len(parsing_failures) + len(unparseable_lines)
         
         if items_created > 0 and total_failures == 0:
             # SUCCESS: All items processed successfully, create the order
+            # Order is already saved, so we can access items
             order.subtotal = sum(item.total_price for item in order.items.all())
             order.total_amount = order.subtotal  # Add tax/fees later if needed
             order.save()
@@ -192,57 +218,16 @@ def create_order_from_message(message):
             
             return order
             
-        elif items_created > 0 and total_failures > 0:
-            # PARTIAL SUCCESS: Some items processed but some failed - DON'T create order
-            success_rate = items_result['success_rate']
-            failed_items_count = items_result['total_attempts'] - items_created
-            
-            message.processing_notes = f"❌ Order NOT created: {items_created}/{items_result['total_attempts']} items processed ({success_rate}%) - All items must be processed successfully"
-            message.processing_notes += f" | ⚠️ {failed_items_count} items failed"
-            
-            # Show all types of failures
-            all_failure_details = []
-            
-            # Add failed products
-            if failed_products:
-                for failed_item in failed_products:  # Show ALL failed products
-                    all_failure_details.append(f"'{failed_item['original_name']}': {failed_item['failure_reason']}")
-            
-            # Add parsing failures
-            if parsing_failures:
-                for failure in parsing_failures:  # Show ALL parsing failures
-                    all_failure_details.append(f"'{failure['original_name']}': {failure['failure_reason']}")
-            
-            # Add unparseable lines
-            if unparseable_lines:
-                for line in unparseable_lines:  # Show ALL unparseable lines
-                    all_failure_details.append(f"'{line}': Could not parse as order item")
-            
-            # Display all failure details
-            if all_failure_details:
-                message.processing_notes += f" | Failed items: {'; '.join(all_failure_details)}"
-            
-            message.processed = False  # Mark as not processed since order creation failed
-            message.save()
-            
-            order.delete()  # Delete the empty order
-            log_processing_action(message, 'partial_rejected', {
-                'error': 'Order rejected due to partial processing - all items must be processed successfully',
-                'action': 'order_creation',
-                'items_processed': items_created,
-                'items_failed': failed_items_count,
-                'success_rate': success_rate,
-                'failed_products_count': len(failed_products),
-                'parsing_failures_count': len(parsing_failures)
-            })
-            return None
         else:
-            # No valid items found, delete order but update message with failure details
+            # FAILURE: Not all items processed successfully - return suggestions for fixing
             failed_products = items_result['failed_products']
             parsing_failures = items_result['parsing_failures']
-            failed_items_count = items_result['total_attempts']
+            failed_items_count = items_result['total_attempts'] - items_created
             
-            message.processing_notes = f"❌ Order creation failed: 0/{items_result['total_attempts']} items processed"
+            if items_created > 0:
+                message.processing_notes = f"❌ Order NOT created: {items_created}/{items_result['total_attempts']} items processed - All items must be processed successfully"
+            else:
+                message.processing_notes = f"❌ Order creation failed: 0/{items_result['total_attempts']} items processed"
             
             if failed_items_count > 0:
                 message.processing_notes += f" | ⚠️ {failed_items_count} items failed"
@@ -279,14 +264,84 @@ def create_order_from_message(message):
             message.processed = False  # Mark as not processed since order creation failed
             message.save()
             
+            # Get suggestions for failed products
+            failed_products_with_suggestions = []
+            for failed_product in failed_products:
+                suggestions = get_product_suggestions(failed_product['original_name'])
+                failed_products_with_suggestions.append({
+                    **failed_product,
+                    'suggestions': suggestions
+                })
+            
+            # Get suggestions for unparseable lines too
+            unparseable_lines_with_suggestions = []
+            for line in unparseable_lines:
+                # Try to extract a product name from the unparseable line
+                # Smart approach: look for product names after quantities and units
+                words = line.strip().split()
+                potential_name = None
+                
+                if words:
+                    # Look for patterns like "3 x 5kg Tomato" or "5kg Tomato" or "Tomato 3 x 5kg"
+                    for i, word in enumerate(words):
+                        # Skip numbers and units
+                        if word.isdigit() or word in ['x', 'kg', 'g', 'box', 'bag', 'bunch', 'packet', 'each', 'piece', 'punnet', 'tray', 'head']:
+                            continue
+                        # Found a potential product name
+                        potential_name = ' '.join(words[i:])
+                        break
+                    
+                    # If no product name found, try the last word
+                    if not potential_name and words:
+                        potential_name = words[-1]
+                    
+                    # If still no good name, try the first word
+                    if not potential_name:
+                        potential_name = words[0]
+                    
+                    suggestions = get_product_suggestions(potential_name)
+                    unparseable_lines_with_suggestions.append({
+                        'original_line': line,
+                        'potential_name': potential_name,
+                        'suggestions': suggestions
+                    })
+            
+            # Collect successfully processed items before deleting the order
+            successful_items = []
+            if items_created > 0:
+                for item in order.items.all():
+                    successful_items.append({
+                        'id': item.id,
+                        'name': item.product.name,
+                        'quantity': float(item.quantity),
+                        'unit': item.unit,
+                        'price': float(item.price),
+                        'total_price': float(item.total_price),
+                        'original_text': item.original_text,
+                        'confidence_score': item.confidence_score
+                    })
+            
+            # Delete the order since it failed
             order.delete()
-            log_processing_action(message, 'error', {
-                'error': 'No valid items found in message',
+            
+            log_processing_action(message, 'order_creation_failed', {
+                'error': 'Order creation failed - not all items processed successfully',
                 'action': 'order_creation',
+                'items_processed': items_created,
+                'items_failed': failed_items_count,
                 'failed_products_count': len(failed_products),
                 'parsing_failures_count': len(parsing_failures)
             })
-            return None
+            
+            # Return failed products with suggestions for fixing, including successful items
+            return {
+                'status': 'failed',
+                'items': successful_items,  # Include successfully processed items
+                'failed_products': failed_products_with_suggestions,
+                'parsing_failures': parsing_failures,
+                'unparseable_lines': unparseable_lines_with_suggestions,
+                'message': f'Order creation failed - {failed_items_count} items need attention. Use suggestions to fix and retry.'
+            }
             
     except Exception as e:
         log_processing_action(message, 'error', {
@@ -294,7 +349,322 @@ def create_order_from_message(message):
             'traceback': traceback.format_exc(),
             'action': 'order_creation'
         })
-        return None
+        return {
+            'status': 'failed',
+            'message': f'Order creation failed due to error: {str(e)}',
+            'error': str(e)
+        }
+
+def create_order_from_message_with_suggestions(message):
+    """
+    Create suggestions for all items in a WhatsApp message - always requires user confirmation
+    
+    Args:
+        message: WhatsAppMessage instance
+        
+    Returns:
+        dict: Always returns confirmation_required status with suggestions for all items
+    """
+    try:
+        # Extract company name
+        company_name = message.extract_company_name()
+        if not company_name:
+            return {
+                'status': 'failed',
+                'message': 'No company name found in message',
+                'items': [],
+                'suggestions': []
+            }
+        
+        # Get or create customer
+        customer = get_or_create_customer(company_name, message.sender_name)
+        if not customer:
+            return {
+                'status': 'failed',
+                'message': f'Could not find or create customer for company: {company_name}',
+                'items': [],
+                'suggestions': []
+            }
+        
+        # Parse the message content
+        parsed_result = parse_order_items(message.content)
+        parsed_items = parsed_result['items']
+        parsing_failures = parsed_result.get('parsing_failures', [])
+        
+        if not parsed_items and not parsing_failures:
+            return {
+                'status': 'failed',
+                'message': 'No items could be parsed from message',
+                'items': [],
+                'suggestions': []
+            }
+        
+        # Get suggestions for ALL parsed items
+        matcher = SmartProductMatcher()
+        items_with_suggestions = []
+        
+        for item_data in parsed_items:
+            # Parse the item to get structured data
+            parsed_message = ParsedMessage(
+                product_name=item_data['product_name'],
+                quantity=item_data['quantity'],
+                unit=item_data['unit'],
+                packaging_size=item_data.get('packaging_size'),
+                extra_descriptions=item_data.get('extra_descriptions', []),
+                original_message=item_data['original_text']
+            )
+            
+            # Get suggestions for this item
+            suggestions_result = matcher.get_suggestions(
+                parsed_message.product_name, 
+                min_confidence=5.0, 
+                max_suggestions=20
+            )
+            
+            # Format suggestions for frontend
+            suggestions = []
+            if suggestions_result.suggestions:
+                for suggestion in suggestions_result.suggestions:
+                    suggestions.append({
+                        'product_id': suggestion.product.id,
+                        'product_name': suggestion.product.name,
+                        'unit': suggestion.product.unit,
+                        'price': float(suggestion.product.price),
+                        'confidence_score': suggestion.confidence_score,
+                        'packaging_size': suggestion.product.name.split('(')[1].split(')')[0] if '(' in suggestion.product.name and ')' in suggestion.product.name else None
+                    })
+            
+            items_with_suggestions.append({
+                'original_text': item_data['original_text'],
+                'parsed': {
+                    'product_name': item_data['product_name'],
+                    'quantity': item_data['quantity'],
+                    'unit': item_data['unit'],
+                    'packaging_size': item_data.get('packaging_size'),
+                    'extra_descriptions': item_data.get('extra_descriptions', [])
+                },
+                'suggestions': suggestions,
+                'selected_suggestion': None,  # User will select
+                'is_ambiguous_packaging': "AMBIGUOUS_PACKAGING" in item_data.get('extra_descriptions', [])
+            })
+        
+        # Handle parsing failures as suggestions too
+        for failure in parsing_failures:
+            # Get suggestions based on the original name
+            suggestions_result = matcher.get_suggestions(
+                failure['original_name'], 
+                min_confidence=5.0, 
+                max_suggestions=20
+            )
+            
+            suggestions = []
+            if suggestions_result.suggestions:
+                for suggestion in suggestions_result.suggestions:
+                    suggestions.append({
+                        'product_id': suggestion.product.id,
+                        'product_name': suggestion.product.name,
+                        'unit': suggestion.product.unit,
+                        'price': float(suggestion.product.price),
+                        'confidence_score': suggestion.confidence_score,
+                        'packaging_size': suggestion.product.name.split('(')[1].split(')')[0] if '(' in suggestion.product.name and ')' in suggestion.product.name else None
+                    })
+            
+            items_with_suggestions.append({
+                'original_text': failure['original_name'],
+                'parsed': {
+                    'product_name': failure['original_name'],
+                    'quantity': failure.get('quantity', 1.0),
+                    'unit': failure.get('unit', 'each'),
+                    'packaging_size': None,
+                    'extra_descriptions': []
+                },
+                'suggestions': suggestions,
+                'selected_suggestion': None,
+                'is_parsing_failure': True,
+                'failure_reason': failure.get('failure_reason', 'Could not parse item')
+            })
+        
+        return {
+            'status': 'confirmation_required',
+            'message': f'Please confirm {len(items_with_suggestions)} items for {company_name}',
+            'customer': {
+                'id': customer.id,
+                'name': customer.username,
+                'email': customer.email
+            },
+            'items': items_with_suggestions,
+            'total_items': len(items_with_suggestions)
+        }
+        
+    except Exception as e:
+        print(f"Error in create_order_from_message_with_suggestions: {e}")
+        import traceback
+        traceback.print_exc()
+        return {
+            'status': 'failed',
+            'message': f'Error processing message: {str(e)}',
+            'items': [],
+            'suggestions': []
+        }
+
+def reprocess_message_with_corrections(message_id, corrections):
+    """
+    Reprocess a message after user has applied corrections
+    
+    Args:
+        message_id: The message ID to reprocess
+        corrections: Dict of corrections applied by user
+        
+    Returns:
+        Order instance or dict with suggestions if still failing
+    """
+    try:
+        from .models import WhatsAppMessage
+        
+        # Get the message
+        message = WhatsAppMessage.objects.get(message_id=message_id)
+        
+        # Apply corrections to the message content
+        corrected_content = apply_corrections_to_content(message.content, corrections)
+        
+        # Update the message content temporarily for reprocessing
+        original_content = message.content
+        original_manual_company = message.manual_company  # Preserve the manual company
+        message.content = corrected_content
+        message.save()
+        
+        # Check if an order already exists for this message
+        from orders.models import Order
+        existing_orders = Order.objects.filter(whatsapp_message_id=message_id)
+        print(f"[REPROCESS] Found {existing_orders.count()} existing orders for message {message_id}")
+        
+        if existing_orders.exists():
+            # Delete all existing orders before creating a new one
+            for order in existing_orders:
+                print(f"[REPROCESS] Deleting existing order {order.id} for message {message_id}")
+                order.delete()
+        
+        # Try to create order again
+        result = create_order_from_message(message)
+        
+        # Always keep the corrected content in the message
+        message.content = corrected_content
+        # CRITICAL: Always preserve the manual company assignment, even if it's None/empty
+        # This prevents the extract_company_name() call from overwriting it
+        message.manual_company = original_manual_company
+        
+        # Update processing notes to indicate content was corrected and order creation status
+        import json
+        try:
+            current_notes = json.loads(message.processing_notes) if message.processing_notes else {}
+        except (json.JSONDecodeError, TypeError):
+            current_notes = {}
+        
+        current_notes['content_corrected'] = True
+        current_notes['original_content'] = original_content
+        current_notes['corrected_content'] = corrected_content
+        
+        # Handle different result types
+        if result is None:
+            # Order creation failed completely
+            current_notes['reprocessing_status'] = 'failed'
+            current_notes['reprocessing_message'] = 'Order creation failed completely after corrections.'
+            result = {'status': 'failed', 'message': 'Order creation failed completely after corrections.'}
+        elif isinstance(result, dict) and result.get('status') == 'failed':
+            current_notes['reprocessing_status'] = 'failed'
+            current_notes['reprocessing_message'] = result.get('message', 'Reprocessing failed after corrections.')
+        else:
+            current_notes['reprocessing_status'] = 'success'
+            current_notes['reprocessing_message'] = 'Reprocessing successful after corrections.'
+            
+        message.processing_notes = json.dumps(current_notes, indent=2)
+        message.save()
+        
+        return result
+        
+    except WhatsAppMessage.DoesNotExist:
+        return {'error': 'Message not found'}
+    except Exception as e:
+        return {'error': f'Reprocessing failed: {str(e)}'}
+
+def apply_corrections_to_content(content, corrections):
+    """
+    Apply user corrections to message content
+    
+    Args:
+        content: Original message content
+        corrections: Dict of corrections {original_line: corrected_data}
+        
+    Returns:
+        Corrected message content
+    """
+    corrected_content = content
+    
+    for original_line, corrected_data in corrections.items():
+        if isinstance(corrected_data, dict):
+            # Check if we have a corrected_line (new format)
+            if 'corrected_line' in corrected_data:
+                corrected_line = corrected_data['corrected_line']
+                # Replace the entire original line with the corrected line (case-insensitive)
+                import re
+                pattern = re.escape(original_line)
+                corrected_content = re.sub(pattern, corrected_line, corrected_content, flags=re.IGNORECASE)
+            else:
+                # Fallback to old format - just replace the name
+                corrected_name = corrected_data.get('name', original_line)
+                import re
+                pattern = re.escape(original_line)
+                corrected_content = re.sub(pattern, corrected_name, corrected_content, flags=re.IGNORECASE)
+        else:
+            # Fallback for non-dict corrections
+            import re
+            pattern = re.escape(original_line)
+            corrected_content = re.sub(pattern, corrected_data, corrected_content, flags=re.IGNORECASE)
+    return corrected_content
+
+def get_product_suggestions(product_name):
+    """
+    Get product suggestions for failed product matches
+    
+    Args:
+        product_name: The product name that failed to match
+        
+    Returns:
+        list: List of suggested products with details
+    """
+    from .smart_product_matcher import SmartProductMatcher
+    from products.models import Product
+    
+    try:
+        # Get or create smart matcher instance
+        if not hasattr(get_product_suggestions, '_matcher'):
+            get_product_suggestions._matcher = SmartProductMatcher()
+        
+        matcher = get_product_suggestions._matcher
+        
+        # Get suggestions for the product
+        suggestions = matcher.get_suggestions(product_name, min_confidence=10.0, max_suggestions=20)
+        
+        # Convert to the format expected by the frontend
+        suggestion_list = []
+        if hasattr(suggestions, 'suggestions') and suggestions.suggestions:
+            for suggestion in suggestions.suggestions:
+                suggestion_list.append({
+                    'id': suggestion.product.id,
+                    'name': suggestion.product.name,
+                    'unit': suggestion.product.unit,
+                    'price': float(suggestion.product.price) if suggestion.product.price else 0.0,
+                    'confidence': suggestion.confidence_score,
+                    'description': f"{suggestion.product.name} - R{float(suggestion.product.price) if suggestion.product.price else 0.0:.2f}"
+                })
+        
+        return suggestion_list
+        
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error getting product suggestions for '{product_name}': {e}")
+        return []
 
 def get_or_create_customer(company_name, sender_name):
     """
@@ -487,7 +857,11 @@ def create_order_items(order, message):
     unparseable_lines = []
     
     # Parse items from message content
-    parsed_items = parse_order_items(content)
+    parsed_result = parse_order_items(content)
+    parsed_items = parsed_result['items']
+    
+    # Get parsing failures from the parse_order_items result
+    parsing_failures_from_parsing = parsed_result.get('parsing_failures', [])
     
     # Track lines that couldn't be parsed for fallback notes
     content_lines = [line.strip() for line in content.split('\n') if line.strip()]
@@ -495,22 +869,50 @@ def create_order_items(order, message):
     
     for line in content_lines:
         # Skip company names and common headers
-        if (not any(parsed_text in line for parsed_text in parsed_line_texts) and
+        if (not any(parsed_text.lower() in line.lower() for parsed_text in parsed_line_texts) and
             not message.extract_company_name() in line and
             not re.match(r'^(good\s+morning|hi|hello|order|please)', line.lower()) and
             len(line) > 3):  # Ignore very short lines
             unparseable_lines.append(line)
     
+    # PRE-MATCH all products AND get pricing OUTSIDE transaction to avoid database query conflicts
+    matched_products = {}
+    customer_prices = {}
+    
     for item_data in parsed_items:
         try:
-            # Find product using smart matcher with production data
-            match_result = get_or_create_product_smart(
+            # Do product matching outside transaction
+            match_result = get_or_create_product_enhanced(
                 item_data['product_name'], 
-                quantity=item_data.get('quantity'),
-                unit=item_data.get('unit')
+                item_data.get('quantity'),
+                item_data.get('unit'),
+                original_message=item_data.get('original_text')
             )
+            matched_products[item_data['product_name']] = match_result
             
-            # Handle the tuple return from smart matcher
+            # Pre-calculate pricing outside transaction
+            if match_result and isinstance(match_result, tuple):
+                product, _, _ = match_result
+                if product:
+                    try:
+                        # Fix: Use order.restaurant instead of order.customer
+                        customer_price = get_customer_specific_price(product, order.restaurant)
+                        customer_prices[product.id] = customer_price
+                    except Exception as pricing_e:
+                        print(f"Pre-pricing error for {product.name}: {pricing_e}")
+                        customer_prices[product.id] = product.price
+            
+        except Exception as e:
+            print(f"Pre-matching error for {item_data['product_name']}: {e}")
+            matched_products[item_data['product_name']] = None
+    
+    # Now process items using pre-matched products
+    for item_data in parsed_items:
+        try:
+            # Get pre-matched product
+            match_result = matched_products.get(item_data['product_name'])
+            
+            # Handle the tuple return from enhanced matcher
             if match_result and isinstance(match_result, tuple):
                 product, matched_quantity, matched_unit = match_result
                 # Update item data with matched values if they're more specific
@@ -522,14 +924,26 @@ def create_order_items(order, message):
                 product = match_result
             
             if not product:
-                failed_products.append({
-                    'original_name': item_data['product_name'],
-                    'normalized_name': normalize_product_name_for_matching(item_data['product_name']),
-                    'failure_reason': 'Product not found in database',
-                    'original_text': item_data['original_text'],
-                    'quantity': item_data['quantity'],
-                    'unit': item_data['unit']
-                })
+                # Check if this is a parsing error with suggestions
+                if item_data.get('parsing_error', False):
+                    parsing_failures.append({
+                        'original_name': item_data['product_name'],
+                        'failure_reason': item_data.get('error_reason', 'No matching product found'),
+                        'original_text': item_data.get('original_text', ''),
+                        'error_type': 'parsing_error',
+                        'suggestions': item_data.get('suggestions', []),
+                        'quantity': item_data.get('quantity'),
+                        'unit': item_data.get('unit')
+                    })
+                else:
+                    failed_products.append({
+                        'original_name': item_data['product_name'],
+                        'normalized_name': normalize_product_name_for_matching(item_data['product_name']),
+                        'failure_reason': 'Product not found in database',
+                        'original_text': item_data['original_text'],
+                        'quantity': item_data['quantity'],
+                        'unit': item_data['unit']
+                    })
                 log_processing_action(message, 'error', {
                     'error': f"Product not found: {item_data['product_name']}",
                     'item_data': item_data,
@@ -537,16 +951,27 @@ def create_order_items(order, message):
                 })
                 continue
             
-            # ENHANCEMENT 5: Dynamic pricing integration
-            customer_price = get_customer_specific_price(product, order.restaurant)
+            # Use pre-calculated pricing to avoid transaction conflicts
+            customer_price = customer_prices.get(product.id, product.price)
             quantity_decimal = Decimal(str(item_data['quantity']))
+            
+            # Ensure customer_price is a Decimal
+            if not isinstance(customer_price, Decimal):
+                customer_price = Decimal(str(customer_price))
+            
+            # Ensure unit is not empty (required field)
+            unit = item_data.get('unit')
+            if unit is None or (isinstance(unit, str) and not unit.strip()):
+                unit = 'each'  # Default unit if none provided
+            else:
+                unit = str(unit).strip()
             
             # Create order item with dynamic pricing
             OrderItem.objects.create(
                 order=order,
                 product=product,
                 quantity=quantity_decimal,
-                unit=item_data['unit'],
+                unit=unit,
                 price=customer_price,
                 total_price=quantity_decimal * customer_price,
                 original_text=item_data['original_text'],
@@ -597,12 +1022,19 @@ def create_order_items(order, message):
     # If no items were parsed but there are unparseable lines, create a note-only order
     elif not items_created and unparseable_lines:
         # Create a special "Notes" product for unparseable content
+        # Get or create the Special department
+        from products.models import Department
+        special_dept, _ = Department.objects.get_or_create(
+            name='Special',
+            defaults={'description': 'Special order items and notes'}
+        )
+        
         notes_product, created = Product.objects.get_or_create(
             name="Order Notes",
             defaults={
                 'price': Decimal('0.00'),
                 'unit': 'note',
-                'department': 'Special',
+                'department': special_dept,
                 'is_active': True
             }
         )
@@ -636,8 +1068,11 @@ def create_order_items(order, message):
                 'error_type': 'parsing_failure'
             })
     
+    # Add parsing failures from the parsing step
+    parsing_failures.extend(parsing_failures_from_parsing)
+    
     # Calculate success rate
-    total_attempts = len(parsed_items) + len(unparseable_lines)
+    total_attempts = len(parsed_items) + len(unparseable_lines) + len(parsing_failures_from_parsing)
     success_rate = round((items_created / total_attempts * 100), 1) if total_attempts > 0 else 0
     
     return {
@@ -651,7 +1086,7 @@ def create_order_items(order, message):
 
 def parse_order_items(content):
     """
-    Parse order items from message content using enhanced MessageParser
+    Parse order items from message content using SmartProductMatcher
     
     Args:
         content: Message content string
@@ -659,20 +1094,209 @@ def parse_order_items(content):
     Returns:
         list: List of parsed item dictionaries
     """
-    from .message_parser import django_message_parser
+    from .smart_product_matcher import SmartProductMatcher
+    from .message_parser import MessageParser
     
-    # Use the enhanced parser to extract items
-    raw_items = django_message_parser.extract_order_items(content)
-    
-    # Convert to Django's expected format
-    items = []
-    for raw_text in raw_items:
-        # Parse individual item
-        item = parse_single_item(raw_text)
-        if item:
-            items.append(item)
-    
-    return items
+    try:
+        # Get or create smart matcher instance
+        if not hasattr(parse_order_items, '_matcher'):
+            parse_order_items._matcher = SmartProductMatcher()
+        
+        matcher = parse_order_items._matcher
+        
+        # Extract company name to exclude it from product parsing
+        message_parser = MessageParser()
+        company_name = message_parser.to_canonical_company(content)
+        
+        # Remove company name from content before parsing products
+        content_for_parsing = content
+        if company_name:
+            # Remove the company name line from the content
+            lines = content.split('\n')
+            filtered_lines = []
+            for line in lines:
+                line_stripped = line.strip()
+                # Check if this line contains the company name
+                if not message_parser.to_canonical_company(line_stripped):
+                    filtered_lines.append(line)
+                else:
+                    # This line is a company name, skip it
+                    continue
+            content_for_parsing = '\n'.join(filtered_lines)
+        
+        # Parse the message (excluding company name)
+        parsed_items = matcher.parse_message(content_for_parsing)
+        
+        # Get all lines from the filtered content to identify rejected items
+        content_lines = [line.strip() for line in content_for_parsing.split('\n') if line.strip()]
+        
+        # Convert to Django's expected format using matched quantities
+        items = []
+        parsing_failures = []
+        for parsed_item in parsed_items:
+            # Check if this is ambiguous packaging that needs suggestions
+            is_ambiguous_packaging = "AMBIGUOUS_PACKAGING" in parsed_item.extra_descriptions
+            
+            if is_ambiguous_packaging:
+                # For ambiguous packaging, always generate suggestions based on product name
+                suggestions = matcher.get_suggestions(parsed_item.product_name, min_confidence=5.0, max_suggestions=20)
+                suggestions_list = []
+                
+                if suggestions.suggestions:
+                    for suggestion in suggestions.suggestions:
+                        suggestions_list.append({
+                            'name': suggestion.product.name,
+                            'confidence': suggestion.confidence_score,
+                            'unit': suggestion.product.unit,
+                            'price': float(suggestion.product.price) if suggestion.product.price else 0.0,
+                            'id': suggestion.product.id
+                        })
+                
+                # Add to parsing_failures instead of items for Flutter display
+                parsing_failure = {
+                    'original_name': parsed_item.product_name,
+                    'failure_reason': 'Ambiguous packaging specification - please specify size (e.g., "5kg box" instead of "box")',
+                    'original_text': parsed_item.original_message,
+                    'error_type': 'parsing_error',
+                    'suggestions': suggestions_list,
+                    'quantity': parsed_item.quantity,
+                    'unit': parsed_item.unit
+                }
+                parsing_failures.append(parsing_failure)
+                # Skip adding to items - only add to parsing_failures
+                continue
+            else:
+                # Normal processing for non-ambiguous items
+                matches = matcher.find_matches(parsed_item)
+                if matches and matches[0].confidence_score >= 60.0:  # Stricter threshold for main matching
+                    best_match = matches[0]
+                    
+                    # Always use database product name when we have a good match
+                    product_name = best_match.product.name
+                    
+                    item = {
+                        'product_name': product_name,
+                        'quantity': best_match.quantity,  # Use matched quantity, not parsed quantity
+                        'unit': best_match.unit,  # Use matched unit, not parsed unit
+                        'original_text': parsed_item.original_message,
+                        'confidence': best_match.confidence_score
+                    }
+                else:
+                    # No good match found - get suggestions for this product
+                    suggestions = matcher.get_suggestions(parsed_item.product_name, min_confidence=5.0, max_suggestions=20)
+                    suggestions_list = []
+                    
+                    if suggestions.suggestions:
+                        for suggestion in suggestions.suggestions:
+                            suggestions_list.append({
+                                'name': suggestion.product.name,
+                                'confidence': suggestion.confidence_score,
+                                'unit': suggestion.product.unit,
+                                'price': float(suggestion.product.price) if suggestion.product.price else 0.0,
+                                'id': suggestion.product.id
+                            })
+                    
+                    # Fallback to parsed values if no good match, but include suggestions
+                    item = {
+                        'product_name': parsed_item.product_name,
+                        'quantity': parsed_item.quantity,
+                        'unit': parsed_item.unit,
+                        'original_text': parsed_item.original_message,
+                        'confidence': 0.0,  # Low confidence since no match found
+                        'suggestions': suggestions_list,
+                        'parsing_error': True,
+                        'error_reason': 'No matching product found in database'
+                    }
+                items.append(item)
+        
+        # Handle rejected items (lines that couldn't be parsed due to ambiguous packaging)
+        # Include both items and parsing_failures to avoid processing the same line twice
+        parsed_line_texts = [item['original_text'] for item in items]
+        parsed_line_texts.extend([failure['original_text'] for failure in parsing_failures])
+        for line in content_lines:
+            # Skip if this line was already parsed
+            if any(parsed_text.lower() in line.lower() for parsed_text in parsed_line_texts):
+                continue
+                
+            # Skip company names and common headers
+            if (not re.match(r'^(good\s+morning|hi|hello|order|please)', line.lower()) and
+                len(line) > 3):  # Ignore very short lines
+                
+                # Try to extract a product name from the rejected line
+                # Remove common prefixes and clean up the line
+                clean_line = re.sub(r'^\d+[\.\)]\s*', '', line)  # Remove "1.", "2)", etc.
+                clean_line = re.sub(r'^\d+\s*[x×]\s*', '', clean_line)  # Remove "3x", "2×", etc.
+                clean_line = re.sub(r'\s+\d+\s*[x×]\s*', ' ', clean_line)  # Remove " 3x", " 2×", etc.
+                
+                # Extract potential product name
+                product_name = clean_line
+                
+                # Remove container words and quantities to get the base product name
+                container_words = ['box', 'bag', 'packet', 'pack', 'punnet', 'bunch', 'head', 'each', 'piece']
+                words = clean_line.split()
+                
+                # Find the last container word and remove everything after it
+                last_container_index = -1
+                for i, word in enumerate(words):
+                    if word.lower() in container_words:
+                        last_container_index = i
+                
+                if last_container_index >= 0:
+                    # Keep only words before the last container word
+                    product_name = ' '.join(words[:last_container_index]).strip()
+                else:
+                    # No container word found, try to remove number+unit combinations
+                    if re.search(r'\d+[a-zA-Z]+', clean_line):
+                        parts = re.split(r'\s+(\d+[a-zA-Z]+)', clean_line)
+                        if len(parts) >= 2:
+                            product_name = parts[0].strip()
+                
+                # If product name is empty or too short, use the original line
+                if not product_name or len(product_name) < 2:
+                    product_name = clean_line
+                
+                # Generate suggestions for the rejected item
+                suggestions = matcher.get_suggestions(product_name, min_confidence=5.0, max_suggestions=20)
+                suggestions_list = []
+                
+                if suggestions.suggestions:
+                    for suggestion in suggestions.suggestions:
+                        suggestions_list.append({
+                            'name': suggestion.product.name,
+                            'confidence': suggestion.confidence_score,
+                            'unit': suggestion.product.unit,
+                            'price': float(suggestion.product.price) if suggestion.product.price else 0.0,
+                            'id': suggestion.product.id
+                        })
+                
+                # Add as a rejected item with suggestions
+                item = {
+                    'product_name': product_name,
+                    'quantity': 1.0,  # Default quantity
+                    'unit': None,
+                    'original_text': line,
+                    'confidence': 0.0,
+                    'suggestions': suggestions_list,
+                    'parsing_error': True,
+                    'error_reason': 'Ambiguous packaging specification - please specify size (e.g., "5kg box" instead of "box")'
+                }
+                items.append(item)
+        
+        return {
+            'items': items,
+            'parsing_failures': parsing_failures,
+            'failed_products': []
+        }
+        
+    except Exception as e:
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.error(f"Error parsing order items: {e}")
+        return {
+            'items': [],
+            'parsing_failures': [],
+            'failed_products': []
+        }
 
 def detect_and_correct_irregular_format(line):
     """
@@ -748,29 +1372,16 @@ def detect_and_correct_irregular_format(line):
 
 def get_database_units():
     """Get all units from database for regex patterns"""
-    from products.models import Product
-    units = list(Product.objects.values_list('unit', flat=True).distinct())
-    # Add common variations
-    unit_variations = []
-    for unit in units:
-        unit_variations.append(unit)
-        if unit == 'kg':
-            unit_variations.extend(['kilos', 'kilogram', 'kilo'])
-        elif unit == 'piece':
-            unit_variations.extend(['pieces', 'pcs', 'pc'])
-        elif unit == 'box':
-            unit_variations.append('boxes')
-        elif unit == 'bag':
-            unit_variations.append('bags')
-        elif unit == 'bunch':
-            unit_variations.append('bunches')
-        elif unit == 'head':
-            unit_variations.append('heads')
-        elif unit == 'punnet':
-            unit_variations.extend(['punnets', 'pun'])
-        elif unit == 'packet':
-            unit_variations.append('packets')
-    return unit_variations
+    from settings.models import UnitOfMeasure
+    try:
+        # Get units from the new configuration system
+        units = list(UnitOfMeasure.objects.filter(is_active=True).values_list('name', flat=True))
+        return units
+    except:
+        # Fallback to old method if new system not available
+        from products.models import Product
+        units = list(Product.objects.values_list('unit', flat=True).distinct())
+        return units
 
 def parse_single_item(line):
     """
@@ -1053,443 +1664,101 @@ def match_size_specific_product(product_name, quantity, unit):
 
 
 
-def get_or_create_product_smart(product_name, quantity, unit, customer=None):
+
+def get_or_create_product_enhanced(product_name, quantity, unit, customer=None, original_message=None):
     """
-    Smart product matching using database-driven analysis
-    No hardcoded regex patterns - dynamically analyzes message components
+    Enhanced product matching using SmartProductMatcher with production data
     """
-    from .smart_product_matcher import SmartProductMatcher, ParsedMessage
+    from .smart_product_matcher import SmartProductMatcher
     from products.models import Product
+    from settings.models import BusinessConfiguration
     import logging
     
     logger = logging.getLogger(__name__)
     
     try:
+        # Get configuration from database
+        confidence_threshold_config = BusinessConfiguration.objects.filter(
+            name='product_matching_confidence_threshold',
+            is_active=True
+        ).first()
+        
+        confidence_threshold = 25.0  # Default fallback
+        if confidence_threshold_config:
+            confidence_threshold = float(confidence_threshold_config.get_value())
+        
         # Get or create smart matcher instance
-        if not hasattr(get_or_create_product_smart, '_matcher'):
-            get_or_create_product_smart._matcher = SmartProductMatcher()
+        if not hasattr(get_or_create_product_enhanced, '_matcher'):
+            get_or_create_product_enhanced._matcher = SmartProductMatcher()
         
-        matcher = get_or_create_product_smart._matcher
+        matcher = get_or_create_product_enhanced._matcher
         
-        # Create a test message for parsing
-        if unit and unit not in ['piece', 'each']:
-            test_message = f"{quantity} {unit} {product_name}"
+        # If we have an original message, re-parse it for better matching
+        if original_message:
+            parsed_items = matcher.parse_message(original_message)
+            if parsed_items:
+                parsed_message = parsed_items[0]  # Use the first parsed item
+            else:
+                # Fallback to manual parsing
+                parsed_message = ParsedMessage(
+                    product_name=product_name,
+                    quantity=quantity or 1.0,
+                    unit=unit or 'each',
+                    extra_descriptions=[],
+                    original_message=original_message
+                )
         else:
-            test_message = f"{product_name} {quantity}"
+            # Create a full parsed message for better matching
+            from .smart_product_matcher import ParsedMessage
+            parsed_message = ParsedMessage(
+                product_name=product_name,
+                quantity=quantity or 1.0,
+                unit=unit or 'each',
+                extra_descriptions=[],
+                original_message=f"{product_name} {quantity or 1}{unit or 'each'}"
+            )
         
-        # Parse and match
-        parsed_messages = matcher.parse_message(test_message)
+        # Use find_matches directly for better quantity-specific matching
+        matches = matcher.find_matches(parsed_message)
         
-        if parsed_messages:
-            parsed = parsed_messages[0]  # Take first parsed result
-            matches = matcher.find_matches(parsed)
+        # Create suggestions object manually
+        from .smart_product_matcher import SmartMatchSuggestions
+        suggestions = SmartMatchSuggestions(
+            best_match=matches[0] if matches and matches[0].confidence_score >= confidence_threshold else None,
+            suggestions=matches[:5],
+            parsed_input=parsed_message,
+            total_candidates=len(matches)
+        )
+        
+        if suggestions.best_match and suggestions.best_match.confidence_score >= confidence_threshold:
+            # Should now get real Django Product from database
+            product = suggestions.best_match.product
             
-            if matches:
-                best_match = matches[0]
-                
-                # Use matches above 50% confidence
-                if best_match.confidence_score >= 50:
-                    logger.info(f"Smart matcher: '{product_name}' -> '{best_match.product.name}' "
-                              f"({best_match.confidence_score:.1f}% confidence)")
-                    
-                    return best_match.product, best_match.quantity, best_match.unit
-                
-                # Log medium confidence matches
-                elif best_match.confidence_score >= 30:
-                    logger.info(f"Medium confidence match: '{product_name}' -> '{best_match.product.name}' "
-                              f"({best_match.confidence_score:.1f}%)")
-                    
-                    return best_match.product, best_match.quantity, best_match.unit
-                
-                # Log low confidence matches
-                else:
-                    logger.warning(f"Low confidence match: '{product_name}' -> '{best_match.product.name}' "
-                                 f"({best_match.confidence_score:.1f}%)")
-    
+            # Verify it's a real Django Product (has _state attribute)
+            if hasattr(product, '_state'):
+                # Use the unit from the matched product, not the original parsed unit
+                matched_unit = suggestions.best_match.unit
+                logger.info(f"Smart matcher: '{product_name}' -> '{product.name}' "
+                          f"({suggestions.best_match.confidence_score:.1f}% confidence) "
+                          f"unit: {unit} -> {matched_unit}")
+                return product, quantity, matched_unit
+            else:
+                logger.error(f"SmartProductMatcher returned non-Django object: {type(product)}")
+                return None, None, None
+        
+        # No good match found - log suggestions but return standard format
+        logger.warning(f"No match found for '{product_name}'")
+        if suggestions.suggestions:
+            logger.info(f"Available suggestions for '{product_name}':")
+            for i, suggestion in enumerate(suggestions.suggestions[:5]):
+                logger.info(f"  {i+1}. {suggestion.product.name} ({suggestion.confidence_score:.1f}% match)")
+        
+        return None, None, None
+        
     except Exception as e:
         logger.error(f"Smart matcher error: {e}")
-    
-    # Fall back to original logic if no good matches
-    return get_or_create_product_original(product_name, quantity, unit, customer)
+        return None, None, None
 
-def get_or_create_product_enhanced(product_name, quantity, unit, customer=None):
-    """
-    Enhanced product matching using production-optimized matcher
-    96% success rate with 210 production products
-    """
-    try:
-        # Get production matcher
-        matcher = get_production_matcher()
-        
-        # Create test message for matcher
-        if unit and unit not in ['piece', 'each']:
-            test_message = f"{quantity} {product_name} {unit}"
-        else:
-            test_message = f"{product_name} {quantity}"
-        
-        # Get matches
-        matches = matcher.parse_message(test_message)
-        
-        if matches:
-            # Get best match
-            best_match = max(matches, key=lambda x: x.confidence_score)
-            
-            # Use matches above 40% confidence (production-tuned threshold)
-            if best_match.confidence_score >= 40:
-                try:
-                    from products.models import Product
-                    product = Product.objects.get(name=best_match.product_name)
-                    
-                    # Log successful match
-                    logger.info(f"Production matcher: '{product_name}' -> '{product.name}' "
-                              f"({best_match.confidence_score:.1f}%, {best_match.match_details['pattern']})")
-                    
-                    return product, best_match.quantity, best_match.unit
-                    
-                except Product.DoesNotExist:
-                    logger.warning(f"Production matcher found '{best_match.product_name}' but product doesn't exist in DB")
-            
-            # Log lower confidence matches
-            elif best_match.confidence_score >= 25:
-                logger.info(f"Low confidence match: '{product_name}' -> '{best_match.product_name}' "
-                          f"({best_match.confidence_score:.1f}%)")
-    
-    except Exception as e:
-        logger.error(f"Production matcher error: {e}")
-    
-    # Fall back to original logic
-    return get_or_create_product_original(product_name, quantity, unit, customer)
-
-def get_or_create_product_original(product_name, auto_create=False, preferred_unit=None, quantity=None, unit=None):
-    """
-    Get or create product by name using enhanced product matching with seeded data
-    
-    Args:
-        product_name: Name of the product
-        auto_create: Whether to create new products if not found (default: False)
-        preferred_unit: Preferred unit to match when multiple products exist (e.g., 'box', 'kg')
-        
-    Returns:
-        Product instance or None if not found and auto_create=False
-    """
-    # ENHANCEMENT 1: Smart product name normalization
-    normalized_name = normalize_product_name_for_matching(product_name)
-    
-    # ENHANCEMENT 1.5: Try size-specific matching first if unit is bag, packet, or g (for packet products)
-    if quantity is not None and (unit in ['bag', 'packet'] or (unit == 'g' and quantity in [50, 100, 200, 500])):
-        size_product = match_size_specific_product(normalized_name, quantity, unit)
-        if size_product:
-            return size_product
-    
-    # ENHANCEMENT 1.6: Try gram-to-packet conversion for herbs/spices
-    if unit == 'g' and quantity in [50, 100, 200] and quantity is not None:
-        # Check if this is a herb/spice that might come in packets
-        herb_names = ['basil', 'parsley', 'thyme', 'mint', 'coriander', 'rosemary', 'oregano', 'sage', 'micro herbs', 'edible flowers']
-        if any(herb in normalized_name.lower() for herb in herb_names):
-            packet_product = match_size_specific_product(normalized_name, quantity, 'packet')
-            if packet_product:
-                print(f"[PRODUCT] Gram-to-packet conversion: '{normalized_name}' {quantity}g -> {packet_product.name}")
-                return packet_product
-    
-    # ENHANCEMENT 2: Unit-aware matching for products with multiple units (PRIORITY when unit specified)
-    if preferred_unit:
-        # Try to find product with specific unit preference
-        unit_aware_matches = Product.objects.filter(name__icontains=normalized_name, unit=preferred_unit)
-        if unit_aware_matches.exists():
-            # Prefer exact name match with correct unit
-            for product in unit_aware_matches:
-                if normalized_name.lower() in product.name.lower():
-                    print(f"[PRODUCT] Unit-aware match: '{normalized_name}' + unit '{preferred_unit}' -> {product.name} ({product.unit})")
-                    return product
-            # If no exact match, return first unit match
-            product = unit_aware_matches.first()
-            print(f"[PRODUCT] Unit-aware fallback: '{normalized_name}' + unit '{preferred_unit}' -> {product.name} ({product.unit})")
-            return product
-        
-        # Try compound name matching (e.g., "Lemons" + "box" -> "Lemons box")
-        compound_name = f"{normalized_name} {preferred_unit}"
-        try:
-            product = Product.objects.get(name__iexact=compound_name)
-            print(f"[PRODUCT] Compound name match: '{compound_name}' -> {product.name}")
-            return product
-        except Product.DoesNotExist:
-            # Try partial compound match
-            compound_matches = Product.objects.filter(name__icontains=compound_name)
-            if compound_matches.exists():
-                product = compound_matches.first()
-                print(f"[PRODUCT] Partial compound match: '{compound_name}' -> {product.name}")
-                return product
-    
-    # ENHANCEMENT 2.5: Try exact match with normalized name (after unit-aware matching)
-    try:
-        products = Product.objects.filter(name__iexact=normalized_name)
-        if products.count() == 1:
-            # Single exact match found
-            return products.first()
-        elif products.count() > 1:
-            # Multiple matches - prefer kg unit as default, then first available
-            kg_product = products.filter(unit='kg').first()
-            if kg_product:
-                print(f"[PRODUCT] Multiple matches for '{normalized_name}', defaulting to kg unit: {kg_product.name}")
-                return kg_product
-            else:
-                print(f"[PRODUCT] Multiple matches for '{normalized_name}', using first: {products.first().name}")
-                return products.first()
-    except Exception as e:
-        print(f"[PRODUCT] Error in exact match: {e}")
-        pass
-    
-    # ENHANCEMENT 3: Try fuzzy matching with seeded products (63 products from SHALLOME)
-    try:
-        # Check common variations and aliases
-        product_aliases = {
-            'tomato': 'tomatoes',
-            'tomatoe': 'tomatoes', 
-            'tomatos': 'tomatoes',
-            'potato': 'potatoes',
-            'potatos': 'potatoes',
-            'potatoe': 'potatoes',
-            'onion': 'onions',
-            'mushroom': 'mushrooms',
-            'porta': 'portabellini',
-            'porta mushroom': 'portabellini',
-            'porta mushrooms': 'portabellini',
-            'carrot': 'carrots',
-            'pepper': 'peppers',
-            'chilli': 'chillies',
-            'chili': 'chillies',
-            'red chili': 'red chillies',
-            'green chili': 'green chillies',
-            'chilli red': 'red chillies',
-            'chilli green': 'green chillies',
-            'red chilli': 'red chillies',
-            'green chilli': 'green chillies',
-            
-            # Fix the failing stock items
-            'cauliflower heads': 'cauliflower',
-            'cauliflower head': 'cauliflower',
-            'straw berry': 'strawberries',
-            'strawberry': 'strawberries',
-            'grape fruits': 'grapefruit',
-            'grape fruit': 'grapefruit',
-            'lettuce': 'lettuce',
-            'spinach': 'spinach',
-            'broccoli': 'broccoli',
-            'cauliflower': 'cauliflower',
-            'cabbage': 'cabbage',
-            'cucumber': 'cucumbers',
-            'avocado': 'avocados',
-            'avos': 'avocados',
-            'avo': 'avocados',
-            'semi-ripe': 'semi ripe',
-            'semi-ripe avocado': 'avocados (semi-ripe)',
-            'semi ripe avocado': 'avocados (semi-ripe)',
-            'avocado semi-ripe': 'avocados (semi-ripe)',
-            'avocado semi ripe': 'avocados (semi-ripe)',
-            'lemon': 'lemons',
-            'lime': 'limes',
-            'orange': 'oranges',
-            'banana': 'bananas',
-            'strawberry': 'strawberries',
-            'mix peppers': 'mixed peppers',
-            'red apple': 'red apples',
-            'baby potato': 'baby potatoes',
-            'egg': 'eggs',
-            'eggs box': 'eggs',
-            'egg box': 'eggs',
-            'large eggs': 'eggs (large)',
-            'medium eggs': 'eggs (medium)',
-            'jumbo eggs': 'eggs (jumbo)',
-            'free range eggs': 'free range eggs',
-            'butter nut': 'butternut',
-            'butternut': 'butternut',
-            'blueberry': 'blueberries',
-            'blue berry': 'blueberries',
-            'fresh basil': 'basil',
-            'dried basil': 'basil',
-            'fresh parsley': 'parsley',
-            'flat leaf parsley': 'parsley',
-            'curly parsley': 'parsley',
-            'fresh thyme': 'thyme',
-            'dried thyme': 'thyme',
-            'fresh mint': 'mint',
-            'spearmint': 'mint',
-            'peppermint': 'mint',
-            'fresh coriander': 'coriander',
-            'cilantro': 'coriander',
-            'fresh rosemary': 'rosemary',
-            'dried rosemary': 'rosemary',
-            'fresh oregano': 'oregano',
-            'dried oregano': 'oregano',
-            'fresh sage': 'sage',
-            'dried sage': 'sage',
-            'lemon': 'lemons',
-            'whole tomatoes': 'tomatoes',
-            'carrot': 'carrots',
-            'basil': 'basil',
-            'parsley': 'parsley',
-            'coriander': 'coriander',
-            'rosemary': 'rosemary',
-            'mint': 'mint',
-            'thyme': 'thyme'
-        }
-        
-        # Special handling for avocados with descriptors
-        normalized_lower = normalized_name.lower()
-        if 'avos' in normalized_lower or 'avocado' in normalized_lower or normalized_lower.startswith('avo'):
-            # Handle avocado descriptors
-            if 'semi' in normalized_lower and 'ripe' in normalized_lower:
-                # "avos semi ripe" -> "Avocados (Semi-Ripe)"
-                try:
-                    product = Product.objects.filter(name__icontains='avocados').filter(name__icontains='semi').first()
-                    if product:
-                        print(f"[PRODUCT] Avocado semi-ripe match: '{normalized_name}' -> {product.name}")
-                        return product
-                except Exception as e:
-                    print(f"[PRODUCT] Error in avocado semi-ripe matching: {e}")
-            elif 'hard' in normalized_lower:
-                # "avos hard" -> "Avocados (Hard)"
-                try:
-                    product = Product.objects.filter(name__icontains='avocados').filter(name__icontains='hard').first()
-                    if product:
-                        print(f"[PRODUCT] Avocado hard match: '{normalized_name}' -> {product.name}")
-                        return product
-                except Exception as e:
-                    print(f"[PRODUCT] Error in avocado hard matching: {e}")
-            elif 'soft' in normalized_lower:
-                # "avos soft" -> "Avocados (Soft)"
-                try:
-                    product = Product.objects.filter(name__icontains='avocados').filter(name__icontains='soft').first()
-                    if product:
-                        print(f"[PRODUCT] Avocado soft match: '{normalized_name}' -> {product.name}")
-                        return product
-                except Exception as e:
-                    print(f"[PRODUCT] Error in avocado soft matching: {e}")
-            elif normalized_lower in ['avos', 'avo', 'avocado'] or ('boxes' in normalized_lower and 'avos' in normalized_lower):
-                # "avos" or "boxes avos" (no descriptor) -> default to "Avocados (Hard)"
-                try:
-                    product = Product.objects.filter(name__icontains='avocados').filter(name__icontains='hard').first()
-                    if product:
-                        print(f"[PRODUCT] Avocado default to hard: '{normalized_name}' -> {product.name}")
-                        return product
-                except Exception as e:
-                    print(f"[PRODUCT] Error in avocado default matching: {e}")
-        
-        # Check if input matches any alias - prioritize exact matches
-        for alias, canonical in product_aliases.items():
-            if normalized_lower == alias:  # Exact alias match
-                try:
-                    # Try exact match first
-                    product = Product.objects.filter(name__iexact=canonical).first()
-                    if product:
-                        return product
-                    # Fall back to contains match
-                    product = Product.objects.filter(name__icontains=canonical).first()
-                    if product:
-                        return product
-                except Exception as e:
-                    print(f"[PRODUCT] Error in alias matching: {e}")
-        
-        # Try partial matching with existing products - prioritize exact word matches
-        partial_matches = Product.objects.filter(name__icontains=normalized_name)
-        if partial_matches.exists():
-            # Prioritize exact matches first
-            for product in partial_matches:
-                # Check if the normalized name matches the product name exactly (ignoring case)
-                if normalized_name.lower() == product.name.lower():
-                    return product
-                # Check if the normalized name is a complete word in the product name
-                product_words = product.name.lower().split()
-                if normalized_name.lower() in product_words:
-                    return product
-            
-            # If no exact word match, use the first partial match
-            best_match = partial_matches.first()
-            # Logging disabled to prevent transaction errors
-            return best_match
-            
-        # Try reverse matching (product name contains input) - but be more specific
-        # Only do reverse matching if the input is reasonably long and specific
-        if len(product_name) >= 10:  # Only for longer product names
-            reverse_matches = Product.objects.filter(name__icontains=product_name[:10])  # First 10 chars
-            # Filter out matches that are clearly wrong (different main product type)
-            filtered_matches = []
-            main_word = product_name.split()[-1].lower()  # Get the main product word (last word)
-            
-            for match in reverse_matches:
-                match_words = match.name.lower().split()
-                # Only include if the main product word appears in the match
-                if main_word in match_words or any(main_word in word for word in match_words):
-                    filtered_matches.append(match)
-            
-            if filtered_matches:
-                best_match = filtered_matches[0]
-                # Logging disabled to prevent transaction errors
-                return best_match
-            
-    except Exception as e:
-        print(f"[PRODUCT] Error in enhanced matching: {e}")
-    
-    # Only create new products if explicitly requested
-    if not auto_create:
-        print(f"[PRODUCT] No match found for '{normalized_name}' and auto_create=False")
-        return None
-    
-    # ENHANCEMENT 4: Create new product with intelligent defaults (only if auto_create=True)
-    try:
-        from products.models import Department
-        
-        # Determine department based on product type
-        department = determine_product_department(normalized_name)
-        
-        # Get realistic pricing based on similar products
-        estimated_price = estimate_product_price(normalized_name)
-        
-        product = Product.objects.create(
-            name=normalized_name,
-            price=estimated_price,
-            department=department,
-            unit=determine_product_unit(normalized_name),
-            is_active=True,
-            stock_level=0,  # Will be updated from stock reports
-            minimum_stock=5,  # Default minimum
-            description=f"Auto-created from WhatsApp order: '{product_name}'. Based on SHALLOME inventory patterns."
-        )
-        
-        # Create alert for admin review with more context
-        from products.models import ProductAlert
-        ProductAlert.objects.create(
-            product=product,
-            alert_type='needs_setup',
-            message=f"Product '{normalized_name}' auto-created from WhatsApp order '{product_name}'. "
-                   f"Estimated price: R{estimated_price}. Department: {department.name}. "
-                   f"Please verify pricing, stock levels, and supplier information.",
-        )
-        
-        # Logging disabled to prevent transaction errors        
-        print(f"[PRODUCT] Enhanced auto-created: '{normalized_name}' (from '{product_name}') - "
-              f"Dept: {department.name}, Price: R{estimated_price}")
-        
-        return product
-        
-    except Exception as e:
-        print(f"[PRODUCT] Failed to create enhanced product '{product_name}': {e}")
-        
-        # Fallback to basic creation
-        try:
-            product = Product.objects.create(
-                name=product_name,
-                price=Decimal('25.00'),  # Default price based on average
-                department_id=1,  # Default department
-                is_active=True,
-                description=f"Fallback creation from WhatsApp order."
-            )
-            
-        # Logging disabled to prevent transaction errors            
-            return product
-        except Exception as fallback_error:
-            print(f"[PRODUCT] Even fallback creation failed: {fallback_error}")
-            return None
 
 
 def normalize_product_name_for_matching(name):
@@ -2291,39 +2560,27 @@ def validate_order_against_stock(order):
 
 def log_processing_action(message, action, details=None):
     """
-    Log message processing action
+    Log message processing action - deferred until after transaction commits
     
     Args:
         message: WhatsAppMessage instance
         action: Action type string
         details: Additional details dictionary
     """
-    try:
-        # Use a separate transaction to prevent rollback cascade
-        from django.db import transaction
-        with transaction.atomic():
+    from django.db import transaction
+    
+    def create_log():
+        try:
             MessageProcessingLog.objects.create(
                 message=message,
                 action=action,
                 details=details or {},
             )
-    except Exception as e:
-        # Don't let logging errors break the main flow
-        # Log to console instead of database if database logging fails
-        print(f"Failed to log action {action} for message {message.message_id}: {e}")
-        
-        # Try to log the error in a separate transaction
-        try:
-            with transaction.atomic():
-                MessageProcessingLog.objects.create(
-                    message=message,
-                    action='error',
-                    details={'original_action': action, 'logging_error': str(e)},
-                    error_message=f"Failed to log action '{action}': {str(e)}"
-                )
-        except Exception as nested_e:
-            # If even error logging fails, just print to console
-            print(f"Failed to log error for message {message.message_id}: {nested_e}")
+        except Exception as e:
+            print(f"Failed to log action {action} for message {message.message_id}: {e}")
+    
+    # Defer logging until after current transaction commits
+    transaction.on_commit(create_log)
 
 
 def reset_all_stock_levels():

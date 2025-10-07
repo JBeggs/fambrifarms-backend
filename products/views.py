@@ -329,7 +329,8 @@ def quick_create_product(request):
             }, status=status.HTTP_400_BAD_REQUEST)
         
         # Validate unit is in allowed choices
-        valid_units = [choice[0] for choice in Product.UNIT_CHOICES]
+        from settings.models import UnitOfMeasure
+        valid_units = list(UnitOfMeasure.objects.filter(is_active=True).values_list('name', flat=True))
         if unit not in valid_units:
             return Response({
                 'error': f'Invalid unit. Must be one of: {", ".join(valid_units)}'

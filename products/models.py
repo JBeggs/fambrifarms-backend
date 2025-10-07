@@ -17,30 +17,27 @@ class Department(models.Model):
     class Meta:
         ordering = ['name']
 
+def get_unit_choices():
+    """Get unit choices dynamically from database"""
+    from settings.models import UnitOfMeasure
+    try:
+        return [(unit.name, unit.display_name) for unit in UnitOfMeasure.objects.filter(is_active=True).order_by('sort_order')]
+    except:
+        # Fallback to hardcoded choices if database is not available
+        return [
+            ('kg', 'Kilogram'), ('g', 'Gram'), ('piece', 'Piece'), ('each', 'Each'),
+            ('head', 'Head'), ('bunch', 'Bunch'), ('box', 'Box'), ('bag', 'Bag'),
+            ('punnet', 'Punnet'), ('packet', 'Packet'), ('crate', 'Crate'),
+            ('tray', 'Tray'), ('bundle', 'Bundle'), ('L', 'Liter'), ('ml', 'Milliliter'),
+        ]
+
 class Product(models.Model):
-    UNIT_CHOICES = [
-        ('kg', 'Kilogram'),
-        ('g', 'Gram'),
-        ('piece', 'Piece'),
-        ('each', 'Each'),
-        ('head', 'Head'),
-        ('bunch', 'Bunch'),
-        ('box', 'Box'),
-        ('bag', 'Bag'),
-        ('punnet', 'Punnet'),
-        ('packet', 'Packet'),
-        ('crate', 'Crate'),
-        ('tray', 'Tray'),
-        ('bundle', 'Bundle'),
-        ('L', 'Liter'),
-        ('ml', 'Milliliter'),
-    ]
     
     name = models.CharField(max_length=200)
     description = models.TextField(blank=True)
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='products')
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
-    unit = models.CharField(max_length=20, choices=UNIT_CHOICES, default='piece')
+    unit = models.CharField(max_length=20, choices=get_unit_choices, default='piece')
     stock_level = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     minimum_stock = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('5.00'))
     is_active = models.BooleanField(default=True)
@@ -134,7 +131,7 @@ class ProcurementBuffer(models.Model):
         help_text="Standard market pack size (e.g., 10kg boxes)"
     )
     market_pack_unit = models.CharField(
-        max_length=20, choices=Product.UNIT_CHOICES, default='kg'
+        max_length=20, choices=get_unit_choices, default='kg'
     )
     
     # Seasonality
@@ -328,7 +325,7 @@ class Recipe(models.Model):
     instructions = models.TextField(blank=True)
     prep_time_minutes = models.PositiveIntegerField(default=30)
     yield_quantity = models.DecimalField(max_digits=10, decimal_places=2, default=1)
-    yield_unit = models.CharField(max_length=20, choices=Product.UNIT_CHOICES, default='piece')
+    yield_unit = models.CharField(max_length=20, choices=get_unit_choices, default='piece')
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

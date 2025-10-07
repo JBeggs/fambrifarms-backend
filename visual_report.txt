@@ -1,0 +1,267 @@
+VISUAL COMPARISON - WHAT'S ACTUALLY HAPPENING
+====================================================================================================
+Total edited messages: 61
+
+📱 MESSAGE 1 (ID: 856)
+----------------------------------------------------------------------------------------------------
+📝 ORIGINAL MESSAGE:
+    1. 2 x 10kg potato
+    2. 7kg sweet potato
+    3. 4kg butternut
+    4. 5kg carrots
+    5. 10kg red onion
+    6. 5kg red peppers
+    7. 10kg portabellini mushroom
+    8. 10kg brown mushroom
+    9. 750g wild rocket
+   10. 750g basil leaves
+   ... and 15 more lines
+
+Using Django database products
+Loaded 577 products
+Found 11 units: ['bag', 'box', 'bunch', 'each', 'g', 'head', 'kg', 'packet', 'piece', 'punnet', 'tray']
+Found 7 container units: ['bag', 'box', 'bunch', 'head', 'packet', 'punnet', 'tray']
+Found 132 unique product names
+🔍 PARSED ITEMS (25 found):
+    1. '2 x 10kg potato' → 'Potatoes (10kg)' | Qty: 2.0 | Unit: bag
+    2. '7kg sweet potato' → 'Sweet Potatoes (7kg)' | Qty: 1.0 | Unit: kg
+    3. '4kg butternut' → 'Butternut (4kg)' | Qty: 1.0 | Unit: kg
+    4. '5kg carrots' → 'Carrots (5kg)' | Qty: 1.0 | Unit: kg
+    5. '10kg red onion' → 'Red Onions (10kg)' | Qty: 1.0 | Unit: kg
+    6. '5kg red peppers' → 'Red Peppers (5kg)' | Qty: 1.0 | Unit: kg
+    7. '10kg portabellini mushroom' → 'Portabellini Mushrooms (10kg)' | Qty: 1.0 | Unit: kg
+    8. '10kg brown mushroom' → 'Brown Mushrooms (10kg)' | Qty: 1.0 | Unit: kg
+    9. '750g wild rocket' → 'Wild Rocket (100g)' | Qty: 1.0 | Unit: g
+   10. '750g basil leaves' → 'Basil (750g)' | Qty: 1.0 | Unit: g
+   ... and 15 more items
+
+💳 ORDER CREATION TEST:
+[CUSTOMER] Matched restaurant profile: Casa Bella -> Casa Bella
+Using Django database products
+Loaded 577 products
+Found 11 units: ['bag', 'box', 'bunch', 'each', 'g', 'head', 'kg', 'packet', 'piece', 'punnet', 'tray']
+Found 7 container units: ['bag', 'box', 'bunch', 'head', 'packet', 'punnet', 'tray']
+Found 132 unique product names
+[PRICING] Applied 25.00% markup to Potatoes (10kg): 20.00 -> 25.0000
+[PRICING] Applied 25.00% markup to Sweet Potatoes (7kg): 14.00 -> 17.5000
+[PRICING] Applied 25.00% markup to Butternut (4kg): 60.00 -> 75.0000
+[PRICING] Applied 25.00% markup to Carrots (5kg): 64.00 -> 80.0000
+[PRICING] Applied 25.00% markup to Red Onions (10kg): 175.00 -> 218.7500
+[PRICING] Applied 25.00% markup to Red Peppers (5kg): 90.00 -> 112.5000
+[PRICING] Applied 25.00% markup to Portabellini Mushrooms (10kg): 900.00 -> 1125.0000
+[PRICING] Applied 25.00% markup to Brown Mushrooms (10kg): 800.00 -> 1000.0000
+[PRICING] Applied 25.00% markup to Wild Rocket (100g): 10.00 -> 12.5000
+[PRICING] Applied 25.00% markup to Basil (750g): 50.00 -> 62.5000
+[PRICING] Applied 25.00% markup to Cherry Tomatoes: 45.00 -> 56.2500
+[PRICING] Applied 25.00% markup to Baby Corn: 20.00 -> 25.0000
+[PRICING] Applied 25.00% markup to Baby Marrow (5kg): 17.50 -> 21.8750
+[PRICING] Applied 25.00% markup to Lemons (10kg): 100.00 -> 125.0000
+[PRICING] Applied 25.00% markup to Tomatoes (5kg): 90.00 -> 112.5000
+[PRICING] Applied 25.00% markup to Cucumber: 100.00 -> 125.0000
+[PRICING] Applied 25.00% markup to Box Pineapple: 100.00 -> 125.0000
+[PRICING] Applied 25.00% markup to Strawberries (1kg): 100.00 -> 125.0000
+[PRICING] Applied 25.00% markup to Lime (1kg): 10.00 -> 12.5000
+[PRICING] Applied 25.00% markup to Bananas (1kg): 25.00 -> 31.2500
+[PRICING] Applied 25.00% markup to Mint (250g): 25.00 -> 31.2500
+[PRICING] Applied 25.00% markup to Spinach (5kg): 100.00 -> 125.0000
+[PRICING] Applied 25.00% markup to Mixed Lettuce (200g): 5.00 -> 6.2500
+[PRICING] Applied 25.00% markup to Avocados (Hard) (3kg): 255.00 -> 318.7500
+[PRICING] Applied 25.00% markup to Parsley (500g): 40.00 -> 50.0000
+   ❌ FAILED: Order FB202510058663 - orders@casabella.co.za
+
+====================================================================================================
+
+📱 MESSAGE 2 (ID: 854)
+----------------------------------------------------------------------------------------------------
+📝 ORIGINAL MESSAGE:
+    1. blueberries 6 punnet 200g
+    2. Lemons 3 5kg
+    3. Pineapple 2 box
+    4. Strawberry 6 punnet 500g
+    5. Basil 1 packet 200g
+    6. Coriander 2 packet 200g
+    7. Mint leaves 2 packet 200g
+    8. Parsley 1 packet 500g
+    9. Rocket 2 packet 500g
+   10. avocados 4 box soft
+   ... and 15 more lines
+
+🔍 PARSED ITEMS (25 found):
+    1. 'blueberries 6 punnet 200g' → 'Blueberries (200g)' | Qty: 6.0 | Unit: punnet
+    2. 'lemons 3 5kg' → 'Lemons (5kg)' | Qty: 3.0 | Unit: bag
+    3. 'pineapple 2 box' → 'pineapple' | Qty: 2.0 | Unit: box
+    4. 'strawberry 6 punnet 500g' → 'Strawberries (500g)' | Qty: 6.0 | Unit: punnet
+    5. 'basil 1 packet 200g' → 'Basil (200g)' | Qty: 1.0 | Unit: packet
+    6. 'coriander 2 packet 200g' → 'Coriander (200g)' | Qty: 2.0 | Unit: packet
+    7. 'mint leaves 2 packet 200g' → 'Mint (200g)' | Qty: 2.0 | Unit: packet
+    8. 'parsley 1 packet 500g' → 'Parsley (500g)' | Qty: 1.0 | Unit: packet
+    9. 'rocket 2 packet 500g' → 'Rocket (500g)' | Qty: 2.0 | Unit: packet
+   10. 'avocados 4 box soft' → 'Avocados (Hard) (3kg)' | Qty: 4.0 | Unit: box
+   ... and 15 more items
+
+💳 ORDER CREATION TEST:
+[CUSTOMER] Matched restaurant profile: Pecanwood Golf Estate - Clubhouse -> Pecanwood Golf Estate - Clubhouse
+[PRICING] Applied 25.00% markup to Blueberries (200g): 24.00 -> 30.0000
+[PRICING] Applied 25.00% markup to Lemons (5kg): 50.00 -> 62.5000
+[PRICING] Applied 25.00% markup to Box Pineapple: 100.00 -> 125.0000
+[PRICING] Applied 25.00% markup to Strawberries (500g): 50.00 -> 62.5000
+[PRICING] Applied 25.00% markup to Basil (200g): 20.00 -> 25.0000
+[PRICING] Applied 25.00% markup to Coriander (200g): 20.00 -> 25.0000
+[PRICING] Applied 25.00% markup to Mint (200g): 20.00 -> 25.0000
+[PRICING] Applied 25.00% markup to Parsley (500g): 40.00 -> 50.0000
+[PRICING] Applied 25.00% markup to Rocket (500g): 40.00 -> 50.0000
+[PRICING] Applied 25.00% markup to Avocados (Hard) (3kg): 255.00 -> 318.7500
+[PRICING] Applied 25.00% markup to Baby Marrow (200g): 7.00 -> 8.7500
+[PRICING] Applied 25.00% markup to Butternut (10kg): 150.00 -> 187.5000
+[PRICING] Applied 25.00% markup to Carrots (5kg): 64.00 -> 80.0000
+[PRICING] Applied 25.00% markup to Cauliflower: 80.00 -> 100.0000
+[PRICING] Applied 25.00% markup to Cucumber Box: 100.00 -> 125.0000
+[PRICING] Applied 25.00% markup to Mixed Lettuce (100g): 2.50 -> 3.1250
+[PRICING] Applied 25.00% markup to Brown Mushrooms (10kg): 800.00 -> 1000.0000
+[PRICING] Applied 25.00% markup to Red Onions (5kg): 87.50 -> 109.3750
+[PRICING] Applied 25.00% markup to White Onions (5kg): 87.50 -> 109.3750
+[PRICING] Applied 25.00% markup to Red Peppers (1kg): 18.00 -> 22.5000
+[PRICING] Applied 25.00% markup to Yellow Peppers (1kg): 18.00 -> 22.5000
+[PRICING] Applied 25.00% markup to Green Peppers (1kg): 18.00 -> 22.5000
+[PRICING] Applied 25.00% markup to Potatoes (10kg): 20.00 -> 25.0000
+[PRICING] Applied 25.00% markup to Cocktail Tomatoes (200g): 13.50 -> 16.8750
+[PRICING] Applied 25.00% markup to Cocktail Tomatoes (1kg): 45.00 -> 56.2500
+   ❌ FAILED: Order FB202510051027 - pecanwoodgolfestateclubhouse@restaurant.com
+
+====================================================================================================
+
+📱 MESSAGE 3 (ID: 852)
+----------------------------------------------------------------------------------------------------
+📝 ORIGINAL MESSAGE:
+    1. 2 5kg tomatoes
+    2. 2 5kg mushrooms
+    3. 10kg red onions
+
+🔍 PARSED ITEMS (3 found):
+    1. 'tomatoes' → 'Cocktail Tomatoes (200g)' | Qty: 1.0 | Unit: punnet
+    2. '2 5kg mushrooms' → 'Brown Mushrooms (5kg)' | Qty: 0.4 | Unit: kg
+    3. '10kg red onions' → 'Red Onions (10kg)' | Qty: 1.0 | Unit: kg
+
+💳 ORDER CREATION TEST:
+[CUSTOMER] Matched restaurant profile: Debonairs Pizza - Centurion -> Debonairs Pizza - Centurion
+[PRICING] Applied 25.00% markup to Cocktail Tomatoes (200g): 13.50 -> 16.8750
+[PRICING] Applied 25.00% markup to Brown Mushrooms (5kg): 400.00 -> 500.0000
+[PRICING] Applied 25.00% markup to Red Onions (10kg): 175.00 -> 218.7500
+   ❌ FAILED: Order FB202510051696 - debonairspizzacenturion@restaurant.com
+
+====================================================================================================
+
+📱 MESSAGE 4 (ID: 850)
+----------------------------------------------------------------------------------------------------
+📝 ORIGINAL MESSAGE:
+    1. Beetroot 3kg
+    2. Baby marrow 4kg
+    3. Carrots 10kg
+    4. cauliflower 4kg
+    5. Cucumber 5kg
+    6. Garlic fresh 3kg
+    7. Lemons 20kg
+    8. Onion red 4kg
+    9. Onion white 2 bag
+   10. Peppers green 5kg
+   ... and 11 more lines
+
+🔍 PARSED ITEMS (22 found):
+    1. 'baby marrow 4kg' → 'Baby Marrow (4kg)' | Qty: 1.0 | Unit: bag
+    2. 'carrots 10kg' → 'Carrots (10kg)' | Qty: 1.0 | Unit: bag
+    3. 'cauliflower 4kg' → 'Lemons (4kg)' | Qty: 1.0 | Unit: bag
+    4. 'cucumber 5kg' → 'Lemons (5kg)' | Qty: 1.0 | Unit: bag
+    5. 'garlic fresh 3kg' → 'Avocados (Hard) (3kg)' | Qty: 1.0 | Unit: packet
+    6. 'lemons 20kg' → 'Lemons (20kg)' | Qty: 1.0 | Unit: bag
+    7. 'onion red 4kg' → 'Red Onions (4kg)' | Qty: 1.0 | Unit: bag
+    8. 'onion white 2 bag' → 'White Onions (2kg)' | Qty: 2.0 | Unit: bag
+    9. 'peppers green 5kg' → 'Red Peppers (5kg)' | Qty: 1.0 | Unit: bag
+   10. 'peppers red 5kg' → 'Red Peppers (5kg)' | Qty: 1.0 | Unit: bag
+   ... and 12 more items
+
+💳 ORDER CREATION TEST:
+[CUSTOMER] Matched restaurant profile: Shebeen -> Shebeen
+[PRICING] Applied 25.00% markup to Baby Marrow (4kg): 14.00 -> 17.5000
+[PRICING] Applied 25.00% markup to Carrots (10kg): 128.00 -> 160.0000
+[PRICING] Applied 25.00% markup to Lemons (4kg): 40.00 -> 50.0000
+[PRICING] Applied 25.00% markup to Lemons (5kg): 50.00 -> 62.5000
+[PRICING] Applied 25.00% markup to Avocados (Hard) (3kg): 255.00 -> 318.7500
+[PRICING] Applied 25.00% markup to Lemons (20kg): 200.00 -> 250.0000
+[PRICING] Applied 25.00% markup to Red Onions (4kg): 70.00 -> 87.5000
+[PRICING] Applied 25.00% markup to White Onions (2kg): 35.00 -> 43.7500
+[PRICING] Applied 25.00% markup to Red Peppers (5kg): 90.00 -> 112.5000
+[PRICING] Applied 25.00% markup to Red Peppers (5kg): 90.00 -> 112.5000
+[PRICING] Applied 25.00% markup to Red Peppers (4kg): 72.00 -> 90.0000
+[PRICING] Applied 25.00% markup to Box Pineapple: 100.00 -> 125.0000
+[PRICING] Applied 25.00% markup to Potatoes (1kg): 2.00 -> 2.5000
+[PRICING] Applied 25.00% markup to Avocados (Hard) (2kg): 170.00 -> 212.5000
+[PRICING] Applied 25.00% markup to Tomatoes (5kg): 90.00 -> 112.5000
+[PRICING] Applied 25.00% markup to Iceberg Lettuce: 25.00 -> 31.2500
+[PRICING] Applied 25.00% markup to Red Apples (5kg): 175.00 -> 218.7500
+[PRICING] Applied 25.00% markup to Avocados (Hard) (1kg): 85.00 -> 106.2500
+[PRICING] Applied 25.00% markup to Parsley (1kg): 500.00 -> 625.0000
+[PRICING] Applied 25.00% markup to Mint (100g): 10.00 -> 12.5000
+Using Django database products
+Loaded 577 products
+Found 11 units: ['bag', 'box', 'bunch', 'each', 'g', 'head', 'kg', 'packet', 'piece', 'punnet', 'tray']
+Found 7 container units: ['bag', 'box', 'bunch', 'head', 'packet', 'punnet', 'tray']
+Found 132 unique product names
+✓ Loaded production products from: data/production_products_analysis.json
+✓ Loaded production products from: data/production_products_analysis.json
+   ❌ FAILED: {'status': 'failed', 'failed_products': [{'original_name': 'm/l', 'normalized_name': 'M/L', 'failure_reason': 'Product not found in database', 'original_text': 'm/l 20 bag', 'quantity': 20.0, 'unit': 'bag', 'suggestions': [{'id': 66, 'name': 'Artichokes', 'unit': 'kg', 'price': 45.0, 'confidence': 18, 'description': 'Artichokes - R45.00'}, {'id': 67, 'name': 'Aubergine', 'unit': 'kg', 'price': 55.0, 'confidence': 18, 'description': 'Aubergine - R55.00'}, {'id': 2, 'name': 'Avocados (Hard)', 'unit': 'kg', 'price': 80.0, 'confidence': 18, 'description': 'Avocados (Hard) - R80.00'}, {'id': 70, 'name': 'Baby Marrow', 'unit': 'kg', 'price': 35.0, 'confidence': 18, 'description': 'Baby Marrow - R35.00'}, {'id': 71, 'name': 'Baby Potatoes', 'unit': 'kg', 'price': 30.0, 'confidence': 18, 'description': 'Baby Potatoes - R30.00'}]}, {'original_name': 'leaves *', 'normalized_name': 'Leaves', 'failure_reason': 'Product not found in database', 'original_text': 'leaves 2 * 100g', 'quantity': 2.0, 'unit': 'g', 'suggestions': [{'id': 66, 'name': 'Artichokes', 'unit': 'kg', 'price': 45.0, 'confidence': 18, 'description': 'Artichokes - R45.00'}, {'id': 67, 'name': 'Aubergine', 'unit': 'kg', 'price': 55.0, 'confidence': 18, 'description': 'Aubergine - R55.00'}, {'id': 2, 'name': 'Avocados (Hard)', 'unit': 'kg', 'price': 80.0, 'confidence': 18, 'description': 'Avocados (Hard) - R80.00'}, {'id': 70, 'name': 'Baby Marrow', 'unit': 'kg', 'price': 35.0, 'confidence': 18, 'description': 'Baby Marrow - R35.00'}, {'id': 71, 'name': 'Baby Potatoes', 'unit': 'kg', 'price': 30.0, 'confidence': 18, 'description': 'Baby Potatoes - R30.00'}]}], 'parsing_failures': [], 'unparseable_lines': [{'original_line': 'Beetroot 3kg', 'potential_name': 'Beetroot 3kg', 'suggestions': [{'id': 460, 'name': 'Lemons (3kg)', 'unit': 'bag', 'price': 30.0, 'confidence': 150, 'description': 'Lemons (3kg) - R30.00'}, {'id': 523, 'name': 'Oranges (3kg)', 'unit': 'bag', 'price': 75.0, 'confidence': 150, 'description': 'Oranges (3kg) - R75.00'}, {'id': 416, 'name': 'Baby Marrow (3kg)', 'unit': 'bag', 'price': 10.5, 'confidence': 150, 'description': 'Baby Marrow (3kg) - R10.50'}, {'id': 435, 'name': 'Butternut (3kg)', 'unit': 'bag', 'price': 45.0, 'confidence': 150, 'description': 'Butternut (3kg) - R45.00'}, {'id': 166, 'name': 'Carrots (3kg)', 'unit': 'bag', 'price': 38.4, 'confidence': 150, 'description': 'Carrots (3kg) - R38.40'}]}], 'message': 'Order creation failed - 3 items need attention. Use suggestions to fix and retry.'}
+
+====================================================================================================
+
+📱 MESSAGE 5 (ID: 847)
+----------------------------------------------------------------------------------------------------
+📝 ORIGINAL MESSAGE:
+    1. Baby Marrow x 4 Pcts 200g
+    2. Beans x 3 packet 500g
+    3. Carrots x 5 kg
+    4. cauliflower x 3 Pcts
+    5. Kiwi x 1 Pckt 500g
+    6. Lemons x 2 Pct 5kg
+    7. Mushrooms x 10 packet 1kg
+    8. Red Onion x 1 Pckt 5kg
+    9. Pineapple x 4 each
+   10. Potatoes x 4 bag 10kg
+   ... and 9 more lines
+
+🔍 PARSED ITEMS (19 found):
+    1. 'baby marrow x 4 pcts 200g' → 'Baby Marrow (1kg)' | Qty: 4.0 | Unit: g
+    2. 'beans x 3 packet 500g' → 'Beans (500g)' | Qty: 3.0 | Unit: packet
+    3. 'carrots x 5 kg' → 'Carrots (5kg)' | Qty: 1.0 | Unit: kg
+    4. 'cauliflower x 3 pcts' → 'Cauliflower (3kg)' | Qty: 1.0 | Unit: kg
+    5. 'kiwi x 1 pckt 500g' → 'Kiwi (500g)' | Qty: 1.0 | Unit: punnet
+    6. 'lemons x 2 pct 5kg' → 'Lemons (250g)' | Qty: 2.0 | Unit: punnet
+    7. 'mushrooms x 10 packet 1kg' → 'Mixed Lettuce (100g)' | Qty: 10.0 | Unit: packet
+    8. 'red onion x 1 pckt 5kg' → 'Red Onions (5kg)' | Qty: 0.2 | Unit: kg
+    9. 'pineapple x 4 each' → 'pineapple' | Qty: 4.0 | Unit: each
+   10. 'potatoes x 4 bag 10kg' → 'Potatoes (10kg)' | Qty: 4.0 | Unit: bag
+   ... and 9 more items
+
+💳 ORDER CREATION TEST:
+[CUSTOMER] Matched restaurant profile: Maltos -> Maltos
+[PRICING] Applied 25.00% markup to Baby Marrow (1kg): 3.50 -> 4.3750
+[PRICING] Applied 25.00% markup to Beans (500g): 10.00 -> 12.5000
+[PRICING] Applied 25.00% markup to Carrots (5kg): 64.00 -> 80.0000
+[PRICING] Applied 25.00% markup to Cauliflower (3kg): 45.00 -> 56.2500
+[PRICING] Applied 25.00% markup to Kiwi (500g): 45.00 -> 56.2500
+[PRICING] Applied 25.00% markup to Lemons (250g): 2.50 -> 3.1250
+[PRICING] Applied 25.00% markup to Mixed Lettuce (100g): 2.50 -> 3.1250
+[PRICING] Applied 25.00% markup to Red Onions (5kg): 87.50 -> 109.3750
+[PRICING] Applied 25.00% markup to Pineapple: 25.00 -> 31.2500
+[PRICING] Applied 25.00% markup to Potatoes (10kg): 20.00 -> 25.0000
+[PRICING] Applied 25.00% markup to Spinach: 15.00 -> 18.7500
+[PRICING] Applied 25.00% markup to Mixed Lettuce (250g): 6.25 -> 7.8125
+[PRICING] Applied 25.00% markup to Tomatoes (5kg): 90.00 -> 112.5000
+[PRICING] Applied 25.00% markup to Cocktail Tomatoes (1kg): 45.00 -> 56.2500
+[PRICING] Applied 25.00% markup to Basil (200g): 20.00 -> 25.0000
+[PRICING] Applied 25.00% markup to Mint (200g): 20.00 -> 25.0000
+[PRICING] Applied 25.00% markup to Parsley (200g): 20.00 -> 25.0000
+[PRICING] Applied 25.00% markup to Rosemary (200g): 20.00 -> 25.0000
+[PRICING] Applied 25.00% markup to Wild Rocket (200g): 20.00 -> 25.0000
+   ❌ FAILED: {'status': 'failed', 'failed_products': [], 'parsing_failures': [], 'unparseable_lines': [{'original_line': 'Mint x 1 Pckt  200g', 'potential_name': 'Mint x 1 Pckt 200g', 'suggestions': [{'id': 188, 'name': 'Mint (200g)', 'unit': 'packet', 'price': 20.0, 'confidence': 192.5, 'description': 'Mint (200g) - R20.00'}, {'id': 187, 'name': 'Mint (100g)', 'unit': 'packet', 'price': 10.0, 'confidence': 142.5, 'description': 'Mint (100g) - R10.00'}, {'id': 186, 'name': 'Mint (50g)', 'unit': 'packet', 'price': 5.0, 'confidence': 142.5, 'description': 'Mint (50g) - R5.00'}, {'id': 277, 'name': 'Mint (150g)', 'unit': 'packet', 'price': 15.0, 'confidence': 142.5, 'description': 'Mint (150g) - R15.00'}, {'id': 278, 'name': 'Mint (250g)', 'unit': 'packet', 'price': 25.0, 'confidence': 142.5, 'description': 'Mint (250g) - R25.00'}]}], 'message': 'Order creation failed - 1 items need attention. Use suggestions to fix and retry.'}
+
+====================================================================================================
+

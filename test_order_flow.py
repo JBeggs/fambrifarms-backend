@@ -85,22 +85,22 @@ nonexistent789''',
                 print("   📝 Each item would be matched against production database")
                 
                 # Show what the smart matcher would do for each item
-                from whatsapp.services import get_or_create_product_smart
+                from whatsapp.services import get_or_create_product_enhanced
                 
                 matched_items = 0
                 failed_items = []
                 
                 for item in parsed_items:
                     try:
-                        result = get_or_create_product_smart(
+                        result = get_or_create_product_enhanced(
                             item['product_name'],
                             item['quantity'],
                             item.get('unit')
                         )
                         
-                        if result and (isinstance(result, tuple) and result[0]) or result:
+                        if result and isinstance(result, tuple) and result[0] is not None:
                             matched_items += 1
-                            product_name = result[0].name if isinstance(result, tuple) else result.name
+                            product_name = result[0].name
                             print(f"     ✅ '{item['product_name']}' → '{product_name}'")
                         else:
                             failed_items.append(item['product_name'])

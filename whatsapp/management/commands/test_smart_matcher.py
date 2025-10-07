@@ -54,7 +54,7 @@ class Command(BaseCommand):
         
         try:
             if show_suggestions:
-                suggestions = matcher.get_suggestions(message, min_confidence=10.0, max_suggestions=5)
+                suggestions = matcher.get_suggestions(message, min_confidence=10.0, max_suggestions=20)
                 
                 if suggestions.parsed_input:
                     parsed = suggestions.parsed_input
@@ -162,7 +162,7 @@ class Command(BaseCommand):
             self.stdout.write(f"{i:2d}. {test_case} ({description})")
             
             try:
-                suggestions = matcher.get_suggestions(test_case, min_confidence=10.0, max_suggestions=5)
+                suggestions = matcher.get_suggestions(test_case, min_confidence=10.0, max_suggestions=20)
                 
                 result = {
                     'input': test_case,

@@ -14,7 +14,7 @@ def fetch_production_products():
     
     # Production API endpoints
     base_url = "https://fambridevops.pythonanywhere.com"
-    login_url = f"{base_url}/auth/login/"
+    login_url = f"{base_url}/api/auth/login/"
     products_url = f"{base_url}/api/products/products/"
     
     # Login credentials
@@ -33,7 +33,7 @@ def fetch_production_products():
         login_response.raise_for_status()
         
         token_data = login_response.json()
-        access_token = token_data.get('access')
+        access_token = token_data.get('tokens', {}).get('access')
         
         if not access_token:
             print("❌ Failed to get access token")
@@ -49,28 +49,44 @@ def fetch_production_products():
         
         print("📦 Fetching production products...")
         
-        # Fetch all products (with pagination)
-        all_products = []
-        page = 1
+        # Fetch all products
+        response = session.get(products_url, timeout=30)
+        response.raise_for_status()
         
-        while True:
-            response = session.get(f"{products_url}?page={page}", timeout=30)
-            response.raise_for_status()
+        data = response.json()
+        
+        # Handle both paginated and direct list responses
+        if isinstance(data, list):
+            all_products = data
+            print(f"  📄 Direct list: {len(all_products)} products")
+        elif isinstance(data, dict) and 'results' in data:
+            # Paginated response
+            all_products = []
+            page = 1
             
-            data = response.json()
-            products = data.get('results', [])
-            
-            if not products:
-                break
+            while True:
+                if page == 1:
+                    products = data.get('results', [])
+                else:
+                    response = session.get(f"{products_url}?page={page}", timeout=30)
+                    response.raise_for_status()
+                    data = response.json()
+                    products = data.get('results', [])
                 
-            all_products.extend(products)
-            print(f"  📄 Page {page}: {len(products)} products")
-            
-            # Check if there's a next page
-            if not data.get('next'):
-                break
+                if not products:
+                    break
+                    
+                all_products.extend(products)
+                print(f"  📄 Page {page}: {len(products)} products")
                 
-            page += 1
+                # Check if there's a next page
+                if not data.get('next'):
+                    break
+                    
+                page += 1
+        else:
+            print(f"❌ Unexpected response format: {type(data)}")
+            return None
         
         print(f"✅ Fetched {len(all_products)} total products")
         

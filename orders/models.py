@@ -37,20 +37,28 @@ def calculate_delivery_date(order_date):
     else:
         raise ValidationError("Orders can only be placed on Monday or Thursday")
 
+def get_order_status_choices():
+    """Get order status choices dynamically from database"""
+    from settings.models import OrderStatus
+    try:
+        return [(status.name, status.display_name) for status in OrderStatus.objects.filter(is_active=True).order_by('sort_order')]
+    except:
+        # Fallback to hardcoded choices if database is not available
+        return [
+            ('received', 'Received via WhatsApp'),
+            ('parsed', 'AI Parsed'),
+            ('confirmed', 'Manager Confirmed'),
+            ('po_sent', 'PO Sent to Sales Rep'),
+            ('po_confirmed', 'Sales Rep Confirmed'),
+            ('delivered', 'Delivered to Customer'),
+            ('cancelled', 'Cancelled'),
+        ]
+
 class Order(models.Model):
-    STATUS_CHOICES = [
-        ('received', 'Received via WhatsApp'),
-        ('parsed', 'AI Parsed'),
-        ('confirmed', 'Manager Confirmed'),
-        ('po_sent', 'PO Sent to Sales Rep'),
-        ('po_confirmed', 'Sales Rep Confirmed'),
-        ('delivered', 'Delivered to Customer'),
-        ('cancelled', 'Cancelled'),
-    ]
     
     restaurant = models.ForeignKey(User, on_delete=models.CASCADE, related_name='orders')
     order_number = models.CharField(max_length=20, unique=True)
-    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
+    status = models.CharField(max_length=20, choices=get_order_status_choices, default='received')
     
     # Scheduling (CRITICAL - Monday/Thursday → Tuesday/Wednesday/Friday)
     order_date = models.DateField(validators=[validate_order_date])

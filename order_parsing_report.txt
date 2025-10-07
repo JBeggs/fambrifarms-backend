@@ -1,0 +1,2953 @@
+ORDER PARSING COMPARISON REPORT
+==================================================
+Generated: 2025-10-05 21:44:30
+Total edited messages: 61
+
+MESSAGE 1: 856
+------------------------------
+Timestamp: 2025-10-01 13:51:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+2 x 10kg potato
+7kg sweet potato
+4kg butternut
+5kg carrots
+10kg red onion
+5kg red peppers
+10kg portabellini mushroom
+10kg brown mushroom
+750g wild rocket
+750g basil leaves
+10 punnet cherry tomato
+10 punnet baby corn
+5kg baby marrow bag
+Lemons x 3 bag 10kg
+4kg semi tomato box
+15 cucumber each
+1 box pineapple
+500g strawberry
+1kg lime
+1.5 kg banana
+250g mint
+5kg spinach
+5 pkt mixed lettuce 200g
+3 box avocados
+500g parsley
+
+PARSED ITEMS:
+------------------------------
+1. Potatoes (10kg) | Qty: 2.0 | Unit: bag
+2. Sweet Potatoes (7kg) | Qty: 1.0 | Unit: kg
+3. Butternut (4kg) | Qty: 1.0 | Unit: kg
+4. Carrots (5kg) | Qty: 1.0 | Unit: kg
+5. Red Onions (10kg) | Qty: 1.0 | Unit: kg
+6. Red Peppers (5kg) | Qty: 1.0 | Unit: kg
+7. Portabellini Mushrooms (10kg) | Qty: 1.0 | Unit: kg
+8. Brown Mushrooms (10kg) | Qty: 1.0 | Unit: kg
+9. Wild Rocket (100g) | Qty: 1.0 | Unit: g
+10. Basil (750g) | Qty: 1.0 | Unit: g
+11. cherry tomato | Qty: 10.0 | Unit: punnet
+12. corn | Qty: 10.0 | Unit: punnet
+13. Baby Marrow (5kg) | Qty: 5.0 | Unit: bag
+14. Lemons (10kg) | Qty: 3.0 | Unit: bag
+15. Tomatoes (5kg) | Qty: 4.0 | Unit: box
+16. cucumber | Qty: 15.0 | Unit: each
+17. pineapple | Qty: 1.0 | Unit: box
+18. Strawberries (1kg) | Qty: 1.0 | Unit: g
+19. Lime (1kg) | Qty: 1.0 | Unit: kg
+20. Bananas (1kg) | Qty: 1.5 | Unit: kg
+21. Mint (250g) | Qty: 1.0 | Unit: g
+22. Spinach (5kg) | Qty: 1.0 | Unit: kg
+23. Mixed Lettuce (200g) | Qty: 5.0 | Unit: packet
+24. Avocados (Hard) (3kg) | Qty: 3.0 | Unit: box
+25. Parsley (500g) | Qty: 1.0 | Unit: g
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 25
+Order items: 0
+Difference: 25
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 2: 854
+------------------------------
+Timestamp: 2025-10-01 11:00:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+blueberries 6 punnet 200g
+Lemons 3 5kg
+Pineapple 2 box
+Strawberry 6 punnet 500g
+Basil 1 packet 200g
+Coriander 2 packet 200g
+Mint leaves 2 packet 200g
+Parsley 1 packet 500g
+Rocket 2 packet 500g
+avocados 4 box soft
+Baby marrow 5 punnet 200g
+Butternut 1 bag 10kg
+Carrots 5kg bag
+cauliflower 3 head
+Cucumber 1 box
+Lettuce mixed 2 box
+Mushrooms 1 box
+Red onion 1 bag 5kg
+White onion 1 bag 5kg
+Red peppers 1 box 
+Yellow peppers 1 box
+Green pepper 1 box 
+big potatoes 1 bag 10kg
+Cocktail tomatoes 6 punnet 
+Normal tomatoes 1 box
+
+PARSED ITEMS:
+------------------------------
+1. Blueberries (200g) | Qty: 6.0 | Unit: punnet
+2. Lemons (5kg) | Qty: 3.0 | Unit: bag
+3. pineapple | Qty: 2.0 | Unit: box
+4. Strawberries (500g) | Qty: 6.0 | Unit: punnet
+5. Basil (200g) | Qty: 1.0 | Unit: packet
+6. Coriander (200g) | Qty: 2.0 | Unit: packet
+7. Mint (200g) | Qty: 2.0 | Unit: packet
+8. Parsley (500g) | Qty: 1.0 | Unit: packet
+9. Rocket (500g) | Qty: 2.0 | Unit: packet
+10. Avocados (Hard) (3kg) | Qty: 4.0 | Unit: box
+11. Baby Marrow (200g) | Qty: 5.0 | Unit: punnet
+12. Butternut (10kg) | Qty: 1.0 | Unit: bag
+13. Carrots (5kg) | Qty: 1.0 | Unit: bag
+14. cauliflower | Qty: 3.0 | Unit: head
+15. cucumber | Qty: 1.0 | Unit: box
+16. Mixed Lettuce (100g) | Qty: 2.0 | Unit: box
+17. Brown Mushrooms (10kg) | Qty: 1.0 | Unit: box
+18. Red Onions (5kg) | Qty: 1.0 | Unit: bag
+19. White Onions (5kg) | Qty: 1.0 | Unit: bag
+20. Red Peppers (1kg) | Qty: 1.0 | Unit: box
+21. Yellow Peppers (1kg) | Qty: 1.0 | Unit: box
+22. Green Peppers (1kg) | Qty: 1.0 | Unit: box
+23. Potatoes (10kg) | Qty: 1.0 | Unit: bag
+24. Cocktail Tomatoes (200g) | Qty: 6.0 | Unit: punnet
+25. Cocktail Tomatoes (1kg) | Qty: 1.0 | Unit: box
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 25
+Order items: 0
+Difference: 25
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 3: 852
+------------------------------
+Timestamp: 2025-10-01 10:36:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+2 5kg tomatoes 
+2 5kg mushrooms 
+10kg red onions
+
+PARSED ITEMS:
+------------------------------
+1. Cocktail Tomatoes (200g) | Qty: 1.0 | Unit: punnet
+2. Brown Mushrooms (5kg) | Qty: 0.4 | Unit: kg
+3. Red Onions (10kg) | Qty: 1.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 3
+Order items: 0
+Difference: 3
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 4: 850
+------------------------------
+Timestamp: 2025-10-01 08:44:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Beetroot 3kg
+Baby marrow 4kg
+Carrots 10kg
+cauliflower 4kg
+Cucumber 5kg
+Garlic fresh 3kg
+Lemons 20kg
+Onion red 4kg
+Onion white 2 bag
+Peppers green 5kg
+Peppers red 5kg
+Peppers yellow 4kg
+Pineapples 1 box 2kg
+Potatoes m/L 20 bag
+Tomato cocktail 2kg
+Tomato 1 box 5kg
+Lettuce head 10 each
+Chilli red 5kg
+Chilli green 1kg
+Parsley 1kg
+Mint leaves 2 * 100g
+
+PARSED ITEMS:
+------------------------------
+1. Baby Marrow (4kg) | Qty: 1.0 | Unit: bag
+2. Carrots (10kg) | Qty: 1.0 | Unit: bag
+3. Lemons (4kg) | Qty: 1.0 | Unit: bag
+4. Lemons (5kg) | Qty: 1.0 | Unit: bag
+5. Avocados (Hard) (3kg) | Qty: 1.0 | Unit: packet
+6. Lemons (20kg) | Qty: 1.0 | Unit: bag
+7. Red Onions (4kg) | Qty: 1.0 | Unit: bag
+8. White Onions (2kg) | Qty: 2.0 | Unit: bag
+9. Red Peppers (5kg) | Qty: 1.0 | Unit: bag
+10. Red Peppers (5kg) | Qty: 1.0 | Unit: bag
+11. Red Peppers (4kg) | Qty: 1.0 | Unit: bag
+12. pineapples | Qty: 1.0 | Unit: box
+13. Potatoes (1kg) | Qty: 1.0 | Unit: bag
+14. m/l | Qty: 20.0 | Unit: bag
+15. Avocados (Hard) (2kg) | Qty: 1.0 | Unit: punnet
+16. Tomatoes (5kg) | Qty: 1.0 | Unit: box
+17. lettuce | Qty: 10.0 | Unit: head
+18. Red Apples (5kg) | Qty: 1.0 | Unit: packet
+19. Avocados (Hard) (1kg) | Qty: 1.0 | Unit: packet
+20. Parsley (1kg) | Qty: 1.0 | Unit: bag
+21. Mint (100g) | Qty: 1.0 | Unit: packet
+22. leaves * | Qty: 2.0 | Unit: g
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 22
+Order items: 0
+Difference: 22
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 5: 847
+------------------------------
+Timestamp: 2025-10-01 08:41:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Baby Marrow x 4 Pcts 200g
+Beans x 3 packet 500g 
+Carrots x 5 kg
+cauliflower x 3 Pcts 
+Kiwi x 1 Pckt 500g
+Lemons x 2 Pct 5kg
+Mushrooms x 10 packet 1kg
+Red Onion x 1 Pckt 5kg
+Pineapple x 4 each
+Potatoes x 4 bag 10kg
+Spinach x 5 Bunch each
+Strawberry x 2 packet 250g
+Tomatoes x 1 Box 5kg
+Cocktail Tomatoes x 4 Pcts 250g
+Basil x 4 Pcts 200g
+Mint x 1 Pckt  200g
+Parsley x 1 Pckt 200g
+Rosemary x 1 Pckt 200g
+Wild Rocket x 2 Pcts 200g
+
+PARSED ITEMS:
+------------------------------
+1. Baby Marrow (1kg) | Qty: 4.0 | Unit: g
+2. Beans (500g) | Qty: 3.0 | Unit: packet
+3. Carrots (5kg) | Qty: 1.0 | Unit: kg
+4. Cauliflower (3kg) | Qty: 1.0 | Unit: kg
+5. Kiwi (500g) | Qty: 1.0 | Unit: punnet
+6. Lemons (250g) | Qty: 2.0 | Unit: punnet
+7. Mixed Lettuce (100g) | Qty: 10.0 | Unit: packet
+8. Red Onions (5kg) | Qty: 0.2 | Unit: kg
+9. pineapple | Qty: 4.0 | Unit: each
+10. Potatoes (10kg) | Qty: 4.0 | Unit: bag
+11. spinach | Qty: 5.0 | Unit: bunch
+12. Mixed Lettuce (250g) | Qty: 2.0 | Unit: packet
+13. Tomatoes (5kg) | Qty: 1.0 | Unit: box
+14. Cocktail Tomatoes (1kg) | Qty: 4.0 | Unit: g
+15. Basil (200g) | Qty: 4.0 | Unit: punnet
+16. Mint (200g) | Qty: 1.0 | Unit: punnet
+17. Parsley (200g) | Qty: 1.0 | Unit: punnet
+18. Rosemary (200g) | Qty: 1.0 | Unit: punnet
+19. Wild Rocket (200g) | Qty: 2.0 | Unit: g
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 19
+Order items: 0
+Difference: 19
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 6: 848
+------------------------------
+Timestamp: 2025-10-01 08:41:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+3 Pcts Aubergines
+2 Pcts Snap Peas
+
+PARSED ITEMS:
+------------------------------
+1. pcts aubergines | Qty: 3.0 | Unit: kg
+2. pcts snap peas | Qty: 2.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 2
+Order items: 0
+Difference: 2
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 7: 843
+------------------------------
+Timestamp: 2025-09-29 14:16:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Carrots 5 x 1kg 
+Beetroot 5 x 1kg 
+Green pepper 3 x 1 kg
+Yellow pepper 3 x 1 kg
+
+PARSED ITEMS:
+------------------------------
+1. Carrots (1kg) | Qty: 5.0 | Unit: punnet
+2. Beetroot (1kg) | Qty: 5.0 | Unit: punnet
+3. Green Peppers (3kg) | Qty: 1.0 | Unit: kg
+4. Yellow Peppers (3kg) | Qty: 1.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 4
+Order items: 0
+Difference: 4
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 8: 842
+------------------------------
+Timestamp: 2025-09-29 12:50:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Green pepper 3 x kg
+Yellow pepper 3 x kg 
+Carrots 5 kg bag
+Beetroot 5kg
+
+PARSED ITEMS:
+------------------------------
+1. Green Peppers (3kg) | Qty: 1.0 | Unit: kg
+2. Yellow Peppers (3kg) | Qty: 1.0 | Unit: kg
+3. Carrots (5kg) | Qty: 5.0 | Unit: bag
+4. Beetroot (5kg) | Qty: 1.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 4
+Order items: 0
+Difference: 4
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 9: 837
+------------------------------
+Timestamp: 2025-09-29 11:20:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+3 x 10kg bag red onions 
+1 x 10kg box ginger
+1 x  5kg box garlic 
+6 x box round tomatoes 
+3 x box 250g punnet cherry tomatoes 
+2 x 10kg bag butternut 
+2 x 30kg box lemons 
+3 x 10kg bag sweet potatoes 
+3 x 10kg bag loose carrots 
+2 x box cucumbers 
+2 x box Aubergine 
+2 x box yellow peppers 
+3 x box green peppers 
+5 x box red peppers 
+2 x box sweet corn 
+4 x box cauliflower 
+4 x box broccoli 
+1 x box gem squash
+1 x 5kg red chillies 
+1 x 5kg green chillies
+
+PARSED ITEMS:
+------------------------------
+1. Red Onions (10kg) | Qty: 3.0 | Unit: bag
+2. box ginger | Qty: 1.0 | Unit: box
+3. box garlic | Qty: 1.0 | Unit: box
+4. Tomatoes (5kg) | Qty: 6.0 | Unit: box
+5. Cocktail Tomatoes (1kg) | Qty: 3.0 | Unit: box
+6. Butternut (10kg) | Qty: 2.0 | Unit: bag
+7. Lemons (10kg) | Qty: 2.0 | Unit: box
+8. Sweet Potatoes (10kg) | Qty: 3.0 | Unit: bag
+9. Carrots (10kg) | Qty: 3.0 | Unit: bag
+10. box cucumbers | Qty: 2.0 | Unit: box
+11. box aubergine | Qty: 2.0 | Unit: box
+12. Yellow Peppers (2kg) | Qty: 2.0 | Unit: box
+13. Green Peppers (3kg) | Qty: 3.0 | Unit: box
+14. Red Peppers (5kg) | Qty: 5.0 | Unit: box
+15. Sweet Potatoes (2kg) | Qty: 2.0 | Unit: box
+16. box cauliflower | Qty: 4.0 | Unit: box
+17. box broccoli | Qty: 4.0 | Unit: box
+18. box gem squash | Qty: 1.0 | Unit: box
+19. Red Apples (5kg) | Qty: 1.0 | Unit: bag
+20. Green Chili (5kg) | Qty: 1.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 20
+Order items: 0
+Difference: 20
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 10: 836
+------------------------------
+Timestamp: 2025-09-29 08:35:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Lemon × 3 2kg
+Pineapple × 2 each
+Mint × 6 small pack  50g
+Orange × 1 bag 5kg
+Rosemary × 2 200g
+
+PARSED ITEMS:
+------------------------------
+1. Lemons (1kg) | Qty: 1.0 | Unit: kg
+2. × | Qty: 3.0 | Unit: kg
+3. pineapple | Qty: 1.0 | Unit: kg
+4. × | Qty: 2.0 | Unit: each
+5. Mint (100g) | Qty: 1.0 | Unit: packet
+6. Carrots (1kg Packed) | Qty: 6.0 | Unit: g
+7. Oranges (5kg) | Qty: 1.0 | Unit: bag
+8. Rosemary (100g) | Qty: 10.0 | Unit: kg
+9. × | Qty: 2.0 | Unit: g
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 9
+Order items: 0
+Difference: 9
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 11: 834
+------------------------------
+Timestamp: 2025-09-29 07:42:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Potato 6 x 10kg
+Spinach 1 box
+Tomato 1 box
+Baby marrow 3 200g
+Butternut 5kg bag
+carrots 1kg
+Pineapple 2 each
+Mushroom 5 200g punnet
+Green pepper 8 each
+Cherry tomato 2 packets 250g
+Cucumber 2 each
+Mixed lettuce 4 packets 500g
+Rosemary fresh 1 packet 500g
+
+PARSED ITEMS:
+------------------------------
+1. Potatoes (10kg) | Qty: 6.0 | Unit: punnet
+2. Spinach (1kg) | Qty: 1.0 | Unit: box
+3. Cocktail Tomatoes (1kg) | Qty: 1.0 | Unit: box
+4. Baby Marrow (1kg) | Qty: 1.0 | Unit: kg
+5. Butternut (5kg) | Qty: 1.0 | Unit: bag
+6. Carrots (1kg) | Qty: 1.0 | Unit: bag
+7. pineapple | Qty: 2.0 | Unit: each
+8. Basil (200g) | Qty: 5.0 | Unit: bag
+9. green pepper | Qty: 8.0 | Unit: each
+10. Cocktail Tomatoes (1kg) | Qty: 2.0 | Unit: packet
+11. cucumber | Qty: 2.0 | Unit: each
+12. Mixed Lettuce (500g) | Qty: 4.0 | Unit: packet
+13. Rosemary (500g) | Qty: 1.0 | Unit: packet
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 13
+Order items: 0
+Difference: 13
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 12: 832
+------------------------------
+Timestamp: 2025-09-29 07:41:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+3 × 5kg Tomato box
+2 × 5kg Mushroom 
+10kg white Onions
+
+PARSED ITEMS:
+------------------------------
+1. Bananas (5kg) | Qty: 3.0 | Unit: box
+2. Brown Mushrooms (5kg) | Qty: 0.4 | Unit: kg
+3. White Onions (10kg) | Qty: 1.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 3
+Order items: 0
+Difference: 3
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 13: 830
+------------------------------
+Timestamp: 2025-09-29 06:48:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+2 10 kg red onions 
+1 box lemons 3kg
+1 box mushrooms 5kg
+1 cucumber each
+
+PARSED ITEMS:
+------------------------------
+1. Red Onions (1kg) | Qty: 1.0 | Unit: bag
+2. Lemons (3kg) | Qty: 1.0 | Unit: box
+3. Brown Mushrooms (5kg) | Qty: 1.0 | Unit: box
+4. cucumber | Qty: 1.0 | Unit: each
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 4
+Order items: 0
+Difference: 4
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 14: 828
+------------------------------
+Timestamp: 2025-09-29 06:11:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+3kg carrots bag
+3kg red pepper box
+2kg tomato box
+10kg portabellini mushroom box
+10kg brown mushroom box
+5kg baby marrow
+5 × cucumber
+3 kg  celery
+500g parsley
+500g wild rocket
+3 × box avocados
+2 5kg lemon
+5× baby corn 200g
+10 × cherry tomato 200g
+500g strawberry
+1kg lime
+3kg butternut bag
+10kg red onion
+2 10kg potato
+7kg sweet potato
+5 kg spinach
+
+PARSED ITEMS:
+------------------------------
+1. Carrots (3kg) | Qty: 3.0 | Unit: bag
+2. Red Peppers (3kg) | Qty: 3.0 | Unit: box
+3. Cocktail Tomatoes (1kg) | Qty: 2.0 | Unit: box
+4. Portabellini Mushrooms (10kg) | Qty: 10.0 | Unit: box
+5. Brown Mushrooms (10kg) | Qty: 10.0 | Unit: box
+6. Baby Marrow (5kg) | Qty: 1.0 | Unit: kg
+7. × | Qty: 5.0 | Unit: kg
+8. cucumber | Qty: 1.0 | Unit: kg
+9. celery | Qty: 3.0 | Unit: kg
+10. Parsley (500g) | Qty: 1.0 | Unit: g
+11. Wild Rocket (500g) | Qty: 1.0 | Unit: g
+12. Avocados (Hard) (3kg) | Qty: 3.0 | Unit: box
+13. Lemons (1kg) | Qty: 1.0 | Unit: kg
+14. 5× | Qty: 1.0 | Unit: kg
+15. corn | Qty: 1.0 | Unit: kg
+16. Cocktail Tomatoes (1kg) | Qty: 10.0 | Unit: g
+17. Strawberries (1kg) | Qty: 1.0 | Unit: g
+18. Lime (1kg) | Qty: 1.0 | Unit: kg
+19. Butternut (3kg) | Qty: 3.0 | Unit: bag
+20. Red Onions (10kg) | Qty: 1.0 | Unit: kg
+21. Potatoes (2kg) | Qty: 1.0 | Unit: kg
+22. Sweet Potatoes (7kg) | Qty: 1.0 | Unit: kg
+23. Spinach (5kg) | Qty: 1.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 23
+Order items: 0
+Difference: 23
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 15: 824
+------------------------------
+Timestamp: 2025-09-29 06:09:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+1 x box lemons 5kg
+1 x box pineapple 2kg
+1 x bag oranges 5kg
+
+PARSED ITEMS:
+------------------------------
+1. Lemons (5kg) | Qty: 1.0 | Unit: box
+2. box pineapple | Qty: 1.0 | Unit: box
+3. Oranges (5kg) | Qty: 1.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 3
+Order items: 0
+Difference: 3
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 16: 826
+------------------------------
+Timestamp: 2025-09-29 06:09:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+5kg mushroom 
+5 * packet parsley 
+3 * box lemons 
+5 * box avocados, 2 semi ripe 
+2 * box Mixed lettuce 
+2 * box cucumber 
+5kg green pepper 
+5kg red pepper 
+3 * packet chives 200g
+5 * packet dill 200g
+3* packet mint 200g
+3 * packet strawberries  200g
+1 * bag oranges 5kg
+1 * bag red onion 
+1 * bag white onion 
+1 kg apple 
+1 * box pineapple  2kg
+10kg carrots 
+3 * packet rocket
+5kg deveined spinach 
+1 * packet rosemary  200g
+1 * packet Thyme 200g
+2kg tomatoes
+
+PARSED ITEMS:
+------------------------------
+1. * | Qty: 5.0 | Unit: packet
+2. Parsley (1kg) | Qty: 1.0 | Unit: packet
+3. Lemons (3kg) | Qty: 3.0 | Unit: box
+4. Avocados (Hard) (1kg) | Qty: 5.0 | Unit: box
+5. Avocados (Semi-Ripe) (2kg) | Qty: 1.0 | Unit: kg
+6. * mixed lettuce | Qty: 2.0 | Unit: box
+7. * cucumber | Qty: 2.0 | Unit: box
+8. Green Peppers (5kg) | Qty: 1.0 | Unit: kg
+9. Red Peppers (5kg) | Qty: 1.0 | Unit: kg
+10. * | Qty: 3.0 | Unit: packet
+11. chives | Qty: 1.0 | Unit: kg
+12. * | Qty: 5.0 | Unit: packet
+13. Dill (100g) | Qty: 10.0 | Unit: kg
+14. 3* | Qty: 1.0 | Unit: packet
+15. Mint (100g) | Qty: 1.0 | Unit: packet
+16. * | Qty: 3.0 | Unit: packet
+17. Strawberries (1kg) | Qty: 1.0 | Unit: kg
+18. * | Qty: 1.0 | Unit: bag
+19. Oranges (1kg) | Qty: 1.0 | Unit: kg
+20. Red Onions (1kg) | Qty: 1.0 | Unit: bag
+21. White Onions (1kg) | Qty: 1.0 | Unit: bag
+22. Red Apples (1kg) | Qty: 1.0 | Unit: kg
+23. Lemons (2kg) | Qty: 1.0 | Unit: box
+24. Carrots (10kg) | Qty: 1.0 | Unit: kg
+25. * | Qty: 3.0 | Unit: packet
+26. Rocket (100g) | Qty: 1.0 | Unit: packet
+27. Spinach (5kg) | Qty: 1.0 | Unit: kg
+28. * | Qty: 1.0 | Unit: packet
+29. Rosemary (100g) | Qty: 10.0 | Unit: kg
+30. * | Qty: 1.0 | Unit: packet
+31. Thyme (100g) | Qty: 10.0 | Unit: kg
+32. Cocktail Tomatoes (1kg) | Qty: 2.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 32
+Order items: 0
+Difference: 32
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 17: 822
+------------------------------
+Timestamp: 2025-09-29 06:08:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Crispy lettuce × 2 boxes 
+Cucumber × 10 head
+Cabbage × 1 head
+Carrots × 10kg bag
+Onions × 2 10kg
+Lemon × 5kg bag
+Broccoli × 5 heads
+cauliflower × 5 heads 
+Whole tomatoes × 5kg box
+Cocktail tomatoes × 5 punnet 250g 
+Spinach × 10 bunches 
+Parsley × 100g
+Fresh Coriander ×100g
+Green peppers ×5kg box
+Red peppers ×5kg box
+Sweet corn ×5 pkts 200g
+
+PARSED ITEMS:
+------------------------------
+1. crispy lettuce × | Qty: 2.0 | Unit: packet
+2. cucumber | Qty: 1.0 | Unit: kg
+3. × | Qty: 10.0 | Unit: head
+4. cabbage × | Qty: 1.0 | Unit: head
+5. Carrots (1kg) | Qty: 1.0 | Unit: bag
+6. Lemons (10kg) | Qty: 1.0 | Unit: bag
+7. Red Onions (10kg) | Qty: 0.2 | Unit: kg
+8. Lemons (1kg) | Qty: 1.0 | Unit: kg
+9. Lemons (5kg) | Qty: 1.0 | Unit: bag
+10. Broccoli (1kg) | Qty: 1.0 | Unit: kg
+11. × | Qty: 5.0 | Unit: head
+12. Cauliflower (1kg) | Qty: 1.0 | Unit: kg
+13. × | Qty: 5.0 | Unit: head
+14. Tomatoes (5kg) | Qty: 1.0 | Unit: box
+15. Cocktail Tomatoes (200g) | Qty: 1.0 | Unit: punnet
+16. Strawberries (250g) | Qty: 5.0 | Unit: punnet
+17. Spinach (1kg) | Qty: 1.0 | Unit: packet
+18. × | Qty: 10.0 | Unit: kg
+19. Parsley (1kg) | Qty: 1.0 | Unit: packet
+20. × | Qty: 1.0 | Unit: g
+21. Coriander (100g) | Qty: 10.0 | Unit: kg
+22. ×100g | Qty: 1.0 | Unit: kg
+23. Green Peppers (5kg) | Qty: 1.0 | Unit: box
+24. Red Peppers (5kg) | Qty: 1.0 | Unit: box
+25. Sweet Potatoes (1kg) | Qty: 1.0 | Unit: kg
+26. Basil (200g) | Qty: 1.0 | Unit: packet
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 26
+Order items: 0
+Difference: 26
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 18: 820
+------------------------------
+Timestamp: 2025-09-29 05:39:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Stock 29 sep 2025
+1.Cartots 11kg
+2.Sweet Corn 3 pun
+3.Patty pan 1 pun
+4.Sweet Potatoes 2kg
+5.Cucumber 107
+6.Spinarch 26kg
+7.Brocoil 13 head
+8.Green Peppee 2,5kg
+9.yellow Pepper 7.3kg
+10.Red Pepper 3kg
+11.Tomatoes 5kg
+12.Crisp lettuce head 5 head
+13.Cherry Tomatoes 24 pun
+14.kale 200g
+15.Celery 800g
+16.Red Chillie 3.7kg
+17.Green Chillie 1.8kg
+18.Baby Marrow 10kg
+19.Brinjals 3kg
+20.Mixed Lettuce 4kg
+21.Red Cabbage 3 head
+22.Spring Onions 1.2kg
+23.Beet root 3kg
+24.Mushroom 6 pun
+25.Baby Corn 5 Pun
+26.potatoes 2 bag
+27.Baby Potatoes 8kg
+28.Red Onions 2bags (18kg)
+29.White Onions 1bag (9kg)
+30.Butternut 1 bag (11kg)
+31 Soft avocados 9 box
+32.kiwi 3kg
+33.Red Apple 4kg
+34.Green Grapes 7 pun
+35.Oranges 8kg
+36.Red Grapes 11 pun
+
+PARSED ITEMS:
+------------------------------
+1. stock sep | Qty: 29.0 | Unit: kg
+2. 1.cartots | Qty: 1.0 | Unit: kg
+3. 2.sweet corn pun | Qty: 3.0 | Unit: kg
+4. 3.patty pan pun | Qty: 1.0 | Unit: kg
+5. 4.sweet | Qty: 1.0 | Unit: kg
+6. Potatoes (1kg) | Qty: 1.0 | Unit: bag
+7. 5.cucumber | Qty: 107.0 | Unit: kg
+8. 6.spinarch | Qty: 1.0 | Unit: kg
+9. 7.brocoil | Qty: 13.0 | Unit: head
+10. 8.green peppee | Qty: 2.0 | Unit: kg
+11. Green Peppers (10kg) | Qty: 0.1 | Unit: kg
+12. Green Peppers (3kg) | Qty: 0.3333333333333333 | Unit: kg
+13. 11.tomatoes | Qty: 1.0 | Unit: kg
+14. 12.crisp | Qty: 1.0 | Unit: kg
+15. lettuce | Qty: 1.0 | Unit: head
+16. 13.cherry | Qty: 1.0 | Unit: punnet
+17. Cocktail Tomatoes (200g) | Qty: 1.0 | Unit: punnet
+18. pun | Qty: 24.0 | Unit: kg
+19. 14.kale | Qty: 1.0 | Unit: g
+20. 15.celery | Qty: 1.0 | Unit: g
+21. 16.red chillie | Qty: 1.0 | Unit: kg
+22. 17.green chillie | Qty: 1.0 | Unit: kg
+23. Baby Marrow (10kg) | Qty: 0.1 | Unit: kg
+24. 19.brinjals | Qty: 1.0 | Unit: kg
+25. 20.mixed lettuce | Qty: 1.0 | Unit: kg
+26. 21.red cabbage | Qty: 3.0 | Unit: head
+27. Red Onions (1kg) | Qty: 1.0 | Unit: kg
+28. Beetroot (2kg) | Qty: 0.5 | Unit: kg
+29. 24.mushroom pun | Qty: 6.0 | Unit: bag
+30. 25.baby corn pun | Qty: 5.0 | Unit: kg
+31. 26.potatoes | Qty: 2.0 | Unit: bag
+32. 27.baby | Qty: 1.0 | Unit: kg
+33. Potatoes (1kg) | Qty: 1.0 | Unit: bag
+34. 28.red onions (18kg) | Qty: 1.0 | Unit: bag
+35. White Onions (9kg) | Qty: 1.0 | Unit: bag
+36. 30.butternut (11kg) | Qty: 1.0 | Unit: bag
+37. Avocados (Hard) (1kg) | Qty: 31.0 | Unit: box
+38. 32.kiwi | Qty: 1.0 | Unit: kg
+39. Red Apples (5kg) | Qty: 0.2 | Unit: kg
+40. 34.green | Qty: 1.0 | Unit: kg
+41. Grapes (1kg) | Qty: 1.0 | Unit: kg
+42. pun | Qty: 7.0 | Unit: kg
+43. 35.oranges | Qty: 1.0 | Unit: kg
+44. 36.red | Qty: 1.0 | Unit: kg
+45. Grapes (1kg) | Qty: 1.0 | Unit: kg
+46. pun | Qty: 11.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 46
+Order items: 0
+Difference: 46
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 19: 813
+------------------------------
+Timestamp: 2025-09-25 06:27:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+1 x box lemon  2kg
+1 x box pineapple 5kg
+
+PARSED ITEMS:
+------------------------------
+1. Lemons (2kg) | Qty: 1.0 | Unit: box
+2. box pineapple | Qty: 1.0 | Unit: box
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 2
+Order items: 0
+Difference: 2
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 20: 814
+------------------------------
+Timestamp: 2025-09-25 06:27:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+5 x cocktail tomatoes
+
+PARSED ITEMS:
+------------------------------
+1. Tomatoes (5kg) | Qty: 5.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 1
+Order items: 0
+Difference: 1
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 21: 806
+------------------------------
+Timestamp: 2025-09-25 01:00:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+5kg butternut  
+5 * punnet strawberries 200g
+5 * packet mint 200g
+2 * box lemons 2kg
+1 * box pineapple 
+2kg tomatoes
+
+PARSED ITEMS:
+------------------------------
+1. * | Qty: 5.0 | Unit: punnet
+2. Strawberries (1kg) | Qty: 1.0 | Unit: kg
+3. * | Qty: 5.0 | Unit: packet
+4. Mint (100g) | Qty: 1.0 | Unit: packet
+5. Lemons (2kg) | Qty: 2.0 | Unit: box
+6. * pineapple | Qty: 1.0 | Unit: box
+7. Cocktail Tomatoes (1kg) | Qty: 2.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 7
+Order items: 0
+Difference: 7
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 22: 804
+------------------------------
+Timestamp: 2025-09-24 16:45:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+4kg semi tomato box
+5kg red pepper box 
+5kg carrots bag
+3 kg green chilli
+3 kg red chill
+5kg baby marrow
+15 cucumber each
+500g rosemary
+500g thyme
+1 box pineapple
+500g basil leaves
+500g rocket
+750g parsley
+5 pkt mixed lettuce
+7 pkt cherry tomato
+5 pkt baby corn
+3 5kg lemon
+7kg portabellini mushroom
+7kg brown mushroom
+2 × box soft avocados
+4kg spinach
+500g strawberry punnet
+2 10kg potato
+10kg red onion
+7kg sweet potato
+
+PARSED ITEMS:
+------------------------------
+1. Tomatoes (5kg) | Qty: 4.0 | Unit: box
+2. Red Peppers (5kg) | Qty: 5.0 | Unit: box
+3. Carrots (5kg) | Qty: 5.0 | Unit: bag
+4. Green Peppers (3kg) | Qty: 1.0 | Unit: kg
+5. Red Onions (3kg) | Qty: 1.0 | Unit: kg
+6. Baby Marrow (5kg) | Qty: 1.0 | Unit: kg
+7. cucumber | Qty: 15.0 | Unit: each
+8. Rosemary (500g) | Qty: 1.0 | Unit: g
+9. Thyme (500g) | Qty: 1.0 | Unit: g
+10. pineapple | Qty: 1.0 | Unit: box
+11. Basil (500g) | Qty: 1.0 | Unit: g
+12. Rocket (500g) | Qty: 1.0 | Unit: g
+13. Parsley (750g) | Qty: 1.0 | Unit: g
+14. Mixed Lettuce (100g) | Qty: 5.0 | Unit: packet
+15. Cocktail Tomatoes (1kg) | Qty: 7.0 | Unit: packet
+16. corn | Qty: 5.0 | Unit: packet
+17. Lemons (1kg) | Qty: 1.0 | Unit: kg
+18. Portabellini Mushrooms (7kg) | Qty: 1.0 | Unit: kg
+19. Brown Mushrooms (7kg) | Qty: 1.0 | Unit: kg
+20. Avocados (Hard) (2kg) | Qty: 2.0 | Unit: box
+21. Spinach (3kg) | Qty: 4.0 | Unit: kg
+22. Strawberries (500g) | Qty: 1.0 | Unit: punnet
+23. Potatoes (2kg) | Qty: 1.0 | Unit: kg
+24. Red Onions (10kg) | Qty: 1.0 | Unit: kg
+25. Sweet Potatoes (7kg) | Qty: 1.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 25
+Order items: 0
+Difference: 25
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 23: 802
+------------------------------
+Timestamp: 2025-09-24 14:17:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Rocket 1.5kg
+Parsley 1kg
+Dill 500g punnet
+Chives 500g punnet
+Basil 500g punnet
+Spinach 30 bunch
+
+PARSED ITEMS:
+------------------------------
+1. Parsley (1kg) | Qty: 1.0 | Unit: bag
+2. Dill (500g) | Qty: 1.0 | Unit: bag
+3. Lemons (500g) | Qty: 1.0 | Unit: bag
+4. Basil (500g) | Qty: 1.0 | Unit: bag
+5. spinach | Qty: 30.0 | Unit: bunch
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 5
+Order items: 0
+Difference: 5
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 24: 801
+------------------------------
+Timestamp: 2025-09-24 14:16:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Rocket 1.5 kg
+Parsley 1 kg
+Dill 500g packet
+Chives 500g packet
+Basil 500g packet
+Spinach 30 bunch
+
+PARSED ITEMS:
+------------------------------
+1. Rocket (500g) | Qty: 3.0 | Unit: kg
+2. Parsley (1kg) | Qty: 1.0 | Unit: kg
+3. Dill (500g) | Qty: 1.0 | Unit: bag
+4. Lemons (500g) | Qty: 1.0 | Unit: bag
+5. Basil (500g) | Qty: 1.0 | Unit: bag
+6. spinach | Qty: 30.0 | Unit: bunch
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 6
+Order items: 0
+Difference: 6
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 25: 798
+------------------------------
+Timestamp: 2025-09-24 12:51:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Red cabbage xb 15
+Carrots 3kg bag
+Tomatoes x 4 box
+Cherry tomatoes x 20 200g
+Mushroom x 20 punnet
+Banana 2kg
+Green apple 1kg
+Ice burg 2 head
+Rocket X2
+Cucumber x15
+Mix peppers 3kg
+Grapes red X1
+Lemon X3
+Onion white 10kg
+Spring onion 1,5kg
+Orange 1kg
+Mixed lettuce X1
+Ginger 500g
+
+PARSED ITEMS:
+------------------------------
+1. Red Peppers (15kg) | Qty: 1.0 | Unit: kg
+2. Carrots (3kg) | Qty: 1.0 | Unit: bag
+3. Tomatoes (5kg) | Qty: 4.0 | Unit: box
+4. Cocktail Tomatoes (1kg) | Qty: 20.0 | Unit: g
+5. Brown Mushrooms (200g) | Qty: 20.0 | Unit: punnet
+6. Lemons (2kg) | Qty: 1.0 | Unit: bag
+7. Avocados (Hard) (1kg) | Qty: 1.0 | Unit: packet
+8. ice burg | Qty: 2.0 | Unit: head
+9. Rocket (100g) | Qty: 1.0 | Unit: packet
+10. cucumber x15 | Qty: 1.0 | Unit: kg
+11. Red Peppers (3kg) | Qty: 1.0 | Unit: bag
+12. Red Chili (1kg) | Qty: 1.0 | Unit: kg
+13. lemon x3 | Qty: 1.0 | Unit: kg
+14. White Onions (10kg) | Qty: 1.0 | Unit: bag
+15. Red Onions (1kg) | Qty: 1.0 | Unit: bag
+16. Oranges (1kg) | Qty: 1.0 | Unit: bag
+17. Mixed Lettuce (100g) | Qty: 1.0 | Unit: packet
+18. Lemons (500g) | Qty: 1.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 18
+Order items: 0
+Difference: 18
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 26: 799
+------------------------------
+Timestamp: 2025-09-24 12:51:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Butternut x 10kg
+White cabbage x 5 head
+
+PARSED ITEMS:
+------------------------------
+1. Butternut (10kg) | Qty: 1.0 | Unit: packet
+2. white cabbage | Qty: 5.0 | Unit: head
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 2
+Order items: 0
+Difference: 2
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 27: 796
+------------------------------
+Timestamp: 2025-09-24 12:21:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+3 × 5kg Tomato 
+3 × 5kg Mushroom 
+10kg Onions 
+3kg Green Pepper
+
+PARSED ITEMS:
+------------------------------
+1. Tomatoes (5kg) | Qty: 0.6 | Unit: kg
+2. Brown Mushrooms (5kg) | Qty: 0.6 | Unit: kg
+3. Red Onions (10kg) | Qty: 1.0 | Unit: kg
+4. Green Peppers (3kg) | Qty: 1.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 4
+Order items: 0
+Difference: 4
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 28: 794
+------------------------------
+Timestamp: 2025-09-24 11:59:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+4 box lettuce 
+3 10kg onions 
+1kg red onions 
+3 box tomatoes 
+4 packet cherry tomatoes 200g
+1kg red pepper 
+1 cucumber  each
+200g parsley
+
+PARSED ITEMS:
+------------------------------
+1. Iceberg Lettuce (100g) | Qty: 4.0 | Unit: box
+2. Red Onions (3kg) | Qty: 1.0 | Unit: kg
+3. Red Onions (1kg) | Qty: 1.0 | Unit: kg
+4. Tomatoes (10kg) | Qty: 3.0 | Unit: box
+5. Basil (200g) | Qty: 4.0 | Unit: packet
+6. Red Peppers (1kg) | Qty: 1.0 | Unit: kg
+7. cucumber | Qty: 1.0 | Unit: each
+8. Parsley (200g) | Qty: 1.0 | Unit: g
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 8
+Order items: 0
+Difference: 8
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 29: 787
+------------------------------
+Timestamp: 2025-09-23 07:39:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Lemon × 2 box 5kg
+Pineapple × 1 box 
+Mint × 6 50g
+Orange × 1 bag 5kg
+Rosemary × 2 200g
+Onions × 3 bag 5kg
+
+PARSED ITEMS:
+------------------------------
+1. Lemons (5kg) | Qty: 2.0 | Unit: box
+2. pineapple × | Qty: 1.0 | Unit: box
+3. Mint (100g) | Qty: 1.0 | Unit: packet
+4. × | Qty: 6.0 | Unit: g
+5. Oranges (5kg) | Qty: 1.0 | Unit: bag
+6. Rosemary (100g) | Qty: 10.0 | Unit: kg
+7. × | Qty: 2.0 | Unit: g
+8. Red Onions (5kg) | Qty: 3.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 8
+Order items: 0
+Difference: 8
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 30: 775
+------------------------------
+Timestamp: 2025-09-23 05:01:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Lemon × 1  5kg
+Pineapple × 1 box 
+Mint pack × 4  100g
+Orange × 1 bag 5kg
+Rosemary × 2 200g
+
+PARSED ITEMS:
+------------------------------
+1. Lemons (1kg) | Qty: 1.0 | Unit: kg
+2. × | Qty: 1.0 | Unit: kg
+3. pineapple × | Qty: 1.0 | Unit: box
+4. Mint (100g) | Qty: 1.0 | Unit: packet
+5. Carrots (1kg Packed) | Qty: 4.0 | Unit: g
+6. Oranges (5kg) | Qty: 1.0 | Unit: bag
+7. Rosemary (100g) | Qty: 10.0 | Unit: kg
+8. × | Qty: 2.0 | Unit: g
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 8
+Order items: 0
+Difference: 8
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 31: 769
+------------------------------
+Timestamp: 2025-09-22 18:59:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Lemons 2 box 5kg
+Limes 1 bag kg
+Grape fruit 5 each 
+Oranges 1 bag 5kg
+Strawberry 6 punnet  200g
+Basil 2 packet  200g
+Chives 1 pack 200g
+Coriander 4 packet 200g
+Parsley 2 100g
+Mint 100g
+ rocket 200g
+Avocado 2 boxes
+Baby marrow 5 punnet 
+Broccoli 5 each
+Butternut 10kg
+Carrots 5kg
+cauliflower 5 each
+Fresh chilli red 1kg
+Fresh chilli green 1kg
+Mixed leaves lettuce 1 box 
+Mushrooms loose 1 box 5kg
+Green peppers 1 box 5kg
+Red peppers 1 box  5kg
+Yellow peppers 2box
+Potatoes large 10kg
+Spinach 1box
+Cocktail tomatoes 12 punnet 
+Tomatoes large 2boxes
+
+PARSED ITEMS:
+------------------------------
+1. Lemons (5kg) | Qty: 2.0 | Unit: box
+2. Lime (1kg) | Qty: 1.0 | Unit: bag
+3. grape fruit | Qty: 5.0 | Unit: each
+4. Oranges (5kg) | Qty: 1.0 | Unit: bag
+5. Strawberries (200g) | Qty: 6.0 | Unit: punnet
+6. Basil (200g) | Qty: 2.0 | Unit: packet
+7. chives | Qty: 1.0 | Unit: punnet
+8. Coriander (200g) | Qty: 4.0 | Unit: packet
+9. Parsley (100g) | Qty: 2.0 | Unit: bag
+10. Mint (100g) | Qty: 1.0 | Unit: bag
+11. Rocket (200g) | Qty: 1.0 | Unit: bag
+12. Avocados (Hard) (2kg) | Qty: 1.0 | Unit: kg
+13. Baby Marrow (200g) | Qty: 5.0 | Unit: punnet
+14. Broccoli (10kg) | Qty: 5.0 | Unit: each
+15. Butternut (10kg) | Qty: 1.0 | Unit: bag
+16. Carrots (5kg) | Qty: 1.0 | Unit: bag
+17. Cauliflower (10kg) | Qty: 5.0 | Unit: each
+18. Red Chili (1kg) | Qty: 1.0 | Unit: kg
+19. Green Chili (1kg) | Qty: 1.0 | Unit: kg
+20. Mixed Lettuce (100g) | Qty: 1.0 | Unit: box
+21. Brown Mushrooms (5kg) | Qty: 1.0 | Unit: box
+22. Green Peppers (5kg) | Qty: 1.0 | Unit: box
+23. Red Peppers (5kg) | Qty: 1.0 | Unit: box
+24. Red Peppers (2kg) | Qty: 1.0 | Unit: bag
+25. Potatoes (10kg) | Qty: 1.0 | Unit: bag
+26. Spinach (1kg) | Qty: 1.0 | Unit: bag
+27. Cocktail Tomatoes (200g) | Qty: 12.0 | Unit: punnet
+28. tomatoes large 2boxes | Qty: 1.0 | Unit: punnet
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 28
+Order items: 0
+Difference: 28
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 32: 767
+------------------------------
+Timestamp: 2025-09-22 18:05:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+750g parsley
+3 box soft avos
+
+PARSED ITEMS:
+------------------------------
+1. Avocados (Hard) (3kg) | Qty: 3.0 | Unit: box
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 1
+Order items: 0
+Difference: 1
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 33: 765
+------------------------------
+Timestamp: 2025-09-22 18:01:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Baby marrow 2kg
+Carrots 10kg
+Cauliflower 3kg
+Cucumber 4kg
+Kale 1 kg
+Lemons 30kg
+Onions red 3kg
+Onions white 2 bags
+Peppers green 5kg
+Peppers red 3kg
+Peppers yellow 3kg
+Pineapples 1 box
+Potatoes  20 bags 10kg
+Tomato cocktail 1 kg
+Tomato 1 box 5kg
+Lettuce heads 14 each
+Apples red 1,5kg
+Parsley 2 1kg
+
+PARSED ITEMS:
+------------------------------
+1. Baby Marrow (2kg) | Qty: 1.0 | Unit: bag
+2. Carrots (10kg) | Qty: 1.0 | Unit: bag
+3. Lemons (3kg) | Qty: 1.0 | Unit: bag
+4. Lemons (4kg) | Qty: 1.0 | Unit: bag
+5. Kale (1kg) | Qty: 1.0 | Unit: kg
+6. Lemons (10kg) | Qty: 1.0 | Unit: bag
+7. Red Onions (3kg) | Qty: 1.0 | Unit: bag
+8. White Onions (2kg) | Qty: 2.0 | Unit: bag
+9. Red Peppers (5kg) | Qty: 1.0 | Unit: bag
+10. Red Peppers (3kg) | Qty: 1.0 | Unit: bag
+11. Red Peppers (3kg) | Qty: 1.0 | Unit: bag
+12. pineapples | Qty: 1.0 | Unit: box
+13. Potatoes (10kg) | Qty: 20.0 | Unit: bag
+14. Cocktail Tomatoes (1kg) | Qty: 1.0 | Unit: kg
+15. Tomatoes (5kg) | Qty: 1.0 | Unit: box
+16. lettuce | Qty: 14.0 | Unit: head
+17. Red Apples (1kg) | Qty: 1.0 | Unit: kg
+18. Parsley (1kg) | Qty: 2.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 18
+Order items: 0
+Difference: 18
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 34: 758
+------------------------------
+Timestamp: 2025-09-22 11:54:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+1 x box lemon  5kg
+2 x mint 200g
+1 x oranges bag 10kg
+4 x pineapple each 
+4 x strawberries 200g
+
+PARSED ITEMS:
+------------------------------
+1. Lemons (5kg) | Qty: 1.0 | Unit: box
+2. Mint (200g) | Qty: 2.0 | Unit: bag
+3. Oranges (10kg) | Qty: 1.0 | Unit: bag
+4. pineapple | Qty: 4.0 | Unit: each
+5. Strawberries (1kg) | Qty: 4.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 5
+Order items: 0
+Difference: 5
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 35: 759
+------------------------------
+Timestamp: 2025-09-22 11:54:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+1kg bananas 
+3kg carrots 
+1 box cucumber 
+1 box lettuce 
+1 box green peppers 
+1 box  red pepper
+
+PARSED ITEMS:
+------------------------------
+1. Carrots (3kg) | Qty: 1.0 | Unit: kg
+2. cucumber | Qty: 1.0 | Unit: box
+3. Iceberg Lettuce (100g) | Qty: 1.0 | Unit: box
+4. Green Peppers (1kg) | Qty: 1.0 | Unit: box
+5. Red Peppers (1kg) | Qty: 1.0 | Unit: box
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 5
+Order items: 0
+Difference: 5
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 36: 757
+------------------------------
+Timestamp: 2025-09-22 11:19:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Chillies x 1 pckt 500g
+Cucumber x 5 head
+Lemons x 4 Pcts 1kg
+Lettuce mix x 8 Pcts 500g
+Mushrooms x 4 punnet 250g
+Red Onions x 1 5kg
+Spring Onion x 1 Bunch 
+Potatoes Large x 5 bag 5kg
+Sweet Potato x 3 Kg
+ Cocktail Tomatoes x 2 Pct 200g
+Basil x 100g
+Garlic x 1 Pckt 1kg
+Mint x 100g
+Ginger Fresh x 1 Pckt 1kg
+Parsley x 100g
+Wild Rocket x 4 x 100g
+
+PARSED ITEMS:
+------------------------------
+1. Mixed Lettuce (500g) | Qty: 1.0 | Unit: punnet
+2. cucumber | Qty: 5.0 | Unit: head
+3. Lemons (250g) | Qty: 4.0 | Unit: punnet
+4. Iceberg Lettuce (500g) | Qty: 8.0 | Unit: g
+5. Brown Mushrooms (250g) | Qty: 4.0 | Unit: punnet
+6. Red Onions (1kg) | Qty: 1.0 | Unit: kg
+7. spring onion | Qty: 1.0 | Unit: bunch
+8. Potatoes (5kg) | Qty: 5.0 | Unit: bag
+9. Sweet Potatoes (3kg) | Qty: 1.0 | Unit: kg
+10. Cocktail Tomatoes (1kg) | Qty: 2.0 | Unit: g
+11. Basil (100g) | Qty: 1.0 | Unit: packet
+12. Mixed Lettuce (100g) | Qty: 1.0 | Unit: punnet
+13. Mint (100g) | Qty: 1.0 | Unit: packet
+14. ginger pckt | Qty: 1.0 | Unit: kg
+15. Parsley (100g) | Qty: 1.0 | Unit: packet
+16. Wild Rocket (100g) | Qty: 4.0 | Unit: g
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 16
+Order items: 0
+Difference: 16
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 37: 751
+------------------------------
+Timestamp: 2025-09-22 10:46:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+2 box lettuce 
+2 10 kg onions 
+1 box tomatoes 5kg
+200g parsley 
+1 cucumber each
+2 packet cherry tomatoes 250g
+
+PARSED ITEMS:
+------------------------------
+1. Iceberg Lettuce (100g) | Qty: 2.0 | Unit: box
+2. Red Onions (2kg) | Qty: 1.0 | Unit: kg
+3. Tomatoes (5kg) | Qty: 1.0 | Unit: box
+4. Parsley (200g) | Qty: 1.0 | Unit: g
+5. cucumber | Qty: 1.0 | Unit: each
+6. Lemons (250g) | Qty: 2.0 | Unit: packet
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 6
+Order items: 0
+Difference: 6
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 38: 743
+------------------------------
+Timestamp: 2025-09-22 09:19:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Potato 5 x 10kg
+Lemons 1 box 5kg
+Fresh chilli red 2 packets 500g
+Fresh chilli green 1 packet 500g
+Cucumber 3 each
+Spinach 1 box
+broccoli 3 each
+cauliflower 3 each
+Cherry tomato 5 packets 200g
+Celery 1 each 1kg
+carrots 2 packets 1kg
+Mixed lettuce 4 packet 500g
+Mint 1 packet 100g
+Green pepper 6 each
+Butternut 5kg bag
+
+PARSED ITEMS:
+------------------------------
+1. Potatoes (10kg) | Qty: 5.0 | Unit: punnet
+2. Lemons (5kg) | Qty: 1.0 | Unit: box
+3. Red Chili (500g) | Qty: 2.0 | Unit: packet
+4. Green Chili (500g) | Qty: 1.0 | Unit: packet
+5. cucumber | Qty: 3.0 | Unit: each
+6. Spinach (1kg) | Qty: 1.0 | Unit: box
+7. Broccoli (10kg) | Qty: 3.0 | Unit: each
+8. Cauliflower (10kg) | Qty: 3.0 | Unit: each
+9. Cocktail Tomatoes (1kg) | Qty: 5.0 | Unit: packet
+10. celery | Qty: 1.0 | Unit: each
+11. Carrots (1kg) | Qty: 2.0 | Unit: packet
+12. Mixed Lettuce (500g) | Qty: 4.0 | Unit: packet
+13. Mint (100g) | Qty: 1.0 | Unit: packet
+14. green pepper | Qty: 6.0 | Unit: each
+15. Butternut (5kg) | Qty: 1.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 15
+Order items: 0
+Difference: 15
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 39: 741
+------------------------------
+Timestamp: 2025-09-22 09:02:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+2 × 5kg Tomato box
+2 × 5kg Mushroom  box
+10kg Onions bag
+
+PARSED ITEMS:
+------------------------------
+1. Bananas (5kg) | Qty: 2.0 | Unit: box
+2. Brown Mushrooms (5kg) | Qty: 2.0 | Unit: box
+3. Red Onions (10kg) | Qty: 10.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 3
+Order items: 0
+Difference: 3
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 40: 739
+------------------------------
+Timestamp: 2025-09-22 08:55:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+20kg bag butternut 
+30kg bag sweet potatoes 
+10x white onion
+2 x red onion
+6 x box round tomatoes 
+4 x cherry tomatoes 
+2 x bag loose carrots 1kg
+2 x bag of packed carrots 5kg
+1 x bag packed Beetroot 
+2 x box baby marrow 500g
+2 x box Aubergine 1kg
+6 x box red peppers 3kg
+3 x box green peppers 3kg
+2 x box yellow peppers 3kg
+1 x box green beans 1kg
+2 x box sweet corn  5kg
+1 x bag white cabbage 5kg
+
+PARSED ITEMS:
+------------------------------
+1. Butternut (20kg) | Qty: 20.0 | Unit: bag
+2. Sweet Potatoes (10kg) | Qty: 30.0 | Unit: bag
+3. White Onions (1kg) | Qty: 1.0 | Unit: bag
+4. Red Onions (2kg) | Qty: 2.0 | Unit: bag
+5. Tomatoes (5kg) | Qty: 6.0 | Unit: box
+6. Tomatoes (5kg) | Qty: 4.0 | Unit: bag
+7. Carrots (1kg) | Qty: 2.0 | Unit: bag
+8. Carrots (5kg) | Qty: 2.0 | Unit: bag
+9. Beetroot (1kg) | Qty: 1.0 | Unit: bag
+10. Baby Marrow (1kg) | Qty: 2.0 | Unit: box
+11. box aubergine | Qty: 2.0 | Unit: box
+12. Red Peppers (3kg) | Qty: 6.0 | Unit: box
+13. Green Peppers (3kg) | Qty: 3.0 | Unit: box
+14. Yellow Peppers (3kg) | Qty: 2.0 | Unit: box
+15. Green Peppers (1kg) | Qty: 1.0 | Unit: box
+16. Sweet Potatoes (5kg) | Qty: 2.0 | Unit: box
+17. White Onions (5kg) | Qty: 1.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 17
+Order items: 0
+Difference: 17
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 41: 737
+------------------------------
+Timestamp: 2025-09-22 08:03:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Red cabbage 4 head
+Carrots 3kg  bag
+Cherry tomatoes 20 200g 
+Tomatoes 3 1k
+Mushrooms 15  punnt 250g
+Strawberry 2  200g
+Red apple 1 kg 
+Bananas 2kg 
+Mixed lettuce x 1 box 2kg
+Rocket x 2 200g
+
+PARSED ITEMS:
+------------------------------
+1. red cabbage | Qty: 4.0 | Unit: head
+2. Carrots (3kg) | Qty: 1.0 | Unit: bag
+3. Cocktail Tomatoes (200g) | Qty: 1.0 | Unit: punnet
+4. tomatoes 1k | Qty: 3.0 | Unit: punnet
+5. Brown Mushrooms (250g) | Qty: 15.0 | Unit: punnet
+6. Strawberries (200g) | Qty: 2.0 | Unit: punnet
+7. Red Apples (1kg) | Qty: 1.0 | Unit: kg
+8. Bananas (2kg) | Qty: 1.0 | Unit: bag
+9. mixed lettuce 2kg | Qty: 1.0 | Unit: box
+10. Rocket (200g) | Qty: 2.0 | Unit: g
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 10
+Order items: 0
+Difference: 10
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 42: 730
+------------------------------
+Timestamp: 2025-09-22 06:50:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Crispy lettuce × 2 boxes
+Cucumber × 10 each
+Carrots × 10kg bag
+Lemon × 10kg bag
+Onions × 10kg bag
+Cocktail tomatoes × 5 pkts 
+Whole tomatoes × 3kg packet
+Red peppers × 5kg box
+Green peppers × 5kg box
+Sweet corn × 5 pkts
+Spinach × 10 bunches 
+Cabbage × 1 head
+Broccoli × 5 heads
+cauliflower × 5 heads
+Parsley × 300g
+Coriander × 200g
+Fresh chillie green × 2 kg
+
+PARSED ITEMS:
+------------------------------
+1. crispy lettuce × | Qty: 2.0 | Unit: packet
+2. cucumber | Qty: 1.0 | Unit: kg
+3. × | Qty: 10.0 | Unit: each
+4. Carrots (1kg) | Qty: 1.0 | Unit: bag
+5. Lemons (10kg) | Qty: 1.0 | Unit: bag
+6. Lemons (1kg) | Qty: 1.0 | Unit: kg
+7. Lemons (10kg) | Qty: 1.0 | Unit: bag
+8. Red Onions (10kg) | Qty: 1.0 | Unit: bag
+9. Cocktail Tomatoes (200g) | Qty: 1.0 | Unit: punnet
+10. × | Qty: 5.0 | Unit: packet
+11. Cocktail Tomatoes (200g) | Qty: 1.0 | Unit: punnet
+12. Avocados (Hard) (3kg) | Qty: 1.0 | Unit: packet
+13. Red Peppers (5kg) | Qty: 1.0 | Unit: box
+14. Green Peppers (5kg) | Qty: 1.0 | Unit: box
+15. Sweet Potatoes (1kg) | Qty: 1.0 | Unit: kg
+16. × | Qty: 5.0 | Unit: packet
+17. Spinach (1kg) | Qty: 1.0 | Unit: packet
+18. × | Qty: 10.0 | Unit: kg
+19. cabbage × | Qty: 1.0 | Unit: head
+20. Broccoli (1kg) | Qty: 1.0 | Unit: kg
+21. × | Qty: 5.0 | Unit: head
+22. Cauliflower (1kg) | Qty: 1.0 | Unit: kg
+23. × | Qty: 5.0 | Unit: head
+24. Parsley (1kg) | Qty: 1.0 | Unit: packet
+25. × | Qty: 1.0 | Unit: g
+26. Coriander (100g) | Qty: 10.0 | Unit: kg
+27. × | Qty: 1.0 | Unit: g
+28. Green Chili (2kg) | Qty: 1.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 28
+Order items: 0
+Difference: 28
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 43: 733
+------------------------------
+Timestamp: 2025-09-22 06:50:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+2 10kg potato bag
+5kg sweet potato bag
+3kg butternut bag
+10kg red onion bag
+7kg carrots bag
+4kg tomato box
+5kg red pepper bag
+7kg portabellini mushroom box
+7kg brown mushroom box
+10kg lemon bag
+750g basil leaves
+750g wild rocket
+10 baby corn punnet 250g
+10 cherry tomato 200g
+5 mixed lettuce 200g
+15 cucumber each
+3kg celery
+500g strawberry punnet
+500g mint packet
+1 kg grapefruit 
+1 kg orange
+
+PARSED ITEMS:
+------------------------------
+1. 10kg potato | Qty: 2.0 | Unit: bag
+2. Sweet Potatoes (5kg) | Qty: 5.0 | Unit: bag
+3. Butternut (3kg) | Qty: 3.0 | Unit: bag
+4. Red Onions (10kg) | Qty: 10.0 | Unit: bag
+5. Carrots (7kg) | Qty: 7.0 | Unit: bag
+6. Tomatoes (5kg) | Qty: 4.0 | Unit: box
+7. Red Peppers (5kg) | Qty: 5.0 | Unit: bag
+8. Portabellini Mushrooms (7kg) | Qty: 7.0 | Unit: box
+9. Brown Mushrooms (7kg) | Qty: 7.0 | Unit: box
+10. Lemons (10kg) | Qty: 10.0 | Unit: bag
+11. Basil (750g) | Qty: 1.0 | Unit: g
+12. Wild Rocket (100g) | Qty: 1.0 | Unit: g
+13. Strawberries (250g) | Qty: 10.0 | Unit: punnet
+14. Cocktail Tomatoes (1kg) | Qty: 10.0 | Unit: g
+15. Mixed Lettuce (200g) | Qty: 5.0 | Unit: g
+16. cucumber | Qty: 15.0 | Unit: each
+17. celery | Qty: 3.0 | Unit: kg
+18. Strawberries (500g) | Qty: 1.0 | Unit: punnet
+19. Mint (500g) | Qty: 1.0 | Unit: packet
+20. grapefruit | Qty: 1.0 | Unit: kg
+21. Oranges (1kg) | Qty: 1.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 21
+Order items: 0
+Difference: 21
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 44: 729
+------------------------------
+Timestamp: 2025-09-22 06:49:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+3kg green pepper box
+3kg red pepper  box
+2 * box avocados, 1 semi ripe
+3 * box lemons 5kg
+3 * packet dill 200g 
+5 * packet parsley  200g
+2 * bag onions white 5kg
+2 * box cucumber  1kg
+10kg carrots bag
+10 head broccoli 
+10 head cauliflower 
+5kg butternut 
+1 * box pineapple 
+5 kg spinach deveined 
+5 * packet mint
+5 * punnet strawberries
+
+PARSED ITEMS:
+------------------------------
+1. Green Peppers (3kg) | Qty: 3.0 | Unit: box
+2. Red Peppers (3kg) | Qty: 3.0 | Unit: box
+3. Avocados (Hard) (2kg) | Qty: 2.0 | Unit: box
+4. Avocados (Semi-Ripe) (1kg) | Qty: 1.0 | Unit: kg
+5. Lemons (5kg) | Qty: 3.0 | Unit: box
+6. * | Qty: 3.0 | Unit: packet
+7. Dill (100g) | Qty: 10.0 | Unit: kg
+8. * | Qty: 5.0 | Unit: packet
+9. Parsley (1kg) | Qty: 1.0 | Unit: packet
+10. White Onions (5kg) | Qty: 2.0 | Unit: bag
+11. Oranges (1kg) | Qty: 2.0 | Unit: box
+12. Carrots (10kg) | Qty: 10.0 | Unit: bag
+13. broccoli | Qty: 10.0 | Unit: head
+14. cauliflower | Qty: 10.0 | Unit: head
+15. Butternut (5kg) | Qty: 1.0 | Unit: kg
+16. * pineapple | Qty: 1.0 | Unit: box
+17. Spinach (5kg) | Qty: 1.0 | Unit: kg
+18. * | Qty: 5.0 | Unit: packet
+19. Mint (100g) | Qty: 1.0 | Unit: packet
+20. * | Qty: 5.0 | Unit: punnet
+21. Strawberries (1kg) | Qty: 1.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 21
+Order items: 0
+Difference: 21
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 45: 718
+------------------------------
+Timestamp: 2025-09-19 08:16:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+4 packet Green Grapes 1kg
+4 packet Strawberries 200g
+4 packet Red apples 5kg
+4 packet Bananas 1kg
+
+PARSED ITEMS:
+------------------------------
+1. Grapes (1kg) | Qty: 4.0 | Unit: packet
+2. Basil (200g) | Qty: 4.0 | Unit: packet
+3. Red Apples (5kg) | Qty: 4.0 | Unit: packet
+4. Bananas (1kg) | Qty: 4.0 | Unit: packet
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 4
+Order items: 0
+Difference: 4
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 46: 711
+------------------------------
+Timestamp: 2025-09-18 10:44:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Green apple 1 kg 
+Red apple 1 kg
+Banana 2 kg 
+avocados 1 kg
+
+PARSED ITEMS:
+------------------------------
+1. Green Chili (1kg) | Qty: 1.0 | Unit: kg
+2. Red Apples (1kg) | Qty: 1.0 | Unit: kg
+3. Bananas (2kg) | Qty: 1.0 | Unit: kg
+4. Avocados (Hard) (1kg) | Qty: 1.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 4
+Order items: 0
+Difference: 4
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 47: 709
+------------------------------
+Timestamp: 2025-09-18 07:40:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Mix lettuce x 20 200g
+Basil 200g
+Chives 100g
+Coriander 300g
+Curly parsley 300g
+Mint 100g
+Red cabbage x 3
+Carrots 10kg
+Green peppers 1 box
+Yellow pepper x 1 box
+Red pepper x 1 box 
+Tomato x 2 box
+Cocktail x 10
+Button mushrooms x 1 
+Butternut 1 bag 5kg
+Cucumber 1 box 5kg
+Baby marrow x 3 punnet 200g
+Red chilli 1 kg
+Potato 10kg bag
+Red onion x 1 bag 5kg
+White onion x 1 bag 5kg
+Lemon 5kg x 2
+Strawberry x 6 200g
+Pineapple x 1 box 2kg
+blueberries x 6 200g
+Avo x 3 box hard
+
+PARSED ITEMS:
+------------------------------
+1. Iceberg Lettuce (200g) | Qty: 20.0 | Unit: g
+2. Basil (200g) | Qty: 1.0 | Unit: bag
+3. Basil (100g) | Qty: 1.0 | Unit: bag
+4. Coriander (300g) | Qty: 1.0 | Unit: bag
+5. Parsley (300g) | Qty: 1.0 | Unit: packet
+6. Mint (100g) | Qty: 1.0 | Unit: bag
+7. Red Onions (3kg) | Qty: 1.0 | Unit: kg
+8. Carrots (10kg) | Qty: 1.0 | Unit: bag
+9. Green Peppers (1kg) | Qty: 1.0 | Unit: box
+10. Yellow Peppers (1kg) | Qty: 1.0 | Unit: box
+11. Red Peppers (1kg) | Qty: 1.0 | Unit: box
+12. Cocktail Tomatoes (1kg) | Qty: 2.0 | Unit: box
+13. Cocktail Tomatoes (1kg) | Qty: 10.0 | Unit: kg
+14. Brown Mushrooms (10kg) | Qty: 1.0 | Unit: bag
+15. Butternut (5kg) | Qty: 1.0 | Unit: bag
+16. cucumber | Qty: 1.0 | Unit: box
+17. Baby Marrow (200g) | Qty: 3.0 | Unit: punnet
+18. Red Chili (1kg) | Qty: 1.0 | Unit: kg
+19. potato 10kg | Qty: 1.0 | Unit: bag
+20. Red Onions (5kg) | Qty: 1.0 | Unit: bag
+21. White Onions (5kg) | Qty: 1.0 | Unit: bag
+22. Lemons (5kg) | Qty: 1.0 | Unit: bag
+23. Strawberries (1kg) | Qty: 6.0 | Unit: g
+24. pineapple x | Qty: 1.0 | Unit: box
+25. blueberries | Qty: 6.0 | Unit: g
+26. Avocados (Hard) (3kg) | Qty: 3.0 | Unit: box
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 26
+Order items: 0
+Difference: 26
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 48: 706
+------------------------------
+Timestamp: 2025-09-18 02:34:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+2 * box avos soft
+2 * box lemons 5kg
+
+PARSED ITEMS:
+------------------------------
+1. Avocados (Hard) (2kg) | Qty: 2.0 | Unit: box
+2. Lemons (5kg) | Qty: 2.0 | Unit: box
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 2
+Order items: 0
+Difference: 2
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 49: 701
+------------------------------
+Timestamp: 2025-09-17 18:23:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Red Onions 10kg
+Potatoes 2 10kg
+Sweet Potato 5 kg
+Butternut 5kg bag
+Red Peppers 5kg bag
+Portabellin Mushrooms 7kg
+Brown Mushrooms 7kg
+Baby Marrow 7kg packet
+Pineapple 1 Box 2kg
+Rockets 700g packet
+Lemons 3 5kg
+Cherry Tomatoes 10 250g punnet
+Green Chilis 3 kg
+Avo 3 Box Soft
+Apples Red 1kg
+Banana 1 kg
+Cucumber 8 each
+Strawberry 500g
+Fresh Garlic 1kg
+Baby Spinach 200g
+Lettuce Baby Gem 4 packet
+
+PARSED ITEMS:
+------------------------------
+1. Red Onions (10kg) | Qty: 1.0 | Unit: bag
+2. Potatoes (10kg) | Qty: 2.0 | Unit: bag
+3. Sweet Potatoes (5kg) | Qty: 1.0 | Unit: kg
+4. Butternut (5kg) | Qty: 1.0 | Unit: bag
+5. Red Peppers (1kg) | Qty: 1.0 | Unit: bag
+6. Brown Mushrooms (7kg) | Qty: 1.0 | Unit: bag
+7. Brown Mushrooms (7kg) | Qty: 1.0 | Unit: bag
+8. Baby Marrow (1kg) | Qty: 1.0 | Unit: kg
+9. pineapple | Qty: 1.0 | Unit: box
+10. Rocket (100g) | Qty: 1.0 | Unit: bag
+11. Lemons (5kg) | Qty: 3.0 | Unit: bag
+12. Cocktail Tomatoes (200g) | Qty: 1.0 | Unit: punnet
+13. Strawberries (250g) | Qty: 10.0 | Unit: punnet
+14. Green Peppers (3kg) | Qty: 1.0 | Unit: kg
+15. Avocados (Hard) (3kg) | Qty: 3.0 | Unit: box
+16. Red Apples (1kg) | Qty: 1.0 | Unit: packet
+17. Bananas (1kg) | Qty: 1.0 | Unit: kg
+18. cucumber | Qty: 8.0 | Unit: each
+19. Strawberries (500g) | Qty: 1.0 | Unit: punnet
+20. Avocados (Hard) (1kg) | Qty: 1.0 | Unit: packet
+21. Spinach (200g) | Qty: 1.0 | Unit: packet
+22. Iceberg Lettuce (100g) | Qty: 4.0 | Unit: packet
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 22
+Order items: 0
+Difference: 22
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 50: 698
+------------------------------
+Timestamp: 2025-09-17 14:45:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+6 x mixed lettuce box
+1 x parsley 200g
+
+PARSED ITEMS:
+------------------------------
+1. mixed lettuce box | Qty: 6.0 | Unit: box
+2. Parsley (200g) | Qty: 1.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 2
+Order items: 0
+Difference: 2
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 51: 695
+------------------------------
+Timestamp: 2025-09-17 11:07:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+5kg Tomato box
+5kg Mushroom box
+10kg red Onions
+
+PARSED ITEMS:
+------------------------------
+1. Tomatoes (5kg) | Qty: 5.0 | Unit: box
+2. Brown Mushrooms (5kg) | Qty: 5.0 | Unit: box
+3. Red Onions (10kg) | Qty: 1.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 3
+Order items: 0
+Difference: 3
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 52: 693
+------------------------------
+Timestamp: 2025-09-17 10:14:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+2 box tomatoes 5kg
+2 box lettuce 
+2 10 kg onions 
+4 packet cherry tomatoes 200g
+200g parsley
+1 box lemons 5kg
+
+PARSED ITEMS:
+------------------------------
+1. Tomatoes (5kg) | Qty: 2.0 | Unit: box
+2. Iceberg Lettuce (100g) | Qty: 2.0 | Unit: box
+3. Red Onions (2kg) | Qty: 1.0 | Unit: kg
+4. Basil (200g) | Qty: 4.0 | Unit: packet
+5. Parsley (200g) | Qty: 1.0 | Unit: g
+6. Lemons (5kg) | Qty: 1.0 | Unit: box
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 6
+Order items: 0
+Difference: 6
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 53: 683
+------------------------------
+Timestamp: 2025-09-17 08:14:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Peppers red 2.5kg
+Cocktail tomatoes 1kg
+Lettuce head 6 each
+Potato 15 bag 5kg
+Onion red 2kg bag
+Oranges 2kg bag
+
+PARSED ITEMS:
+------------------------------
+1. Red Peppers (2kg) | Qty: 1.0 | Unit: bag
+2. Cocktail Tomatoes (200g) | Qty: 1.0 | Unit: punnet
+3. lettuce | Qty: 6.0 | Unit: head
+4. Potatoes (5kg) | Qty: 15.0 | Unit: bag
+5. Red Onions (2kg) | Qty: 1.0 | Unit: bag
+6. Oranges (2kg) | Qty: 1.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 6
+Order items: 0
+Difference: 6
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 54: 686
+------------------------------
+Timestamp: 2025-09-17 08:14:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+1 pckt Avocados 2kg
+1 Box Baby Narrows 500g
+1 Packet Bananas 1kg
+1 Broccoli head
+1 Bag Butternut 5kg
+1 x 5kg Carrots bag
+4 packet cauliflower  1kg
+2 packet Lemons 3kg
+4 packet Lettuce Mix 500g
+10 packet Mushrooms 200g
+2 bunch Spring Onion 
+2 packet Green Peppers 1kg
+2 packet Red Peppers 1kg
+4 bag Potatoes Large 5kg
+1 Bag Potatoes 2kg
+5 bunch Spinach 
+1 Box Tomatoes  5kg
+
+PARSED ITEMS:
+------------------------------
+1. Avocados (Hard) (2kg) | Qty: 0.5 | Unit: kg
+2. Lemons (500g) | Qty: 1.0 | Unit: box
+3. Bananas (1kg) | Qty: 1.0 | Unit: packet
+4. broccoli | Qty: 1.0 | Unit: head
+5. Butternut (5kg) | Qty: 1.0 | Unit: bag
+6. Carrots (5kg) | Qty: 1.0 | Unit: bag
+7. Avocados (Hard) (1kg) | Qty: 4.0 | Unit: packet
+8. Lemons (3kg) | Qty: 2.0 | Unit: packet
+9. Iceberg Lettuce (500g) | Qty: 4.0 | Unit: packet
+10. Basil (200g) | Qty: 10.0 | Unit: packet
+11. spring onion | Qty: 2.0 | Unit: bunch
+12. Red Peppers (1kg) | Qty: 2.0 | Unit: packet
+13. Red Peppers (1kg) | Qty: 2.0 | Unit: packet
+14. Potatoes (5kg) | Qty: 4.0 | Unit: bag
+15. Potatoes (2kg) | Qty: 1.0 | Unit: bag
+16. spinach | Qty: 5.0 | Unit: bunch
+17. Tomatoes (5kg) | Qty: 1.0 | Unit: box
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 17
+Order items: 0
+Difference: 17
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 55: 672
+------------------------------
+Timestamp: 2025-09-15 14:13:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+2 box lettuce 
+1 box tomatoes 
+2 10 kg white onions 
+1kg red onions 
+2 packet cherry tomatoes 200g
+1 cucumber each
+200g parsley
+
+PARSED ITEMS:
+------------------------------
+1. Iceberg Lettuce (100g) | Qty: 2.0 | Unit: box
+2. Cocktail Tomatoes (1kg) | Qty: 1.0 | Unit: box
+3. White Onions (1kg) | Qty: 1.0 | Unit: bag
+4. Red Onions (1kg) | Qty: 1.0 | Unit: kg
+5. Basil (200g) | Qty: 2.0 | Unit: packet
+6. cucumber | Qty: 1.0 | Unit: each
+7. Parsley (200g) | Qty: 1.0 | Unit: g
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 7
+Order items: 0
+Difference: 7
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 56: 670
+------------------------------
+Timestamp: 2025-09-15 11:14:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+1 x bag loose carrots 5kg
+1 x bag packs carrots 2kg
+6 x bag white onions 2kg
+2 x red bag onion 2kg
+2 10kg bag sweet potato
+2 x box baby marrow 200g
+1 box Aubergine
+3 box cucumbers
+1 x box green pepper 5kg
+2 x box yellow peppers 5kg
+4 x red peppers 5kg
+10 x round box tomatoes 2kg
+4 x box cherry tomatoes 200g
+
+PARSED ITEMS:
+------------------------------
+1. Carrots (5kg) | Qty: 1.0 | Unit: bag
+2. Carrots (2kg) | Qty: 1.0 | Unit: bag
+3. White Onions (2kg) | Qty: 6.0 | Unit: bag
+4. Red Onions (2kg) | Qty: 2.0 | Unit: bag
+5. Sweet Potatoes (10kg) | Qty: 2.0 | Unit: bag
+6. Baby Marrow (1kg) | Qty: 2.0 | Unit: box
+7. aubergine | Qty: 1.0 | Unit: box
+8. cucumbers | Qty: 3.0 | Unit: box
+9. Green Peppers (5kg) | Qty: 1.0 | Unit: box
+10. Yellow Peppers (5kg) | Qty: 2.0 | Unit: box
+11. Red Peppers (5kg) | Qty: 4.0 | Unit: bag
+12. Cocktail Tomatoes (1kg) | Qty: 10.0 | Unit: box
+13. Cocktail Tomatoes (1kg) | Qty: 4.0 | Unit: box
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 13
+Order items: 0
+Difference: 13
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 57: 668
+------------------------------
+Timestamp: 2025-09-15 10:46:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Potato 4 x 10kg
+Lemon 1 box
+Tomato 1 box
+Mixed lettuce 1 box
+Carrots 2 packet 1kg
+Pineapple 1 each
+Mushroom 4 packet 200g
+Cucumber 2 each
+Celery 1 each
+Cherry tomato 2 packets 200g
+Green pepper 4each
+Onion white 5kg
+Red onion 5kg
+
+PARSED ITEMS:
+------------------------------
+1. Potatoes (10kg) | Qty: 4.0 | Unit: punnet
+2. Lemons (1kg) | Qty: 1.0 | Unit: box
+3. Cocktail Tomatoes (1kg) | Qty: 1.0 | Unit: box
+4. Mixed Lettuce (100g) | Qty: 1.0 | Unit: box
+5. Carrots (1kg) | Qty: 2.0 | Unit: packet
+6. pineapple | Qty: 1.0 | Unit: each
+7. Brown Mushrooms (10kg) | Qty: 4.0 | Unit: packet
+8. cucumber | Qty: 2.0 | Unit: each
+9. celery | Qty: 1.0 | Unit: each
+10. Cocktail Tomatoes (1kg) | Qty: 2.0 | Unit: packet
+11. Green Peppers (1kg) | Qty: 1.0 | Unit: bag
+12. White Onions (5kg) | Qty: 1.0 | Unit: bag
+13. Red Onions (5kg) | Qty: 1.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 13
+Order items: 0
+Difference: 13
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 58: 666
+------------------------------
+Timestamp: 2025-09-15 08:16:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+2 5kg tomatoes 
+2 5kg mushrooms 
+10 kg onions
+
+PARSED ITEMS:
+------------------------------
+1. Cocktail Tomatoes (200g) | Qty: 1.0 | Unit: punnet
+2. Brown Mushrooms (5kg) | Qty: 0.4 | Unit: kg
+3. Red Onions (10kg) | Qty: 1.0 | Unit: kg
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 3
+Order items: 0
+Difference: 3
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 59: 660
+------------------------------
+Timestamp: 2025-09-15 07:33:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Sweet Potato 5kg box
+Mushrooms port 5kg box
+Mushrooms Brown 5kg box
+Spinach 6 bunch
+Cherry Tomatoes 5 packet 200g
+Basil Leaves 400g
+Butternut 3kg
+Red Onions 10kg
+
+PARSED ITEMS:
+------------------------------
+1. Sweet Potatoes (5kg) | Qty: 1.0 | Unit: bag
+2. Brown Mushrooms (5kg) | Qty: 1.0 | Unit: bag
+3. Brown Mushrooms (5kg) | Qty: 1.0 | Unit: bag
+4. spinach | Qty: 6.0 | Unit: bunch
+5. Cocktail Tomatoes (1kg) | Qty: 5.0 | Unit: packet
+6. Basil (400g) | Qty: 1.0 | Unit: packet
+7. Butternut (3kg) | Qty: 1.0 | Unit: bag
+8. Red Onions (10kg) | Qty: 1.0 | Unit: bag
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 8
+Order items: 0
+Difference: 8
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 60: 658
+------------------------------
+Timestamp: 2025-09-15 07:08:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+Mushrooms x 20 200g punnet
+Cherry tomatoes  15 200g 
+Tomatoes x 3 box 5kg
+Bananas 2 kg 
+Strawberry x 2 200g punnet
+Green grapes x 1kg
+Green apple x 1kg
+Red apple x 1kg
+Pineapple x 1 each
+Orange 2kg bag
+white Onions 10kg 
+Mixed peppers 3kg 
+Lemon x 2 box 2kg
+
+PARSED ITEMS:
+------------------------------
+1. Brown Mushrooms (200g) | Qty: 20.0 | Unit: punnet
+2. Cocktail Tomatoes (200g) | Qty: 1.0 | Unit: punnet
+3. Tomatoes (5kg) | Qty: 3.0 | Unit: box
+4. Bananas (2kg) | Qty: 1.0 | Unit: kg
+5. Strawberries (200g) | Qty: 2.0 | Unit: punnet
+6. Green Chili (1kg) | Qty: 1.0 | Unit: kg
+7. Green Chili (1kg) | Qty: 1.0 | Unit: kg
+8. Red Apples (1kg) | Qty: 1.0 | Unit: kg
+9. pineapple | Qty: 1.0 | Unit: each
+10. Oranges (2kg) | Qty: 1.0 | Unit: bag
+11. White Onions (10kg) | Qty: 1.0 | Unit: bag
+12. Red Peppers (3kg) | Qty: 1.0 | Unit: bag
+13. Lemons (2kg) | Qty: 2.0 | Unit: box
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 13
+Order items: 0
+Difference: 13
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+
+MESSAGE 61: 606
+------------------------------
+Timestamp: 2025-09-08 19:22:00
+Order ID: No Order
+
+ORIGINAL MESSAGE CONTENT:
+------------------------------
+2x bag loose carrots 
+2x bag butternut 
+2x bag red onions 
+10x bag white onions
+2x bag baby potatoes 
+6x box round tomatoes 
+6x box plum tomatoes
+6x box cherry tomatoes 
+20kgx sweet potatoes 
+1x box ginger
+1x box garlic 
+3x box baby marrow loose
+2x box Aubergine loose
+1x box green beans
+6x box red peppers 
+2 box yellow peppers 
+2 box green peppers 
+1x box red Chilli 
+1x box green chilli
+
+PARSED ITEMS:
+------------------------------
+1. Carrots (1kg) | Qty: 1.0 | Unit: bag
+2. Butternut (1kg) | Qty: 1.0 | Unit: bag
+3. Red Onions (1kg) | Qty: 1.0 | Unit: bag
+4. White Onions (1kg) | Qty: 1.0 | Unit: bag
+5. Potatoes (1kg) | Qty: 1.0 | Unit: bag
+6. Cocktail Tomatoes (1kg) | Qty: 1.0 | Unit: box
+7. Cocktail Tomatoes (1kg) | Qty: 1.0 | Unit: box
+8. Cocktail Tomatoes (1kg) | Qty: 1.0 | Unit: box
+9. Sweet Potatoes (20kg) | Qty: 1.0 | Unit: bag
+10. 1x ginger | Qty: 1.0 | Unit: box
+11. 1x garlic | Qty: 1.0 | Unit: box
+12. Baby Marrow (1kg) | Qty: 1.0 | Unit: box
+13. 2x aubergine loose | Qty: 1.0 | Unit: box
+14. Green Peppers (1kg) | Qty: 1.0 | Unit: box
+15. Red Peppers (1kg) | Qty: 1.0 | Unit: box
+16. Yellow Peppers (2kg) | Qty: 2.0 | Unit: box
+17. Green Peppers (2kg) | Qty: 2.0 | Unit: box
+18. Red Peppers (1kg) | Qty: 1.0 | Unit: box
+19. Green Peppers (1kg) | Qty: 1.0 | Unit: box
+
+ORDER ITEMS (DATABASE):
+------------------------------
+No order items found
+
+COMPARISON ANALYSIS:
+------------------------------
+Parsed items: 19
+Order items: 0
+Difference: 19
+ISSUES FOUND:
+- ERROR: Items parsed but no order created
+
+==================================================
+

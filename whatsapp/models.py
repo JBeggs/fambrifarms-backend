@@ -108,14 +108,15 @@ class WhatsAppMessage(models.Model):
     
     def extract_company_name(self):
         """Extract company name from message using enhanced MessageParser"""
-        # CRITICAL FIX: Don't extract company names from stock messages
+        # CRITICAL: Always prioritize manual company selection regardless of message type
+        # Customer assignments should ALWAYS be preserved
+        if self.manual_company:
+            return self.manual_company
+            
+        # Don't extract company names from stock messages (unless manually assigned)
         # SHALLOME should never be treated as a customer
         if self.message_type == 'stock' or self.is_stock_controller():
             return ''
-            
-        # Prioritize manual company selection
-        if self.manual_company:
-            return self.manual_company
             
         company = django_message_parser.to_canonical_company(self.content)
         

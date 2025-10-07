@@ -32,4 +32,12 @@ urlpatterns = [
     
     # Company extraction refresh
     path('messages/refresh-companies/', views.refresh_company_extraction, name='refresh-company-extraction'),
+    
+    # Message corrections
+    path('messages/corrections/', views.update_message_corrections, name='update-message-corrections'),
+    path('messages/reprocess/', views.reprocess_message_with_corrections, name='reprocess-message-with-corrections'),
+    
+    # Always-suggestions processing
+    path('messages/process-with-suggestions/', views.process_message_with_suggestions, name='process-message-with-suggestions'),
+    path('orders/create-from-suggestions/', views.create_order_from_suggestions, name='create-order-from-suggestions'),
 ]

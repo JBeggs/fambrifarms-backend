@@ -1,0 +1,3657 @@
+[
+{
+  "model": "products.product",
+  "pk": 1,
+  "fields": {
+    "name": "Avocados (Hard)",
+    "description": "",
+    "department": 1,
+    "price": "85.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.735Z",
+    "updated_at": "2025-10-05T08:32:29.749Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 2,
+  "fields": {
+    "name": "Avocados (Hard)",
+    "description": "Avocados (Hard) - kg unit variation",
+    "department": 1,
+    "price": "85.00",
+    "unit": "kg",
+    "stock_level": "15.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.741Z",
+    "updated_at": "2025-10-05T08:32:29.750Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 3,
+  "fields": {
+    "name": "Avocados (Hard)",
+    "description": "Avocados (Hard) - piece unit variation",
+    "department": 1,
+    "price": "85.00",
+    "unit": "piece",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.742Z",
+    "updated_at": "2025-10-05T08:32:29.750Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 4,
+  "fields": {
+    "name": "Avocados (Semi-Ripe)",
+    "description": "",
+    "department": 1,
+    "price": "110.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.743Z",
+    "updated_at": "2025-09-28T20:37:16.743Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 5,
+  "fields": {
+    "name": "Avocados (Soft)",
+    "description": "",
+    "department": 1,
+    "price": "120.00",
+    "unit": "box",
+    "stock_level": "3.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.744Z",
+    "updated_at": "2025-09-28T21:01:53.993Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 6,
+  "fields": {
+    "name": "Bananas",
+    "description": "",
+    "department": 1,
+    "price": "220.00",
+    "unit": "kg",
+    "stock_level": "4.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.745Z",
+    "updated_at": "2025-10-05T08:32:29.677Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 7,
+  "fields": {
+    "name": "Black Grapes",
+    "description": "",
+    "department": 1,
+    "price": "60.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.746Z",
+    "updated_at": "2025-09-28T20:37:16.746Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 8,
+  "fields": {
+    "name": "Blueberries",
+    "description": "",
+    "department": 1,
+    "price": "240.00",
+    "unit": "punnet",
+    "stock_level": "4.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.747Z",
+    "updated_at": "2025-10-05T08:32:29.706Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 9,
+  "fields": {
+    "name": "Box Pineapple",
+    "description": "",
+    "department": 1,
+    "price": "25.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.748Z",
+    "updated_at": "2025-09-28T20:37:16.748Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 10,
+  "fields": {
+    "name": "Grapefruit",
+    "description": "",
+    "department": 1,
+    "price": "28.00",
+    "unit": "kg",
+    "stock_level": "11.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.748Z",
+    "updated_at": "2025-09-28T21:01:53.995Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 11,
+  "fields": {
+    "name": "Green Grapes",
+    "description": "",
+    "department": 1,
+    "price": "45.00",
+    "unit": "punnet",
+    "stock_level": "1.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.749Z",
+    "updated_at": "2025-09-28T21:01:53.956Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 12,
+  "fields": {
+    "name": "Lemon",
+    "description": "Lemon - Added for order processing",
+    "department": 1,
+    "price": "40.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.750Z",
+    "updated_at": "2025-10-05T08:32:29.673Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 13,
+  "fields": {
+    "name": "Lemons",
+    "description": "",
+    "department": 1,
+    "price": "40.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.751Z",
+    "updated_at": "2025-10-05T08:32:29.674Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 14,
+  "fields": {
+    "name": "Lemons",
+    "description": "Lemons - box unit variation",
+    "department": 1,
+    "price": "40.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.752Z",
+    "updated_at": "2025-10-05T08:32:29.674Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 15,
+  "fields": {
+    "name": "Lemons",
+    "description": "Lemons - bag unit variation",
+    "department": 1,
+    "price": "40.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.753Z",
+    "updated_at": "2025-10-05T08:32:29.675Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 16,
+  "fields": {
+    "name": "Lemons box",
+    "description": "",
+    "department": 1,
+    "price": "40.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.754Z",
+    "updated_at": "2025-10-05T08:32:29.675Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 17,
+  "fields": {
+    "name": "Lime",
+    "description": "",
+    "department": 1,
+    "price": "25.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.755Z",
+    "updated_at": "2025-09-28T20:37:16.755Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 18,
+  "fields": {
+    "name": "Naartjies",
+    "description": "",
+    "department": 1,
+    "price": "45.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.756Z",
+    "updated_at": "2025-09-28T20:37:16.756Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 19,
+  "fields": {
+    "name": "Oranges",
+    "description": "",
+    "department": 1,
+    "price": "25.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.757Z",
+    "updated_at": "2025-09-28T20:37:16.757Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 20,
+  "fields": {
+    "name": "Oranges",
+    "description": "Oranges - box unit variation",
+    "department": 1,
+    "price": "27.50",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.758Z",
+    "updated_at": "2025-09-28T20:37:16.758Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 21,
+  "fields": {
+    "name": "Oranges",
+    "description": "Oranges - bag unit variation",
+    "department": 1,
+    "price": "23.75",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.759Z",
+    "updated_at": "2025-09-28T20:37:16.759Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 22,
+  "fields": {
+    "name": "Papaya",
+    "description": "",
+    "department": 1,
+    "price": "30.00",
+    "unit": "punnet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.760Z",
+    "updated_at": "2025-09-28T20:37:16.760Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 23,
+  "fields": {
+    "name": "Paw Paw",
+    "description": "",
+    "department": 1,
+    "price": "25.00",
+    "unit": "punnet",
+    "stock_level": "4.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.761Z",
+    "updated_at": "2025-09-28T21:01:53.968Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 24,
+  "fields": {
+    "name": "Pineapple",
+    "description": "",
+    "department": 1,
+    "price": "25.00",
+    "unit": "each",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.762Z",
+    "updated_at": "2025-09-28T20:37:16.762Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 25,
+  "fields": {
+    "name": "Red Apples",
+    "description": "",
+    "department": 1,
+    "price": "35.00",
+    "unit": "kg",
+    "stock_level": "13.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.763Z",
+    "updated_at": "2025-09-28T21:01:53.977Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 26,
+  "fields": {
+    "name": "Red Grapes",
+    "description": "",
+    "department": 1,
+    "price": "45.00",
+    "unit": "punnet",
+    "stock_level": "1.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.764Z",
+    "updated_at": "2025-09-28T21:01:53.958Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 27,
+  "fields": {
+    "name": "Strawberries",
+    "description": "",
+    "department": 1,
+    "price": "400.00",
+    "unit": "punnet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.764Z",
+    "updated_at": "2025-10-05T08:32:29.669Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 28,
+  "fields": {
+    "name": "Strawberries",
+    "description": "Strawberries - kg unit variation",
+    "department": 1,
+    "price": "400.00",
+    "unit": "kg",
+    "stock_level": "12.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.765Z",
+    "updated_at": "2025-10-05T08:32:29.670Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 29,
+  "fields": {
+    "name": "Strawberries",
+    "description": "Strawberries - box unit variation",
+    "department": 1,
+    "price": "400.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.766Z",
+    "updated_at": "2025-10-05T08:32:29.671Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 30,
+  "fields": {
+    "name": "Sweet Melon",
+    "description": "",
+    "department": 1,
+    "price": "40.00",
+    "unit": "each",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.767Z",
+    "updated_at": "2025-09-28T20:37:16.767Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 31,
+  "fields": {
+    "name": "Water Melon",
+    "description": "",
+    "department": 1,
+    "price": "50.00",
+    "unit": "each",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.768Z",
+    "updated_at": "2025-09-28T20:37:16.768Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 32,
+  "fields": {
+    "name": "Watermelon",
+    "description": "",
+    "department": 1,
+    "price": "50.00",
+    "unit": "each",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.769Z",
+    "updated_at": "2025-09-28T20:37:16.769Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 33,
+  "fields": {
+    "name": "Baby Spinach",
+    "description": "",
+    "department": 2,
+    "price": "45.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.770Z",
+    "updated_at": "2025-09-28T20:37:16.770Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 34,
+  "fields": {
+    "name": "Basil",
+    "description": "",
+    "department": 2,
+    "price": "15.00",
+    "unit": "g",
+    "stock_level": "250.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.771Z",
+    "updated_at": "2025-09-28T23:34:47.782Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 35,
+  "fields": {
+    "name": "Chives",
+    "description": "",
+    "department": 2,
+    "price": "35.00",
+    "unit": "piece",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.772Z",
+    "updated_at": "2025-09-28T20:37:16.772Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 36,
+  "fields": {
+    "name": "Coriander",
+    "description": "",
+    "department": 2,
+    "price": "90.00",
+    "unit": "bunch",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.773Z",
+    "updated_at": "2025-10-05T08:32:29.725Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 37,
+  "fields": {
+    "name": "Crushed Garlic",
+    "description": "",
+    "department": 2,
+    "price": "90.00",
+    "unit": "kg",
+    "stock_level": "3.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.774Z",
+    "updated_at": "2025-09-28T21:01:54.007Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 38,
+  "fields": {
+    "name": "Dill",
+    "description": "",
+    "department": 2,
+    "price": "15.00",
+    "unit": "bunch",
+    "stock_level": "600.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.775Z",
+    "updated_at": "2025-09-28T21:01:53.984Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 39,
+  "fields": {
+    "name": "Garlic Cloves",
+    "description": "",
+    "department": 2,
+    "price": "80.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.776Z",
+    "updated_at": "2025-09-28T20:37:16.776Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 40,
+  "fields": {
+    "name": "Ginger",
+    "description": "",
+    "department": 2,
+    "price": "800.00",
+    "unit": "kg",
+    "stock_level": "1.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.777Z",
+    "updated_at": "2025-10-05T08:32:29.748Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 41,
+  "fields": {
+    "name": "Green Chili",
+    "description": "",
+    "department": 2,
+    "price": "45.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.778Z",
+    "updated_at": "2025-09-28T20:37:16.778Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 42,
+  "fields": {
+    "name": "Mint",
+    "description": "",
+    "department": 2,
+    "price": "10.00",
+    "unit": "bunch",
+    "stock_level": "1.50",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.779Z",
+    "updated_at": "2025-09-28T21:01:53.983Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 43,
+  "fields": {
+    "name": "Packets Mint",
+    "description": "",
+    "department": 2,
+    "price": "25.00",
+    "unit": "bunch",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.780Z",
+    "updated_at": "2025-09-28T20:37:16.780Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 44,
+  "fields": {
+    "name": "Packets Rosemary",
+    "description": "",
+    "department": 2,
+    "price": "25.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.780Z",
+    "updated_at": "2025-09-28T20:37:16.780Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 45,
+  "fields": {
+    "name": "Thyme",
+    "description": "",
+    "department": 2,
+    "price": "25.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.781Z",
+    "updated_at": "2025-09-28T21:06:36.370Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 46,
+  "fields": {
+    "name": "Parsley",
+    "description": "",
+    "department": 2,
+    "price": "100.00",
+    "unit": "bunch",
+    "stock_level": "1.50",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.782Z",
+    "updated_at": "2025-10-05T08:32:29.719Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 47,
+  "fields": {
+    "name": "Red Chili",
+    "description": "",
+    "department": 2,
+    "price": "80.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.783Z",
+    "updated_at": "2025-09-28T20:37:16.783Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 48,
+  "fields": {
+    "name": "Rocket",
+    "description": "",
+    "department": 2,
+    "price": "120.00",
+    "unit": "kg",
+    "stock_level": "400.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.784Z",
+    "updated_at": "2025-09-28T21:01:53.987Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 49,
+  "fields": {
+    "name": "Rosemary",
+    "description": "",
+    "department": 2,
+    "price": "12.00",
+    "unit": "bunch",
+    "stock_level": "1.20",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.785Z",
+    "updated_at": "2025-09-28T21:01:53.978Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 50,
+  "fields": {
+    "name": "Thyme",
+    "description": "",
+    "department": 2,
+    "price": "12.00",
+    "unit": "g",
+    "stock_level": "500.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.786Z",
+    "updated_at": "2025-09-28T21:06:16.662Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 51,
+  "fields": {
+    "name": "Turmeric",
+    "description": "",
+    "department": 2,
+    "price": "150.00",
+    "unit": "kg",
+    "stock_level": "1.50",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.787Z",
+    "updated_at": "2025-09-28T21:01:54.003Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 52,
+  "fields": {
+    "name": "Brown Mushrooms",
+    "description": "",
+    "department": 3,
+    "price": "80.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.788Z",
+    "updated_at": "2025-09-28T20:37:16.788Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 53,
+  "fields": {
+    "name": "Button Mushrooms",
+    "description": "",
+    "department": 3,
+    "price": "25.00",
+    "unit": "punnet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.789Z",
+    "updated_at": "2025-09-28T20:37:16.789Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 54,
+  "fields": {
+    "name": "Portabellini Mushrooms",
+    "description": "",
+    "department": 3,
+    "price": "90.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.790Z",
+    "updated_at": "2025-09-28T20:37:16.790Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 55,
+  "fields": {
+    "name": "Cherry Tomatoes",
+    "description": "",
+    "department": 4,
+    "price": "75.00",
+    "unit": "punnet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.791Z",
+    "updated_at": "2025-10-05T08:32:29.700Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 56,
+  "fields": {
+    "name": "Edible Flowers",
+    "description": "",
+    "department": 4,
+    "price": "35.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.792Z",
+    "updated_at": "2025-09-28T20:37:16.792Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 57,
+  "fields": {
+    "name": "Eggs (Jumbo)",
+    "description": "Jumbo eggs - 30 count box",
+    "department": 4,
+    "price": "75.00",
+    "unit": "tray",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.792Z",
+    "updated_at": "2025-09-28T21:45:16.889Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 58,
+  "fields": {
+    "name": "Eggs (Large)",
+    "description": "Large eggs - 30 count box",
+    "department": 4,
+    "price": "65.00",
+    "unit": "tray",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.793Z",
+    "updated_at": "2025-09-28T21:43:56.958Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 59,
+  "fields": {
+    "name": "Eggs (Medium)",
+    "description": "Medium eggs - 30 count box",
+    "department": 4,
+    "price": "55.00",
+    "unit": "tray",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.794Z",
+    "updated_at": "2025-09-28T21:43:52.919Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 60,
+  "fields": {
+    "name": "Free Range Eggs",
+    "description": "Free range eggs - 30 count box",
+    "department": 4,
+    "price": "85.00",
+    "unit": "tray",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.795Z",
+    "updated_at": "2025-09-28T21:43:48.609Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 61,
+  "fields": {
+    "name": "Large Veggie Box",
+    "description": "",
+    "department": 4,
+    "price": "320.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.796Z",
+    "updated_at": "2025-09-28T20:37:16.796Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 62,
+  "fields": {
+    "name": "Micro Greens",
+    "description": "",
+    "department": 4,
+    "price": "40.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.797Z",
+    "updated_at": "2025-09-28T20:37:16.797Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 63,
+  "fields": {
+    "name": "Micro Herbs",
+    "description": "",
+    "department": 4,
+    "price": "25.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.798Z",
+    "updated_at": "2025-09-28T20:37:16.798Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 64,
+  "fields": {
+    "name": "Small Veggie Box",
+    "description": "",
+    "department": 4,
+    "price": "180.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.799Z",
+    "updated_at": "2025-09-28T20:37:16.799Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 66,
+  "fields": {
+    "name": "Artichokes",
+    "description": "",
+    "department": 5,
+    "price": "45.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.801Z",
+    "updated_at": "2025-09-28T23:32:31.102Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 67,
+  "fields": {
+    "name": "Aubergine",
+    "description": "",
+    "department": 5,
+    "price": "55.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.802Z",
+    "updated_at": "2025-09-28T20:37:16.802Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 68,
+  "fields": {
+    "name": "Aubergine box",
+    "description": "",
+    "department": 5,
+    "price": "120.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.802Z",
+    "updated_at": "2025-09-28T20:37:16.802Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 69,
+  "fields": {
+    "name": "Baby Corn",
+    "description": "",
+    "department": 5,
+    "price": "20.00",
+    "unit": "punnet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.803Z",
+    "updated_at": "2025-09-28T20:37:16.803Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 70,
+  "fields": {
+    "name": "Baby Marrow",
+    "description": "",
+    "department": 5,
+    "price": "35.00",
+    "unit": "kg",
+    "stock_level": "14.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.804Z",
+    "updated_at": "2025-09-28T21:01:53.949Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 71,
+  "fields": {
+    "name": "Baby Potatoes",
+    "description": "",
+    "department": 5,
+    "price": "20.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.805Z",
+    "updated_at": "2025-10-05T08:32:29.692Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 72,
+  "fields": {
+    "name": "Beetroot",
+    "description": "",
+    "department": 5,
+    "price": "25.00",
+    "unit": "kg",
+    "stock_level": "7.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.806Z",
+    "updated_at": "2025-09-28T21:01:53.996Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 73,
+  "fields": {
+    "name": "Box Cucumber",
+    "description": "",
+    "department": 5,
+    "price": "100.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.807Z",
+    "updated_at": "2025-10-05T08:32:29.739Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 74,
+  "fields": {
+    "name": "Broccoli",
+    "description": "",
+    "department": 5,
+    "price": "200.00",
+    "unit": "head",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.808Z",
+    "updated_at": "2025-10-05T08:32:29.743Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 75,
+  "fields": {
+    "name": "Broccoli",
+    "description": "Broccoli - kg unit variation",
+    "department": 5,
+    "price": "200.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.809Z",
+    "updated_at": "2025-10-05T08:32:29.743Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 76,
+  "fields": {
+    "name": "Broccoli",
+    "description": "Broccoli - box unit variation",
+    "department": 5,
+    "price": "200.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.810Z",
+    "updated_at": "2025-10-05T08:32:29.744Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 77,
+  "fields": {
+    "name": "Brussels Sprouts",
+    "description": "",
+    "department": 5,
+    "price": "50.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.811Z",
+    "updated_at": "2025-09-28T20:37:16.811Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 78,
+  "fields": {
+    "name": "Butter Nut",
+    "description": "Butter Nut - Added for order processing",
+    "department": 5,
+    "price": "22.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.812Z",
+    "updated_at": "2025-09-28T20:37:16.812Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 79,
+  "fields": {
+    "name": "Butternut",
+    "description": "",
+    "department": 5,
+    "price": "65.00",
+    "unit": "kg",
+    "stock_level": "5.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.813Z",
+    "updated_at": "2025-10-05T08:32:29.708Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 80,
+  "fields": {
+    "name": "Carrots",
+    "description": "Carrots - Added for order processing",
+    "department": 5,
+    "price": "128.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.814Z",
+    "updated_at": "2025-10-05T08:32:29.709Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 81,
+  "fields": {
+    "name": "Carrots",
+    "description": "Carrots - bag unit variation",
+    "department": 5,
+    "price": "128.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.815Z",
+    "updated_at": "2025-10-05T08:32:29.710Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 82,
+  "fields": {
+    "name": "Carrots",
+    "description": "Carrots - bunch unit variation",
+    "department": 5,
+    "price": "128.00",
+    "unit": "bunch",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.815Z",
+    "updated_at": "2025-10-05T08:32:29.711Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 83,
+  "fields": {
+    "name": "Carrots (1kg Packed)",
+    "description": "",
+    "department": 5,
+    "price": "128.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.816Z",
+    "updated_at": "2025-10-05T08:32:29.712Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 84,
+  "fields": {
+    "name": "Carrots (Loose)",
+    "description": "",
+    "department": 5,
+    "price": "128.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.817Z",
+    "updated_at": "2025-10-05T08:32:29.718Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 85,
+  "fields": {
+    "name": "Cauliflower",
+    "description": "",
+    "department": 5,
+    "price": "80.00",
+    "unit": "head",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.818Z",
+    "updated_at": "2025-10-05T08:32:29.745Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 86,
+  "fields": {
+    "name": "Cauliflower",
+    "description": "Cauliflower - kg unit variation",
+    "department": 5,
+    "price": "80.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.819Z",
+    "updated_at": "2025-10-05T08:32:29.745Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 87,
+  "fields": {
+    "name": "Cauliflower",
+    "description": "Cauliflower - box unit variation",
+    "department": 5,
+    "price": "80.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.820Z",
+    "updated_at": "2025-10-05T08:32:29.746Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 88,
+  "fields": {
+    "name": "Celery",
+    "description": "",
+    "department": 5,
+    "price": "40.00",
+    "unit": "kg",
+    "stock_level": "1.50",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.821Z",
+    "updated_at": "2025-09-28T21:01:53.975Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 89,
+  "fields": {
+    "name": "Cocktail Tomatoes",
+    "description": "",
+    "department": 5,
+    "price": "5.00",
+    "unit": "punnet",
+    "stock_level": "8.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.822Z",
+    "updated_at": "2025-10-05T08:32:29.705Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 90,
+  "fields": {
+    "name": "Crispy Lettuce",
+    "description": "",
+    "department": 5,
+    "price": "200.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.823Z",
+    "updated_at": "2025-10-05T08:32:29.730Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 91,
+  "fields": {
+    "name": "Cucumber",
+    "description": "",
+    "department": 5,
+    "price": "100.00",
+    "unit": "each",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.824Z",
+    "updated_at": "2025-10-05T08:32:29.739Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 92,
+  "fields": {
+    "name": "Cucumber",
+    "description": "Cucumber - kg unit variation",
+    "department": 5,
+    "price": "100.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.825Z",
+    "updated_at": "2025-10-05T08:32:29.740Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 93,
+  "fields": {
+    "name": "Cucumber",
+    "description": "Cucumber - box unit variation",
+    "department": 5,
+    "price": "100.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.826Z",
+    "updated_at": "2025-10-05T08:32:29.741Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 94,
+  "fields": {
+    "name": "Cucumber Box",
+    "description": "",
+    "department": 5,
+    "price": "100.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.827Z",
+    "updated_at": "2025-10-05T08:32:29.741Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 95,
+  "fields": {
+    "name": "Deveined Spinach",
+    "description": "",
+    "department": 5,
+    "price": "25.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.828Z",
+    "updated_at": "2025-09-28T20:37:16.828Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 96,
+  "fields": {
+    "name": "Eggplant",
+    "description": "",
+    "department": 5,
+    "price": "45.00",
+    "unit": "kg",
+    "stock_level": "1.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.829Z",
+    "updated_at": "2025-09-28T21:01:53.970Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 97,
+  "fields": {
+    "name": "Green Beans",
+    "description": "",
+    "department": 5,
+    "price": "45.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.830Z",
+    "updated_at": "2025-09-28T20:37:16.830Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 98,
+  "fields": {
+    "name": "Green Cabbage",
+    "description": "",
+    "department": 5,
+    "price": "50.00",
+    "unit": "head",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.831Z",
+    "updated_at": "2025-10-05T08:32:29.747Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 99,
+  "fields": {
+    "name": "Green Chillies",
+    "description": "",
+    "department": 5,
+    "price": "75.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.832Z",
+    "updated_at": "2025-09-28T20:37:16.832Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 100,
+  "fields": {
+    "name": "Green Peppers",
+    "description": "",
+    "department": 5,
+    "price": "129.00",
+    "unit": "kg",
+    "stock_level": "2.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.832Z",
+    "updated_at": "2025-10-05T08:32:29.735Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 101,
+  "fields": {
+    "name": "Green Peppers",
+    "description": "Green Peppers - box unit variation",
+    "department": 5,
+    "price": "129.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.833Z",
+    "updated_at": "2025-10-05T08:32:29.736Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 102,
+  "fields": {
+    "name": "Green Peppers",
+    "description": "Green Peppers - piece unit variation",
+    "department": 5,
+    "price": "129.00",
+    "unit": "piece",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.834Z",
+    "updated_at": "2025-10-05T08:32:29.737Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 103,
+  "fields": {
+    "name": "Iceberg Lettuce",
+    "description": "",
+    "department": 5,
+    "price": "25.00",
+    "unit": "head",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.835Z",
+    "updated_at": "2025-09-28T20:37:16.835Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 104,
+  "fields": {
+    "name": "Lettuce Head",
+    "description": "",
+    "department": 5,
+    "price": "15.00",
+    "unit": "head",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.836Z",
+    "updated_at": "2025-09-28T20:37:16.836Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 105,
+  "fields": {
+    "name": "Lettuce Head",
+    "description": "Lettuce Head - kg unit variation",
+    "department": 5,
+    "price": "27.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.837Z",
+    "updated_at": "2025-09-28T20:37:16.837Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 106,
+  "fields": {
+    "name": "Lettuce Head",
+    "description": "Lettuce Head - box unit variation",
+    "department": 5,
+    "price": "21.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.838Z",
+    "updated_at": "2025-09-28T20:37:16.838Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 107,
+  "fields": {
+    "name": "Mixed Lettuce",
+    "description": "",
+    "department": 5,
+    "price": "35.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.839Z",
+    "updated_at": "2025-09-28T20:37:16.839Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 108,
+  "fields": {
+    "name": "Mixed Lettuce",
+    "description": "Mixed Lettuce - box unit",
+    "department": 5,
+    "price": "25.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.840Z",
+    "updated_at": "2025-09-28T20:37:16.840Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 109,
+  "fields": {
+    "name": "Mixed Peppers",
+    "description": "",
+    "department": 5,
+    "price": "50.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.841Z",
+    "updated_at": "2025-09-28T20:37:16.841Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 110,
+  "fields": {
+    "name": "Packets Dill",
+    "description": "",
+    "department": 5,
+    "price": "25.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.842Z",
+    "updated_at": "2025-09-28T20:37:16.842Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 111,
+  "fields": {
+    "name": "Packets Rocket",
+    "description": "",
+    "department": 5,
+    "price": "25.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.843Z",
+    "updated_at": "2025-09-28T20:37:16.843Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 112,
+  "fields": {
+    "name": "Patty Pan",
+    "description": "",
+    "department": 5,
+    "price": "8.00",
+    "unit": "each",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.844Z",
+    "updated_at": "2025-09-28T20:37:16.844Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 115,
+  "fields": {
+    "name": "Potatoes",
+    "description": "Potatoes - box unit variation",
+    "department": 5,
+    "price": "20.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.847Z",
+    "updated_at": "2025-10-05T08:32:29.693Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 116,
+  "fields": {
+    "name": "Punnets Strawberries",
+    "description": "",
+    "department": 5,
+    "price": "400.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.848Z",
+    "updated_at": "2025-10-05T08:32:29.672Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 117,
+  "fields": {
+    "name": "Red Cabbage",
+    "description": "",
+    "department": 5,
+    "price": "25.00",
+    "unit": "head",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.848Z",
+    "updated_at": "2025-09-28T20:37:16.848Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 118,
+  "fields": {
+    "name": "Red Chillies",
+    "description": "",
+    "department": 5,
+    "price": "80.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.849Z",
+    "updated_at": "2025-09-28T20:37:16.849Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 119,
+  "fields": {
+    "name": "Red Onions",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "9.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.850Z",
+    "updated_at": "2025-10-05T08:32:29.679Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 120,
+  "fields": {
+    "name": "Red Peppers",
+    "description": "",
+    "department": 5,
+    "price": "150.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.851Z",
+    "updated_at": "2025-10-05T08:32:29.732Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 121,
+  "fields": {
+    "name": "Red Peppers",
+    "description": "Red Peppers - box unit variation",
+    "department": 5,
+    "price": "150.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.852Z",
+    "updated_at": "2025-10-05T08:32:29.733Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 122,
+  "fields": {
+    "name": "Red Peppers",
+    "description": "Red Peppers - piece unit variation",
+    "department": 5,
+    "price": "150.00",
+    "unit": "piece",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.853Z",
+    "updated_at": "2025-10-05T08:32:29.734Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 123,
+  "fields": {
+    "name": "Spring Onions",
+    "description": "",
+    "department": 5,
+    "price": "25.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.854Z",
+    "updated_at": "2025-09-28T20:37:16.854Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 124,
+  "fields": {
+    "name": "Sweet Corn",
+    "description": "",
+    "department": 5,
+    "price": "15.00",
+    "unit": "punnet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.855Z",
+    "updated_at": "2025-09-28T20:37:16.855Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 125,
+  "fields": {
+    "name": "Sweet Potatoes",
+    "description": "",
+    "department": 5,
+    "price": "20.00",
+    "unit": "kg",
+    "stock_level": "25.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.856Z",
+    "updated_at": "2025-10-05T08:32:29.699Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 126,
+  "fields": {
+    "name": "Tomatoes",
+    "description": "",
+    "department": 5,
+    "price": "75.00",
+    "unit": "kg",
+    "stock_level": "5.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.857Z",
+    "updated_at": "2025-10-05T08:32:29.702Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 127,
+  "fields": {
+    "name": "Tomatoes",
+    "description": "Tomatoes - box unit variation",
+    "department": 5,
+    "price": "75.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.858Z",
+    "updated_at": "2025-10-05T08:32:29.703Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 128,
+  "fields": {
+    "name": "Tomatoes",
+    "description": "Tomatoes - punnet unit variation",
+    "department": 5,
+    "price": "75.00",
+    "unit": "punnet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.859Z",
+    "updated_at": "2025-10-05T08:32:29.703Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 129,
+  "fields": {
+    "name": "White Onions",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.860Z",
+    "updated_at": "2025-10-05T08:32:29.685Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 130,
+  "fields": {
+    "name": "Whole Tomatoes",
+    "description": "Whole Tomatoes - Added for order processing",
+    "department": 5,
+    "price": "75.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.861Z",
+    "updated_at": "2025-10-05T08:32:29.704Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 131,
+  "fields": {
+    "name": "Wild Rocket (bulk kg)",
+    "description": "",
+    "department": 5,
+    "price": "25.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.862Z",
+    "updated_at": "2025-09-29T12:30:33.700Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 132,
+  "fields": {
+    "name": "Yellow Peppers",
+    "description": "",
+    "department": 5,
+    "price": "250.00",
+    "unit": "kg",
+    "stock_level": "3.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-28T20:37:16.863Z",
+    "updated_at": "2025-10-05T08:32:29.738Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 133,
+  "fields": {
+    "name": "Box Pineapple",
+    "description": "Quick-created product for order processing",
+    "department": 1,
+    "price": "25.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T07:19:44.524Z",
+    "updated_at": "2025-10-05T08:32:29.752Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 134,
+  "fields": {
+    "name": "Red Onions (1kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.795Z",
+    "updated_at": "2025-10-05T08:32:29.680Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 135,
+  "fields": {
+    "name": "Red Onions (2kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.803Z",
+    "updated_at": "2025-10-05T08:32:29.680Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 136,
+  "fields": {
+    "name": "Red Onions (3kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.805Z",
+    "updated_at": "2025-10-05T08:32:29.681Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 137,
+  "fields": {
+    "name": "Red Onions (4kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.807Z",
+    "updated_at": "2025-10-05T08:32:29.681Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 138,
+  "fields": {
+    "name": "Red Onions (5kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.808Z",
+    "updated_at": "2025-10-05T08:32:29.682Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 139,
+  "fields": {
+    "name": "Red Onions (6kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.810Z",
+    "updated_at": "2025-10-05T08:32:29.682Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 140,
+  "fields": {
+    "name": "Red Onions (7kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.811Z",
+    "updated_at": "2025-10-05T08:32:29.683Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 141,
+  "fields": {
+    "name": "Red Onions (8kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.813Z",
+    "updated_at": "2025-10-05T08:32:29.683Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 142,
+  "fields": {
+    "name": "Red Onions (9kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.814Z",
+    "updated_at": "2025-10-05T08:32:29.684Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 143,
+  "fields": {
+    "name": "Red Onions (10kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.815Z",
+    "updated_at": "2025-10-05T08:32:29.679Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 144,
+  "fields": {
+    "name": "White Onions (1kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.817Z",
+    "updated_at": "2025-10-05T08:32:29.686Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 145,
+  "fields": {
+    "name": "White Onions (2kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.818Z",
+    "updated_at": "2025-10-05T08:32:29.687Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 146,
+  "fields": {
+    "name": "White Onions (3kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.820Z",
+    "updated_at": "2025-10-05T08:32:29.688Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 147,
+  "fields": {
+    "name": "White Onions (4kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.821Z",
+    "updated_at": "2025-10-05T08:32:29.688Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 148,
+  "fields": {
+    "name": "White Onions (5kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.823Z",
+    "updated_at": "2025-10-05T08:32:29.689Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 149,
+  "fields": {
+    "name": "White Onions (6kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.824Z",
+    "updated_at": "2025-10-05T08:32:29.689Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 150,
+  "fields": {
+    "name": "White Onions (7kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.826Z",
+    "updated_at": "2025-10-05T08:32:29.690Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 151,
+  "fields": {
+    "name": "White Onions (8kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.827Z",
+    "updated_at": "2025-10-05T08:32:29.690Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 152,
+  "fields": {
+    "name": "White Onions (9kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.828Z",
+    "updated_at": "2025-10-05T08:32:29.691Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 153,
+  "fields": {
+    "name": "White Onions (10kg)",
+    "description": "",
+    "department": 5,
+    "price": "175.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.830Z",
+    "updated_at": "2025-10-05T08:32:29.686Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 154,
+  "fields": {
+    "name": "Potatoes (1kg)",
+    "description": "",
+    "department": 5,
+    "price": "20.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.831Z",
+    "updated_at": "2025-10-05T08:32:29.694Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 155,
+  "fields": {
+    "name": "Potatoes (2kg)",
+    "description": "",
+    "department": 5,
+    "price": "20.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.833Z",
+    "updated_at": "2025-10-05T08:32:29.695Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 156,
+  "fields": {
+    "name": "Potatoes (3kg)",
+    "description": "",
+    "department": 5,
+    "price": "20.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.834Z",
+    "updated_at": "2025-10-05T08:32:29.695Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 157,
+  "fields": {
+    "name": "Potatoes (4kg)",
+    "description": "",
+    "department": 5,
+    "price": "20.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.835Z",
+    "updated_at": "2025-10-05T08:32:29.696Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 158,
+  "fields": {
+    "name": "Potatoes (5kg)",
+    "description": "",
+    "department": 5,
+    "price": "20.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.837Z",
+    "updated_at": "2025-10-05T08:32:29.696Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 159,
+  "fields": {
+    "name": "Potatoes (6kg)",
+    "description": "",
+    "department": 5,
+    "price": "20.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.838Z",
+    "updated_at": "2025-10-05T08:32:29.697Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 160,
+  "fields": {
+    "name": "Potatoes (7kg)",
+    "description": "",
+    "department": 5,
+    "price": "20.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.839Z",
+    "updated_at": "2025-10-05T08:32:29.697Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 161,
+  "fields": {
+    "name": "Potatoes (8kg)",
+    "description": "",
+    "department": 5,
+    "price": "20.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.841Z",
+    "updated_at": "2025-10-05T08:32:29.698Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 162,
+  "fields": {
+    "name": "Potatoes (9kg)",
+    "description": "",
+    "department": 5,
+    "price": "20.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.842Z",
+    "updated_at": "2025-10-05T08:32:29.698Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 163,
+  "fields": {
+    "name": "Potatoes (10kg)",
+    "description": "",
+    "department": 5,
+    "price": "20.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.843Z",
+    "updated_at": "2025-10-05T08:32:29.694Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 164,
+  "fields": {
+    "name": "Carrots (1kg)",
+    "description": "",
+    "department": 5,
+    "price": "128.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.845Z",
+    "updated_at": "2025-10-05T08:32:29.712Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 165,
+  "fields": {
+    "name": "Carrots (2kg)",
+    "description": "",
+    "department": 5,
+    "price": "128.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.846Z",
+    "updated_at": "2025-10-05T08:32:29.713Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 166,
+  "fields": {
+    "name": "Carrots (3kg)",
+    "description": "",
+    "department": 5,
+    "price": "128.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.847Z",
+    "updated_at": "2025-10-05T08:32:29.713Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 167,
+  "fields": {
+    "name": "Carrots (4kg)",
+    "description": "",
+    "department": 5,
+    "price": "128.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.849Z",
+    "updated_at": "2025-10-05T08:32:29.714Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 168,
+  "fields": {
+    "name": "Carrots (5kg)",
+    "description": "",
+    "department": 5,
+    "price": "128.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.850Z",
+    "updated_at": "2025-10-05T08:32:29.715Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 169,
+  "fields": {
+    "name": "Carrots (6kg)",
+    "description": "",
+    "department": 5,
+    "price": "128.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.851Z",
+    "updated_at": "2025-10-05T08:32:29.715Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 170,
+  "fields": {
+    "name": "Carrots (7kg)",
+    "description": "",
+    "department": 5,
+    "price": "128.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.853Z",
+    "updated_at": "2025-10-05T08:32:29.716Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 171,
+  "fields": {
+    "name": "Carrots (8kg)",
+    "description": "",
+    "department": 5,
+    "price": "128.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.854Z",
+    "updated_at": "2025-10-05T08:32:29.717Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 172,
+  "fields": {
+    "name": "Carrots (9kg)",
+    "description": "",
+    "department": 5,
+    "price": "128.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.856Z",
+    "updated_at": "2025-10-05T08:32:29.718Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 173,
+  "fields": {
+    "name": "Carrots (10kg)",
+    "description": "",
+    "department": 5,
+    "price": "128.00",
+    "unit": "bag",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:41:46.857Z",
+    "updated_at": "2025-10-05T08:32:29.712Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 174,
+  "fields": {
+    "name": "Thyme (50g packet)",
+    "description": "",
+    "department": 2,
+    "price": "25.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.024Z",
+    "updated_at": "2025-09-29T09:58:53.024Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 175,
+  "fields": {
+    "name": "Thyme (100g packet)",
+    "description": "",
+    "department": 2,
+    "price": "50.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.031Z",
+    "updated_at": "2025-09-29T09:58:53.031Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 176,
+  "fields": {
+    "name": "Thyme (200g packet)",
+    "description": "",
+    "department": 2,
+    "price": "100.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.032Z",
+    "updated_at": "2025-09-29T09:58:53.032Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 177,
+  "fields": {
+    "name": "Basil (50g packet)",
+    "description": "",
+    "department": 2,
+    "price": "7.50",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.034Z",
+    "updated_at": "2025-09-29T09:58:53.034Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 178,
+  "fields": {
+    "name": "Basil (100g packet)",
+    "description": "",
+    "department": 2,
+    "price": "15.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.036Z",
+    "updated_at": "2025-09-29T09:58:53.036Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 179,
+  "fields": {
+    "name": "Basil (200g packet)",
+    "description": "",
+    "department": 2,
+    "price": "30.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.037Z",
+    "updated_at": "2025-09-29T09:58:53.037Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 180,
+  "fields": {
+    "name": "Parsley (50g packet)",
+    "description": "",
+    "department": 2,
+    "price": "100.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.039Z",
+    "updated_at": "2025-10-05T08:32:29.721Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 181,
+  "fields": {
+    "name": "Parsley (100g packet)",
+    "description": "",
+    "department": 2,
+    "price": "100.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.040Z",
+    "updated_at": "2025-10-05T08:32:29.720Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 182,
+  "fields": {
+    "name": "Parsley (200g packet)",
+    "description": "",
+    "department": 2,
+    "price": "100.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.042Z",
+    "updated_at": "2025-10-05T08:32:29.720Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 183,
+  "fields": {
+    "name": "Coriander (50g packet)",
+    "description": "",
+    "department": 2,
+    "price": "90.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.043Z",
+    "updated_at": "2025-10-05T08:32:29.728Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 184,
+  "fields": {
+    "name": "Coriander (100g packet)",
+    "description": "",
+    "department": 2,
+    "price": "90.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.045Z",
+    "updated_at": "2025-10-05T08:32:29.726Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 185,
+  "fields": {
+    "name": "Coriander (200g packet)",
+    "description": "",
+    "department": 2,
+    "price": "90.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.046Z",
+    "updated_at": "2025-10-05T08:32:29.727Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 186,
+  "fields": {
+    "name": "Mint (50g packet)",
+    "description": "",
+    "department": 2,
+    "price": "12.50",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.047Z",
+    "updated_at": "2025-09-29T09:58:53.047Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 187,
+  "fields": {
+    "name": "Mint (100g packet)",
+    "description": "",
+    "department": 2,
+    "price": "25.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.049Z",
+    "updated_at": "2025-09-29T09:58:53.049Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 188,
+  "fields": {
+    "name": "Mint (200g packet)",
+    "description": "",
+    "department": 2,
+    "price": "50.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.050Z",
+    "updated_at": "2025-09-29T09:58:53.050Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 189,
+  "fields": {
+    "name": "Rosemary (50g packet)",
+    "description": "",
+    "department": 2,
+    "price": "20.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.052Z",
+    "updated_at": "2025-09-29T09:58:53.052Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 190,
+  "fields": {
+    "name": "Rosemary (100g packet)",
+    "description": "",
+    "department": 2,
+    "price": "40.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.053Z",
+    "updated_at": "2025-09-29T09:58:53.053Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 191,
+  "fields": {
+    "name": "Rosemary (200g packet)",
+    "description": "",
+    "department": 2,
+    "price": "80.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.055Z",
+    "updated_at": "2025-09-29T09:58:53.055Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 192,
+  "fields": {
+    "name": "Oregano (50g packet)",
+    "description": "",
+    "department": 2,
+    "price": "17.50",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.056Z",
+    "updated_at": "2025-09-29T09:58:53.056Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 193,
+  "fields": {
+    "name": "Oregano (100g packet)",
+    "description": "",
+    "department": 2,
+    "price": "35.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.057Z",
+    "updated_at": "2025-09-29T09:58:53.057Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 194,
+  "fields": {
+    "name": "Oregano (200g packet)",
+    "description": "",
+    "department": 2,
+    "price": "70.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.059Z",
+    "updated_at": "2025-09-29T09:58:53.059Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 195,
+  "fields": {
+    "name": "Sage (50g packet)",
+    "description": "",
+    "department": 2,
+    "price": "22.50",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.061Z",
+    "updated_at": "2025-09-29T09:58:53.061Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 196,
+  "fields": {
+    "name": "Sage (100g packet)",
+    "description": "",
+    "department": 2,
+    "price": "45.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.062Z",
+    "updated_at": "2025-09-29T09:58:53.062Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 197,
+  "fields": {
+    "name": "Sage (200g packet)",
+    "description": "",
+    "department": 2,
+    "price": "90.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.064Z",
+    "updated_at": "2025-09-29T09:58:53.064Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 198,
+  "fields": {
+    "name": "Micro Herbs (50g packet)",
+    "description": "",
+    "department": 2,
+    "price": "25.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.065Z",
+    "updated_at": "2025-09-29T09:58:53.065Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 199,
+  "fields": {
+    "name": "Micro Herbs (100g packet)",
+    "description": "",
+    "department": 2,
+    "price": "50.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.067Z",
+    "updated_at": "2025-09-29T09:58:53.067Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 200,
+  "fields": {
+    "name": "Micro Herbs (200g packet)",
+    "description": "",
+    "department": 2,
+    "price": "100.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.068Z",
+    "updated_at": "2025-09-29T09:58:53.068Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 201,
+  "fields": {
+    "name": "Edible Flowers (50g packet)",
+    "description": "",
+    "department": 2,
+    "price": "35.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.069Z",
+    "updated_at": "2025-09-29T09:58:53.069Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 202,
+  "fields": {
+    "name": "Edible Flowers (100g packet)",
+    "description": "",
+    "department": 2,
+    "price": "70.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.071Z",
+    "updated_at": "2025-09-29T09:58:53.071Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 203,
+  "fields": {
+    "name": "Edible Flowers (200g packet)",
+    "description": "",
+    "department": 2,
+    "price": "140.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "10.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T09:58:53.072Z",
+    "updated_at": "2025-09-29T09:58:53.072Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 204,
+  "fields": {
+    "name": "Wild Rocket (50g packet)",
+    "description": "Wild Rocket in 50g packet size",
+    "department": 5,
+    "price": "1.25",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "0.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T12:22:30.533Z",
+    "updated_at": "2025-09-29T12:22:30.534Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 205,
+  "fields": {
+    "name": "Wild Rocket (100g packet)",
+    "description": "Wild Rocket in 100g packet size",
+    "department": 5,
+    "price": "2.50",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "0.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T12:22:30.542Z",
+    "updated_at": "2025-09-29T12:22:30.542Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 206,
+  "fields": {
+    "name": "Wild Rocket (200g packet)",
+    "description": "Wild Rocket in 200g packet size",
+    "department": 5,
+    "price": "5.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "0.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T12:22:30.546Z",
+    "updated_at": "2025-09-29T12:22:30.546Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 207,
+  "fields": {
+    "name": "Wild Rocket (500g packet)",
+    "description": "Wild Rocket in 500g packet size",
+    "department": 5,
+    "price": "12.50",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "0.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-29T12:22:30.550Z",
+    "updated_at": "2025-09-29T12:22:30.550Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 208,
+  "fields": {
+    "name": "Istent",
+    "description": "Auto-created from WhatsApp order: 'istent'. Based on SHALLOME inventory patterns.",
+    "department": 5,
+    "price": "25.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-30T21:41:32.405Z",
+    "updated_at": "2025-09-30T21:41:32.405Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 209,
+  "fields": {
+    "name": "None",
+    "description": "Auto-created from WhatsApp order: 'none'. Based on SHALLOME inventory patterns.",
+    "department": 5,
+    "price": "25.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-09-30T21:41:32.415Z",
+    "updated_at": "2025-09-30T21:41:32.415Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 210,
+  "fields": {
+    "name": "Strawberry",
+    "description": "Fresh Strawberry",
+    "department": 1,
+    "price": "25.00",
+    "unit": "punnet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-10-04T20:56:38.585Z",
+    "updated_at": "2025-10-04T20:56:38.585Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 211,
+  "fields": {
+    "name": "Grapes",
+    "description": "Fresh Grapes",
+    "department": 1,
+    "price": "45.00",
+    "unit": "punnet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-10-04T20:56:38.591Z",
+    "updated_at": "2025-10-04T20:56:38.591Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 212,
+  "fields": {
+    "name": "Grape",
+    "description": "Fresh Grape",
+    "department": 1,
+    "price": "45.00",
+    "unit": "punnet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-10-04T20:56:38.593Z",
+    "updated_at": "2025-10-04T20:56:38.593Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 213,
+  "fields": {
+    "name": "Kiwi (200g punnet)",
+    "description": "Fresh Kiwi (200g punnet)",
+    "department": 1,
+    "price": "25.00",
+    "unit": "punnet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-10-05T08:03:08.175Z",
+    "updated_at": "2025-10-05T08:03:08.176Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 214,
+  "fields": {
+    "name": "Kiwi (500g punnet)",
+    "description": "Fresh Kiwi (500g punnet)",
+    "department": 1,
+    "price": "45.00",
+    "unit": "punnet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-10-05T08:03:08.183Z",
+    "updated_at": "2025-10-05T08:03:08.183Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 215,
+  "fields": {
+    "name": "Kiwi (box)",
+    "description": "Fresh Kiwi (box)",
+    "department": 1,
+    "price": "120.00",
+    "unit": "box",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-10-05T08:03:08.185Z",
+    "updated_at": "2025-10-05T08:03:08.185Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 216,
+  "fields": {
+    "name": "Snap Peas (packet)",
+    "description": "Fresh Snap Peas (packet)",
+    "department": 5,
+    "price": "15.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-10-05T08:03:08.186Z",
+    "updated_at": "2025-10-05T08:03:08.186Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 217,
+  "fields": {
+    "name": "Squash (kg)",
+    "description": "Fresh Squash (kg)",
+    "department": 5,
+    "price": "30.00",
+    "unit": "kg",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-10-05T08:03:08.188Z",
+    "updated_at": "2025-10-05T08:03:08.188Z"
+  }
+},
+{
+  "model": "products.product",
+  "pk": 218,
+  "fields": {
+    "name": "Sun Dried Tomatoes (packet)",
+    "description": "Fresh Sun Dried Tomatoes (packet)",
+    "department": 5,
+    "price": "40.00",
+    "unit": "packet",
+    "stock_level": "0.00",
+    "minimum_stock": "5.00",
+    "is_active": true,
+    "needs_setup": false,
+    "created_at": "2025-10-05T08:03:08.189Z",
+    "updated_at": "2025-10-05T08:32:29.754Z"
+  }
+}
+]

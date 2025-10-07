@@ -1,0 +1,1287 @@
+SIDE-BY-SIDE PARSING REPORT
+================================================================================
+
+Message ID: 483
+ORIGINAL: Hi Here is my order 
+
+Tomatoes x3 
+Sweet melonx1 
+Bananas 2kg 
+Onions 10kg 
+Lemon x2 
+Mixed lettuce x3box 
+Cherry tomatoes x15 200g 
+Carrots 2kg 
+Spring onion 1kg 
+Mushrooms x10 
+Grapesx1 
+Red cabage x2
+Strawberry x1
+
+Thanks
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+tomatoes x3                              | tomatoes | Qty: 3.0 | Unit: None    | Ambiguous packaging - Suggestions: Cherry Tomatoes (100), Cocktail Tomatoes (1kg) (100), Cocktail Tomatoes (200g) (100), Cocktail Tomatoes (250g) (100), Cocktail Tomatoes (500g) (100), Sun Dried Tomatoes (100), Tomatoes (100), Tomatoes (100), Tomatoes (100), Tomatoes (10kg) (100), Tomatoes (15kg) (100), Tomatoes (20kg) (100), Tomatoes (5kg) (100), Whole Tomatoes (100) | ❌ AMBIGUOUS
+sweet melonx1                            | sweet melon | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Sweet Melon (100), Sweet Corn (25), Sweet Corn (200g) (25), Sweet Potatoes (25), Sweet Potatoes (10kg) (25), Sweet Potatoes (15kg) (25), Sweet Potatoes (1kg) (25), Sweet Potatoes (20kg) (25), Sweet Potatoes (25kg) (25), Sweet Potatoes (2kg) (25), Sweet Potatoes (3kg) (25), Sweet Potatoes (4kg) (25), Sweet Potatoes (5kg) (25), Sweet Potatoes (6kg) (25), Sweet Potatoes (7kg) (25), Sweet Potatoes (8kg) (25), Sweet Potatoes (9kg) (25), Water Melon (25), Watermelon (25) | ❌ AMBIGUOUS
+bananas 2kg                              | bananas | Qty: 1.0 | Unit: kg | Pkg: 2kg | Bananas (2kg) | Score: 100.0        | ✅ CORRECT 
+onions 10kg                              | onions | Qty: 1.0 | Unit: kg | Pkg: 10kg | Red Onions (10kg) | Score: 100.0    | ✅ CORRECT 
+lemon x2                                 | lemon | Qty: 2.0 | Unit: None       | Ambiguous packaging - Suggestions: Lemon (100), Lemons (10kg) (80), Lemons (10kg) (80), Lemons (15kg) (80), Lemons (1kg) (80), Lemons (20kg) (80), Lemons (250g) (80), Lemons (25kg) (80), Lemons (2kg) (80), Lemons (2kg) (80), Lemons (3kg) (80), Lemons (4kg) (80), Lemons (500g) (80), Lemons (5kg) (80), Lemons (5kg) (80), Lemons (750g) (80) | ❌ AMBIGUOUS
+mixed lettuce x3box                      | lettuce | Qty: 1.0 | Unit: box | Pkg: 3box | Iceberg Lettuce | Score: 100.0      | ✅ CORRECT 
+cherry tomatoes x15 200g                 | cherry tomatoes | Qty: 15.0 | Unit: g | Pkg: 200g | Cherry Tomatoes | Score: 100.0      | ✅ CORRECT 
+carrots 2kg                              | carrots | Qty: 1.0 | Unit: kg | Pkg: 2kg | Carrots (2kg) | Score: 100.0        | ✅ CORRECT 
+spring onion 1kg                         | spring onions | Qty: 1.0 | Unit: kg | Pkg: 1kg | Spring Onions | Score: 100.0        | ✅ CORRECT 
+mushrooms x10                            | mushrooms | Qty: 10.0 | Unit: None  | Ambiguous packaging - Suggestions: Button Mushrooms (100), Portabellini Mushrooms (100), Portabellini Mushrooms (10kg) (100), Portabellini Mushrooms (5kg) (100), Portabellini Mushrooms (200g) (100), Portabellini Mushrooms (250g) (100), Portabellini Mushrooms (500g) (100), Portabellini Mushrooms (750g) (100), Portabellini Mushrooms (7kg) (100), Brown Mushrooms (95), Brown Mushrooms (10kg) (82), Brown Mushrooms (5kg) (82), Brown Mushrooms (200g) (82), Brown Mushrooms (250g) (82), Brown Mushrooms (500g) (82), Brown Mushrooms (750g) (82), Brown Mushrooms (7kg) (82) | ❌ AMBIGUOUS
+grapesx1                                 | grapes | Qty: 1.0 | Unit: None      | Ambiguous packaging - Suggestions: Black Grapes (95), Green Grapes (95), Red Grapes (95), White Grapes (95), Black Grapes (1kg) (82), Black Grapes (2kg) (82), Black Grapes (500g) (82), Black Grapes (5kg) (82), Green Grapes (1kg) (82), Green Grapes (2kg) (82), Green Grapes (500g) (82), Green Grapes (5kg) (82), Red Grapes (1kg) (82), Red Grapes (2kg) (82), Red Grapes (500g) (82), Red Grapes (5kg) (82), White Grapes (1kg) (82), White Grapes (2kg) (82), White Grapes (500g) (82), White Grapes (5kg) (82) | ❌ AMBIGUOUS
+red cabage x2                            | red cabage | Qty: 2.0 | Unit: None  | Ambiguous packaging - Suggestions: Green Cabbage (50), Red Apples (25), Red Apples (10kg) (25), Red Apples (1kg) (25), Red Apples (2kg) (25), Red Apples (5kg) (25), Red Apples (5kg) (25), Red Grapes (25), Red Grapes (1kg) (25), Red Grapes (2kg) (25), Red Grapes (500g) (25), Red Grapes (5kg) (25), Red Chili (25), Red Cabbage (25), Red Chili (100g) (25), Red Chili (1kg) (25), Red Chili (200g) (25), Red Chili (250g) (25), Red Chili (2kg) (25), Red Chili (500g) (25) | ❌ AMBIGUOUS
+strawberry x1                            | strawberry | Qty: 1.0 | Unit: None  | Ambiguous packaging - Suggestions: Strawberry (100), Strawberries (1kg) (9), Strawberries (200g) (9), Strawberries (2kg) (9), Strawberries (500g) (9), Strawberries (250g) (9), Strawberries (750g) (9) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 484
+ORIGINAL: Mugg and Bean
+PARSED: No items parsed
+MATCHED: Suggestions for unparsed items:
+--------------------------------------------------------------------------------
+  Mugg and Bean                  -> No suggestions available
+STATUS: 💡 SUGGESTIONS
+
+Message ID: 485
+ORIGINAL: Hie pliz send for Luma
+6*packets mint
+6* punnets strawberries
+1*box lemons
+1* box lettuce
+6*punnets cherry tomatoes
+3*packets micro herbs
+3kg red pepper
+1* box pineapple
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+6*packets mint                           | mint | Qty: 6.0 | Unit: packet      | Ambiguous packaging - Suggestions: Mint (100), Mint (100g) (100), Mint (200g) (100), Mint (50g) (100), Mint (150g) (100), Mint (250g) (100), Mint (300g) (100), Mint (400g) (100), Mint (500g) (100), Mint (600g) (100), Mint (750g) (100) | ❌ AMBIGUOUS
+6* punnets strawberries                  | strawberries | Qty: 6.0 | Unit: punnet | Ambiguous packaging - Suggestions: Strawberries (1kg) (100), Strawberries (200g) (100), Strawberries (250g) (100), Strawberries (2kg) (100), Strawberries (500g) (100), Strawberries (750g) (100), Strawberry (16) | ❌ AMBIGUOUS
+1*box lemons                             | box lemons | Qty: 1.0 | Unit: box   | Ambiguous packaging - Suggestions: Lemons (10kg) (100), Lemons (2kg) (100), Lemons (5kg) (100), Lemon (50), Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30) | ❌ AMBIGUOUS
+1* box lettuce                           | box lettuce | Qty: 1.0 | Unit: box  | Ambiguous packaging - Suggestions: Lettuce (100), Mixed Lettuce (75), Crispy Lettuce (2kg) (35), Crispy Lettuce (5kg) (35), Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30) | ❌ AMBIGUOUS
+6*punnets cherry tomatoes                | cherry tomatoes | Qty: 6.0 | Unit: punnet | Ambiguous packaging - Suggestions: Cherry Tomatoes (100), Tomatoes (10kg) (60), Tomatoes (15kg) (60), Tomatoes (20kg) (60), Tomatoes (5kg) (60), Whole Tomatoes (60), Tomatoes (40), Tomatoes (40), Tomatoes (40), Cocktail Tomatoes (1kg) (25), Cocktail Tomatoes (200g) (25), Cocktail Tomatoes (250g) (25), Cocktail Tomatoes (500g) (25), Sun Dried Tomatoes (25) | ❌ AMBIGUOUS
+3*packets micro herbs                    | micro herbs | Qty: 3.0 | Unit: packet | Ambiguous packaging - Suggestions: Micro Herbs (100g) (100), Micro Herbs (200g) (100), Micro Herbs (50g) (100), Micro Herbs (100), Micro Greens (25) | ❌ AMBIGUOUS
+3kg red pepper                           | red peppers | Qty: 1.0 | Unit: kg | Pkg: 3kg | Red Peppers (3kg) | Score: 100.0    | ✅ CORRECT 
+1* box pineapple                         | box pineapple | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Pineapple (10kg) (85), Pineapple (2kg) (85), Pineapple (5kg) (85), Red Apples (10kg) (45), Pineapple (40), Pineapple (40), Large Veggie Box (35), Small Veggie Box (35), Red Apples (35), Red Apples (1kg) (35), Red Apples (2kg) (35), Red Apples (5kg) (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 486
+ORIGINAL: For Maltos
+1* box lettuce
+2*bags onions white
+4*punnets strawberry
+1* box pineapple
+1* bag oranges
+4* packets mint
+1* box lemons
+2* packets parsley
+2* packets rocket
+5kg carrots
+6* heads broccoli
+6* heads cauliflower
+4*box avos
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+1* box lettuce                           | box lettuce | Qty: 1.0 | Unit: box  | Ambiguous packaging - Suggestions: Lettuce (100), Mixed Lettuce (75), Crispy Lettuce (2kg) (35), Crispy Lettuce (5kg) (35), Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30) | ❌ AMBIGUOUS
+2*bags onions white                      | onions white | Qty: 2.0 | Unit: bag | Ambiguous packaging - Suggestions: White Onions (100), White Onions (10kg) (100), White Onions (1kg) (100), White Onions (2kg) (100), White Onions (3kg) (100), White Onions (4kg) (100), White Onions (5kg) (100), White Onions (6kg) (100), White Onions (7kg) (100), White Onions (8kg) (100), White Onions (9kg) (100), White Onions 10kg (100), White Onions 15kg (100), White Onions 20kg (100), White Onions 5kg (100), Red Onions (10) | ❌ AMBIGUOUS
+4*punnets strawberry                     | strawberry | Qty: 4.0 | Unit: punnet | Ambiguous packaging - Suggestions: Strawberry (100), Strawberries (1kg) (9), Strawberries (200g) (9), Strawberries (2kg) (9), Strawberries (500g) (9), Strawberries (250g) (9), Strawberries (750g) (9) | ❌ AMBIGUOUS
+1* box pineapple                         | box pineapple | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Pineapple (10kg) (85), Pineapple (2kg) (85), Pineapple (5kg) (85), Red Apples (10kg) (45), Pineapple (40), Pineapple (40), Large Veggie Box (35), Small Veggie Box (35), Red Apples (35), Red Apples (1kg) (35), Red Apples (2kg) (35), Red Apples (5kg) (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30) | ❌ AMBIGUOUS
+1* bag oranges                           | bag oranges | Qty: 1.0 | Unit: bag  | Ambiguous packaging - Suggestions: Oranges (100), Oranges (10kg) (100), Oranges (1kg) (100), Oranges (2kg) (100), Oranges (3kg) (100), Oranges (5kg) (100), Oranges (40), Oranges (40), Lemons (10kg) (30), Lemons (15kg) (30), Lemons (1kg) (30), Lemons (20kg) (30), Lemons (25kg) (30), Lemons (2kg) (30) | ❌ AMBIGUOUS
+4* packets mint                          | mint | Qty: 4.0 | Unit: packet      | Ambiguous packaging - Suggestions: Mint (100), Mint (100g) (100), Mint (200g) (100), Mint (50g) (100), Mint (150g) (100), Mint (250g) (100), Mint (300g) (100), Mint (400g) (100), Mint (500g) (100), Mint (600g) (100), Mint (750g) (100) | ❌ AMBIGUOUS
+1* box lemons                            | box lemons | Qty: 1.0 | Unit: box   | Ambiguous packaging - Suggestions: Lemons (10kg) (100), Lemons (2kg) (100), Lemons (5kg) (100), Lemon (50), Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30) | ❌ AMBIGUOUS
+2* packets parsley                       | parsley | Qty: 2.0 | Unit: packet   | Ambiguous packaging - Suggestions: Parsley (100), Parsley (100g) (100), Parsley (200g) (100), Parsley (50g) (100), Parsley (150g) (100), Parsley (1kg) (100), Parsley (250g) (100), Parsley (300g) (100), Parsley (400g) (100), Parsley (500g) (100), Parsley (600g) (100), Parsley (750g) (100) | ❌ AMBIGUOUS
+2* packets rocket                        | rocket | Qty: 2.0 | Unit: packet    | Ambiguous packaging - Suggestions: Rocket (100), Rocket (100), Rocket (100g) (100), Rocket (150g) (100), Rocket (200g) (100), Rocket (250g) (100), Rocket (300g) (100), Rocket (400g) (100), Rocket (500g) (100), Rocket (50g) (100), Rocket (600g) (100), Rocket (750g) (100), Wild Rocket (100g) (65), Wild Rocket (200g) (65), Wild Rocket (500g) (65), Wild Rocket (50g) (65), Wild Rocket (bulk kg) (65) | ❌ AMBIGUOUS
+5kg carrots                              | carrots | Qty: 1.0 | Unit: kg | Pkg: 5kg | Carrots (5kg) | Score: 100.0        | ✅ CORRECT 
+6* heads broccoli                        | broccoli | Qty: 6.0 | Unit: head    | Broccoli | Score: 100.0             | ✅ CORRECT 
+6* heads cauliflower                     | cauliflower | Qty: 6.0 | Unit: head | Cauliflower | Score: 100.0          | ✅ CORRECT 
+4*box avos                               | box avocados | Qty: 4.0 | Unit: box | Ambiguous packaging - Suggestions: Avocados (Hard) (100), Avocados (Semi-Ripe) (100), Avocados (Soft) (100), Large Veggie Box (35), Small Veggie Box (35), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30), Lemons (10kg) (30), Lemons (2kg) (30), Lemons (5kg) (30) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 487
+ORIGINAL: Cocktail tomatoes 3pkts 
+Carrots x10kg 
+Lemon 1boxe 
+Rose marry x200g 
+Parsley x200g 
+Onion x10kg
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+cocktail tomatoes 3pkts                  | cocktail tomatoes | Qty: 3.0 | Unit: None | Ambiguous packaging - Suggestions: Cocktail Tomatoes (1kg) (100), Cocktail Tomatoes (200g) (100), Cocktail Tomatoes (250g) (100), Cocktail Tomatoes (500g) (100), Tomatoes (10kg) (50), Tomatoes (15kg) (50), Tomatoes (20kg) (50), Tomatoes (5kg) (50), Whole Tomatoes (50), Cherry Tomatoes (40), Tomatoes (30), Tomatoes (30), Tomatoes (30) | ❌ AMBIGUOUS
+carrots x10kg                            | carrots | Qty: 1.0 | Unit: kg | Pkg: 10kg | Carrots (10kg) | Score: 100.0       | ✅ CORRECT 
+lemon 1boxe                              | lemon e | Qty: 1.0 | Unit: box | Pkg: 1box | Lemon | Score: 100.0                | ✅ CORRECT 
+rose marry x200g                         | rose marry | Qty: 1.0 | Unit: g | Pkg: 200g | No matches found                    | ❌ NO MATCH
+parsley x200g                            | parsley | Qty: 1.0 | Unit: g | Pkg: 200g | Parsley (200g) | Score: 100.0       | ✅ CORRECT 
+onion x10kg                              | onions | Qty: 1.0 | Unit: kg | Pkg: 10kg | Red Onions (10kg) | Score: 100.0    | ✅ CORRECT 
+
+--------------------------------------------------------------------------------
+
+Message ID: 488
+ORIGINAL: Shebeen
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+shebeen                                  | shebeen | Qty: 1.0 | Unit: None     | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 489
+ORIGINAL: Good morning...may I please order 
+3×5kgTomato 
+3×5kgMushroom 
+10kgOnions 
+That's all tnx
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+3×5kgtomato                              | tomato | Qty: 3.0 | Unit: kg | Pkg: 5kg | Tomatoes (5kg) | Score: 100.0       | ✅ CORRECT 
+3×5kgmushroom                            | mushrooms | Qty: 3.0 | Unit: kg | Pkg: 5kg | Brown Mushrooms (5kg) | Score: 100.0 | ✅ CORRECT 
+10kgonions                               | onions | Qty: 1.0 | Unit: kg | Pkg: 10kg | Red Onions (10kg) | Score: 100.0    | ✅ CORRECT 
+that's all tnx                           | that's all tnx | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Small Veggie Box (25) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 490
+ORIGINAL: Debonair
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+debonair                                 | debonair | Qty: 1.0 | Unit: None    | Ambiguous packaging - Suggestions: Large Veggie Box (45), Small Veggie Box (45), Deveined Spinach (7) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 491
+ORIGINAL: 30kg Potatoes 
+Red Onions- 10kg
+Sweet Potatoes-7kg
+Banana-1kg
+Tomatoes-5kg
+Portabellin Mush-2*7kg
+Brown Mush-2*7kg
+Red Peppers -3kg
+Red Chills-3kg
+Baby Marrow-5kg
+Lemons-15kg
+Pineapple-1Box
+Rocket-400g
+salad packs-7
+Cherry tomatoes-10
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+30kg potatoes                            | potatoes | Qty: 1.0 | Unit: kg | Pkg: 30kg | Baby Potatoes | Score: 100.0        | ✅ CORRECT 
+red onions- 10kg                         | red onions- | Qty: 1.0 | Unit: kg | Pkg: 10kg | Red Onions (10kg) | Score: 100.0    | ✅ CORRECT 
+sweet potatoes-7kg                       | sweet | Qty: 1.0 | Unit: kg         | Sweet Potatoes | Score: 100.0       | ✅ CORRECT 
+portabellin mush-2*7kg                   | portabellin | Qty: 2.0 | Unit: kg | Pkg: 7kg | Portabellini Mushrooms (7kg) | Score: 100.0 | ✅ CORRECT 
+brown mush-2*7kg                         | brown | Qty: 2.0 | Unit: kg | Pkg: 7kg | Brown Mushrooms (7kg) | Score: 100.0 | ✅ CORRECT 
+red peppers -3kg                         | red peppers | Qty: 1.0 | Unit: kg   | Red Peppers | Score: 100.0          | ✅ CORRECT 
+red chills-3kg                           | red | Qty: 1.0 | Unit: kg           | Red Apples | Score: 100.0           | ✅ CORRECT 
+baby marrow-5kg                          | baby | Qty: 1.0 | Unit: kg          | Baby Spinach | Score: 100.0         | ✅ CORRECT 
+salad packs-7                            | salad | Qty: 7.0 | Unit: None       | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+cherry tomatoes-10                       | cherry | Qty: 10.0 | Unit: None     | Ambiguous packaging - Suggestions: Cherry Tomatoes (100), Cocktail Tomatoes (1kg) (35), Cocktail Tomatoes (200g) (35), Cocktail Tomatoes (250g) (35), Cocktail Tomatoes (500g) (35), Sun Dried Tomatoes (35), Tomatoes (35), Tomatoes (35), Tomatoes (35), Tomatoes (10kg) (35), Chives (8) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 492
+ORIGINAL: Casa Bella
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+casa bella                               | casa bella | Qty: 1.0 | Unit: None  | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 493
+ORIGINAL: 1bag red chili 
+1bag green chilies 
+Culinary
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+1bag red chili                           | red chili | Qty: 1.0 | Unit: bag | Pkg: 1bag | Red Chili | Score: 100.0            | ✅ CORRECT 
+1bag green chilies                       | green chilies | Qty: 1.0 | Unit: bag | Pkg: 1bag | Green Chili | Score: 35.0           | ❌ POOR MATCH
+culinary                                 | culinary | Qty: 1.0 | Unit: None    | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 494
+ORIGINAL: butternut 10kg,spinach 6 bunches, parsley x3, corianderx3 chilli 1 box, peppers x2 box,
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+butternut 10kg                           | butternut | Qty: 1.0 | Unit: kg | Pkg: 10kg | Butternut (10kg) | Score: 100.0     | ✅ CORRECT 
+spinach 6 bunches                        | spinach | Qty: 6.0 | Unit: bunch    | Ambiguous packaging - Suggestions: Baby Spinach (100), Deveined Spinach (100), Spinach (100), Spinach (100), Spinach (100g) (100), Spinach (10kg) (100), Spinach (150g) (100), Spinach (1kg) (100), Spinach (200g) (100), Spinach (250g) (100), Spinach (2kg) (100), Spinach (300g) (100), Spinach (3kg) (100), Spinach (400g) (100), Spinach (500g) (100), Spinach (50g) (100), Spinach (5kg) (100), Spinach (600g) (100), Spinach (750g) (100) | ❌ AMBIGUOUS
+parsley x3                               | parsley | Qty: 3.0 | Unit: None     | Ambiguous packaging - Suggestions: Parsley (100), Parsley (100g) (100), Parsley (200g) (100), Parsley (50g) (100), Parsley (150g) (100), Parsley (1kg) (100), Parsley (250g) (100), Parsley (300g) (100), Parsley (400g) (100), Parsley (500g) (100), Parsley (600g) (100), Parsley (750g) (100) | ❌ AMBIGUOUS
+corianderx3 chilli 1 box                 | coriander chilli box | Qty: 3.0 | Unit: box | Ambiguous packaging - Suggestions: Green Chili (50), Red Chili (50), Green Chili (100g) (50), Green Chili (1kg) (50), Green Chili (200g) (50), Green Peppers (45), Green Peppers (10kg) (45), Green Peppers (15kg) (45), Green Peppers (1kg) (45), Green Peppers (20kg) (45), Green Peppers (25kg) (45), Green Peppers (2kg) (45), Green Peppers (3kg) (45), Coriander (40), Large Veggie Box (35), Small Veggie Box (35), Green Peppers (35), Green Peppers (35), Micro Herbs (100g) (35), Micro Herbs (200g) (35) | ❌ AMBIGUOUS
+peppers x2 box                           | peppers box | Qty: 2.0 | Unit: box  | Ambiguous packaging - Suggestions: Green Peppers (100), Green Peppers (10kg) (52), Green Peppers (15kg) (52), Green Peppers (1kg) (52), Green Peppers (20kg) (52), Green Peppers (25kg) (52), Green Peppers (2kg) (52), Green Peppers (3kg) (52), Green Peppers (4kg) (52), Green Peppers (5kg) (52), Red Peppers (10kg) (52), Red Peppers (15kg) (52), Red Peppers (1kg) (52), Red Peppers (20kg) (52), Red Peppers (25kg) (52), Red Peppers (2kg) (52), Red Peppers (3kg) (52), Red Peppers (4kg) (52), Red Peppers (5kg) (52), Yellow Peppers (10kg) (52) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 495
+ORIGINAL: Late order from Pecanwood.
+Please help other customers first
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+late order from pecanwood.               | late order from pecanwood. | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Order Notes (25) | ❌ AMBIGUOUS
+please help other customers first        | please help other customers first | Qty: 1.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 496
+ORIGINAL: Please add micros if you have
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+please add micros if you have            | please add micros if you have | Qty: 1.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 497
+ORIGINAL: SHALLOME 
+STOKE AS AT 28 AUGUST 2025
+1.Spinarch 3kg
+2.Patty pan 12 pun
+3.Deveined Spinarch 3.5kg
+4.Cocktail 25 Pun
+5.Green grape 4up
+6.Red Grape 4 pun
+7.Beetroot 11kg
+8.Grape fruits 11kg
+9.Pine Apple 1
+12.Water melon 1
+13.Sweet mellon 1
+14.Paw paw 6 pun
+15.Baby Marrow 5.5kg
+16.Cucumber 17
+17.Brinjals 500g
+18.Sweet potatoes 22kg
+19.Cauliflower 13 Pun
+20.Mushroom 3 pun
+21.Baby corn 25 Pun
+22.Naartjies 1 small box
+23.Red apple 23kg
+24.Green Cabbage 5 heads
+25.Strawberry 22Pun
+26.Avocado Hard 20boxes
+27.Tomatoes 10kg
+28.lceberg 14 pun
+29.Spring Onions 1kg
+30.Lemons 29.7kg
+31.Red chillies 2kg
+32.Green Chillies 2kg
+33.Tumeric 1.7kg
+34.Red Onions 12kg
+35.White Onions 27kg
+36.Potatoes 2bags
+37.Mixed lettuce 2kg
+
+
+38.Rocket 1.5kg
+39.Parsley 1.5kg
+40.Mint 1kg
+41.Rosemarry 200g
+
+
+41.Dill 50g
+42.Rosemary 200g
+43.Basil 200g
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+shallome                                 | shallome | Qty: 1.0 | Unit: None    | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+stoke as at 28 august 2025               | stoke as at august | Qty: 28.0 | Unit: None | Ambiguous packaging - Suggestions: Strawberries (1kg) (9), Strawberries (2kg) (9), Strawberries (200g) (7), Strawberries (500g) (7), Strawberries (250g) (7), Strawberries (750g) (7), Strawberry (6) | ❌ AMBIGUOUS
+2.patty pan 12 pun                       | 2.patty pan | Qty: 12.0 | Unit: punnet | Ambiguous packaging - Suggestions: Patty Pan (95) | ❌ AMBIGUOUS
+3.deveined spinarch 3.5kg                | spinarch | Qty: 3.0 | Unit: kg | Pkg: 3.5kg | No matches found                    | ❌ NO MATCH
+4.cocktail 25 pun                        | 4.cocktail | Qty: 25.0 | Unit: punnet | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+5.green grape 4up                        | grape | Qty: 5.0 | Unit: None       | Ambiguous packaging - Suggestions: Grape (100), Grapefruit (75), Black Grapes (50), Green Grapes (50), Red Grapes (50), White Grapes (50), Black Grapes (1kg) (10), Black Grapes (2kg) (10), Black Grapes (500g) (10), Black Grapes (5kg) (10), Green Grapes (1kg) (10), Green Grapes (2kg) (10), Green Grapes (500g) (10), Green Grapes (5kg) (10), Red Grapes (1kg) (10), Red Grapes (2kg) (10), Red Grapes (500g) (10), Red Grapes (5kg) (10), White Grapes (1kg) (10), White Grapes (2kg) (10) | ❌ AMBIGUOUS
+6.red grape 4 pun                        | 6.red grape | Qty: 4.0 | Unit: punnet | Ambiguous packaging - Suggestions: Grape (100), Grapefruit (75), Black Grapes (50), Green Grapes (50), Red Grapes (50), White Grapes (50), Black Grapes (1kg) (10), Black Grapes (2kg) (10), Black Grapes (500g) (10), Black Grapes (5kg) (10), Green Grapes (1kg) (10), Green Grapes (2kg) (10), Green Grapes (500g) (10), Green Grapes (5kg) (10), Red Grapes (1kg) (10), Red Grapes (2kg) (10), Red Grapes (500g) (10), Red Grapes (5kg) (10), White Grapes (1kg) (10), White Grapes (2kg) (10) | ❌ AMBIGUOUS
+8.grape fruits 11kg                      | fruits | Qty: 8.0 | Unit: kg | Pkg: 11kg | No matches found                    | ❌ NO MATCH
+9.pine apple 1                           | 9.pine apple | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Pineapple (75), Pineapple (75), Pineapple (10kg) (75), Pineapple (2kg) (75), Pineapple (5kg) (75), Red Apples (65), Red Apples (10kg) (25), Red Apples (1kg) (25), Red Apples (2kg) (25), Red Apples (5kg) (25), Red Apples (5kg) (25) | ❌ AMBIGUOUS
+12.water melon 1                         | 12.water melon | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Sweet Melon (100), Water Melon (100), Watermelon (75) | ❌ AMBIGUOUS
+13.sweet mellon 1                        | 13.sweet mellon | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Sweet Melon (50), Water Melon (50), Watermelon (50) | ❌ AMBIGUOUS
+14.paw paw 6 pun                         | 14.paw paw | Qty: 6.0 | Unit: punnet | Ambiguous packaging - Suggestions: Paw Paw (100) | ❌ AMBIGUOUS
+15.baby marrow 5.5kg                     | marrow | Qty: 15.0 | Unit: kg | Pkg: 5.5kg | Baby Marrow | Score: 85.0           | ✅ CORRECT 
+16.cucumber 17                           | 16.cucumber | Qty: 17.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+18.sweet potatoes 22kg                   | potatoes | Qty: 18.0 | Unit: kg | Pkg: 22kg | Baby Potatoes | Score: 100.0        | ✅ CORRECT 
+19.cauliflower 13 pun                    | 19.cauliflower | Qty: 13.0 | Unit: punnet | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+20.mushroom 3 pun                        | 20.mushroom | Qty: 3.0 | Unit: punnet | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+21.baby corn 25 pun                      | 21.baby corn | Qty: 25.0 | Unit: punnet | Ambiguous packaging - Suggestions: Baby Corn (100), Sweet Corn (100), Sweet Corn (200g) (65), Coriander (10) | ❌ AMBIGUOUS
+22.naartjies 1 small box                 | 22.naartjies small box | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Small Veggie Box (87), Large Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30), Lemons (10kg) (30), Lemons (2kg) (30), Lemons (5kg) (30) | ❌ AMBIGUOUS
+23.red apple 23kg                        | apple | Qty: 23.0 | Unit: kg | Pkg: 23kg | Pineapple | Score: 55.0             | ❌ POOR MATCH
+24.green cabbage 5 heads                 | 24.green cabbage | Qty: 5.0 | Unit: head | Green Cabbage | Score: 75.0         | ⚠️ LOW CONF
+26.avocado hard 20boxes                  | hard es | Qty: 26.0 | Unit: box | Pkg: 20box | No matches found                    | ❌ NO MATCH
+28.lceberg 14 pun                        | punnet | Qty: 14.0 | Unit: g | Pkg: 28.lceberg | No matches found                    | ❌ NO MATCH
+29.spring onions 1kg                     | onions | Qty: 29.0 | Unit: g | Pkg: 29.spring | Red Onions (1kg) | Score: 96.7      | ✅ CORRECT 
+31.red chillies 2kg                      | chillies | Qty: 31.0 | Unit: kg | Pkg: 2kg | Green Chillies | Score: 75.0        | ⚠️ LOW CONF
+32.green chillies 2kg                    | chillies | Qty: 32.0 | Unit: kg | Pkg: 2kg | Green Chillies | Score: 75.0        | ⚠️ LOW CONF
+34.red onions 12kg                       | onions | Qty: 34.0 | Unit: kg | Pkg: 12kg | Spring Onions | Score: 100.0        | ✅ CORRECT 
+35.white onions 27kg                     | onions | Qty: 35.0 | Unit: kg | Pkg: 27kg | Spring Onions | Score: 100.0        | ✅ CORRECT 
+36.potatoes 2bags                        | s | Qty: 36.0 | Unit: bag | Pkg: 2bag | Lemons (10kg) | Score: 85.0         | ✅ CORRECT 
+37.mixed lettuce 2kg                     | lettuce | Qty: 37.0 | Unit: kg | Pkg: 2kg | Crispy Lettuce (2kg) | Score: 100.0 | ✅ CORRECT 
+
+--------------------------------------------------------------------------------
+
+Message ID: 498
+ORIGINAL: Good morning. Tuesday orders starts here
+PARSED: No items parsed
+MATCHED: Suggestions for unparsed items:
+--------------------------------------------------------------------------------
+  Good morning. Tuesday orders starts here -> No suggestions available
+STATUS: 💡 SUGGESTIONS
+
+Message ID: 499
+ORIGINAL: Greetings  team 
+Order valley 
+
+Onions× 2 bags
+Pineapple × 1 box
+Mint × 5
+Strawberry × 5
+Lemon × 3 
+Rosemary × 3
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+greetings  team                          | greetings team | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Green Grapes (13), Green Beans (13), Green Cabbage (10), Green Grapes (1kg) (9), Green Grapes (2kg) (9), Green Grapes (500g) (9), Green Grapes (5kg) (9), Grapefruit (9), Green Chili (9), Grape (7) | ❌ AMBIGUOUS
+onions× 2 bags                           | onions | Qty: 2.0 | Unit: bag       | Ambiguous packaging - Suggestions: Spring Onions (100), Red Onions (95), White Onions (95), Red Onions (10kg) (82), Red Onions (1kg) (82), Red Onions (2kg) (82), Red Onions (3kg) (82), Red Onions (4kg) (82), Red Onions (5kg) (82), Red Onions (6kg) (82), Red Onions (7kg) (82), Red Onions (8kg) (82), Red Onions (9kg) (82), Red Onions 10kg (82), Red Onions 15kg (82), Red Onions 20kg (82), Red Onions 5kg (82), White Onions (10kg) (82), White Onions (1kg) (82), White Onions (2kg) (82) | ❌ AMBIGUOUS
+pineapple × 1 box                        | pineapple box | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Pineapple (10kg) (85), Pineapple (2kg) (85), Pineapple (5kg) (85), Red Apples (10kg) (45), Pineapple (40), Pineapple (40), Large Veggie Box (35), Small Veggie Box (35), Red Apples (35), Red Apples (1kg) (35), Red Apples (2kg) (35), Red Apples (5kg) (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30) | ❌ AMBIGUOUS
+mint × 5                                 | mint | Qty: 5.0 | Unit: None        | Ambiguous packaging - Suggestions: Mint (100), Mint (100g) (100), Mint (200g) (100), Mint (50g) (100), Mint (150g) (100), Mint (250g) (100), Mint (300g) (100), Mint (400g) (100), Mint (500g) (100), Mint (600g) (100), Mint (750g) (100) | ❌ AMBIGUOUS
+strawberry × 5                           | strawberry | Qty: 5.0 | Unit: None  | Ambiguous packaging - Suggestions: Strawberry (100), Strawberries (1kg) (9), Strawberries (200g) (9), Strawberries (2kg) (9), Strawberries (500g) (9), Strawberries (250g) (9), Strawberries (750g) (9) | ❌ AMBIGUOUS
+lemon × 3                                | lemon | Qty: 3.0 | Unit: None       | Ambiguous packaging - Suggestions: Lemon (100), Lemons (10kg) (80), Lemons (10kg) (80), Lemons (15kg) (80), Lemons (1kg) (80), Lemons (20kg) (80), Lemons (250g) (80), Lemons (25kg) (80), Lemons (2kg) (80), Lemons (2kg) (80), Lemons (3kg) (80), Lemons (4kg) (80), Lemons (500g) (80), Lemons (5kg) (80), Lemons (5kg) (80), Lemons (750g) (80) | ❌ AMBIGUOUS
+rosemary × 3                             | rosemary | Qty: 3.0 | Unit: None    | Ambiguous packaging - Suggestions: Rosemary (100), Rosemary (100), Rosemary (100g) (100), Rosemary (200g) (100), Rosemary (50g) (100), Rosemary (150g) (100), Rosemary (250g) (100), Rosemary (300g) (100), Rosemary (400g) (100), Rosemary (500g) (100), Rosemary (600g) (100), Rosemary (750g) (100) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 500
+ORIGINAL: Greetings team 
+Barchef entertainment 
+
+Lemon × 1 box
+Strawberry × 3 
+Mint × 4
+Rosemary × 2
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+greetings team                           | greetings team | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Green Grapes (13), Green Beans (13), Green Cabbage (10), Green Grapes (1kg) (9), Green Grapes (2kg) (9), Green Grapes (500g) (9), Green Grapes (5kg) (9), Grapefruit (9), Green Chili (9), Grape (7) | ❌ AMBIGUOUS
+barchef entertainment                    | barchef entertainment | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Baby Spinach (9) | ❌ AMBIGUOUS
+lemon × 1 box                            | lemon box | Qty: 1.0 | Unit: box    | Ambiguous packaging - Suggestions: Lemons (10kg) (50), Lemons (2kg) (50), Lemons (5kg) (50), Lemon (40), Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30) | ❌ AMBIGUOUS
+strawberry × 3                           | strawberry | Qty: 3.0 | Unit: None  | Ambiguous packaging - Suggestions: Strawberry (100), Strawberries (1kg) (9), Strawberries (200g) (9), Strawberries (2kg) (9), Strawberries (500g) (9), Strawberries (250g) (9), Strawberries (750g) (9) | ❌ AMBIGUOUS
+mint × 4                                 | mint | Qty: 4.0 | Unit: None        | Ambiguous packaging - Suggestions: Mint (100), Mint (100g) (100), Mint (200g) (100), Mint (50g) (100), Mint (150g) (100), Mint (250g) (100), Mint (300g) (100), Mint (400g) (100), Mint (500g) (100), Mint (600g) (100), Mint (750g) (100) | ❌ AMBIGUOUS
+rosemary × 2                             | rosemary | Qty: 2.0 | Unit: None    | Ambiguous packaging - Suggestions: Rosemary (100), Rosemary (100), Rosemary (100g) (100), Rosemary (200g) (100), Rosemary (50g) (100), Rosemary (150g) (100), Rosemary (250g) (100), Rosemary (300g) (100), Rosemary (400g) (100), Rosemary (500g) (100), Rosemary (600g) (100), Rosemary (750g) (100) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 501
+ORIGINAL: Hie, pliz send for Maltos
+5* boxes avos, 3 semi ripe
+5kg deveined spinach 
+10kg carrots 
+10 heads broccoli 
+10 heads cauliflower 
+5kg tomato 
+1kg parsley
+2*packets rocket
+2* packets rosemary 
+2*packets thyme 
+3*bags potatoes
+1*box pineapple
+1*box Mixed lettuce 
+3* packets mint 
+5* packets dill
+5*punnets strawberries
+5kg mushroom 
+1kg red chili
+1kg green chili
+1*box cucumber
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+5* boxes avos                            | avocados | Qty: 5.0 | Unit: box     | Ambiguous packaging - Suggestions: Avocados (Hard) (100), Avocados (Hard) (100), Avocados (Hard) (100), Avocados (Hard) (1kg) (100), Avocados (Hard) (2kg) (100), Avocados (Hard) (3kg) (100), Avocados (Semi-Ripe) (100), Avocados (Semi-Ripe) (1kg) (100), Avocados (Semi-Ripe) (2kg) (100), Avocados (Semi-Ripe) (3kg) (100), Avocados (Soft) (100), Avocados (Soft) (1kg) (100), Avocados (Soft) (2kg) (100), Avocados (Soft) (3kg) (100) | ❌ AMBIGUOUS
+3 semi ripe                              | semi ripe | Qty: 3.0 | Unit: None   | Ambiguous packaging - Suggestions: Avocados (Semi-Ripe) (50), Avocados (Semi-Ripe) (1kg) (50), Avocados (Semi-Ripe) (2kg) (50), Avocados (Semi-Ripe) (3kg) (50) | ❌ AMBIGUOUS
+5kg deveined spinach                     | deveined spinach | Qty: 1.0 | Unit: kg | Pkg: 5kg | Deveined Spinach | Score: 100.0     | ✅ CORRECT 
+10kg carrots                             | carrots | Qty: 1.0 | Unit: kg | Pkg: 10kg | Carrots (10kg) | Score: 100.0       | ✅ CORRECT 
+10 heads broccoli                        | broccoli | Qty: 10.0 | Unit: head   | Broccoli | Score: 100.0             | ✅ CORRECT 
+10 heads cauliflower                     | cauliflower | Qty: 10.0 | Unit: head | Cauliflower | Score: 100.0          | ✅ CORRECT 
+5kg tomato                               | tomato | Qty: 1.0 | Unit: kg | Pkg: 5kg | Tomatoes (5kg) | Score: 100.0       | ✅ CORRECT 
+1kg parsley                              | parsley | Qty: 1.0 | Unit: kg | Pkg: 1kg | Parsley (1kg) | Score: 100.0        | ✅ CORRECT 
+2*packets rocket                         | rocket | Qty: 2.0 | Unit: packet    | Ambiguous packaging - Suggestions: Rocket (100), Rocket (100), Rocket (100g) (100), Rocket (150g) (100), Rocket (200g) (100), Rocket (250g) (100), Rocket (300g) (100), Rocket (400g) (100), Rocket (500g) (100), Rocket (50g) (100), Rocket (600g) (100), Rocket (750g) (100), Wild Rocket (100g) (65), Wild Rocket (200g) (65), Wild Rocket (500g) (65), Wild Rocket (50g) (65), Wild Rocket (bulk kg) (65) | ❌ AMBIGUOUS
+2* packets rosemary                      | rosemary | Qty: 2.0 | Unit: packet  | Ambiguous packaging - Suggestions: Rosemary (100), Rosemary (100), Rosemary (100g) (100), Rosemary (200g) (100), Rosemary (50g) (100), Rosemary (150g) (100), Rosemary (250g) (100), Rosemary (300g) (100), Rosemary (400g) (100), Rosemary (500g) (100), Rosemary (600g) (100), Rosemary (750g) (100) | ❌ AMBIGUOUS
+2*packets thyme                          | thyme | Qty: 2.0 | Unit: packet     | Ambiguous packaging - Suggestions: Thyme (100), Thyme (100), Thyme (100g) (100), Thyme (200g) (100), Thyme (50g) (100), Thyme (150g) (100), Thyme (250g) (100), Thyme (300g) (100), Thyme (400g) (100), Thyme (500g) (100), Thyme (600g) (100), Thyme (750g) (100) | ❌ AMBIGUOUS
+3*bags potatoes                          | potatoes | Qty: 3.0 | Unit: bag     | Ambiguous packaging - Suggestions: Baby Potatoes (100), Potatoes (100), Potatoes (10kg) (100), Potatoes (1kg) (100), Potatoes (2kg) (100), Potatoes (3kg) (100), Potatoes (4kg) (100), Potatoes (5kg) (100), Potatoes (6kg) (100), Potatoes (7kg) (100), Potatoes (8kg) (100), Potatoes (9kg) (100), Potatoes 10kg (100), Potatoes 15kg (100), Potatoes 20kg (100), Potatoes 25kg (100), Sweet Potatoes (100), Sweet Potatoes (10kg) (100), Sweet Potatoes (15kg) (100), Sweet Potatoes (1kg) (100) | ❌ AMBIGUOUS
+1*box pineapple                          | box pineapple | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Pineapple (10kg) (85), Pineapple (2kg) (85), Pineapple (5kg) (85), Red Apples (10kg) (45), Pineapple (40), Pineapple (40), Large Veggie Box (35), Small Veggie Box (35), Red Apples (35), Red Apples (1kg) (35), Red Apples (2kg) (35), Red Apples (5kg) (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30) | ❌ AMBIGUOUS
+1*box mixed lettuce                      | box lettuce | Qty: 1.0 | Unit: box  | Ambiguous packaging - Suggestions: Lettuce (100), Mixed Lettuce (75), Crispy Lettuce (2kg) (35), Crispy Lettuce (5kg) (35), Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30) | ❌ AMBIGUOUS
+3* packets mint                          | mint | Qty: 3.0 | Unit: packet      | Ambiguous packaging - Suggestions: Mint (100), Mint (100g) (100), Mint (200g) (100), Mint (50g) (100), Mint (150g) (100), Mint (250g) (100), Mint (300g) (100), Mint (400g) (100), Mint (500g) (100), Mint (600g) (100), Mint (750g) (100) | ❌ AMBIGUOUS
+5* packets dill                          | dill | Qty: 5.0 | Unit: packet      | Ambiguous packaging - Suggestions: Dill (100), Dill (100), Dill (100g) (100), Dill (150g) (100), Dill (200g) (100), Dill (250g) (100), Dill (300g) (100), Dill (400g) (100), Dill (500g) (100), Dill (50g) (100), Dill (600g) (100), Dill (750g) (100) | ❌ AMBIGUOUS
+5*punnets strawberries                   | strawberries | Qty: 5.0 | Unit: punnet | Ambiguous packaging - Suggestions: Strawberries (1kg) (100), Strawberries (200g) (100), Strawberries (250g) (100), Strawberries (2kg) (100), Strawberries (500g) (100), Strawberries (750g) (100), Strawberry (16) | ❌ AMBIGUOUS
+5kg mushroom                             | mushrooms | Qty: 1.0 | Unit: kg | Pkg: 5kg | Brown Mushrooms (5kg) | Score: 100.0 | ✅ CORRECT 
+1kg red chili                            | red chili | Qty: 1.0 | Unit: kg | Pkg: 1kg | Red Chili (1kg) | Score: 100.0      | ✅ CORRECT 
+1kg green chili                          | green chili | Qty: 1.0 | Unit: kg | Pkg: 1kg | Green Chili (1kg) | Score: 100.0    | ✅ CORRECT 
+1*box cucumber                           | box cucumber | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Cucumber (100), Cucumber (100), Cucumber (100), Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 502
+ORIGINAL: Pliz add 10kg lemons
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+pliz add 10kg lemons                     | pliz add lemons | Qty: 1.0 | Unit: kg | Pkg: 10kg | Lemons (10kg) | Score: 76.7         | ⚠️ LOW CONF
+
+--------------------------------------------------------------------------------
+
+Message ID: 503
+ORIGINAL: Luma 
+3kg cucumber
+1x avocado 
+1x box lemon 
+1kg chilli red 
+1x chilli green
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+luma                                     | luma | Qty: 1.0 | Unit: None        | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+3kg cucumber                             | cucumber | Qty: 1.0 | Unit: kg | Pkg: 3kg | Cucumber | Score: 100.0             | ✅ CORRECT 
+1x avocado                               | avocado | Qty: 1.0 | Unit: None     | Ambiguous packaging - Suggestions: Avocados (Hard) (95), Avocados (Hard) (95), Avocados (Hard) (95), Avocados (Semi-Ripe) (95), Avocados (Soft) (95), Avocados (Hard) (1kg) (55), Avocados (Hard) (2kg) (55), Avocados (Hard) (3kg) (55), Avocados (Semi-Ripe) (1kg) (55), Avocados (Semi-Ripe) (2kg) (55), Avocados (Semi-Ripe) (3kg) (55), Avocados (Soft) (1kg) (55), Avocados (Soft) (2kg) (55), Avocados (Soft) (3kg) (55) | ❌ AMBIGUOUS
+1x box lemon                             | box lemon | Qty: 1.0 | Unit: box    | Ambiguous packaging - Suggestions: Lemons (10kg) (50), Lemons (2kg) (50), Lemons (5kg) (50), Lemon (40), Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30) | ❌ AMBIGUOUS
+1kg chilli red                           | chilli red | Qty: 1.0 | Unit: kg | Pkg: 1kg | Red Chillies | Score: 85.0          | ✅ CORRECT 
+1x chilli green                          | chilli green | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Green Chillies (100), Red Chili (50), Green Peppers (35), Green Peppers (10kg) (35), Green Peppers (15kg) (35), Green Peppers (1kg) (35), Green Peppers (20kg) (35), Green Peppers (25kg) (35), Green Peppers (2kg) (35), Green Peppers (3kg) (35), Red Chillies (25), Green Grapes (25), Green Grapes (1kg) (25), Green Grapes (2kg) (25), Green Grapes (500g) (25), Green Grapes (5kg) (25), Green Chili (25), Micro Greens (25), Green Beans (25) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 504
+ORIGINAL: 20kg potato
+10kg red onion
+5kg red pepper
+1×box pineapple
+15kg lemon
+4kg tomato
+10×cherry tomato
+10× baby corn
+5kg carrots
+750g parsley
+3×box avos...soft
+15×cucumber
+5kg baby marrow
+5×mixed lectuce
+7kg porta mushroom
+5kg brown mushroom
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+20kg potato                              | potato | Qty: 1.0 | Unit: kg | Pkg: 20kg | Potatoes 20kg | Score: 100.0        | ✅ CORRECT 
+10kg red onion                           | red onions | Qty: 1.0 | Unit: kg | Pkg: 10kg | Red Onions (10kg) | Score: 100.0    | ✅ CORRECT 
+5kg red pepper                           | red peppers | Qty: 1.0 | Unit: kg | Pkg: 5kg | Red Peppers (5kg) | Score: 100.0    | ✅ CORRECT 
+1×box pineapple                          | box pineapple | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Pineapple (10kg) (85), Pineapple (2kg) (85), Pineapple (5kg) (85), Red Apples (10kg) (45), Pineapple (40), Pineapple (40), Large Veggie Box (35), Small Veggie Box (35), Red Apples (35), Red Apples (1kg) (35), Red Apples (2kg) (35), Red Apples (5kg) (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30) | ❌ AMBIGUOUS
+15kg lemon                               | lemon | Qty: 1.0 | Unit: kg | Pkg: 15kg | Lemons (15kg) | Score: 100.0        | ✅ CORRECT 
+4kg tomato                               | tomato | Qty: 1.0 | Unit: kg | Pkg: 4kg | Tomatoes | Score: 55.0              | ❌ POOR MATCH
+10×cherry tomato                         | cherry tomatoes | Qty: 10.0 | Unit: None | Ambiguous packaging - Suggestions: Cherry Tomatoes (100), Tomatoes (10kg) (60), Tomatoes (15kg) (60), Tomatoes (20kg) (60), Tomatoes (5kg) (60), Whole Tomatoes (60), Tomatoes (40), Tomatoes (40), Tomatoes (40), Cocktail Tomatoes (1kg) (25), Cocktail Tomatoes (200g) (25), Cocktail Tomatoes (250g) (25), Cocktail Tomatoes (500g) (25), Sun Dried Tomatoes (25) | ❌ AMBIGUOUS
+10× baby corn                            | baby corn | Qty: 10.0 | Unit: None  | Ambiguous packaging - Suggestions: Baby Corn (100), Baby Spinach (25), Baby Marrow (25), Baby Marrow (10kg) (25), Baby Marrow (15kg) (25), Baby Marrow (1kg) (25), Baby Marrow (200g) (25), Baby Marrow (20kg) (25), Baby Marrow (250g) (25), Baby Marrow (25kg) (25), Baby Marrow (2kg) (25), Baby Marrow (3kg) (25), Baby Marrow (4kg) (25), Baby Marrow (500g) (25), Baby Marrow (5kg) (25), Baby Marrow (6kg) (25), Baby Marrow (750g) (25), Baby Marrow (7kg) (25), Baby Marrow (8kg) (25) | ❌ AMBIGUOUS
+5kg carrots                              | carrots | Qty: 1.0 | Unit: kg | Pkg: 5kg | Carrots (5kg) | Score: 100.0        | ✅ CORRECT 
+750g parsley                             | parsley | Qty: 1.0 | Unit: g | Pkg: 750g | Parsley (750g) | Score: 100.0       | ✅ CORRECT 
+3×box avos...soft                        | box avos...soft | Qty: 3.0 | Unit: box | Ambiguous packaging - Suggestions: Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (35), Avocados (Hard) (35), Avocados (Hard) (1kg) (35), Avocados (Hard) (2kg) (35), Avocados (Hard) (3kg) (35), Avocados (Semi-Ripe) (1kg) (35), Avocados (Semi-Ripe) (2kg) (35), Avocados (Semi-Ripe) (3kg) (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30) | ❌ AMBIGUOUS
+15×cucumber                              | cucumber | Qty: 15.0 | Unit: None   | Ambiguous packaging - Suggestions: Cucumber (100), Cucumber (100), Cucumber (100) | ❌ AMBIGUOUS
+5kg baby marrow                          | baby marrow | Qty: 1.0 | Unit: kg | Pkg: 5kg | Baby Marrow (5kg) | Score: 100.0    | ✅ CORRECT 
+5×mixed lectuce                          | mixed lectuce | Qty: 5.0 | Unit: None | Ambiguous packaging - Suggestions: Mixed Lettuce (25), Mixed Lettuce (100g) (25), Mixed Lettuce (150g) (25), Mixed Lettuce (200g) (25), Mixed Lettuce (250g) (25), Mixed Lettuce (300g) (25), Mixed Lettuce (400g) (25), Mixed Lettuce (500g) (25), Mixed Lettuce (50g) (25), Mixed Lettuce (600g) (25), Mixed Lettuce (750g) (25), Mixed Peppers (25), Micro Greens (7), Micro Herbs (7) | ❌ AMBIGUOUS
+7kg porta mushroom                       | porta mushrooms | Qty: 1.0 | Unit: kg | Pkg: 7kg | Portabellini Mushrooms (7kg) | Score: 100.0 | ✅ CORRECT 
+5kg brown mushroom                       | brown mushrooms | Qty: 1.0 | Unit: kg | Pkg: 5kg | Brown Mushrooms (5kg) | Score: 100.0 | ✅ CORRECT 
+
+--------------------------------------------------------------------------------
+
+Message ID: 505
+ORIGINAL: 4kg celery
+3kg green chilli
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+4kg celery                               | celery | Qty: 1.0 | Unit: kg | Pkg: 4kg | Celery | Score: 100.0               | ✅ CORRECT 
+3kg green chilli                         | green chilli | Qty: 1.0 | Unit: kg | Pkg: 3kg | Green Chillies | Score: 100.0       | ✅ CORRECT 
+
+--------------------------------------------------------------------------------
+
+Message ID: 506
+ORIGINAL: 7kg sweet potato
+7kg butternut
+750g wild rocket
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+7kg sweet potato                         | sweet potato | Qty: 1.0 | Unit: kg | Pkg: 7kg | Sweet Potatoes (7kg) | Score: 100.0 | ✅ CORRECT 
+7kg butternut                            | butternut | Qty: 1.0 | Unit: kg | Pkg: 7kg | Butternut (7kg) | Score: 100.0      | ✅ CORRECT 
+750g wild rocket                         | rocket | Qty: 1.0 | Unit: g | Pkg: 750g | Rocket (750g) | Score: 100.0        | ✅ CORRECT 
+
+--------------------------------------------------------------------------------
+
+Message ID: 507
+ORIGINAL: Casa Bella
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+casa bella                               | casa bella | Qty: 1.0 | Unit: None  | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 508
+ORIGINAL: SHALLOME 
+Stock As At 1Sep 2025
+Temp 9 decrees 
+1.Avo 18 boxes
+2.Red Onions 2bags
+3.White Onion 2 bags
+4.Blue berries 4 Pun
+Naatjies 1 small box
+Mushroom 3 pun
+Baby Corn 25 pun
+Beetroot 11kg
+Cabbage 3 heads
+Spring Onion 1.5kg
+Mixed lettuce 2kg
+Red Chillies 2kg
+Green Chillies 2kg
+Lemons 29kg
+Baby Marrow normal size 3kg
+Baby Marrow medium 1.5 +2.8 normal size
+Spinach 3kg
+Cocktail 25 pun
+Sweet corn 1Pun
+Patty pan 10
+Green Grapes3 pun
+Red Grapes 3 pun
+Deveined spinarch 3kg
+Red Cabbage 3
+Cauliflower heads 10 heads
+Brinjals 1.8kg
+Cucumber 17
+Sweet Mellon 1
+Water Mellon 1
+Pine Apple 20
+Paw paw 6 pun
+Iceberg 12
+Tomatoes 10kg
+Straw berry 18 pun
+Grape fruits 10kg
+Red apple 23kg
+
+
+
+
+Rocket 1.5kg
+Parsley1.5kg
+Mint 1kg
+Tumeric 1.5kg
+Ginger 1.5kg
+Garlic 3kg
+
+Thyme and Garlic will be supplied by mum Sylvia  this week
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+shallome                                 | shallome | Qty: 1.0 | Unit: None    | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+stock as at 1sep 2025                    | stock as at 1sep | Qty: 2025.0 | Unit: None | Ambiguous packaging - Suggestions: Strawberries (1kg) (6), Strawberries (2kg) (6) | ❌ AMBIGUOUS
+temp 9 decrees                           | temp decrees | Qty: 9.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+1.avo 18 boxes                           | 1.avo | Qty: 18.0 | Unit: box       | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+2.red onions 2bags                       | onions s | Qty: 2.0 | Unit: bag | Pkg: 2bag | Red Onions | Score: 100.0           | ✅ CORRECT 
+3.white onion 2 bags                     | 3.white onions | Qty: 2.0 | Unit: bag | Ambiguous packaging - Suggestions: Spring Onions (100), Red Onions (95), White Onions (95), Red Onions (10kg) (82), Red Onions (1kg) (82), Red Onions (2kg) (82), Red Onions (3kg) (82), Red Onions (4kg) (82), Red Onions (5kg) (82), Red Onions (6kg) (82), Red Onions (7kg) (82), Red Onions (8kg) (82), Red Onions (9kg) (82), Red Onions 10kg (82), Red Onions 15kg (82), Red Onions 20kg (82), Red Onions 5kg (82), White Onions (10kg) (82), White Onions (1kg) (82), White Onions (2kg) (82) | ❌ AMBIGUOUS
+4.blue berries 4 pun                     | 4.blue berries | Qty: 4.0 | Unit: punnet | Ambiguous packaging - Suggestions: Blueberries (75), Blueberries (200g) (75), Blueberries (500g) (75), Strawberries (1kg) (75), Strawberries (200g) (75), Strawberries (250g) (75), Strawberries (2kg) (75), Strawberries (500g) (75), Strawberries (750g) (75), Beetroot (9) | ❌ AMBIGUOUS
+naatjies 1 small box                     | naatjies small box | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Small Veggie Box (45), Large Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30), Lemons (10kg) (30), Lemons (2kg) (30), Lemons (5kg) (30), Naartjies (10) | ❌ AMBIGUOUS
+mushroom 3 pun                           | mushrooms | Qty: 3.0 | Unit: punnet | Ambiguous packaging - Suggestions: Button Mushrooms (100), Portabellini Mushrooms (100), Portabellini Mushrooms (10kg) (100), Portabellini Mushrooms (5kg) (100), Portabellini Mushrooms (200g) (100), Portabellini Mushrooms (250g) (100), Portabellini Mushrooms (500g) (100), Portabellini Mushrooms (750g) (100), Portabellini Mushrooms (7kg) (100), Brown Mushrooms (95), Brown Mushrooms (10kg) (82), Brown Mushrooms (5kg) (82), Brown Mushrooms (200g) (82), Brown Mushrooms (250g) (82), Brown Mushrooms (500g) (82), Brown Mushrooms (750g) (82), Brown Mushrooms (7kg) (82) | ❌ AMBIGUOUS
+baby corn 25 pun                         | baby corn | Qty: 25.0 | Unit: punnet | Ambiguous packaging - Suggestions: Baby Corn (100), Baby Spinach (25), Baby Marrow (25), Baby Marrow (10kg) (25), Baby Marrow (15kg) (25), Baby Marrow (1kg) (25), Baby Marrow (200g) (25), Baby Marrow (20kg) (25), Baby Marrow (250g) (25), Baby Marrow (25kg) (25), Baby Marrow (2kg) (25), Baby Marrow (3kg) (25), Baby Marrow (4kg) (25), Baby Marrow (500g) (25), Baby Marrow (5kg) (25), Baby Marrow (6kg) (25), Baby Marrow (750g) (25), Baby Marrow (7kg) (25), Baby Marrow (8kg) (25) | ❌ AMBIGUOUS
+beetroot 11kg                            | beetroot | Qty: 1.0 | Unit: kg | Pkg: 11kg | Beetroot | Score: 100.0             | ✅ CORRECT 
+cabbage 3 heads                          | cabbage | Qty: 3.0 | Unit: head     | Green Cabbage | Score: 85.0         | ✅ CORRECT 
+spring onion 1.5kg                       | spring onions | Qty: 1.0 | Unit: kg | Pkg: 1.5kg | Spring Onions | Score: 100.0        | ✅ CORRECT 
+mixed lettuce 2kg                        | lettuce | Qty: 1.0 | Unit: kg | Pkg: 2kg | Crispy Lettuce (2kg) | Score: 100.0 | ✅ CORRECT 
+red chillies 2kg                         | red chillies | Qty: 1.0 | Unit: kg | Pkg: 2kg | Red Chillies | Score: 100.0         | ✅ CORRECT 
+green chillies 2kg                       | green chillies | Qty: 1.0 | Unit: kg | Pkg: 2kg | Green Chillies | Score: 100.0       | ✅ CORRECT 
+lemons 29kg                              | lemons | Qty: 1.0 | Unit: kg | Pkg: 29kg | Lemons (10kg) | Score: 100.0        | ✅ CORRECT 
+baby marrow normal size 3kg              | baby marrow normal size | Qty: 1.0 | Unit: kg | Pkg: 3kg | Baby Marrow (3kg) | Score: 70.0     | ⚠️ LOW CONF
+baby marrow medium 1.5 +2.8 normal size  | baby marrow medium +2.8 normal size | Qty: 1.5 | Unit: None | Ambiguous packaging - Suggestions: Baby Marrow (50), Baby Marrow (10kg) (35), Baby Marrow (15kg) (35), Baby Marrow (1kg) (35), Baby Marrow (200g) (35), Baby Marrow (20kg) (35), Baby Marrow (250g) (35), Baby Marrow (25kg) (35), Baby Marrow (2kg) (35), Baby Marrow (3kg) (35), Baby Marrow (4kg) (35), Baby Marrow (500g) (35), Baby Marrow (5kg) (35), Baby Marrow (6kg) (35), Baby Marrow (750g) (35), Baby Marrow (7kg) (35), Baby Marrow (8kg) (35), Baby Marrow (9kg) (35), Baby Spinach (25), Baby Corn (25) | ❌ AMBIGUOUS
+spinach 3kg                              | spinach | Qty: 1.0 | Unit: kg | Pkg: 3kg | Spinach (3kg) | Score: 100.0        | ✅ CORRECT 
+cocktail 25 pun                          | cocktail | Qty: 25.0 | Unit: punnet | Ambiguous packaging - Suggestions: Cocktail Tomatoes (1kg) (80), Cocktail Tomatoes (200g) (80), Cocktail Tomatoes (250g) (80), Cocktail Tomatoes (500g) (80), Cherry Tomatoes (35), Sun Dried Tomatoes (35), Tomatoes (35), Tomatoes (35), Tomatoes (35), Tomatoes (10kg) (35), Coriander (7) | ❌ AMBIGUOUS
+sweet corn 1pun                          | sweet corn | Qty: 1.0 | Unit: None  | Ambiguous packaging - Suggestions: Sweet Corn (100), Sweet Corn (200g) (100), Sweet Melon (25), Sweet Potatoes (25), Sweet Potatoes (10kg) (25), Sweet Potatoes (15kg) (25), Sweet Potatoes (1kg) (25), Sweet Potatoes (20kg) (25), Sweet Potatoes (25kg) (25), Sweet Potatoes (2kg) (25), Sweet Potatoes (3kg) (25), Sweet Potatoes (4kg) (25), Sweet Potatoes (5kg) (25), Sweet Potatoes (6kg) (25), Sweet Potatoes (7kg) (25), Sweet Potatoes (8kg) (25), Sweet Potatoes (9kg) (25), Baby Corn (25) | ❌ AMBIGUOUS
+patty pan 10                             | patty pan | Qty: 10.0 | Unit: None  | Ambiguous packaging - Suggestions: Patty Pan (100), Papaya (10), Paw Paw (9) | ❌ AMBIGUOUS
+green grapes3 pun                        | green | Qty: 3.0 | Unit: punnet     | Ambiguous packaging - Suggestions: Green Grapes (100), Green Chili (100), Green Beans (100), Green Cabbage (100), Green Chillies (100), Green Peppers (100), Green Peppers (100), Green Peppers (100), Green Grapes (1kg) (90), Green Grapes (2kg) (90), Green Grapes (500g) (90), Green Grapes (5kg) (90), Green Chili (100g) (90), Green Chili (1kg) (90), Green Chili (200g) (90), Green Chili (250g) (90), Green Chili (2kg) (90), Green Chili (500g) (90), Green Chili (5kg) (90), Green Chili (750g) (90) | ❌ AMBIGUOUS
+red grapes 3 pun                         | red grapes | Qty: 3.0 | Unit: punnet | Ambiguous packaging - Suggestions: Red Grapes (100), Red Grapes (1kg) (100), Red Grapes (2kg) (100), Red Grapes (500g) (100), Red Grapes (5kg) (100), Black Grapes (10), Green Grapes (10), White Grapes (10), Grape (50), Grapefruit (35), Red Apples (25), Red Apples (10kg) (25), Red Apples (1kg) (25), Red Apples (2kg) (25), Red Apples (5kg) (25) | ❌ AMBIGUOUS
+deveined spinarch 3kg                    | deveined spinarch | Qty: 1.0 | Unit: kg | Pkg: 3kg | No matches found                    | ❌ NO MATCH
+red cabbage 3                            | red cabbage | Qty: 3.0 | Unit: None | Ambiguous packaging - Suggestions: Red Cabbage (100), Red Apples (25), Red Apples (10kg) (25), Red Apples (1kg) (25), Red Apples (2kg) (25), Red Apples (5kg) (25), Red Apples (5kg) (25), Red Grapes (25), Red Grapes (1kg) (25), Red Grapes (2kg) (25), Red Grapes (500g) (25), Red Grapes (5kg) (25), Red Chili (25), Red Chili (100g) (25), Red Chili (1kg) (25), Red Chili (200g) (25), Red Chili (250g) (25), Red Chili (2kg) (25), Red Chili (500g) (25) | ❌ AMBIGUOUS
+cauliflower heads 10 heads               | cauliflower | Qty: 10.0 | Unit: head | Cauliflower | Score: 100.0          | ✅ CORRECT 
+brinjals 1.8kg                           | brinjals | Qty: 1.0 | Unit: kg | Pkg: 1.8kg | No matches found                    | ❌ NO MATCH
+cucumber 17                              | cucumber | Qty: 17.0 | Unit: None   | Ambiguous packaging - Suggestions: Cucumber (100), Cucumber (100), Cucumber (100) | ❌ AMBIGUOUS
+sweet mellon 1                           | sweet mellon | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Water Melon (50), Watermelon (50), Sweet Melon (25), Sweet Corn (25), Sweet Corn (200g) (25), Sweet Potatoes (25), Sweet Potatoes (10kg) (25), Sweet Potatoes (15kg) (25), Sweet Potatoes (1kg) (25), Sweet Potatoes (20kg) (25), Sweet Potatoes (25kg) (25), Sweet Potatoes (2kg) (25), Sweet Potatoes (3kg) (25), Sweet Potatoes (4kg) (25), Sweet Potatoes (5kg) (25), Sweet Potatoes (6kg) (25), Sweet Potatoes (7kg) (25), Sweet Potatoes (8kg) (25), Sweet Potatoes (9kg) (25) | ❌ AMBIGUOUS
+water mellon 1                           | water mellon | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Sweet Melon (50), Water Melon (25), Watermelon (25), Watercress (25), Watercress (100g) (25), Watercress (150g) (25), Watercress (200g) (25), Watercress (250g) (25), Watercress (300g) (25), Watercress (400g) (25), Watercress (500g) (25), Watercress (50g) (25), Watercress (600g) (25), Watercress (750g) (25) | ❌ AMBIGUOUS
+pine apple 20                            | pine apple | Qty: 20.0 | Unit: None | Ambiguous packaging - Suggestions: Pineapple (50), Pineapple (50), Pineapple (10kg) (50), Pineapple (2kg) (50), Pineapple (5kg) (50), Red Apples (25), Red Apples (10kg) (25), Red Apples (1kg) (25), Red Apples (2kg) (25), Red Apples (5kg) (25), Red Apples (5kg) (25) | ❌ AMBIGUOUS
+paw paw 6 pun                            | paw paw | Qty: 6.0 | Unit: punnet   | Ambiguous packaging - Suggestions: Paw Paw (100), Papaya (8) | ❌ AMBIGUOUS
+iceberg 12                               | iceberg | Qty: 12.0 | Unit: None    | Ambiguous packaging - Suggestions: Iceberg Lettuce (100), Iceberg Lettuce (100g) (65), Iceberg Lettuce (150g) (65), Iceberg Lettuce (200g) (65), Iceberg Lettuce (250g) (65), Iceberg Lettuce (300g) (65), Iceberg Lettuce (400g) (65), Iceberg Lettuce (500g) (65), Iceberg Lettuce (50g) (65), Iceberg Lettuce (600g) (65), Iceberg Lettuce (750g) (65) | ❌ AMBIGUOUS
+tomatoes 10kg                            | tomatoes | Qty: 1.0 | Unit: kg | Pkg: 10kg | Tomatoes (10kg) | Score: 100.0      | ✅ CORRECT 
+straw berry 18 pun                       | straw berry | Qty: 18.0 | Unit: punnet | Ambiguous packaging - Suggestions: Strawberry (50), Strawberries (1kg) (25), Strawberries (200g) (25), Strawberries (250g) (25), Strawberries (2kg) (25), Strawberries (500g) (25), Strawberries (750g) (25) | ❌ AMBIGUOUS
+grape fruits 10kg                        | grape fruits | Qty: 1.0 | Unit: kg | Pkg: 10kg | No matches found                    | ❌ NO MATCH
+red apple 23kg                           | red apple | Qty: 1.0 | Unit: kg | Pkg: 23kg | Red Apples | Score: 100.0           | ✅ CORRECT 
+rocket 1.5kg                             | rocket | Qty: 1.0 | Unit: kg | Pkg: 1.5kg | Rocket | Score: 100.0               | ✅ CORRECT 
+mint 1kg                                 | mint | Qty: 1.0 | Unit: kg | Pkg: 1kg | Mint | Score: 100.0                 | ✅ CORRECT 
+tumeric 1.5kg                            | tumeric | Qty: 1.0 | Unit: kg | Pkg: 1.5kg | No matches found                    | ❌ NO MATCH
+ginger 1.5kg                             | ginger | Qty: 1.0 | Unit: kg | Pkg: 1.5kg | Ginger | Score: 100.0               | ✅ CORRECT 
+garlic 3kg                               | garlic | Qty: 1.0 | Unit: kg | Pkg: 3kg | Garlic | Score: 100.0               | ✅ CORRECT 
+thyme and garlic will be supplied by mum sylvia  this week | thyme and garlic will be supplied by mum sylvia this week | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Thyme (40), Thyme (40), Garlic (40), Micro Herbs (100g) (35), Micro Herbs (200g) (35), Micro Herbs (50g) (35), Micro Herbs (35), Thyme (100g) (25), Thyme (200g) (25), Thyme (50g) (25), Thyme (150g) (25), Thyme (250g) (25), Thyme (300g) (25), Thyme (400g) (25), Thyme (500g) (25), Thyme (600g) (25), Thyme (750g) (25), Coriander (25), Coriander (100g) (25), Coriander (200g) (25) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 509
+ORIGINAL: Morning here is my order 
+
+Tomatoes x2
+Mix peppers 3kg 
+Baby spinach x6
+Cherry tomatoes x15 200g 
+Red apple 2kg
+Baby potato 10kg 
+Strawberry x3 
+Grapes x1 
+Orange 1kg
+Red cabbage x3
+Pineapple x2 
+
+Thanks
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+morning here is my order                 | morning here is my order | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Order Notes (25) | ❌ AMBIGUOUS
+tomatoes x2                              | tomatoes | Qty: 2.0 | Unit: None    | Ambiguous packaging - Suggestions: Cherry Tomatoes (100), Cocktail Tomatoes (1kg) (100), Cocktail Tomatoes (200g) (100), Cocktail Tomatoes (250g) (100), Cocktail Tomatoes (500g) (100), Sun Dried Tomatoes (100), Tomatoes (100), Tomatoes (100), Tomatoes (100), Tomatoes (10kg) (100), Tomatoes (15kg) (100), Tomatoes (20kg) (100), Tomatoes (5kg) (100), Whole Tomatoes (100) | ❌ AMBIGUOUS
+mix peppers 3kg                          | mix peppers | Qty: 1.0 | Unit: kg | Pkg: 3kg | Mixed Peppers | Score: 100.0        | ✅ CORRECT 
+baby spinach x6                          | baby spinach | Qty: 6.0 | Unit: None | Ambiguous packaging - Suggestions: Baby Spinach (100), Spinach (10), Spinach (10), Baby Corn (25), Baby Marrow (25), Baby Marrow (10kg) (25), Baby Marrow (15kg) (25), Baby Marrow (1kg) (25), Baby Marrow (200g) (25), Baby Marrow (20kg) (25), Baby Marrow (250g) (25), Baby Marrow (25kg) (25), Baby Marrow (2kg) (25), Baby Marrow (3kg) (25), Baby Marrow (4kg) (25), Baby Marrow (500g) (25), Baby Marrow (5kg) (25) | ❌ AMBIGUOUS
+cherry tomatoes x15 200g                 | cherry tomatoes | Qty: 15.0 | Unit: g | Pkg: 200g | Cherry Tomatoes | Score: 100.0      | ✅ CORRECT 
+red apple 2kg                            | red apple | Qty: 1.0 | Unit: kg | Pkg: 2kg | Red Apples (2kg) | Score: 100.0     | ✅ CORRECT 
+baby potato 10kg                         | baby potato | Qty: 1.0 | Unit: kg | Pkg: 10kg | Baby Potatoes | Score: 85.0         | ✅ CORRECT 
+strawberry x3                            | strawberry | Qty: 3.0 | Unit: None  | Ambiguous packaging - Suggestions: Strawberry (100), Strawberries (1kg) (9), Strawberries (200g) (9), Strawberries (2kg) (9), Strawberries (500g) (9), Strawberries (250g) (9), Strawberries (750g) (9) | ❌ AMBIGUOUS
+grapes x1                                | grapes | Qty: 1.0 | Unit: None      | Ambiguous packaging - Suggestions: Black Grapes (95), Green Grapes (95), Red Grapes (95), White Grapes (95), Black Grapes (1kg) (82), Black Grapes (2kg) (82), Black Grapes (500g) (82), Black Grapes (5kg) (82), Green Grapes (1kg) (82), Green Grapes (2kg) (82), Green Grapes (500g) (82), Green Grapes (5kg) (82), Red Grapes (1kg) (82), Red Grapes (2kg) (82), Red Grapes (500g) (82), Red Grapes (5kg) (82), White Grapes (1kg) (82), White Grapes (2kg) (82), White Grapes (500g) (82), White Grapes (5kg) (82) | ❌ AMBIGUOUS
+orange 1kg                               | orange | Qty: 1.0 | Unit: kg | Pkg: 1kg | Oranges (1kg) | Score: 100.0        | ✅ CORRECT 
+red cabbage x3                           | red cabbage | Qty: 3.0 | Unit: None | Ambiguous packaging - Suggestions: Red Cabbage (100), Red Apples (25), Red Apples (10kg) (25), Red Apples (1kg) (25), Red Apples (2kg) (25), Red Apples (5kg) (25), Red Apples (5kg) (25), Red Grapes (25), Red Grapes (1kg) (25), Red Grapes (2kg) (25), Red Grapes (500g) (25), Red Grapes (5kg) (25), Red Chili (25), Red Chili (100g) (25), Red Chili (1kg) (25), Red Chili (200g) (25), Red Chili (250g) (25), Red Chili (2kg) (25), Red Chili (500g) (25) | ❌ AMBIGUOUS
+pineapple x2                             | pineapple | Qty: 2.0 | Unit: None   | Ambiguous packaging - Suggestions: Pineapple (100), Pineapple (100), Pineapple (10kg) (100), Pineapple (2kg) (100), Pineapple (5kg) (100), Red Apples (35), Red Apples (10kg) (35), Red Apples (1kg) (35), Red Apples (2kg) (35), Red Apples (5kg) (35) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 510
+ORIGINAL: Mugg and Bean
+PARSED: No items parsed
+MATCHED: Suggestions for unparsed items:
+--------------------------------------------------------------------------------
+  Mugg and Bean                  -> No suggestions available
+STATUS: 💡 SUGGESTIONS
+
+Message ID: 511
+ORIGINAL: Good morning 
+20 kg onions
+2 box lettuce 
+1 box mushrooms 
+3 packet cherry tomatoes 
+200g parsley 
+200g chives
+1 cucumber
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+20 kg onions                             | onions | Qty: 20.0 | Unit: kg       | Spring Onions | Score: 100.0        | ✅ CORRECT 
+2 box lettuce                            | box lettuce | Qty: 2.0 | Unit: box  | Ambiguous packaging - Suggestions: Lettuce (100), Mixed Lettuce (75), Crispy Lettuce (2kg) (35), Crispy Lettuce (5kg) (35), Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30) | ❌ AMBIGUOUS
+1 box mushrooms                          | box mushrooms | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Portabellini Mushrooms (10kg) (82), Portabellini Mushrooms (5kg) (82), Portabellini Mushrooms (7kg) (82), Brown Mushrooms (10kg) (52), Brown Mushrooms (5kg) (52), Brown Mushrooms (7kg) (52), Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30) | ❌ AMBIGUOUS
+3 packet cherry tomatoes                 | packet cherry tomatoes | Qty: 3.0 | Unit: packet | Ambiguous packaging - Suggestions: Cherry Tomatoes (100), Tomatoes (27), Tomatoes (27), Tomatoes (27), Sun Dried Tomatoes (35), Avocados (Hard) (1kg) (30), Avocados (Hard) (2kg) (30), Avocados (Hard) (3kg) (30), Avocados (Semi-Ripe) (1kg) (30), Avocados (Semi-Ripe) (2kg) (30), Avocados (Semi-Ripe) (3kg) (30), Avocados (Soft) (1kg) (30), Avocados (Soft) (2kg) (30), Avocados (Soft) (3kg) (30), Bananas (1kg) (30), Bananas (2kg) (30) | ❌ AMBIGUOUS
+200g parsley                             | parsley | Qty: 1.0 | Unit: g | Pkg: 200g | Parsley (200g) | Score: 100.0       | ✅ CORRECT 
+200g chives                              | chives | Qty: 1.0 | Unit: g | Pkg: 200g | Chives | Score: 100.0               | ✅ CORRECT 
+1 cucumber                               | cucumber | Qty: 1.0 | Unit: None    | Ambiguous packaging - Suggestions: Cucumber (100), Cucumber (100), Cucumber (100) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 512
+ORIGINAL: Wimpy mooinooi
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+wimpy mooinooi                           | wimpy mooinooi | Qty: 1.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 513
+ORIGINAL: Wimpy
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+wimpy                                    | wimpy | Qty: 1.0 | Unit: None       | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 514
+ORIGINAL: 1kg red onions
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+1kg red onions                           | red onions | Qty: 1.0 | Unit: kg | Pkg: 1kg | Red Onions (1kg) | Score: 100.0     | ✅ CORRECT 
+
+--------------------------------------------------------------------------------
+
+Message ID: 515
+ORIGINAL: Good day 
+Orders 
+2 5kg tomato 
+2 5kg mushrooms 
+10kg onions 
+2kg green paper 
+Thanks
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+good day                                 | good day | Qty: 1.0 | Unit: None    | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+2 5kg tomato                             | tomato | Qty: 2.0 | Unit: kg | Pkg: 5kg | Tomatoes (5kg) | Score: 100.0       | ✅ CORRECT 
+2 5kg mushrooms                          | mushrooms | Qty: 2.0 | Unit: kg | Pkg: 5kg | Brown Mushrooms (5kg) | Score: 100.0 | ✅ CORRECT 
+10kg onions                              | onions | Qty: 1.0 | Unit: kg | Pkg: 10kg | Red Onions (10kg) | Score: 100.0    | ✅ CORRECT 
+2kg green paper                          | green paper | Qty: 1.0 | Unit: kg | Pkg: 2kg | Green Chili (2kg) | Score: 55.0     | ❌ POOR MATCH
+
+--------------------------------------------------------------------------------
+
+Message ID: 516
+ORIGINAL: Debonair
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+debonair                                 | debonair | Qty: 1.0 | Unit: None    | Ambiguous packaging - Suggestions: Large Veggie Box (45), Small Veggie Box (45), Deveined Spinach (7) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 517
+ORIGINAL: Veg order
+2x bags loose 19kg carrot 
+2x bags butternut 
+2x bags red onions 
+6x bags white onions
+2x bags baby potatoes 
+6x boxes round tomatoes 
+4x boxes cherry tomatoes 
+20kg x sweet potatoes 
+1x box ginger
+1x box garlic 
+3x boxes baby marrow 
+2x boxes Aubergine 
+1x green beans 
+6x boxes red peppers 
+1 box yellow peppers 
+1 box green peppers 
+1x box Artichokes
+1x box red Chilli 
+1x box green chilli
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+veg order                                | veg order | Qty: 1.0 | Unit: None   | Ambiguous packaging - Suggestions: Large Veggie Box (25), Small Veggie Box (25), Order Notes (25) | ❌ AMBIGUOUS
+2x bags loose 19kg carrot                | bag loose carrots | Qty: 2.0 | Unit: kg | Pkg: 19kg | Carrots (Loose) | Score: 56.7       | ❌ POOR MATCH
+2x bags butternut                        | butternut | Qty: 2.0 | Unit: bag    | Ambiguous packaging - Suggestions: Butternut (100), Butternut (10kg) (100), Butternut (15kg) (100), Butternut (1kg) (100), Butternut (20kg) (100), Butternut (25kg) (100), Butternut (2kg) (100), Butternut (3kg) (100), Butternut (4kg) (100), Butternut (5kg) (100), Butternut (6kg) (100), Butternut (7kg) (100), Butternut (8kg) (100), Butternut (9kg) (100), Butternut Squash (100) | ❌ AMBIGUOUS
+2x bags red onions                       | red onions | Qty: 2.0 | Unit: bag   | Ambiguous packaging - Suggestions: Red Onions (100), Red Onions (10kg) (100), Red Onions (1kg) (100), Red Onions (2kg) (100), Red Onions (3kg) (100), Red Onions (4kg) (100), Red Onions (5kg) (100), Red Onions (6kg) (100), Red Onions (7kg) (100), Red Onions (8kg) (100), Red Onions (9kg) (100), Red Onions 10kg (100), Red Onions 15kg (100), Red Onions 20kg (100), Red Onions 5kg (100), White Onions (10) | ❌ AMBIGUOUS
+6x bags white onions                     | white onions | Qty: 6.0 | Unit: bag | Ambiguous packaging - Suggestions: White Onions (100), White Onions (10kg) (100), White Onions (1kg) (100), White Onions (2kg) (100), White Onions (3kg) (100), White Onions (4kg) (100), White Onions (5kg) (100), White Onions (6kg) (100), White Onions (7kg) (100), White Onions (8kg) (100), White Onions (9kg) (100), White Onions 10kg (100), White Onions 15kg (100), White Onions 20kg (100), White Onions 5kg (100), Red Onions (10) | ❌ AMBIGUOUS
+2x bags baby potatoes                    | baby potatoes | Qty: 2.0 | Unit: bag | Ambiguous packaging - Suggestions: Baby Potatoes (100), Potatoes (10kg) (50), Potatoes (1kg) (50), Potatoes (2kg) (50), Potatoes (3kg) (50), Potatoes (4kg) (50), Potatoes (5kg) (50), Potatoes (6kg) (50), Potatoes (7kg) (50), Potatoes (8kg) (50), Potatoes (9kg) (50), Potatoes 10kg (50), Potatoes 15kg (50), Potatoes 20kg (50), Potatoes 25kg (50), Sweet Potatoes (50), Potatoes (30), Baby Spinach (25) | ❌ AMBIGUOUS
+6x boxes round tomatoes                  | round tomatoes | Qty: 6.0 | Unit: box | Ambiguous packaging - Suggestions: Cherry Tomatoes (60), Tomatoes (10kg) (60), Tomatoes (15kg) (60), Tomatoes (20kg) (60), Tomatoes (5kg) (60), Whole Tomatoes (60), Tomatoes (40), Tomatoes (40), Tomatoes (40), Cocktail Tomatoes (1kg) (25), Cocktail Tomatoes (200g) (25), Cocktail Tomatoes (250g) (25), Cocktail Tomatoes (500g) (25), Sun Dried Tomatoes (25) | ❌ AMBIGUOUS
+4x boxes cherry tomatoes                 | cherry tomatoes | Qty: 4.0 | Unit: box | Ambiguous packaging - Suggestions: Cherry Tomatoes (100), Tomatoes (10kg) (60), Tomatoes (15kg) (60), Tomatoes (20kg) (60), Tomatoes (5kg) (60), Whole Tomatoes (60), Tomatoes (40), Tomatoes (40), Tomatoes (40), Cocktail Tomatoes (1kg) (25), Cocktail Tomatoes (200g) (25), Cocktail Tomatoes (250g) (25), Cocktail Tomatoes (500g) (25), Sun Dried Tomatoes (25) | ❌ AMBIGUOUS
+20kg x sweet potatoes                    | sweet potatoes | Qty: 1.0 | Unit: kg | Pkg: 20kg | Potatoes 20kg | Score: 100.0        | ✅ CORRECT 
+1x box ginger                            | box ginger | Qty: 1.0 | Unit: box   | Ambiguous packaging - Suggestions: Ginger (85), Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30), Lemons (10kg) (30), Lemons (2kg) (30), Lemons (5kg) (30) | ❌ AMBIGUOUS
+1x box garlic                            | box garlic | Qty: 1.0 | Unit: box   | Ambiguous packaging - Suggestions: Garlic (100), Crushed Garlic (75), Garlic Cloves (75), Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30), Lemons (10kg) (30), Lemons (2kg) (30) | ❌ AMBIGUOUS
+3x boxes baby marrow                     | baby marrow | Qty: 3.0 | Unit: box  | Ambiguous packaging - Suggestions: Baby Marrow (100), Baby Marrow (10kg) (100), Baby Marrow (15kg) (100), Baby Marrow (1kg) (100), Baby Marrow (200g) (100), Baby Marrow (20kg) (100), Baby Marrow (250g) (100), Baby Marrow (25kg) (100), Baby Marrow (2kg) (100), Baby Marrow (3kg) (100), Baby Marrow (4kg) (100), Baby Marrow (500g) (100), Baby Marrow (5kg) (100), Baby Marrow (6kg) (100), Baby Marrow (750g) (100), Baby Marrow (7kg) (100), Baby Marrow (8kg) (100), Baby Marrow (9kg) (100) | ❌ AMBIGUOUS
+2x boxes aubergine                       | aubergine | Qty: 2.0 | Unit: box    | Ambiguous packaging - Suggestions: Aubergine (100), Aubergine (100) | ❌ AMBIGUOUS
+1x green beans                           | green beans | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Green Beans (100), Green Grapes (25), Green Grapes (1kg) (25), Green Grapes (2kg) (25), Green Grapes (500g) (25), Green Grapes (5kg) (25), Green Chili (25), Micro Greens (25), Green Cabbage (25), Green Chili (100g) (25), Green Chili (1kg) (25), Green Chili (200g) (25), Green Chili (250g) (25), Green Chili (2kg) (25), Green Chili (500g) (25), Green Chili (5kg) (25), Green Chili (750g) (25), Green Chillies (25), Green Peppers (25) | ❌ AMBIGUOUS
+6x boxes red peppers                     | red peppers | Qty: 6.0 | Unit: box  | Ambiguous packaging - Suggestions: Red Peppers (100), Red Peppers (10kg) (100), Red Peppers (10kg) (100), Red Peppers (15kg) (100), Red Peppers (1kg) (100), Red Peppers (1kg) (100), Red Peppers (20kg) (100), Red Peppers (250g) (100), Red Peppers (25kg) (100), Red Peppers (2kg) (100), Red Peppers (2kg) (100), Red Peppers (3kg) (100), Red Peppers (3kg) (100), Red Peppers (4kg) (100), Red Peppers (4kg) (100), Red Peppers (500g) (100), Red Peppers (5kg) (100), Red Peppers (5kg) (100), Red Peppers (750g) (100), Green Peppers (10) | ❌ AMBIGUOUS
+1 box yellow peppers                     | box yellow peppers | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Yellow Peppers (10kg) (100), Yellow Peppers (15kg) (100), Yellow Peppers (1kg) (100), Yellow Peppers (20kg) (100), Yellow Peppers (25kg) (100), Yellow Peppers (2kg) (100), Yellow Peppers (3kg) (100), Yellow Peppers (4kg) (100), Yellow Peppers (5kg) (100), Yellow Peppers (50), Large Veggie Box (35) | ❌ AMBIGUOUS
+1 box green peppers                      | box green peppers | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Green Peppers (100), Green Peppers (10kg) (100), Green Peppers (15kg) (100), Green Peppers (1kg) (100), Green Peppers (20kg) (100), Green Peppers (25kg) (100), Green Peppers (2kg) (100), Green Peppers (3kg) (100), Green Peppers (4kg) (100), Green Peppers (5kg) (100), Green Peppers (50), Green Peppers (50) | ❌ AMBIGUOUS
+1x box artichokes                        | box artichokes | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Artichokes (100), Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30), Lemons (10kg) (30), Lemons (2kg) (30), Lemons (5kg) (30) | ❌ AMBIGUOUS
+1x box red chilli                        | box red chilli | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Red Chillies (50), Green Chili (50), Green Chili (100g) (50), Green Chili (1kg) (50), Green Chili (200g) (50), Green Peppers (45), Green Peppers (10kg) (45), Green Peppers (15kg) (45), Green Peppers (1kg) (45), Green Peppers (20kg) (45), Green Peppers (25kg) (45), Green Peppers (2kg) (45), Green Peppers (3kg) (45), Large Veggie Box (35), Small Veggie Box (35), Red Apples (10kg) (35), Red Apples (5kg) (35), Red Grapes (1kg) (35), Red Grapes (2kg) (35), Red Grapes (5kg) (35) | ❌ AMBIGUOUS
+1x box green chilli                      | box green chilli | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Red Chili (50), Green Peppers (10kg) (45), Green Peppers (15kg) (45), Green Peppers (1kg) (45), Green Peppers (20kg) (45), Green Peppers (25kg) (45), Green Peppers (2kg) (45), Green Peppers (3kg) (45), Large Veggie Box (35), Small Veggie Box (35), Green Grapes (1kg) (35), Green Grapes (2kg) (35), Green Grapes (5kg) (35), Green Peppers (35), Green Peppers (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 518
+ORIGINAL: 6 box Avo
+Culinary
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+6 box avo                                | box avocado | Qty: 6.0 | Unit: box  | Ambiguous packaging - Suggestions: Avocados (Hard) (65), Avocados (Semi-Ripe) (65), Avocados (Soft) (65), Large Veggie Box (35), Small Veggie Box (35), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30), Lemons (10kg) (30), Lemons (2kg) (30), Lemons (5kg) (30) | ❌ AMBIGUOUS
+culinary                                 | culinary | Qty: 1.0 | Unit: None    | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 519
+ORIGINAL: Please add on
+5kg spinach
+1kg lime
+1kg banana
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+please add on                            | please add on | Qty: 1.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+5kg spinach                              | spinach | Qty: 1.0 | Unit: kg | Pkg: 5kg | Spinach (5kg) | Score: 100.0        | ✅ CORRECT 
+1kg lime                                 | lime | Qty: 1.0 | Unit: kg | Pkg: 1kg | Lime (1kg) | Score: 100.0           | ✅ CORRECT 
+1kg banana                               | banana | Qty: 1.0 | Unit: kg | Pkg: 1kg | Bananas (1kg) | Score: 100.0        | ✅ CORRECT 
+
+--------------------------------------------------------------------------------
+
+Message ID: 520
+ORIGINAL: KarlPlease add on
+5kg spinach
+1kg lime
+1kg bananaPlease add to Casa Bella
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+karlplease add on                        | karlplease add on | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Kale (7), Kale (1kg) (7), Kale (100g) (6), Kale (200g) (6), Kale (300g) (6), Kale (400g) (6), Kale (500g) (6), Kale (50g) (6) | ❌ AMBIGUOUS
+5kg spinach                              | spinach | Qty: 1.0 | Unit: kg | Pkg: 5kg | Spinach (5kg) | Score: 100.0        | ✅ CORRECT 
+1kg lime                                 | lime | Qty: 1.0 | Unit: kg | Pkg: 1kg | Lime (1kg) | Score: 100.0           | ✅ CORRECT 
+1kg bananaplease add to casa bella       | bananaplease add to casa bella | Qty: 1.0 | Unit: kg | Pkg: 1kg | No matches found                    | ❌ NO MATCH
+
+--------------------------------------------------------------------------------
+
+Message ID: 521
+ORIGINAL: Basil 200g
+Chives 100g
+Mint 100g
+Rocket 200g
+Avo Box x 2
+Butternut 10kg
+Red chilli 1box
+Ginger 500g
+Mixed lettuce x10
+Mushroom x 10
+Red onion 1bag
+White onion 1bag
+Green peppers x2
+Red pepper x2
+Yellow pepper x 2
+Spinach x 20
+Cocktail tomato x 8
+Tomato box x 2
+Pecanwood
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+basil 200g                               | basil | Qty: 1.0 | Unit: g | Pkg: 200g | Basil (200g) | Score: 100.0         | ✅ CORRECT 
+chives 100g                              | chives | Qty: 1.0 | Unit: g | Pkg: 100g | Chives | Score: 100.0               | ✅ CORRECT 
+mint 100g                                | mint | Qty: 1.0 | Unit: g | Pkg: 100g | Mint (100g) | Score: 100.0          | ✅ CORRECT 
+rocket 200g                              | rocket | Qty: 1.0 | Unit: g | Pkg: 200g | Rocket (200g) | Score: 100.0        | ✅ CORRECT 
+avo box x 2                              | avocado box | Qty: 2.0 | Unit: box  | Ambiguous packaging - Suggestions: Avocados (Hard) (65), Avocados (Semi-Ripe) (65), Avocados (Soft) (65), Large Veggie Box (35), Small Veggie Box (35), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30), Lemons (10kg) (30), Lemons (2kg) (30), Lemons (5kg) (30) | ❌ AMBIGUOUS
+butternut 10kg                           | butternut | Qty: 1.0 | Unit: kg | Pkg: 10kg | Butternut (10kg) | Score: 100.0     | ✅ CORRECT 
+red chilli 1box                          | red chilli | Qty: 1.0 | Unit: box | Pkg: 1box | Red Chillies | Score: 100.0         | ✅ CORRECT 
+ginger 500g                              | ginger | Qty: 1.0 | Unit: g | Pkg: 500g | Ginger | Score: 100.0               | ✅ CORRECT 
+mixed lettuce x10                        | lettuce | Qty: 10.0 | Unit: None    | Ambiguous packaging - Suggestions: Iceberg Lettuce (100), Lettuce (100), Lettuce (100), Lettuce (100), Mixed Lettuce (100), Crispy Lettuce (100g) (65), Crispy Lettuce (150g) (65), Crispy Lettuce (200g) (65), Crispy Lettuce (250g) (65), Crispy Lettuce (2kg) (65), Crispy Lettuce (300g) (65), Crispy Lettuce (400g) (65), Crispy Lettuce (500g) (65), Crispy Lettuce (50g) (65), Crispy Lettuce (5kg) (65), Crispy Lettuce (600g) (65), Crispy Lettuce (750g) (65), Iceberg Lettuce (100g) (65), Iceberg Lettuce (150g) (65), Iceberg Lettuce (200g) (65) | ❌ AMBIGUOUS
+mushroom x 10                            | mushrooms | Qty: 10.0 | Unit: None  | Ambiguous packaging - Suggestions: Button Mushrooms (100), Portabellini Mushrooms (100), Portabellini Mushrooms (10kg) (100), Portabellini Mushrooms (5kg) (100), Portabellini Mushrooms (200g) (100), Portabellini Mushrooms (250g) (100), Portabellini Mushrooms (500g) (100), Portabellini Mushrooms (750g) (100), Portabellini Mushrooms (7kg) (100), Brown Mushrooms (95), Brown Mushrooms (10kg) (82), Brown Mushrooms (5kg) (82), Brown Mushrooms (200g) (82), Brown Mushrooms (250g) (82), Brown Mushrooms (500g) (82), Brown Mushrooms (750g) (82), Brown Mushrooms (7kg) (82) | ❌ AMBIGUOUS
+red onion 1bag                           | red onions | Qty: 1.0 | Unit: bag | Pkg: 1bag | Red Onions | Score: 100.0           | ✅ CORRECT 
+white onion 1bag                         | white onions | Qty: 1.0 | Unit: bag | Pkg: 1bag | White Onions | Score: 100.0         | ✅ CORRECT 
+green peppers x2                         | green peppers | Qty: 2.0 | Unit: None | Ambiguous packaging - Suggestions: Green Peppers (100), Green Peppers (100), Green Peppers (100), Green Peppers (10kg) (100), Green Peppers (15kg) (100), Green Peppers (1kg) (100), Green Peppers (20kg) (100), Green Peppers (25kg) (100), Green Peppers (2kg) (100), Green Peppers (3kg) (100), Green Peppers (4kg) (100), Green Peppers (5kg) (100), Red Peppers (10), Yellow Peppers (10) | ❌ AMBIGUOUS
+red pepper x2                            | red peppers | Qty: 2.0 | Unit: None | Ambiguous packaging - Suggestions: Red Peppers (100), Red Peppers (10kg) (100), Red Peppers (10kg) (100), Red Peppers (15kg) (100), Red Peppers (1kg) (100), Red Peppers (1kg) (100), Red Peppers (20kg) (100), Red Peppers (250g) (100), Red Peppers (25kg) (100), Red Peppers (2kg) (100), Red Peppers (2kg) (100), Red Peppers (3kg) (100), Red Peppers (3kg) (100), Red Peppers (4kg) (100), Red Peppers (4kg) (100), Red Peppers (500g) (100), Red Peppers (5kg) (100), Red Peppers (5kg) (100), Red Peppers (750g) (100), Green Peppers (10) | ❌ AMBIGUOUS
+yellow pepper x 2                        | yellow peppers | Qty: 2.0 | Unit: None | Ambiguous packaging - Suggestions: Yellow Peppers (100), Yellow Peppers (10kg) (100), Yellow Peppers (15kg) (100), Yellow Peppers (1kg) (100), Yellow Peppers (20kg) (100), Yellow Peppers (25kg) (100), Yellow Peppers (2kg) (100), Yellow Peppers (3kg) (100), Yellow Peppers (4kg) (100), Yellow Peppers (5kg) (100), Green Peppers (10), Green Peppers (10), Green Peppers (10), Red Peppers (10) | ❌ AMBIGUOUS
+spinach x 20                             | spinach | Qty: 20.0 | Unit: None    | Ambiguous packaging - Suggestions: Baby Spinach (100), Deveined Spinach (100), Spinach (100), Spinach (100), Spinach (100g) (100), Spinach (10kg) (100), Spinach (150g) (100), Spinach (1kg) (100), Spinach (200g) (100), Spinach (250g) (100), Spinach (2kg) (100), Spinach (300g) (100), Spinach (3kg) (100), Spinach (400g) (100), Spinach (500g) (100), Spinach (50g) (100), Spinach (5kg) (100), Spinach (600g) (100), Spinach (750g) (100) | ❌ AMBIGUOUS
+cocktail tomato x 8                      | cocktail tomatoes | Qty: 8.0 | Unit: None | Ambiguous packaging - Suggestions: Cocktail Tomatoes (1kg) (100), Cocktail Tomatoes (200g) (100), Cocktail Tomatoes (250g) (100), Cocktail Tomatoes (500g) (100), Tomatoes (10kg) (50), Tomatoes (15kg) (50), Tomatoes (20kg) (50), Tomatoes (5kg) (50), Whole Tomatoes (50), Cherry Tomatoes (40), Tomatoes (30), Tomatoes (30), Tomatoes (30) | ❌ AMBIGUOUS
+tomato box x 2                           | tomato box | Qty: 2.0 | Unit: box   | Ambiguous packaging - Suggestions: Cocktail Tomatoes (1kg) (45), Tomatoes (45), Tomatoes (10kg) (45), Tomatoes (15kg) (45), Tomatoes (20kg) (45), Tomatoes (5kg) (45), Large Veggie Box (35), Small Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30) | ❌ AMBIGUOUS
+pecanwood                                | pecanwood | Qty: 1.0 | Unit: None   | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 522
+ORIGINAL: Hazvinei+27 61 674 9368SHALLOME 
+Stock As At 1Sep 2025
+Temp 9 decrees 
+1.Avo 18 boxes
+2.Red Onions 2bags
+3.White Onion 2 bags
+4.Blue berries 4 Pun
+Naatjies 1 small box
+Mushroom 3 pun
+Baby Corn 25 pun
+Beetroot 11kg
+Cabbage 3 heads
+Spring Onion 1.5kg
+Mixed lettuce 2kg
+Red Chillies 2kg
+Green Chillies 2kg
+Lemons 29kg
+Baby Marrow normal size 3kg
+Baby Marrow medium 1.5 +2.8 normal size
+Spinach 3kg
+Cocktail 25 pun
+Sweet corn 1Pun
+Patty pan 10
+Green Grapes3 pun
+Red Grapes 3 pun
+Deveined spinarch 3kg
+Red Cabbage 3
+Cauliflower heads 10 heads
+Brinjals 1.8kg
+Cucumber 17
+Sweet Mellon 1
+Water Mellon 1
+Pine Apple 20
+Paw paw 6 pun
+Iceberg 12
+Tomatoes 10kg
+Straw berry 18 pun
+Grape fruits 10kg
+Red apple 23kg
+
+
+
+
+Rocket 1.5kg
+Parsley1.5kg
+Mint 1kg
+Tumeric 1.5kg
+GingSorry thyme Rosemary Mint we have enough from Sylvia chives we have 320g
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+hazvinei+27 61 674 9368shallome          | hazvinei+27 | Qty: 61.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+stock as at 1sep 2025                    | stock as at 1sep | Qty: 2025.0 | Unit: None | Ambiguous packaging - Suggestions: Strawberries (1kg) (6), Strawberries (2kg) (6) | ❌ AMBIGUOUS
+temp 9 decrees                           | temp decrees | Qty: 9.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+1.avo 18 boxes                           | 1.avo | Qty: 18.0 | Unit: box       | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+2.red onions 2bags                       | onions s | Qty: 2.0 | Unit: bag | Pkg: 2bag | Red Onions | Score: 100.0           | ✅ CORRECT 
+3.white onion 2 bags                     | 3.white onions | Qty: 2.0 | Unit: bag | Ambiguous packaging - Suggestions: Spring Onions (100), Red Onions (95), White Onions (95), Red Onions (10kg) (82), Red Onions (1kg) (82), Red Onions (2kg) (82), Red Onions (3kg) (82), Red Onions (4kg) (82), Red Onions (5kg) (82), Red Onions (6kg) (82), Red Onions (7kg) (82), Red Onions (8kg) (82), Red Onions (9kg) (82), Red Onions 10kg (82), Red Onions 15kg (82), Red Onions 20kg (82), Red Onions 5kg (82), White Onions (10kg) (82), White Onions (1kg) (82), White Onions (2kg) (82) | ❌ AMBIGUOUS
+4.blue berries 4 pun                     | 4.blue berries | Qty: 4.0 | Unit: punnet | Ambiguous packaging - Suggestions: Blueberries (75), Blueberries (200g) (75), Blueberries (500g) (75), Strawberries (1kg) (75), Strawberries (200g) (75), Strawberries (250g) (75), Strawberries (2kg) (75), Strawberries (500g) (75), Strawberries (750g) (75), Beetroot (9) | ❌ AMBIGUOUS
+naatjies 1 small box                     | naatjies small box | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Small Veggie Box (45), Large Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30), Lemons (10kg) (30), Lemons (2kg) (30), Lemons (5kg) (30), Naartjies (10) | ❌ AMBIGUOUS
+mushroom 3 pun                           | mushrooms | Qty: 3.0 | Unit: punnet | Ambiguous packaging - Suggestions: Button Mushrooms (100), Portabellini Mushrooms (100), Portabellini Mushrooms (10kg) (100), Portabellini Mushrooms (5kg) (100), Portabellini Mushrooms (200g) (100), Portabellini Mushrooms (250g) (100), Portabellini Mushrooms (500g) (100), Portabellini Mushrooms (750g) (100), Portabellini Mushrooms (7kg) (100), Brown Mushrooms (95), Brown Mushrooms (10kg) (82), Brown Mushrooms (5kg) (82), Brown Mushrooms (200g) (82), Brown Mushrooms (250g) (82), Brown Mushrooms (500g) (82), Brown Mushrooms (750g) (82), Brown Mushrooms (7kg) (82) | ❌ AMBIGUOUS
+baby corn 25 pun                         | baby corn | Qty: 25.0 | Unit: punnet | Ambiguous packaging - Suggestions: Baby Corn (100), Baby Spinach (25), Baby Marrow (25), Baby Marrow (10kg) (25), Baby Marrow (15kg) (25), Baby Marrow (1kg) (25), Baby Marrow (200g) (25), Baby Marrow (20kg) (25), Baby Marrow (250g) (25), Baby Marrow (25kg) (25), Baby Marrow (2kg) (25), Baby Marrow (3kg) (25), Baby Marrow (4kg) (25), Baby Marrow (500g) (25), Baby Marrow (5kg) (25), Baby Marrow (6kg) (25), Baby Marrow (750g) (25), Baby Marrow (7kg) (25), Baby Marrow (8kg) (25) | ❌ AMBIGUOUS
+beetroot 11kg                            | beetroot | Qty: 1.0 | Unit: kg | Pkg: 11kg | Beetroot | Score: 100.0             | ✅ CORRECT 
+cabbage 3 heads                          | cabbage | Qty: 3.0 | Unit: head     | Green Cabbage | Score: 85.0         | ✅ CORRECT 
+spring onion 1.5kg                       | spring onions | Qty: 1.0 | Unit: kg | Pkg: 1.5kg | Spring Onions | Score: 100.0        | ✅ CORRECT 
+mixed lettuce 2kg                        | lettuce | Qty: 1.0 | Unit: kg | Pkg: 2kg | Crispy Lettuce (2kg) | Score: 100.0 | ✅ CORRECT 
+red chillies 2kg                         | red chillies | Qty: 1.0 | Unit: kg | Pkg: 2kg | Red Chillies | Score: 100.0         | ✅ CORRECT 
+green chillies 2kg                       | green chillies | Qty: 1.0 | Unit: kg | Pkg: 2kg | Green Chillies | Score: 100.0       | ✅ CORRECT 
+lemons 29kg                              | lemons | Qty: 1.0 | Unit: kg | Pkg: 29kg | Lemons (10kg) | Score: 100.0        | ✅ CORRECT 
+baby marrow normal size 3kg              | baby marrow normal size | Qty: 1.0 | Unit: kg | Pkg: 3kg | Baby Marrow (3kg) | Score: 70.0     | ⚠️ LOW CONF
+baby marrow medium 1.5 +2.8 normal size  | baby marrow medium +2.8 normal size | Qty: 1.5 | Unit: None | Ambiguous packaging - Suggestions: Baby Marrow (50), Baby Marrow (10kg) (35), Baby Marrow (15kg) (35), Baby Marrow (1kg) (35), Baby Marrow (200g) (35), Baby Marrow (20kg) (35), Baby Marrow (250g) (35), Baby Marrow (25kg) (35), Baby Marrow (2kg) (35), Baby Marrow (3kg) (35), Baby Marrow (4kg) (35), Baby Marrow (500g) (35), Baby Marrow (5kg) (35), Baby Marrow (6kg) (35), Baby Marrow (750g) (35), Baby Marrow (7kg) (35), Baby Marrow (8kg) (35), Baby Marrow (9kg) (35), Baby Spinach (25), Baby Corn (25) | ❌ AMBIGUOUS
+spinach 3kg                              | spinach | Qty: 1.0 | Unit: kg | Pkg: 3kg | Spinach (3kg) | Score: 100.0        | ✅ CORRECT 
+cocktail 25 pun                          | cocktail | Qty: 25.0 | Unit: punnet | Ambiguous packaging - Suggestions: Cocktail Tomatoes (1kg) (80), Cocktail Tomatoes (200g) (80), Cocktail Tomatoes (250g) (80), Cocktail Tomatoes (500g) (80), Cherry Tomatoes (35), Sun Dried Tomatoes (35), Tomatoes (35), Tomatoes (35), Tomatoes (35), Tomatoes (10kg) (35), Coriander (7) | ❌ AMBIGUOUS
+sweet corn 1pun                          | sweet corn | Qty: 1.0 | Unit: None  | Ambiguous packaging - Suggestions: Sweet Corn (100), Sweet Corn (200g) (100), Sweet Melon (25), Sweet Potatoes (25), Sweet Potatoes (10kg) (25), Sweet Potatoes (15kg) (25), Sweet Potatoes (1kg) (25), Sweet Potatoes (20kg) (25), Sweet Potatoes (25kg) (25), Sweet Potatoes (2kg) (25), Sweet Potatoes (3kg) (25), Sweet Potatoes (4kg) (25), Sweet Potatoes (5kg) (25), Sweet Potatoes (6kg) (25), Sweet Potatoes (7kg) (25), Sweet Potatoes (8kg) (25), Sweet Potatoes (9kg) (25), Baby Corn (25) | ❌ AMBIGUOUS
+patty pan 10                             | patty pan | Qty: 10.0 | Unit: None  | Ambiguous packaging - Suggestions: Patty Pan (100), Papaya (10), Paw Paw (9) | ❌ AMBIGUOUS
+green grapes3 pun                        | green | Qty: 3.0 | Unit: punnet     | Ambiguous packaging - Suggestions: Green Grapes (100), Green Chili (100), Green Beans (100), Green Cabbage (100), Green Chillies (100), Green Peppers (100), Green Peppers (100), Green Peppers (100), Green Grapes (1kg) (90), Green Grapes (2kg) (90), Green Grapes (500g) (90), Green Grapes (5kg) (90), Green Chili (100g) (90), Green Chili (1kg) (90), Green Chili (200g) (90), Green Chili (250g) (90), Green Chili (2kg) (90), Green Chili (500g) (90), Green Chili (5kg) (90), Green Chili (750g) (90) | ❌ AMBIGUOUS
+red grapes 3 pun                         | red grapes | Qty: 3.0 | Unit: punnet | Ambiguous packaging - Suggestions: Red Grapes (100), Red Grapes (1kg) (100), Red Grapes (2kg) (100), Red Grapes (500g) (100), Red Grapes (5kg) (100), Black Grapes (10), Green Grapes (10), White Grapes (10), Grape (50), Grapefruit (35), Red Apples (25), Red Apples (10kg) (25), Red Apples (1kg) (25), Red Apples (2kg) (25), Red Apples (5kg) (25) | ❌ AMBIGUOUS
+deveined spinarch 3kg                    | deveined spinarch | Qty: 1.0 | Unit: kg | Pkg: 3kg | No matches found                    | ❌ NO MATCH
+red cabbage 3                            | red cabbage | Qty: 3.0 | Unit: None | Ambiguous packaging - Suggestions: Red Cabbage (100), Red Apples (25), Red Apples (10kg) (25), Red Apples (1kg) (25), Red Apples (2kg) (25), Red Apples (5kg) (25), Red Apples (5kg) (25), Red Grapes (25), Red Grapes (1kg) (25), Red Grapes (2kg) (25), Red Grapes (500g) (25), Red Grapes (5kg) (25), Red Chili (25), Red Chili (100g) (25), Red Chili (1kg) (25), Red Chili (200g) (25), Red Chili (250g) (25), Red Chili (2kg) (25), Red Chili (500g) (25) | ❌ AMBIGUOUS
+cauliflower heads 10 heads               | cauliflower | Qty: 10.0 | Unit: head | Cauliflower | Score: 100.0          | ✅ CORRECT 
+brinjals 1.8kg                           | brinjals | Qty: 1.0 | Unit: kg | Pkg: 1.8kg | No matches found                    | ❌ NO MATCH
+cucumber 17                              | cucumber | Qty: 17.0 | Unit: None   | Ambiguous packaging - Suggestions: Cucumber (100), Cucumber (100), Cucumber (100) | ❌ AMBIGUOUS
+sweet mellon 1                           | sweet mellon | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Water Melon (50), Watermelon (50), Sweet Melon (25), Sweet Corn (25), Sweet Corn (200g) (25), Sweet Potatoes (25), Sweet Potatoes (10kg) (25), Sweet Potatoes (15kg) (25), Sweet Potatoes (1kg) (25), Sweet Potatoes (20kg) (25), Sweet Potatoes (25kg) (25), Sweet Potatoes (2kg) (25), Sweet Potatoes (3kg) (25), Sweet Potatoes (4kg) (25), Sweet Potatoes (5kg) (25), Sweet Potatoes (6kg) (25), Sweet Potatoes (7kg) (25), Sweet Potatoes (8kg) (25), Sweet Potatoes (9kg) (25) | ❌ AMBIGUOUS
+water mellon 1                           | water mellon | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Sweet Melon (50), Water Melon (25), Watermelon (25), Watercress (25), Watercress (100g) (25), Watercress (150g) (25), Watercress (200g) (25), Watercress (250g) (25), Watercress (300g) (25), Watercress (400g) (25), Watercress (500g) (25), Watercress (50g) (25), Watercress (600g) (25), Watercress (750g) (25) | ❌ AMBIGUOUS
+pine apple 20                            | pine apple | Qty: 20.0 | Unit: None | Ambiguous packaging - Suggestions: Pineapple (50), Pineapple (50), Pineapple (10kg) (50), Pineapple (2kg) (50), Pineapple (5kg) (50), Red Apples (25), Red Apples (10kg) (25), Red Apples (1kg) (25), Red Apples (2kg) (25), Red Apples (5kg) (25), Red Apples (5kg) (25) | ❌ AMBIGUOUS
+paw paw 6 pun                            | paw paw | Qty: 6.0 | Unit: punnet   | Ambiguous packaging - Suggestions: Paw Paw (100), Papaya (8) | ❌ AMBIGUOUS
+iceberg 12                               | iceberg | Qty: 12.0 | Unit: None    | Ambiguous packaging - Suggestions: Iceberg Lettuce (100), Iceberg Lettuce (100g) (65), Iceberg Lettuce (150g) (65), Iceberg Lettuce (200g) (65), Iceberg Lettuce (250g) (65), Iceberg Lettuce (300g) (65), Iceberg Lettuce (400g) (65), Iceberg Lettuce (500g) (65), Iceberg Lettuce (50g) (65), Iceberg Lettuce (600g) (65), Iceberg Lettuce (750g) (65) | ❌ AMBIGUOUS
+tomatoes 10kg                            | tomatoes | Qty: 1.0 | Unit: kg | Pkg: 10kg | Tomatoes (10kg) | Score: 100.0      | ✅ CORRECT 
+straw berry 18 pun                       | straw berry | Qty: 18.0 | Unit: punnet | Ambiguous packaging - Suggestions: Strawberry (50), Strawberries (1kg) (25), Strawberries (200g) (25), Strawberries (250g) (25), Strawberries (2kg) (25), Strawberries (500g) (25), Strawberries (750g) (25) | ❌ AMBIGUOUS
+grape fruits 10kg                        | grape fruits | Qty: 1.0 | Unit: kg | Pkg: 10kg | No matches found                    | ❌ NO MATCH
+red apple 23kg                           | red apple | Qty: 1.0 | Unit: kg | Pkg: 23kg | Red Apples | Score: 100.0           | ✅ CORRECT 
+rocket 1.5kg                             | rocket | Qty: 1.0 | Unit: kg | Pkg: 1.5kg | Rocket | Score: 100.0               | ✅ CORRECT 
+mint 1kg                                 | mint | Qty: 1.0 | Unit: kg | Pkg: 1kg | Mint | Score: 100.0                 | ✅ CORRECT 
+tumeric 1.5kg                            | tumeric | Qty: 1.0 | Unit: kg | Pkg: 1.5kg | No matches found                    | ❌ NO MATCH
+gingsorry thyme rosemary mint we have enough from sylvia chives we have 320g | gingsorry thyme rosemary mint we have enough from sylvia chives we have | Qty: 1.0 | Unit: g | Pkg: 320g | No matches found                    | ❌ NO MATCH
+
+--------------------------------------------------------------------------------
+
+Message ID: 523
+ORIGINAL: Pls add spinach x1box 
+Potatoes 10kg 
+
+Seperate invoice 
+Thanks
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+pls add spinach x1box                    | pls add spinach | Qty: 1.0 | Unit: box | Pkg: 1box | No matches found                    | ❌ NO MATCH
+potatoes 10kg                            | potatoes | Qty: 1.0 | Unit: kg | Pkg: 10kg | Potatoes (10kg) | Score: 100.0      | ✅ CORRECT 
+seperate invoice                         | seperate invoice | Qty: 1.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 524
+ORIGINAL: Mugg Been
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+mugg been                                | mugg been | Qty: 1.0 | Unit: None   | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 525
+ORIGINAL: Good day .Our apology concerning the rejection on broccoli sterm .We had no more broccoli heads and we received the order late
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+good day .our apology concerning the rejection on broccoli sterm .we had no more broccoli heads and we received the order late | good day .our apology concerning the rejection on broccoli sterm .we had no more broccoli and we received the order late | Qty: 1.0 | Unit: head | No matches found                    | ❌ NO MATCH
+
+--------------------------------------------------------------------------------
+
+Message ID: 526
+ORIGINAL: SHALLOME 
+STOCK AS AT 02 SEP 2025
+1.Baby Marrow 14 Pun
+2.Green Grapes 1 Pun
+3.Red Grapes 1 Pun
+4.Strawberry 12 Pun
+5.Patty Pen 8
+6.Red Cabbage 8
+7.Water Mellon 1
+8.Yellow Pepper 3kg
+9.Green Pepper 2kg
+10.Cucumber 47
+11.Paw paw 4Pun
+12.Brinjals 1kg
+13.Cocktail 8Pun
+14.Tomatoes 5kg
+15.Iceberg 2
+16.Cauloflower 6
+17.Cauliflower 6
+18.Celery 1.5kg
+19.Baby Corn 15 
+20.lemon 14.5
+21.Red Apple 13kg
+22.Rosemary 1.2kg
+23.Basil leaves 250g
+34.Parsley 1.5kg
+35.Mint 1.5kg
+36.Dill 600g
+37.Thyme 500g
+38.Rocket 400g
+39Butternut 5kg
+40.Sweet Potatoes 25kg
+41.Avocado 15 boxes
+42.Avo soft 3boxes
+43.Grape Fruits 11kg
+44.Beetroot 7kg
+45.Blue Berry 4 pun
+46.Naatjies 1 small box
+47Banana 4kg
+48.Red Onion 9kg
+49.Tumeric 1.5kg
+50.Ginger 1kg
+51.Garlic 3kg
+
+So far Tyme and Rosemary is available in the farmEdited
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+shallome                                 | shallome | Qty: 1.0 | Unit: None    | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+stock as at 02 sep 2025                  | stock as at sep | Qty: 2.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+1.baby marrow 14 pun                     | 1.baby marrow | Qty: 14.0 | Unit: punnet | Ambiguous packaging - Suggestions: Baby Marrow (100), Baby Marrow (10kg) (65), Baby Marrow (15kg) (65), Baby Marrow (1kg) (65), Baby Marrow (200g) (65), Baby Marrow (20kg) (65), Baby Marrow (250g) (65), Baby Marrow (25kg) (65), Baby Marrow (2kg) (65), Baby Marrow (3kg) (65), Baby Marrow (4kg) (65), Baby Marrow (500g) (65), Baby Marrow (5kg) (65), Baby Marrow (6kg) (65), Baby Marrow (750g) (65), Baby Marrow (7kg) (65), Baby Marrow (8kg) (65), Baby Marrow (9kg) (65) | ❌ AMBIGUOUS
+2.green grapes 1 pun                     | 2.green grapes | Qty: 1.0 | Unit: punnet | Ambiguous packaging - Suggestions: Black Grapes (95), Green Grapes (95), Red Grapes (95), White Grapes (95), Black Grapes (1kg) (82), Black Grapes (2kg) (82), Black Grapes (500g) (82), Black Grapes (5kg) (82), Green Grapes (1kg) (82), Green Grapes (2kg) (82), Green Grapes (500g) (82), Green Grapes (5kg) (82), Red Grapes (1kg) (82), Red Grapes (2kg) (82), Red Grapes (500g) (82), Red Grapes (5kg) (82), White Grapes (1kg) (82), White Grapes (2kg) (82), White Grapes (500g) (82), White Grapes (5kg) (82) | ❌ AMBIGUOUS
+3.red grapes 1 pun                       | 3.red grapes | Qty: 1.0 | Unit: punnet | Ambiguous packaging - Suggestions: Black Grapes (95), Green Grapes (95), Red Grapes (95), White Grapes (95), Black Grapes (1kg) (82), Black Grapes (2kg) (82), Black Grapes (500g) (82), Black Grapes (5kg) (82), Green Grapes (1kg) (82), Green Grapes (2kg) (82), Green Grapes (500g) (82), Green Grapes (5kg) (82), Red Grapes (1kg) (82), Red Grapes (2kg) (82), Red Grapes (500g) (82), Red Grapes (5kg) (82), White Grapes (1kg) (82), White Grapes (2kg) (82), White Grapes (500g) (82), White Grapes (5kg) (82) | ❌ AMBIGUOUS
+4.strawberry 12 pun                      | 4.strawberry | Qty: 12.0 | Unit: punnet | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+5.patty pen 8                            | 5.patty pen | Qty: 8.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+6.red cabbage 8                          | 6.red cabbage | Qty: 8.0 | Unit: None | Ambiguous packaging - Suggestions: Green Cabbage (75), Red Cabbage (75) | ❌ AMBIGUOUS
+7.water mellon 1                         | 7.water mellon | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Sweet Melon (50), Water Melon (50), Watermelon (50) | ❌ AMBIGUOUS
+8.yellow pepper 3kg                      | peppers | Qty: 8.0 | Unit: kg | Pkg: 3kg | Green Peppers (3kg) | Score: 100.0  | ✅ CORRECT 
+9.green pepper 2kg                       | peppers | Qty: 9.0 | Unit: kg | Pkg: 2kg | Green Peppers (2kg) | Score: 100.0  | ✅ CORRECT 
+10.cucumber 47                           | 10.cucumber | Qty: 47.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+11.paw paw 4pun                          | paw | Qty: 11.0 | Unit: None        | Ambiguous packaging - Suggestions: Paw Paw (100) | ❌ AMBIGUOUS
+16.cauloflower 6                         | 16.cauloflower | Qty: 6.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+17.cauliflower 6                         | 17.cauliflower | Qty: 6.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+19.baby corn 15                          | 19.baby corn | Qty: 15.0 | Unit: None | Ambiguous packaging - Suggestions: Baby Corn (100), Sweet Corn (100), Sweet Corn (200g) (65), Coriander (10) | ❌ AMBIGUOUS
+20.lemon 14.5                            | 20.lemon | Qty: 14.5 | Unit: None   | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+21.red apple 13kg                        | apple | Qty: 21.0 | Unit: kg | Pkg: 13kg | Pineapple | Score: 55.0             | ❌ POOR MATCH
+23.basil leaves 250g                     | leaves | Qty: 23.0 | Unit: g | Pkg: 250g | No matches found                    | ❌ NO MATCH
+40.sweet potatoes 25kg                   | potatoes | Qty: 40.0 | Unit: kg | Pkg: 25kg | Potatoes 25kg | Score: 100.0        | ✅ CORRECT 
+41.avocado 15 boxes                      | 41.avocado | Qty: 15.0 | Unit: box  | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+42.avo soft 3boxes                       | soft es | Qty: 42.0 | Unit: box | Pkg: 3box | No matches found                    | ❌ NO MATCH
+43.grape fruits 11kg                     | fruits | Qty: 43.0 | Unit: kg | Pkg: 11kg | No matches found                    | ❌ NO MATCH
+45.blue berry 4 pun                      | 45.blue berry | Qty: 4.0 | Unit: punnet | Ambiguous packaging - Suggestions: Strawberry (75), Beetroot (10) | ❌ AMBIGUOUS
+46.naatjies 1 small box                  | 46.naatjies small box | Qty: 1.0 | Unit: box | Ambiguous packaging - Suggestions: Small Veggie Box (87), Large Veggie Box (35), Avocados (Hard) (30), Avocados (Semi-Ripe) (30), Avocados (Soft) (30), Bananas (10kg) (30), Bananas (5kg) (30), Black Grapes (1kg) (30), Black Grapes (2kg) (30), Black Grapes (5kg) (30), Green Grapes (1kg) (30), Green Grapes (2kg) (30), Green Grapes (5kg) (30), Kiwi (30), Lemons (10kg) (30), Lemons (2kg) (30), Lemons (5kg) (30) | ❌ AMBIGUOUS
+48.red onion 9kg                         | onions | Qty: 48.0 | Unit: kg | Pkg: 9kg | Red Onions (9kg) | Score: 100.0     | ✅ CORRECT 
+so far tyme and rosemary is available in the farmedited | so far tyme and rosemary is available in the farmedited | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Rosemary (40), Rosemary (40), Micro Herbs (100g) (35), Micro Herbs (200g) (35), Micro Herbs (50g) (35), Micro Herbs (35), Coriander (25), Coriander (100g) (25), Coriander (200g) (25), Coriander (50g) (25), Coriander (150g) (25), Coriander (250g) (25), Coriander (300g) (25), Coriander (400g) (25), Coriander (500g) (25), Coriander (600g) (25), Coriander (750g) (25), Rosemary (100g) (25), Rosemary (200g) (25), Rosemary (50g) (25) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 527
+ORIGINAL: Venue
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+venue                                    | venue | Qty: 1.0 | Unit: None       | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 528
+ORIGINAL: Thursday orders start here.
+PARSED: No items parsed
+MATCHED: Suggestions for unparsed items:
+--------------------------------------------------------------------------------
+  Thursday orders start here.    -> No suggestions available
+STATUS: 💡 SUGGESTIONS
+
+Message ID: 529
+ORIGINAL: Good morning may I please order 
+2×5kgTomato 
+2×5kgMushroom 
+10kgOnions 
+Tnx that's all
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+2×5kgtomato                              | tomato | Qty: 2.0 | Unit: kg | Pkg: 5kg | Tomatoes (5kg) | Score: 100.0       | ✅ CORRECT 
+2×5kgmushroom                            | mushrooms | Qty: 2.0 | Unit: kg | Pkg: 5kg | Brown Mushrooms (5kg) | Score: 100.0 | ✅ CORRECT 
+10kgonions                               | onions | Qty: 1.0 | Unit: kg | Pkg: 10kg | Red Onions (10kg) | Score: 100.0    | ✅ CORRECT 
+tnx that's all                           | tnx that's all | Qty: 1.0 | Unit: None | Ambiguous packaging - Suggestions: Small Veggie Box (25) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 530
+ORIGINAL: Debonairs
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+debonairs                                | debonairs | Qty: 1.0 | Unit: None   | Ambiguous packaging - Suggestions: Large Veggie Box (45), Small Veggie Box (45), Deveined Spinach (9) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 531
+ORIGINAL: Morning, Here's my order
+
+Tomatoes x3box
+Onions 10kg 
+Baby spinach x12
+Rocket x2 
+Lemon x3
+Red cabage x2
+Carrots 3kg 
+Mushrooms x 20
+Mix lettuce x3
+Cherry tomatoes x15 200g
+Banana 2kg 
+Orange 2kg
+Parsley x1 
+Micro greens x2
+Coriander x1 
+Grapesx1 
+
+Thanks
+
+SIDE-BY-SIDE COMPARISON:
+------------------------------------------------------------------------------------------------------------------------
+ORIGINAL                                 | PARSED                              | MATCHED                             | STATUS    
+------------------------------------------------------------------------------------------------------------------------
+morning                                  | morning | Qty: 1.0 | Unit: None     | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+here's my order                          | here's my order | Qty: 1.0 | Unit: None | Ambiguous packaging - No suggestions available | ❌ AMBIGUOUS
+tomatoes x3box                           | tomatoes | Qty: 1.0 | Unit: box | Pkg: 3box | Cherry Tomatoes | Score: 100.0      | ✅ CORRECT 
+onions 10kg                              | onions | Qty: 1.0 | Unit: kg | Pkg: 10kg | Red Onions (10kg) | Score: 100.0    | ✅ CORRECT 
+baby spinach x12                         | baby spinach | Qty: 12.0 | Unit: None | Ambiguous packaging - Suggestions: Baby Spinach (100), Spinach (10), Spinach (10), Baby Corn (25), Baby Marrow (25), Baby Marrow (10kg) (25), Baby Marrow (15kg) (25), Baby Marrow (1kg) (25), Baby Marrow (200g) (25), Baby Marrow (20kg) (25), Baby Marrow (250g) (25), Baby Marrow (25kg) (25), Baby Marrow (2kg) (25), Baby Marrow (3kg) (25), Baby Marrow (4kg) (25), Baby Marrow (500g) (25), Baby Marrow (5kg) (25) | ❌ AMBIGUOUS
+rocket x2                                | rocket | Qty: 2.0 | Unit: None      | Ambiguous packaging - Suggestions: Rocket (100), Rocket (100), Rocket (100g) (100), Rocket (150g) (100), Rocket (200g) (100), Rocket (250g) (100), Rocket (300g) (100), Rocket (400g) (100), Rocket (500g) (100), Rocket (50g) (100), Rocket (600g) (100), Rocket (750g) (100), Wild Rocket (100g) (65), Wild Rocket (200g) (65), Wild Rocket (500g) (65), Wild Rocket (50g) (65), Wild Rocket (bulk kg) (65) | ❌ AMBIGUOUS
+lemon x3                                 | lemon | Qty: 3.0 | Unit: None       | Ambiguous packaging - Suggestions: Lemon (100), Lemons (10kg) (80), Lemons (10kg) (80), Lemons (15kg) (80), Lemons (1kg) (80), Lemons (20kg) (80), Lemons (250g) (80), Lemons (25kg) (80), Lemons (2kg) (80), Lemons (2kg) (80), Lemons (3kg) (80), Lemons (4kg) (80), Lemons (500g) (80), Lemons (5kg) (80), Lemons (5kg) (80), Lemons (750g) (80) | ❌ AMBIGUOUS
+red cabage x2                            | red cabage | Qty: 2.0 | Unit: None  | Ambiguous packaging - Suggestions: Green Cabbage (50), Red Apples (25), Red Apples (10kg) (25), Red Apples (1kg) (25), Red Apples (2kg) (25), Red Apples (5kg) (25), Red Apples (5kg) (25), Red Grapes (25), Red Grapes (1kg) (25), Red Grapes (2kg) (25), Red Grapes (500g) (25), Red Grapes (5kg) (25), Red Chili (25), Red Cabbage (25), Red Chili (100g) (25), Red Chili (1kg) (25), Red Chili (200g) (25), Red Chili (250g) (25), Red Chili (2kg) (25), Red Chili (500g) (25) | ❌ AMBIGUOUS
+carrots 3kg                              | carrots | Qty: 1.0 | Unit: kg | Pkg: 3kg | Carrots (3kg) | Score: 100.0        | ✅ CORRECT 
+mushrooms x 20                           | mushrooms | Qty: 20.0 | Unit: None  | Ambiguous packaging - Suggestions: Button Mushrooms (100), Portabellini Mushrooms (100), Portabellini Mushrooms (10kg) (100), Portabellini Mushrooms (5kg) (100), Portabellini Mushrooms (200g) (100), Portabellini Mushrooms (250g) (100), Portabellini Mushrooms (500g) (100), Portabellini Mushrooms (750g) (100), Portabellini Mushrooms (7kg) (100), Brown Mushrooms (95), Brown Mushrooms (10kg) (82), Brown Mushrooms (5kg) (82), Brown Mushrooms (200g) (82), Brown Mushrooms (250g) (82), Brown Mushrooms (500g) (82), Brown Mushrooms (750g) (82), Brown Mushrooms (7kg) (82) | ❌ AMBIGUOUS
+mix lettuce x3                           | mix lettuce | Qty: 3.0 | Unit: None | Ambiguous packaging - Suggestions: Mixed Lettuce (90), Mixed Lettuce (100g) (50), Mixed Lettuce (150g) (50), Mixed Lettuce (200g) (50), Mixed Lettuce (250g) (50), Mixed Lettuce (300g) (50), Mixed Lettuce (400g) (50), Mixed Lettuce (500g) (50), Mixed Lettuce (50g) (50), Mixed Lettuce (600g) (50), Mixed Lettuce (750g) (50), Lettuce (20), Lettuce (20), Lettuce (20) | ❌ AMBIGUOUS
+cherry tomatoes x15 200g                 | cherry tomatoes | Qty: 15.0 | Unit: g | Pkg: 200g | Cherry Tomatoes | Score: 100.0      | ✅ CORRECT 
+banana 2kg                               | banana | Qty: 1.0 | Unit: kg | Pkg: 2kg | Bananas (2kg) | Score: 100.0        | ✅ CORRECT 
+orange 2kg                               | orange | Qty: 1.0 | Unit: kg | Pkg: 2kg | Oranges (2kg) | Score: 100.0        | ✅ CORRECT 
+parsley x1                               | parsley | Qty: 1.0 | Unit: None     | Ambiguous packaging - Suggestions: Parsley (100), Parsley (100g) (100), Parsley (200g) (100), Parsley (50g) (100), Parsley (150g) (100), Parsley (1kg) (100), Parsley (250g) (100), Parsley (300g) (100), Parsley (400g) (100), Parsley (500g) (100), Parsley (600g) (100), Parsley (750g) (100) | ❌ AMBIGUOUS
+micro greens x2                          | micro greens | Qty: 2.0 | Unit: None | Ambiguous packaging - Suggestions: Micro Greens (100), Micro Herbs (100g) (25), Micro Herbs (200g) (25), Micro Herbs (50g) (25), Micro Herbs (25), Mint (100g) (7), Mint (200g) (7), Mint (50g) (7), Mint (150g) (6) | ❌ AMBIGUOUS
+coriander x1                             | coriander | Qty: 1.0 | Unit: None   | Ambiguous packaging - Suggestions: Coriander (100), Coriander (100g) (100), Coriander (200g) (100), Coriander (50g) (100), Coriander (150g) (100), Coriander (250g) (100), Coriander (300g) (100), Coriander (400g) (100), Coriander (500g) (100), Coriander (600g) (100), Coriander (750g) (100) | ❌ AMBIGUOUS
+grapesx1                                 | grapes | Qty: 1.0 | Unit: None      | Ambiguous packaging - Suggestions: Black Grapes (95), Green Grapes (95), Red Grapes (95), White Grapes (95), Black Grapes (1kg) (82), Black Grapes (2kg) (82), Black Grapes (500g) (82), Black Grapes (5kg) (82), Green Grapes (1kg) (82), Green Grapes (2kg) (82), Green Grapes (500g) (82), Green Grapes (5kg) (82), Red Grapes (1kg) (82), Red Grapes (2kg) (82), Red Grapes (500g) (82), Red Grapes (5kg) (82), White Grapes (1kg) (82), White Grapes (2kg) (82), White Grapes (500g) (82), White Grapes (5kg) (82) | ❌ AMBIGUOUS
+
+--------------------------------------------------------------------------------
+
+Message ID: 532
+ORIGINAL: Mugg and bean
+PARSED: No items parsed
+MATCHED: Suggestions for unparsed items:
+--------------------------------------------------------------------------------
+  Mugg and bean                  -> No suggestions available
+STATUS: 💡 SUGGESTIONS
+
+
+SUMMARY:
+Total messages processed: 50
+Total items parsed: 382
+Correct matches: 130
+Accuracy: 34.0%

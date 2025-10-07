@@ -1,0 +1,46 @@
+ANALYSIS OF SIDE-BY-SIDE REPORT
+================================
+
+Based on manual review of the report:
+
+SUMMARY:
+- Total edited messages: 61
+- Total items processed: ~740 (estimated from report structure)
+
+STATUS BREAKDOWN:
+✅ CORRECT matches: ~600+ (estimated 80%+)
+❌ WRONG matches: ~80+ (estimated 10%+)  
+❌ NO MATCH: ~60+ (estimated 8%+)
+
+KEY FINDINGS:
+
+1. WRONG MATCHES - Common patterns:
+   - "lettuce mixed" -> "Mixed Lettuce (box)" (word order issue - FIXED)
+   - "750g basil leaves" -> "Basil (g)" (size/unit mismatch)
+   - "pineapples 1 box 2kg" -> "Box Pineapple (box)" (parsing issue)
+   - "cauliflower 4kg" -> "Lemons (4kg)" (completely wrong product)
+   - "cucumber 5kg" -> "Lemons (5kg)" (completely wrong product)
+
+2. NO MATCHES - Common patterns:
+   - "m/l 20 bag" (unclear abbreviation)
+   - "leaves 2 * 100g" (malformed format)
+   - "× 3 2kg" (incomplete product name)
+   - "5 * packet" (missing product name)
+   - "stock 29 sep 2025" (not a product)
+
+3. MAJOR ISSUES IDENTIFIED:
+   - Some products matching completely wrong items (cauliflower -> lemons)
+   - Size/unit mismatches causing wrong matches
+   - Malformed input causing no matches
+   - Word order issues (mostly fixed with recent changes)
+
+4. SUCCESS RATE:
+   - Overall: ~80%+ correct matches
+   - Wrong matches are more problematic than no matches
+   - System is working well for most standard product formats
+
+RECOMMENDATIONS:
+1. Fix the completely wrong product matches (cauliflower -> lemons)
+2. Improve size/unit matching for herbs and leafy greens
+3. Better handling of malformed input
+4. The recent word order fix for "lettuce mixed" was successful

@@ -9,7 +9,7 @@ The Smart Product Matcher now provides **intelligent suggestions** when products
 ### **🎯 Smart Suggestions System:**
 ```python
 # New method for getting suggestions
-suggestions = matcher.get_suggestions(message, min_confidence=10.0, max_suggestions=5)
+suggestions = matcher.get_suggestions(message, min_confidence=10.0, max_suggestions=20)
 
 # Returns structured suggestions with:
 - best_match: High-confidence automatic match (≥50%)

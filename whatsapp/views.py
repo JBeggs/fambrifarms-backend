@@ -701,28 +701,54 @@ def parse_html_message(html):
 @authentication_classes([FlexibleAuthentication])
 @permission_classes([IsAuthenticated])
 def get_messages(request):
-    """Get WhatsApp messages for the Flutter app"""
+    """Get WhatsApp messages for the Flutter app with pagination"""
     
     # Filter parameters
     message_type = request.GET.get('type')
     processed = request.GET.get('processed')
     order_day = request.GET.get('order_day')
+    
+    # Pagination parameters
+    page_param = request.GET.get('page', '1')
+    page_size_param = request.GET.get('page_size', '20')
+    
+    # Legacy limit parameter for backward compatibility
     limit_param = request.GET.get('limit')
-    if limit_param is None:
-        return Response({
-            'error': 'limit parameter is required'
-        }, status=400)
     
     try:
-        limit = int(limit_param)
-        if limit <= 0 or limit > 1000:
+        page = int(page_param)
+        page_size = int(page_size_param)
+        
+        if page < 1:
             return Response({
-                'error': 'limit must be between 1 and 1000'
+                'error': 'page must be 1 or greater'
             }, status=400)
+            
+        if page_size < 1 or page_size > 100:
+            return Response({
+                'error': 'page_size must be between 1 and 100'
+            }, status=400)
+            
     except ValueError:
         return Response({
-            'error': 'limit must be a valid integer'
+            'error': 'page and page_size must be valid integers'
         }, status=400)
+    
+    # Handle legacy limit parameter
+    if limit_param:
+        try:
+            limit = int(limit_param)
+            if limit <= 0 or limit > 1000:
+                return Response({
+                    'error': 'limit must be between 1 and 1000'
+                }, status=400)
+            # Use limit as page_size and set page to 1
+            page_size = limit
+            page = 1
+        except ValueError:
+            return Response({
+                'error': 'limit must be a valid integer'
+            }, status=400)
     
     queryset = WhatsAppMessage.objects.filter(is_deleted=False)
     
@@ -735,13 +761,30 @@ def get_messages(request):
     if order_day:
         queryset = queryset.filter(order_day=order_day)
     
-    # Get recent messages (keep original ordering that was working)
-    messages = queryset.order_by('-timestamp')[:limit]
+    # Calculate pagination
+    total_count = queryset.count()
+    total_pages = (total_count + page_size - 1) // page_size  # Ceiling division
+    
+    # Calculate offset
+    offset = (page - 1) * page_size
+    
+    # Get messages for current page
+    messages = queryset.order_by('-timestamp')[offset:offset + page_size]
     
     serializer = WhatsAppMessageSerializer(messages, many=True)
+    
     return Response({
         'messages': serializer.data,
-        'total_count': queryset.count(),
+        'pagination': {
+            'current_page': page,
+            'page_size': page_size,
+            'total_pages': total_pages,
+            'total_count': total_count,
+            'has_next': page < total_pages,
+            'has_previous': page > 1,
+            'next_page': page + 1 if page < total_pages else None,
+            'previous_page': page - 1 if page > 1 else None
+        },
         'returned_count': len(serializer.data)
     })
 
@@ -893,10 +936,9 @@ def update_message_type(request):
         # Update message type
         message.message_type = new_message_type
         
-        # If changing to stock type, clear any manual company assignment
-        # since stock messages shouldn't have customer assignments
-        if new_message_type == 'stock':
-            message.manual_company = ''
+        # CRITICAL: Always preserve customer assignments regardless of message type
+        # Customer assignments should NEVER be cleared automatically
+        # Users can manually clear them if needed through the UI
         
         # Reset processed status when changing type so it can be reprocessed
         message.processed = False
@@ -950,47 +992,186 @@ def process_messages_to_orders(request):
     errors = []
     warnings = []
     
-    with transaction.atomic():
+    # Store error messages for logging OUTSIDE transaction
+    error_logs = []
+    
+    # Get messages first - handle both database IDs and WhatsApp message IDs
+    # Check if message_ids are integers (database IDs) or strings (WhatsApp message IDs)
+    try:
+        # Try to convert first ID to int to determine the type
+        int(message_ids[0])
+        # If successful, these are database IDs
+        messages = WhatsAppMessage.objects.filter(
+            id__in=message_ids,
+            message_type='order'
+        )
+    except (ValueError, TypeError, IndexError):
+        # If conversion fails, these are WhatsApp message IDs
         messages = WhatsAppMessage.objects.filter(
             message_id__in=message_ids,
             message_type='order'
         )
-        
-        for message in messages:
-            try:
-                # Skip if already processed
-                if message.processed:
-                    warnings.append({
-                        'message_id': message.message_id,
-                        'warning': 'Message already processed',
-                        'existing_order': message.order.order_number if message.order else None
-                    })
-                    continue
-                
-                # Create order from message (this handles message.processed, message.order, and message.save())
-                order = create_order_from_message(message)
-                
-                if order:
-                    orders_created.append(order)
-                    # Note: message.processed, message.order, and message.save() are already handled in create_order_from_message()
-                else:
-                    errors.append({
-                        'message_id': message.message_id,
-                        'error': 'Failed to create order - no valid items found'
-                    })
-                    
-            except Exception as e:
+    
+    for message in messages:
+        try:
+            # Skip if already processed
+            if message.processed:
+                warnings.append({
+                    'message_id': message.message_id,
+                    'warning': 'Message already processed',
+                    'existing_order': message.order.order_number if message.order else None
+                })
+                continue
+            
+            # Create order from message (this handles message.processed, message.order, and message.save())
+            order_result = create_order_from_message(message)
+            
+            if isinstance(order_result, dict) and order_result.get('status') == 'failed':
+                # Order creation failed but we have suggestions
                 errors.append({
                     'message_id': message.message_id,
-                    'error': str(e),
-                    'traceback': traceback.format_exc()
+                    'error': order_result.get('message', 'Failed to create order - no valid items found'),
+                    'items': order_result.get('items', []),  # Include successfully processed items
+                    'failed_products': order_result.get('failed_products', []),
+                    'parsing_failures': order_result.get('parsing_failures', []),
+                    'unparseable_lines': order_result.get('unparseable_lines', [])
+                })
+                # Store message for detailed error analysis
+                error_logs.append({
+                    'message': message,
+                    'error': order_result.get('message', 'Failed to create order - no valid items found'),
+                    'failed_products': order_result.get('failed_products', []),
+                    'action': 'order_creation_failed_with_suggestions'
+                })
+            elif order_result:
+                # Order created successfully
+                orders_created.append(order_result)
+                # Note: message.processed, message.order, and message.save() are already handled in create_order_from_message()
+            else:
+                # Order creation failed with no suggestions
+                errors.append({
+                    'message_id': message.message_id,
+                    'error': 'Failed to create order - no valid items found'
+                })
+                # Store message for detailed error analysis
+                error_logs.append({
+                    'message': message,
+                    'error': 'Failed to create order - no valid items found',
+                    'action': 'order_creation_failed'
                 })
                 
-                log_processing_action(message, 'error', {
-                    'error': str(e),
-                    'action': 'order_creation'
-                })
+        except Exception as e:
+            errors.append({
+                'message_id': message.message_id,
+                'error': str(e),
+                'traceback': traceback.format_exc()
+            })
+            # Store for logging
+            error_logs.append({
+                'message': message,
+                'error': str(e)
+            })
     
+    # Log errors and get detailed error info OUTSIDE transaction to avoid conflicts
+    for error_log in error_logs:
+        try:
+            log_processing_action(error_log['message'], 'error', {
+                'error': error_log['error'],
+                'action': error_log.get('action', 'order_creation')
+            })
+            
+            # Get detailed error information for failed orders
+            if error_log.get('action') == 'order_creation_failed':
+                try:
+                    from .services import parse_order_items
+                    
+                    # Just parse the items to see what failed - don't create order items
+                    parsed_items = parse_order_items(error_log['message'].content)
+                    
+                    failed_products = []
+                    for item in parsed_items:
+                        # Get suggestions for this failed product
+                        from .services import get_or_create_product_enhanced
+                        product_name = item.get('product_name', 'Unknown')
+                        
+                        # Try to get suggestions
+                        suggestions_list = []
+                        try:
+                            # Use the smart matcher to get suggestions
+                            from .smart_product_matcher import SmartProductMatcher
+                            matcher = SmartProductMatcher()
+                            suggestions = matcher.get_suggestions(product_name, min_confidence=10.0, max_suggestions=20)
+                            
+                            for suggestion in suggestions.suggestions:
+                                suggestions_list.append({
+                                    'name': suggestion.product.name,
+                                    'confidence': suggestion.confidence_score,
+                                    'unit': suggestion.product.unit,
+                                    'price': float(suggestion.product.price),
+                                    'id': suggestion.product.id
+                                })
+                        except Exception as e:
+                            print(f"Error getting suggestions for {product_name}: {e}")
+                        
+                        failed_products.append({
+                            'original_name': product_name,
+                            'quantity': item.get('quantity', 1),
+                            'unit': item.get('unit', 'piece'),
+                            'failure_reason': 'Product not found in database',
+                            'suggestions': suggestions_list
+                        })
+                    
+                    # Update the error in the errors list with simple failed products info
+                    for error in errors:
+                        if error.get('message_id') == error_log['message'].message_id:
+                            error.update({
+                                'failed_products': failed_products,
+                                'items_attempted': len(parsed_items),
+                                'items_created': 0,
+                                'message': 'Products not found. Please select from available products.'
+                            })
+                            break
+                except Exception as detail_e:
+                    print(f"Failed to get detailed error info: {detail_e}")
+                    
+        except Exception as log_e:
+            print(f"Failed to log error: {log_e}")
+    
+    # Check if we have failed products with suggestions (new format) BEFORE creating serializer
+    has_detailed_errors = any(
+        'failed_products' in error or 
+        'parsing_failures' in error or 
+        'unparseable_lines' in error 
+        for error in errors
+    )
+    
+    if has_detailed_errors and len(orders_created) == 0:
+        # Return new format for failed products with suggestions
+        failed_products = []
+        parsing_failures = []
+        unparseable_lines = []
+        successful_items = []
+        
+        for error in errors:
+            if 'failed_products' in error:
+                failed_products.extend(error['failed_products'])
+            if 'parsing_failures' in error:
+                parsing_failures.extend(error['parsing_failures'])
+            if 'unparseable_lines' in error:
+                unparseable_lines.extend(error['unparseable_lines'])
+            if 'items' in error:  # Include successfully processed items
+                successful_items.extend(error['items'])
+        
+        return Response({
+            'status': 'failed',
+            'message': f'Order creation failed - {len(failed_products)} items need attention. Use suggestions to fix and retry.',
+            'items': successful_items,  # Include successfully processed items
+            'failed_products': failed_products,
+            'parsing_failures': parsing_failures,
+            'unparseable_lines': unparseable_lines
+        })
+    
+    # Use old format for other cases
     result_serializer = OrderCreationResultSerializer(data={
         'status': 'completed',
         'orders_created': len(orders_created),
@@ -1024,6 +1205,7 @@ def process_stock_messages(request):
     stock_updates_created = 0
     errors = []
     warnings = []
+    error_logs = []
     
     with transaction.atomic():
         messages = WhatsAppMessage.objects.filter(
@@ -1086,10 +1268,22 @@ def process_stock_messages(request):
                     'traceback': traceback.format_exc()
                 })
                 
-                log_processing_action(message, 'error', {
+                # Store for logging OUTSIDE transaction
+                error_logs.append({
+                    'message': message,
                     'error': str(e),
                     'action': 'stock_processing'
                 })
+    
+    # Log errors OUTSIDE transaction to avoid conflicts
+    for error_log in error_logs:
+        try:
+            log_processing_action(error_log['message'], 'error', {
+                'error': error_log['error'],
+                'action': error_log['action']
+            })
+        except Exception as log_e:
+            print(f"Failed to log error: {log_e}")
     
     return Response({
         'status': 'completed',
@@ -1717,5 +1911,350 @@ def process_stock_and_apply_to_inventory(request):
         return Response({
             'status': 'error',
             'message': f'Failed to process stock and apply to inventory: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def update_message_corrections(request):
+    """Update message with user corrections for failed products"""
+    from .serializers import MessageCorrectionSerializer
+    
+    serializer = MessageCorrectionSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    message_id = serializer.validated_data['message_id']
+    corrections = serializer.validated_data['corrections']
+    
+    try:
+        message = WhatsAppMessage.objects.get(message_id=message_id)
+        
+        # Store corrections in the message's processing_notes
+        import json
+        try:
+            # Try to parse as JSON first
+            current_notes = json.loads(message.processing_notes) if message.processing_notes else {}
+        except (json.JSONDecodeError, TypeError):
+            # If not JSON, create a new structure with the old notes as a comment
+            current_notes = {
+                'original_notes': message.processing_notes or '',
+                'notes_type': 'legacy_string'
+            }
+        
+        current_notes['user_corrections'] = corrections
+        current_notes['corrections_applied'] = True
+        current_notes['corrections_timestamp'] = timezone.now().isoformat()
+        
+        message.processing_notes = json.dumps(current_notes, indent=2)
+        message.save()
+        
+        # Log the corrections
+        log_processing_action(message, 'corrections_applied', {
+            'corrections_count': len(corrections),
+            'corrections': corrections
+        })
+        
+        return Response({
+            'status': 'success',
+            'message': 'Corrections saved successfully',
+            'corrections_applied': len(corrections)
+        })
+        
+    except WhatsAppMessage.DoesNotExist:
+        return Response({
+            'error': 'Message not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error(f"Failed to save message corrections: {str(e)}")
+        return Response({
+            'error': 'Failed to save corrections',
+            'details': str(e) if settings.DEBUG else None
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def reprocess_message_with_corrections(request):
+    """Reprocess a message using saved corrections"""
+    from .serializers import MessageReprocessSerializer
+    
+    serializer = MessageReprocessSerializer(data=request.data)
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    message_id = serializer.validated_data['message_id']
+    
+    try:
+        message = WhatsAppMessage.objects.get(message_id=message_id)
+        
+        # Check if corrections exist
+        import json
+        current_notes = json.loads(message.processing_notes) if message.processing_notes else {}
+        corrections = current_notes.get('user_corrections', {})
+        
+        if not corrections:
+            return Response({
+                'error': 'No corrections found for this message'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Reset processing status
+        message.processed = False
+        message.processing_notes = json.dumps({
+            **current_notes,
+            'reprocessing_with_corrections': True,
+            'reprocess_timestamp': timezone.now().isoformat()
+        })
+        message.save()
+        
+        # Log the reprocessing
+        log_processing_action(message, 'reprocess_initiated', {
+            'corrections_count': len(corrections),
+            'reason': 'user_corrections_applied'
+        })
+        
+        # Actually reprocess the message with corrections
+        from .services import reprocess_message_with_corrections
+        
+        result = reprocess_message_with_corrections(message_id, corrections)
+        
+        if isinstance(result, dict) and 'error' in result:
+            return Response(result, status=status.HTTP_400_BAD_REQUEST)
+        elif isinstance(result, dict) and result.get('status') == 'failed':
+            # Still has failures, return suggestions
+            return Response({
+                'status': 'failed',
+                'message': result['message'],
+                'failed_products': result['failed_products'],
+                'parsing_failures': result['parsing_failures'],
+                'unparseable_lines': result['unparseable_lines']
+            })
+        else:
+            # Success - order created
+            if hasattr(result, 'order_number'):
+                # result is an Order object
+                return Response({
+                    'status': 'success',
+                    'message': 'Order created successfully with corrections',
+                    'order_number': result.order_number,
+                    'order_id': result.id,
+                    'items_count': result.items.count()
+                })
+            else:
+                # result is a dict with success info
+                return Response({
+                    'status': 'success',
+                    'message': 'Order created successfully with corrections',
+                    'order_number': result.get('order_number', 'Unknown'),
+                    'order_id': result.get('order_id', 'Unknown'),
+                    'items_count': result.get('items_count', 0)
+                })
+        
+    except WhatsAppMessage.DoesNotExist:
+        return Response({
+            'error': 'Message not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error(f"Failed to reprocess message: {str(e)}")
+        return Response({
+            'error': 'Failed to reprocess message',
+            'details': str(e) if settings.DEBUG else None
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def process_message_with_suggestions(request):
+    """
+    Process a WhatsApp message and return suggestions for all items - requires user confirmation
+    """
+    message_id = request.data.get('message_id')
+    
+    if not message_id:
+        return Response({
+            'error': 'message_id is required'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        message = WhatsAppMessage.objects.get(message_id=message_id)
+        
+        # Use the new always-suggestions function
+        from .services import create_order_from_message_with_suggestions
+        result = create_order_from_message_with_suggestions(message)
+        
+        if result['status'] == 'confirmation_required':
+            return Response({
+                'status': 'success',
+                'message': result['message'],
+                'customer': result['customer'],
+                'items': result['items'],
+                'total_items': result['total_items']
+            })
+        else:
+            return Response({
+                'status': 'error',
+                'message': result['message'],
+                'items': result.get('items', [])
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+    except WhatsAppMessage.DoesNotExist:
+        return Response({
+            'error': 'Message not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error(f"Failed to process message with suggestions: {str(e)}")
+        return Response({
+            'error': 'Failed to process message',
+            'details': str(e) if settings.DEBUG else None
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def create_order_from_suggestions(request):
+    """
+    Create an order from confirmed suggestions
+    """
+    try:
+        message_id = request.data.get('message_id')
+        customer_data = request.data.get('customer')
+        items_data = request.data.get('items', [])
+        
+        if not message_id or not customer_data or not items_data:
+            return Response({
+                'status': 'error',
+                'message': 'message_id, customer, and items are required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Get the message
+        try:
+            message = WhatsAppMessage.objects.get(message_id=message_id)
+        except WhatsAppMessage.DoesNotExist:
+            return Response({
+                'status': 'error',
+                'message': 'Message not found'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # Get or create customer
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        
+        customer, created = User.objects.get_or_create(
+            email=customer_data.get('email', f"{customer_data.get('name', 'Unknown')}@example.com"),
+            defaults={
+                'first_name': customer_data.get('name', 'Unknown'),
+                'is_active': True,
+            }
+        )
+        
+        # Create the order
+        from orders.models import Order
+        from products.models import Product
+        
+        from datetime import date
+        from decimal import Decimal
+        
+        # Generate unique order number
+        import time
+        import random
+        timestamp = int(time.time())
+        random_suffix = random.randint(1000, 9999)
+        order_number = f"WHATSAPP-{timestamp}-{random_suffix}"
+        
+        # Ensure order number is unique
+        while Order.objects.filter(order_number=order_number).exists():
+            random_suffix = random.randint(1000, 9999)
+            order_number = f"WHATSAPP-{timestamp}-{random_suffix}"
+        
+        # Create order with required fields
+        order = Order.objects.create(
+            restaurant=customer,
+            order_number=order_number,
+            status='received',
+            order_date=date.today(),
+            delivery_date=date.today(),  # Will be calculated properly in production
+            whatsapp_message_id=message_id,
+            original_message=message.content,
+            parsed_by_ai=True,
+            subtotal=Decimal('0.00'),
+            total_amount=Decimal('0.00'),
+        )
+        
+        # Create order items
+        total_amount = Decimal('0.00')
+        created_items = []
+        
+        for item_data in items_data:
+            try:
+                product = Product.objects.get(id=item_data['product_id'])
+                quantity = Decimal(str(item_data.get('quantity', 1.0)))
+                unit = item_data.get('unit', product.unit)
+                price = Decimal(str(item_data.get('price', product.price)))
+                total_price = quantity * price
+                
+                from orders.models import OrderItem
+                order_item = OrderItem.objects.create(
+                    order=order,
+                    product=product,
+                    quantity=quantity,
+                    unit=unit,
+                    price=price,
+                    total_price=total_price,
+                    original_text=item_data.get('original_text', ''),
+                    confidence_score=100.0,  # User confirmed selection
+                )
+                
+                created_items.append({
+                    'id': order_item.id,
+                    'product_name': product.name,
+                    'quantity': float(quantity),
+                    'unit': unit,
+                    'price': float(price),
+                    'total_price': float(total_price),
+                })
+                
+                total_amount += total_price
+                
+            except Product.DoesNotExist:
+                logger.warning(f"Product with ID {item_data['product_id']} not found")
+                continue
+            except Exception as e:
+                logger.error(f"Error creating order item: {str(e)}")
+                continue
+        
+        # Update order total
+        order.total_amount = total_amount
+        order.subtotal = total_amount
+        order.save()
+        
+        # Update message content with confirmed items
+        confirmed_items_text = []
+        for item in created_items:
+            confirmed_items_text.append(f"{item['quantity']} {item['unit']} {item['product_name']}")
+        
+        # Update message content to show confirmed items
+        original_content = message.content
+        updated_content = f"CONFIRMED ORDER:\n" + "\n".join(confirmed_items_text) + f"\n\nOriginal message:\n{original_content}"
+        
+        # Mark message as processed
+        message.is_processed = True
+        message.processing_notes = f"Order created: {order.id} with {len(created_items)} items"
+        message.content = updated_content
+        message.save()
+        
+        return Response({
+            'status': 'success',
+            'message': f'Order created successfully with {len(created_items)} items',
+            'order_id': order.id,
+            'total_amount': total_amount,
+            'items': created_items,
+        })
+        
+    except Exception as e:
+        logger.error(f"Failed to create order from suggestions: {str(e)}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        return Response({
+            'status': 'error',
+            'message': 'Failed to create order',
+            'details': str(e) if settings.DEBUG else 'Internal server error'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 

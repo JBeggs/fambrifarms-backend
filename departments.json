@@ -1,0 +1,52 @@
+[
+{
+  "model": "products.department",
+  "pk": 1,
+  "fields": {
+    "name": "Fruits",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-09-28T20:37:16.733Z"
+  }
+},
+{
+  "model": "products.department",
+  "pk": 2,
+  "fields": {
+    "name": "Herbs & Spices",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-09-28T20:37:16.733Z"
+  }
+},
+{
+  "model": "products.department",
+  "pk": 3,
+  "fields": {
+    "name": "Mushrooms",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-09-28T20:37:16.734Z"
+  }
+},
+{
+  "model": "products.department",
+  "pk": 4,
+  "fields": {
+    "name": "Specialty Items",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-09-28T20:37:16.734Z"
+  }
+},
+{
+  "model": "products.department",
+  "pk": 5,
+  "fields": {
+    "name": "Vegetables",
+    "description": "",
+    "is_active": true,
+    "created_at": "2025-09-28T20:37:16.734Z"
+  }
+}
+]
