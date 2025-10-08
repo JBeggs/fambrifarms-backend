@@ -500,7 +500,7 @@ class SmartProductMatcher:
         remaining_words = [w for w in words if w not in words_to_remove]
         
         if not remaining_words:
-        return None
+            return None
     
         # Step 6: Build product name
         product_name = ' '.join(remaining_words)
@@ -1003,7 +1003,7 @@ class SmartProductMatcher:
             total_words = len(parsed_name.split())
             if matched_words == total_words:
                 score += 50  # High score for exact word match
-                else:
+            else:
                 score += 30  # Lower score for partial word match
         
         # Base product name matching (high priority for container/weight products)
@@ -1017,9 +1017,9 @@ class SmartProductMatcher:
         # Penalty for partial matches that don't include all words
         else:
             # Check if we have some words matching but not all
-        parsed_words = set(parsed_name.split())
-        product_words = set(product_name_lower.split())
-        common_words = parsed_words.intersection(product_words)
+            parsed_words = set(parsed_name.split())
+            product_words = set(product_name_lower.split())
+            common_words = parsed_words.intersection(product_words)
         
             if common_words and len(common_words) < len(parsed_words):
                 # Some words match but not all - this is likely a wrong match
@@ -1047,7 +1047,7 @@ class SmartProductMatcher:
                     size_pattern = r'\b' + re.escape(f"{size_num}{size_unit}") + r'\b'
                     if re.search(size_pattern, product_name_lower):
                         score += 45  # High bonus for same size
-            else:
+                    else:
                         score -= 30  # Penalty for different packaging size
         
         # Color-specific matching bonus/penalty
@@ -1060,7 +1060,7 @@ class SmartProductMatcher:
                 score += 25  # Exact color match bonus
             elif any(color in product_colors for color in parsed_colors):
                 score += 15  # Partial color match bonus
-                else:
+            else:
                 # Different colors - strong penalty
                 score -= 40  # Strong penalty for different colors
         elif parsed_colors and not product_colors:
@@ -1080,7 +1080,7 @@ class SmartProductMatcher:
                 score += 20  # Exact product type match bonus
             elif any(ptype in product_types for ptype in parsed_types):
                 score += 10  # Partial product type match bonus
-                else:
+            else:
                 score -= 15  # Penalty for wrong product type
         
         # Specific tomato type matching (cherry vs cocktail)
@@ -1160,10 +1160,10 @@ class SmartProductMatcher:
         
         # Extra description matching (only if we have a reasonable product name match)
         if score >= 20:  # Only apply extra description bonus if we already have a decent product name match
-        for desc in parsed_message.extra_descriptions:
-            if desc in product_name_lower:
-                score += 15
-        
+            for desc in parsed_message.extra_descriptions:
+                if desc in product_name_lower:
+                    score += 15
+            
         # Penalize if no meaningful match
         if score < 10:
             return 0
@@ -1243,7 +1243,7 @@ class SmartProductMatcher:
     
     def _get_fuzzy_suggestions(self, parsed_message: ParsedMessage, max_suggestions: int) -> List[SmartMatchResult]:
         """Get fuzzy suggestions when exact matching fails"""
-            return self._get_fuzzy_suggestions_from_database(parsed_message, max_suggestions)
+        return self._get_fuzzy_suggestions_from_database(parsed_message, max_suggestions)
     
     
     def _get_fuzzy_suggestions_from_database(self, parsed_message: ParsedMessage, max_suggestions: int) -> List[SmartMatchResult]:
@@ -1299,7 +1299,7 @@ class SmartProductMatcher:
         for product in phrase_matches:
             score = self._calculate_fuzzy_score(product, parsed_message, 'phrase_match')
             
-                if score > 0:
+            if score > 0:
                 fuzzy_matches.append(SmartMatchResult(
                     product=product,
                     quantity=quantity,
