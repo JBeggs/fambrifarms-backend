@@ -44,10 +44,10 @@ class Command(BaseCommand):
             
             if supplier.name == 'Fambri Farms Internal':
                 self.create_fambri_internal_products(supplier, products_by_dept)
-            elif supplier.name == 'Tania\'s Fresh Produce':
-                self.create_tania_products(supplier, products_by_dept)
-            elif supplier.name == 'Mumbai Spice & Produce':
-                self.create_mumbai_products(supplier, products_by_dept)
+            elif supplier.name == 'Tshwane Market':
+                self.create_tshwane_market_products(supplier, products_by_dept)
+            elif supplier.name == 'Reese Mushrooms':
+                self.create_reese_mushrooms_products(supplier, products_by_dept)
             elif supplier.name == 'Tshwane Fresh Produce Market':
                 self.create_tshwane_market_products(supplier, products_by_dept)
 
@@ -100,8 +100,8 @@ class Command(BaseCommand):
         self.add_products_to_price_list(price_list, farm_products, 'FF')
         self.stdout.write(f'   ✅ Added {len(farm_products)} farm production items')
 
-    def create_tania_products(self, supplier, products_by_dept):
-        """Tania's Fresh Produce - Emergency supply, herbs specialist, quick delivery"""
+    def create_reese_mushrooms_products(self, supplier, products_by_dept):
+        """Reese Mushrooms - Mushroom specialist supplier"""
         
         # Clear existing price lists
         SupplierPriceList.objects.filter(supplier=supplier).delete()
@@ -109,89 +109,21 @@ class Command(BaseCommand):
         price_list = SupplierPriceList.objects.create(
             supplier=supplier,
             list_date=date.today(),
-            file_reference=f'Tania\'s Emergency Supply List',
+            file_reference=f'Reese Mushrooms Product List',
             is_processed=True,
-            notes='Emergency supply specialist - herbs, quick delivery, premium pricing for urgent needs',
+            notes='Mushroom specialist - fresh mushrooms, premium quality',
         )
         
-        # Emergency supply items - herbs specialist with some vegetables
-        tania_products = [
-            # Herbs - her specialty (premium pricing for emergency supply)
-            {'name': 'Basil', 'price': 18.00, 'qty': 30},  # Premium for emergency
-            {'name': 'Parsley', 'price': 10.00, 'qty': 35},
-            {'name': 'Mint', 'price': 12.00, 'qty': 30},
-            {'name': 'Rosemary', 'price': 15.00, 'qty': 25},
-            {'name': 'Thyme', 'price': 15.00, 'qty': 20},
-            {'name': 'Coriander', 'price': 10.00, 'qty': 30},
-            {'name': 'Dill', 'price': 18.00, 'qty': 15},
-            {'name': 'Rocket', 'price': 130.00, 'qty': 10},  # Premium specialty
-            
-            # Emergency vegetables (higher pricing for quick supply)
-            {'name': 'Tomatoes', 'price': 28.00, 'qty': 20},  # Emergency premium
-            {'name': 'Cucumber', 'price': 10.00, 'qty': 25},
-            {'name': 'Green Peppers', 'price': 55.00, 'qty': 15},
-            {'name': 'Red Peppers', 'price': 60.00, 'qty': 12},
-            {'name': 'Mixed Lettuce', 'price': 45.00, 'qty': 15},
-            {'name': 'Baby Spinach', 'price': 50.00, 'qty': 12},
-            {'name': 'Spring Onions', 'price': 28.00, 'qty': 20},
-            
-            # Specialty items for restaurants
-            {'name': 'Micro Herbs', 'price': 30.00, 'qty': 10},
-            {'name': 'Cherry Tomatoes', 'price': 25.00, 'qty': 15},
-            {'name': 'Baby Corn', 'price': 22.00, 'qty': 12},
+        # Mushroom products based on real supplier
+        reese_products = [
+            {'name': 'Button Mushrooms', 'price': 50.00, 'qty': 20},
+            {'name': 'Brown Mushrooms', 'price': 55.00, 'qty': 15},
+            {'name': 'Portabellini Mushrooms', 'price': 65.00, 'qty': 10},
+            {'name': 'Oyster Mushrooms', 'price': 70.00, 'qty': 8},
         ]
         
-        self.add_products_to_price_list(price_list, tania_products, 'TFP')
-        self.stdout.write(f'   ✅ Added {len(tania_products)} emergency supply items')
-
-    def create_mumbai_products(self, supplier, products_by_dept):
-        """Mumbai Spice & Produce - Spices, specialty vegetables, exotic items"""
-        
-        # Clear existing price lists
-        SupplierPriceList.objects.filter(supplier=supplier).delete()
-        
-        price_list = SupplierPriceList.objects.create(
-            supplier=supplier,
-            list_date=date.today(),
-            file_reference=f'Mumbai Spice & Specialty List',
-            is_processed=True,
-            notes='Specialty spices, exotic vegetables, Indian cuisine ingredients, premium quality',
-        )
-        
-        # Specialty and spice items
-        mumbai_products = [
-            # Spices and specialty herbs (their main specialty)
-            {'name': 'Turmeric', 'price': 160.00, 'qty': 8},
-            {'name': 'Ginger', 'price': 85.00, 'qty': 12},
-            {'name': 'Garlic Cloves', 'price': 125.00, 'qty': 10},
-            {'name': 'Crushed Garlic', 'price': 95.00, 'qty': 8},
-            {'name': 'Red Chillies', 'price': 85.00, 'qty': 15},
-            {'name': 'Green Chillies', 'price': 80.00, 'qty': 18},
-            
-            # Specialty vegetables
-            {'name': 'Eggplant', 'price': 48.00, 'qty': 15},
-            {'name': 'Aubergine', 'price': 58.00, 'qty': 12},
-            {'name': 'Baby Corn', 'price': 18.00, 'qty': 20},
-            {'name': 'Green Beans', 'price': 48.00, 'qty': 15},
-            {'name': 'Yellow Peppers', 'price': 65.00, 'qty': 10},
-            
-            # Exotic and specialty items
-            {'name': 'Artichokes', 'price': 50.00, 'qty': 8},
-            {'name': 'Brussels Sprouts', 'price': 55.00, 'qty': 10},
-            {'name': 'Celery', 'price': 45.00, 'qty': 12},
-            
-            # Some fruits they might specialize in
-            {'name': 'Papaya', 'price': 35.00, 'qty': 15},
-            {'name': 'Grapefruit', 'price': 32.00, 'qty': 12},
-            
-            # Mushrooms (specialty item)
-            {'name': 'Brown Mushrooms', 'price': 85.00, 'qty': 8},
-            {'name': 'Button Mushrooms', 'price': 28.00, 'qty': 12},
-            {'name': 'Portabellini Mushrooms', 'price': 95.00, 'qty': 6},
-        ]
-        
-        self.add_products_to_price_list(price_list, mumbai_products, 'MSP')
-        self.stdout.write(f'   ✅ Added {len(mumbai_products)} specialty and spice items')
+        self.add_products_to_price_list(price_list, reese_products, 'REESE')
+        self.stdout.write(f'   ✅ Added {len(reese_products)} mushroom products')
 
     def create_tshwane_market_products(self, supplier, products_by_dept):
         """Tshwane Fresh Produce Market - Wholesale market, bulk quantities, competitive prices"""

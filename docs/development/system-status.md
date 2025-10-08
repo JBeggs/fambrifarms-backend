@@ -108,10 +108,12 @@ backend/
 - Real examples: Butternut, Mixed Lettuce, Lemons, Broccoli, Basil
 
 #### **Supplier Network:**
-- **3 specialized suppliers** with distinct roles
+- **5 real suppliers** with distinct roles
 - **Fambri Farms Internal** (0 payment terms - internal)
-- **Tania's Fresh Produce** (emergency supply, herbs)
-- **Mumbai Spice & Produce** (specialty spices, exotic vegetables)
+- **Tshwane Market** (fresh produce market supplier)
+- **Reese Mushrooms** (mushroom specialist)
+- **Rooted (Pty) Ltd** (agricultural supplier)
+- **Prudence AgriBusiness** (agricultural business supplier)
 
 #### **WhatsApp Data Preservation:**
 - **Maltos**: Real restaurant with procurement email

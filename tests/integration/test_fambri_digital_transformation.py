@@ -126,14 +126,14 @@ class FambriFarmsDigitalTransformationTest(TestCase):
         self.assertIsNotNone(karl_rep, "Karl should be sales rep for internal supplier")
         self.assertTrue(karl_rep.is_primary)
         
-        # Test Tania's Fresh Produce
-        tania_supplier = Supplier.objects.filter(name__icontains='Tania').first()
-        self.assertIsNotNone(tania_supplier, "Tania's supplier should exist")
-        self.assertEqual(tania_supplier.lead_time_days, 0)  # Same day delivery
+        # Test Tshwane Market
+        tshwane_supplier = Supplier.objects.filter(name__icontains='Tshwane').first()
+        self.assertIsNotNone(tshwane_supplier, "Tshwane Market supplier should exist")
+        self.assertEqual(tshwane_supplier.lead_time_days, 0)  # Market delivery
         
-        # Test Mumbai Spice & Produce
-        mumbai_supplier = Supplier.objects.filter(name__icontains='Mumbai').first()
-        self.assertIsNotNone(mumbai_supplier, "Mumbai supplier should exist")
+        # Test Reese Mushrooms
+        reese_supplier = Supplier.objects.filter(name__icontains='Reese').first()
+        self.assertIsNotNone(reese_supplier, "Reese Mushrooms supplier should exist")
         
         # Test supplier products
         supplier_products = SupplierProduct.objects.all()

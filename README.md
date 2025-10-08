@@ -80,7 +80,7 @@ python manage.py test tests.integration.test_system_validation -v 2
 - **products/** - 63 products from SHALLOME stock across 5 departments
 - **orders/** - Tuesday/Thursday cycles with authentic customer patterns
 - **inventory/** - Live stock levels, market prices, procurement intelligence
-- **suppliers/** - Fambri Internal, Tania's Produce, Mumbai Spice & Produce
+- **suppliers/** - Fambri Internal, Tshwane Market, Reese Mushrooms, Rooted (Pty) Ltd, Prudence AgriBusiness
 - **procurement/** - Smart recommendations based on stock analysis
 - **production/** - Production batches and reservations
 - **invoices/** - Invoice generation and credit notes
@@ -88,7 +88,7 @@ python manage.py test tests.integration.test_system_validation -v 2
 
 ### 🌟 **AUTHENTIC BUSINESS FEATURES**
 - ✅ **Real Customer Data** - Maltos, Casa Bella, Sylvia (+27 73 621 2471), Marco, Arthur
-- ✅ **Authentic Suppliers** - Karl as Farm Manager, Tania (emergency), Mumbai (spices)
+- ✅ **Real Suppliers** - Karl as Farm Manager, Tshwane Market, Reese Mushrooms, Rooted, Prudence AgriBusiness
 - ✅ **SHALLOME Stock System** - Real inventory from Hazvinei's stock reports
 - ✅ **WhatsApp Order Patterns** - "30kg potato", "10 heads broccoli", "Arthur box x2"
 - ✅ **Market Intelligence** - 1,890 price records across 3 markets with volatility tracking

@@ -236,13 +236,13 @@ class Command(BaseCommand):
                 # Internal supplier - base cost pricing
                 price_multiplier = Decimal('0.70')  # 70% of retail (cost price)
                 availability_rate = 0.95  # 95% availability
-            elif 'Tania' in supplier.name:
-                # Emergency supplier - premium pricing but high availability
-                price_multiplier = Decimal('1.15')  # 115% of retail (premium for quick delivery)
+            elif 'Tshwane Market' in supplier.name:
+                # Market supplier - competitive pricing
+                price_multiplier = Decimal('0.85')  # 85% of retail (market rates)
                 availability_rate = 0.90  # 90% availability
-            elif 'Mumbai' in supplier.name:
-                # Specialty supplier - varied pricing based on product type
-                price_multiplier = Decimal('1.05')  # 105% of retail
+            elif 'Reese Mushrooms' in supplier.name:
+                # Mushroom specialist - premium pricing for specialty items
+                price_multiplier = Decimal('1.10')  # 110% of retail
                 availability_rate = 0.85  # 85% availability
             else:
                 # Default supplier pricing
@@ -255,24 +255,16 @@ class Command(BaseCommand):
                 supplier_products = products.filter(
                     department__name__in=['Vegetables', 'Fruits', 'Herbs & Spices']
                 )
-            elif 'Tania' in supplier.name:
-                # Tania - herbs and emergency vegetables
+            elif 'Tshwane Market' in supplier.name:
+                # Tshwane Market - fruits, vegetables, general produce
                 supplier_products = products.filter(
-                    department__name__in=['Herbs & Spices', 'Vegetables']
-                )[:30]  # Limit to 30 products
-            elif 'Mumbai' in supplier.name:
-                # Mumbai - spices, specialty items, exotic vegetables
-                spice_products = products.filter(
-                    department__name__in=['Herbs & Spices', 'Specialty Items']
+                    department__name__in=['Fruits', 'Vegetables']
+                )[:50]  # Limit to 50 products
+            elif 'Reese Mushrooms' in supplier.name:
+                # Reese Mushrooms - mushroom specialist
+                supplier_products = products.filter(
+                    department__name='Mushrooms'
                 )
-                pepper_products = products.filter(name__icontains='pepper')
-                chilli_products = products.filter(name__icontains='chilli')
-                
-                # Combine manually to avoid union ordering issues
-                supplier_products = list(spice_products) + list(pepper_products) + list(chilli_products)
-                # Remove duplicates
-                seen_ids = set()
-                supplier_products = [p for p in supplier_products if not (p.id in seen_ids or seen_ids.add(p.id))]
             else:
                 # Default - random selection
                 supplier_products = random.sample(list(products), min(20, len(products)))
@@ -282,8 +274,8 @@ class Command(BaseCommand):
                 base_price = product.price * price_multiplier
                 
                 # Add product-specific adjustments
-                if product.department.name == 'Herbs & Spices' and 'Mumbai' in supplier.name:
-                    base_price *= Decimal('1.20')  # 20% premium for Mumbai spices
+                if product.department.name == 'Mushrooms' and 'Reese Mushrooms' in supplier.name:
+                    base_price *= Decimal('1.15')  # 15% premium for specialty mushrooms
                 elif product.department.name == 'Vegetables' and 'Fambri' in supplier.name:
                     base_price *= Decimal('0.90')  # 10% discount for internal vegetables
                 
@@ -312,7 +304,7 @@ class Command(BaseCommand):
                     created_count += 1
 
         self.stdout.write(f'🏭 Created {created_count} supplier-product relationships with realistic pricing')
-        self.stdout.write(f'💡 Fambri Internal: Cost pricing, Tania: Premium emergency, Mumbai: Specialty spices')
+        self.stdout.write(f'💡 Fambri Internal: Cost pricing, Tshwane Market: Market rates, Reese Mushrooms: Specialty pricing')
 
     def create_customer_price_lists(self):
         """Create customer-specific price lists based on their segments and order patterns"""
