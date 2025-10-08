@@ -81,8 +81,8 @@ class Command(BaseCommand):
         from accounts.models import RestaurantProfile, PrivateCustomerProfile, FarmProfile
         from suppliers.models import Supplier, SupplierProduct
         from products.models import Product, Department
-        from inventory.models import UnitOfMeasure, FinishedInventory, StockUpdate
-        from settings.models import MessageType, PaymentMethod, UnitType
+        from inventory.models import UnitOfMeasure, FinishedInventory, StockMovement
+        from settings.models import MessageType, PaymentMethod, UserType
         
         # Clear in reverse dependency order
         models_to_clear = [
@@ -95,13 +95,13 @@ class Command(BaseCommand):
             (SupplierProduct, 'Supplier Products'),
             (Supplier, 'Suppliers'),
             (FinishedInventory, 'Finished Inventory'),
-            (StockUpdate, 'Stock Updates'),
+            (StockMovement, 'Stock Movements'),
             (Product, 'Products'),
             (Department, 'Departments'),
             (UnitOfMeasure, 'Units of Measure'),
             (MessageType, 'Message Types'),
             (PaymentMethod, 'Payment Methods'),
-            (UnitType, 'Unit Types'),
+            (UserType, 'User Types'),
         ]
         
         for model, name in models_to_clear:
