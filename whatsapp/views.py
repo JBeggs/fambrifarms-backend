@@ -2152,17 +2152,18 @@ def create_order_from_suggestions(request):
         from datetime import date
         from decimal import Decimal
         
-        # Generate unique order number
-        import time
+        # Generate unique order number (max 20 chars)
         import random
-        timestamp = int(time.time())
-        random_suffix = random.randint(1000, 9999)
-        order_number = f"WHATSAPP-{timestamp}-{random_suffix}"
+        from django.utils import timezone
+        
+        date_str = timezone.now().strftime('%Y%m%d')  # 8 chars
+        random_suffix = random.randint(1000, 9999)   # 4 chars
+        order_number = f"WA{date_str}{random_suffix}"  # WA20241008123 = 14 chars ✅
         
         # Ensure order number is unique
         while Order.objects.filter(order_number=order_number).exists():
             random_suffix = random.randint(1000, 9999)
-            order_number = f"WHATSAPP-{timestamp}-{random_suffix}"
+            order_number = f"WA{date_str}{random_suffix}"
         
         # Create order with required fields
         order = Order.objects.create(
