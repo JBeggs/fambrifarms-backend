@@ -30,6 +30,21 @@
   "customers": {
     "mooi_nooi_area": [
       {
+        "business_name": "Leopard Lodge",
+        "contact_person": "Leon",
+        "email": "info@leopardlodge.co.za",
+        "phone": "+27 83 267 6406",
+        "address": "R560 – Portion 234 Skeerpoort 477 JQ, North West",
+        "customer_type": "restaurant",
+        "area": "Mooi Nooi",
+        "cuisine_type": "Function Venue & Conference Centre Restaurant",
+        "is_active": true,
+        "delivery_address": "Leopard Lodge Restaurant, Hartbeespoort Valley",
+        "delivery_instructions": "Main entrance - restaurant delivery",
+        "order_notes": "248-hectare wildlife lodge with restaurant - upmarket venue catering",
+        "website": "https://leopardlodge.co.za/"
+      },
+      {
         "business_name": "Pecanwood Golf Estate",
         "contact_person": "Restaurant Manager",
         "email": "info@pecanwood.co.za",
@@ -106,6 +121,52 @@
         "order_notes": "Mediterranean cuisine - seafood, fresh herbs, lemons, olives, tomatoes",
         "website": "https://maltos.co.za/",
         "description": "Mediterranean restaurant with seafood, sushi, and Greek dishes"
+      },
+      {
+        "business_name": "Revue Bar",
+        "contact_person": "Manager",
+        "email": "info@revuesa.com",
+        "phone": "+27 84 750 5430",
+        "address": "Sun City Resort, Sun City, 0316",
+        "customer_type": "restaurant",
+        "area": "Sun City",
+        "cuisine_type": "Premier Gentlemen's Lounge",
+        "is_active": true,
+        "delivery_address": "Revue Bar, Sun City Resort",
+        "delivery_instructions": "Resort delivery - adult entertainment venue",
+        "order_notes": "Adult entertainment venue - premium service requirements",
+        "website": "https://revuesa.com/"
+      },
+      {
+        "business_name": "Pemba Mozambican Restaurant",
+        "contact_person": "Restaurant Manager",
+        "email": "info@chameleonvillage.co.za",
+        "phone": "082 874 8637",
+        "address": "Chameleon Village, R104 Old Rustenburg Road, Damdoryn, Hartbeespoort, 0216",
+        "customer_type": "restaurant",
+        "area": "Mooi Nooi",
+        "cuisine_type": "Mozambican Restaurant",
+        "is_active": true,
+        "delivery_address": "Pemba Restaurant, Chameleon Village, Hartbeespoort",
+        "delivery_instructions": "Chameleon Village main entrance - restaurant delivery",
+        "order_notes": "Mozambican cuisine - flame-grilled dishes, peri-peri chicken, Portuguese specialties",
+        "website": "https://chameleonvillage.co.za/restaurant/pemba-mozambican-restaurant/"
+      },
+      {
+        "business_name": "Die Joint Koffiehuis & Kwekery",
+        "contact_person": "Manager",
+        "email": "info@diejoint.co.za",
+        "phone": "+27 79 435 6059",
+        "address": "29B Pelindaba Rd, Hartbeespoort, Broederstroom, 0216, South Africa",
+        "customer_type": "restaurant",
+        "area": "Mooi Nooi",
+        "cuisine_type": "Cannabis Social Club & Coffee House",
+        "is_active": true,
+        "delivery_address": "Die Joint, Pelindaba Road, Hartbeespoort",
+        "delivery_instructions": "Main entrance - coffee house delivery",
+        "order_notes": "Cannabis social club with coffee house - serves coffee, burgers, fresh produce for events",
+        "website": "https://diejoint.co.za/",
+        "operating_hours": "Mon-Sat 9:00 AM - 6:00 PM, Sun 9:00 AM - 4:00 PM"
       },
       {
         "business_name": "Barchefz",

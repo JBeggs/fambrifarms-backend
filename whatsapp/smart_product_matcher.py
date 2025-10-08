@@ -747,7 +747,7 @@ class SmartProductMatcher:
             if unit_candidates.exists():
                 if len(unit_candidates) >= 3:
                     candidates = unit_candidates
-        else:
+            else:
                     # If unit filtering gives us too few candidates, use both but prioritize unit matches
                     all_candidates = list(candidates)
                     unit_candidates_list = list(unit_candidates)
