@@ -1,0 +1,6828 @@
+{
+  "data_collection_info": {
+    "purpose": "Production database seeding - clean start for message processing",
+    "creation_date": "2025-10-08",
+    "status": "production_ready",
+    "notes": "No messages, no orders - ready for live WhatsApp processing"
+  },
+  "departments": [
+    {
+      "name": "Fruits",
+      "description": "Fresh fruits and citrus"
+    },
+    {
+      "name": "Vegetables",
+      "description": "Fresh vegetables and root crops"
+    },
+    {
+      "name": "Herbs & Spices",
+      "description": "Fresh herbs and aromatic spices"
+    },
+    {
+      "name": "Mushrooms",
+      "description": "Fresh mushrooms and fungi"
+    },
+    {
+      "name": "Specialty Items",
+      "description": "Specialty and gourmet produce"
+    }
+  ],
+  "suppliers": [
+    {
+      "name": "Tshwane Market",
+      "contact_person": "Market Administration",
+      "phone": "+27 12 358 1234",
+      "email": "admin@tshwanemarket.co.za",
+      "address": "Unit 9 Sunninghill Office Park, Johannesburg",
+      "description": "Primary wholesale produce supplier",
+      "supplier_type": "external",
+      "registration_number": "TM2020/001",
+      "tax_number": "4070107901",
+      "payment_terms_days": 7,
+      "lead_time_days": 1,
+      "minimum_order_value": 500.0,
+      "is_active": true
+    },
+    {
+      "name": "Reese Mushrooms",
+      "contact_person": "Reese Sales Team",
+      "phone": "067 419 2940",
+      "email": "reesemushrooms@gmail.com",
+      "address": "Unit 9 Sunninghill Office Park, Broederstroom",
+      "description": "Specialist mushroom supplier",
+      "supplier_type": "external",
+      "registration_number": "RM2020/002",
+      "tax_number": "4270259501",
+      "payment_terms_days": 30,
+      "lead_time_days": 2,
+      "minimum_order_value": 200.0,
+      "is_active": true
+    },
+    {
+      "name": "Rooted (Pty) Ltd",
+      "contact_person": "Sales Department",
+      "phone": "+27 12 345 6789",
+      "email": "orders@rooted.co.za",
+      "address": "66 Von Willich Avenue, Doringkloof, Centurion, Gauteng, 0157",
+      "description": "Premium lettuce and micro herbs supplier",
+      "supplier_type": "external",
+      "registration_number": "RT2020/003",
+      "tax_number": "4300318716",
+      "payment_terms_days": 30,
+      "lead_time_days": 1,
+      "minimum_order_value": 150.0,
+      "is_active": true
+    },
+    {
+      "name": "Prudence AgriBusiness",
+      "contact_person": "Prudence Sales",
+      "phone": "073 766 0792",
+      "email": "prudenceagribusinesses@gmail.com",
+      "address": "Portion 148, Farm Hartbeespoort, Mamagalieskraal, Brits, 0250",
+      "description": "Fresh herbs and specialty produce",
+      "supplier_type": "external",
+      "registration_number": "PA2020/004",
+      "tax_number": "2010173178",
+      "payment_terms_days": 14,
+      "lead_time_days": 1,
+      "minimum_order_value": 100.0,
+      "is_active": true
+    },
+    {
+      "name": "Fambri Farms Internal",
+      "contact_person": "Karl Farm Manager",
+      "phone": "+27 76 655 4873",
+      "email": "karl@fambrifarms.co.za",
+      "address": "Fambri Farms, Hartbeespoort, North West, 0216",
+      "description": "Internal farm production",
+      "supplier_type": "internal",
+      "registration_number": "FF2020/001",
+      "tax_number": "4520199680",
+      "payment_terms_days": 0,
+      "lead_time_days": 0,
+      "minimum_order_value": null,
+      "is_active": true
+    }
+  ],
+  "customers": {
+    "mooi_nooi_area": [
+      {
+        "business_name": "Pecanwood Golf Estate",
+        "contact_person": "Restaurant Manager",
+        "email": "info@pecanwood.co.za",
+        "phone": "+27 12 207 0000",
+        "address": "Pecanwood Golf Estate, Hartbeespoort, North West, 0216",
+        "customer_type": "restaurant",
+        "area": "Mooi Nooi",
+        "cuisine_type": "Golf Estate Restaurant",
+        "is_active": true,
+        "delivery_address": "Pecanwood Golf Estate Clubhouse, Hartbeespoort",
+        "delivery_instructions": "Clubhouse service entrance",
+        "order_notes": "Premier golf estate restaurant - upmarket produce orders",
+        "website": "https://pecanwood.co.za/"
+      },
+      {
+        "business_name": "Pecanwood Golf Estate - Clubhouse",
+        "contact_person": "Clubhouse Manager",
+        "email": "clubhouse@pecanwood.co.za",
+        "phone": "+27 12 207 0001",
+        "address": "Pecanwood Golf Estate Clubhouse, Hartbeespoort, North West, 0216",
+        "customer_type": "restaurant",
+        "area": "Mooi Nooi",
+        "cuisine_type": "Golf Club Dining",
+        "is_active": true,
+        "delivery_address": "Pecanwood Golf Estate Clubhouse, Hartbeespoort",
+        "delivery_instructions": "Main clubhouse entrance",
+        "order_notes": "Clubhouse dining facility - golf event catering",
+        "website": "https://pecanwood.co.za/",
+        "parent_business": "Pecanwood Golf Estate"
+      },
+      {
+        "business_name": "Wimpy Mooikloof",
+        "contact_person": "Store Manager",
+        "email": "mooikloof@wimpy.co.za",
+        "phone": "+27 12 998 0100",
+        "address": "Mooikloof, Pretoria, North West, 0081",
+        "customer_type": "restaurant",
+        "area": "Mooi Nooi",
+        "cuisine_type": "Family Restaurant Chain",
+        "is_active": true,
+        "delivery_address": "Wimpy Mooikloof, Pretoria",
+        "delivery_instructions": "Restaurant service entrance",
+        "order_notes": "Family restaurant - consistent quality produce requirements"
+      },
+      {
+        "business_name": "Wimpy Mooikloof - Mooikloof",
+        "contact_person": "Branch Manager",
+        "email": "mooikloof.branch@wimpy.co.za",
+        "phone": "+27 12 998 0101",
+        "address": "Mooikloof Branch, Pretoria, North West, 0081",
+        "customer_type": "restaurant",
+        "area": "Mooi Nooi",
+        "cuisine_type": "Family Restaurant Branch",
+        "is_active": true,
+        "delivery_address": "Wimpy Mooikloof Branch, Pretoria",
+        "delivery_instructions": "Branch service entrance",
+        "order_notes": "Wimpy branch location - standard franchise requirements",
+        "parent_business": "Wimpy Mooikloof"
+      }
+    ],
+    "sun_city_area": [
+      {
+        "business_name": "Casa Bella",
+        "contact_person": "Restaurant Manager",
+        "email": "suncity@casabelladining.co.za",
+        "phone": "+27 14 557 1000",
+        "address": "Sun City Resort, North West, South Africa",
+        "customer_type": "restaurant",
+        "area": "Sun City",
+        "cuisine_type": "Authentic Italian Restaurant",
+        "is_active": true,
+        "delivery_address": "Casa Bella Restaurant, Sun City Resort",
+        "delivery_instructions": "Restaurant service entrance",
+        "order_notes": "Authentic Italian cuisine - fresh herbs, tomatoes, premium ingredients",
+        "website": "https://casabelladining.co.za/"
+      },
+      {
+        "business_name": "Luma Bar and Lounge",
+        "contact_person": "Bar Manager",
+        "email": "luma@suninternational.com",
+        "phone": "+27 14 557 5150",
+        "address": "Cascades Hotel, 3rd Floor, Sun City, North West, South Africa",
+        "customer_type": "restaurant",
+        "area": "Sun City",
+        "cuisine_type": "Bar & Lounge - Light Meals",
+        "is_active": true,
+        "delivery_address": "Luma Bar and Lounge, Cascades Hotel, Sun City",
+        "delivery_instructions": "Hotel service entrance - 3rd floor",
+        "order_notes": "Poolside bar - light lunches, garnishes, fresh ingredients",
+        "website": "https://www.suninternational.com/sun-city/cascades/restaurants/luma-bar-lounge/",
+        "operating_hours": "Daily 07h00 - 23h00"
+      },
+      {
+        "business_name": "Maltos Sun City",
+        "contact_person": "Restaurant Manager",
+        "email": "suncity@maltos.co.za",
+        "phone": "+27 14 557 5600",
+        "address": "Sun City, North West, South Africa",
+        "customer_type": "restaurant",
+        "area": "Sun City",
+        "cuisine_type": "Mediterranean Restaurant",
+        "is_active": true,
+        "delivery_address": "Maltos Restaurant, Sun City Resort",
+        "delivery_instructions": "Restaurant service entrance",
+        "order_notes": "Mediterranean cuisine - seafood, fresh herbs, lemons, olives, tomatoes",
+        "website": "https://maltos.co.za/",
+        "description": "Mediterranean restaurant with seafood, sushi, and Greek dishes"
+      },
+      {
+        "business_name": "Barchefz",
+        "contact_person": "Bar Manager",
+        "email": "orders@barchefz.co.za",
+        "phone": "+27 14 557 0206",
+        "address": "Unnamed Road, Sun City, North West, 0316",
+        "customer_type": "restaurant",
+        "area": "Sun City",
+        "cuisine_type": "Pub & Bar with Food",
+        "is_active": true,
+        "delivery_address": "Barchefz, Unnamed Road, Sun City",
+        "delivery_instructions": "Main entrance - wheelchair accessible",
+        "order_notes": "Main establishment - quality-focused customer, mint, pineapple, fresh produce requirements",
+        "website": "https://barchefz.co.za",
+        "operating_hours": "Mon-Fri 9AM-5:30PM, Sun 9AM-5PM, Closed Saturday",
+        "description": "Pub and bar with cocktails and food options"
+      },
+      {
+        "business_name": "Valley (Barchefz Branch)",
+        "contact_person": "Branch Manager",
+        "email": "valley@barchefz.co.za",
+        "phone": "+27 14 557 0207",
+        "address": "Sun City Area, North West, 0316",
+        "customer_type": "restaurant",
+        "area": "Sun City",
+        "cuisine_type": "Pub & Bar Branch",
+        "is_active": true,
+        "delivery_address": "Valley Branch, Sun City Area",
+        "delivery_instructions": "Branch service entrance",
+        "order_notes": "Branch of Barchefz - regular orders: onions, pineapple, mint, strawberry, lemon, rosemary, cucumber, orange",
+        "parent_business": "Barchefz",
+        "branch_type": "satellite_location"
+      },
+      {
+        "business_name": "Shebeen",
+        "contact_person": "Bar Manager",
+        "email": "orders@shebeen.co.za",
+        "phone": "+27 14 557 0208",
+        "address": "Sun City Resort, North West, 0316",
+        "customer_type": "restaurant",
+        "area": "Sun City",
+        "cuisine_type": "Traditional Bar & Grill",
+        "is_active": true,
+        "delivery_address": "Shebeen Bar & Grill, Sun City Resort",
+        "delivery_instructions": "Resort service entrance",
+        "order_notes": "Traditional South African bar - local cuisine focus",
+        "website": "https://www.suninternational.com/sun-city/restaurants/shebeen/"
+      }
+    ],
+    "private_customers": [
+      {
+        "customer_name": "Marco Private Customer",
+        "email": "marco.private@gmail.com",
+        "phone": "+27 73 621 2472",
+        "customer_type": "private",
+        "area": "Confidential",
+        "is_active": true,
+        "delivery_address": "Private Address - Confidential",
+        "delivery_instructions": "Private customer - handle with discretion",
+        "order_notes": "Regular private customer - mixed vegetables and fruits",
+        "is_private_customer": true
+      },
+      {
+        "customer_name": "Arthur Private Customer",
+        "email": "arthur.orders@gmail.com",
+        "phone": "+27 76 555 0018",
+        "customer_type": "private",
+        "area": "Confidential",
+        "is_active": true,
+        "delivery_address": "Private Address - Confidential",
+        "delivery_instructions": "Private customer - handle with discretion",
+        "order_notes": "Regular private customer - household orders",
+        "is_private_customer": true
+      },
+      {
+        "customer_name": "Sylvia Private Customer",
+        "email": "sylvia.private@gmail.com",
+        "phone": "+27 73 621 2474",
+        "customer_type": "private",
+        "area": "Hartbeespoort",
+        "is_active": true,
+        "delivery_address": "Private Address - Hartbeespoort",
+        "delivery_instructions": "Private customer - family orders",
+        "order_notes": "Regular private customer - fresh produce",
+        "is_private_customer": true
+      }
+    ],
+    "other_areas": [
+      {
+        "business_name": "Culinary Institute",
+        "contact_person": "Orders Department",
+        "email": "orders@culinary.edu.za",
+        "phone": "+27 12 321 0987",
+        "address": "369 Education Drive, Pretoria, 0002",
+        "customer_type": "restaurant",
+        "area": "Pretoria",
+        "cuisine_type": "Educational Institution",
+        "website": "",
+        "business_registration": "CULINARYINSTITUTE2024/001",
+        "delivery_instructions": "Culinary school - herbs in punnets, educational orders",
+        "order_notes": "Regular orders from Culinary Institute",
+        "is_active": true
+      },
+      {
+        "business_name": "Debonairs Pizza",
+        "contact_person": "Store Manager",
+        "email": "orders@debonairs.co.za",
+        "phone": "+27 12 654 3210",
+        "address": "987 Pizza Plaza, Centurion, 0157",
+        "customer_type": "restaurant",
+        "area": "Centurion",
+        "cuisine_type": "Pizza Chain",
+        "website": "https://debonairs.co.za",
+        "business_registration": "DEBONAIRSPIZZA2024/001",
+        "delivery_instructions": "Pizza chain - regular vegetable orders",
+        "order_notes": "Regular orders from Debonairs Pizza",
+        "is_active": true
+      },
+      {
+        "business_name": "Revue Bar",
+        "contact_person": "Kitchen Manager",
+        "email": "orders@revuebar.co.za",
+        "phone": "+27 11 098 7654",
+        "address": "852 Nightlife Street, Johannesburg, 2001",
+        "customer_type": "restaurant",
+        "area": "Johannesburg",
+        "cuisine_type": "Bar and Grill",
+        "website": "",
+        "business_registration": "REVUEBAR2024/001",
+        "delivery_instructions": "Bar and grill - fresh produce for kitchen",
+        "order_notes": "Regular orders from Revue Bar",
+        "is_active": true
+      },
+      {
+        "business_name": "Mugg and Bean",
+        "contact_person": "Store Manager",
+        "email": "orders@muggandbean.co.za",
+        "phone": "+27 12 244 0199",
+        "address": "The Islands, Hartbeespoort, 0216",
+        "customer_type": "restaurant",
+        "area": "Hartbeespoort",
+        "cuisine_type": "Coffee Shop Chain",
+        "website": "https://muggandbean.co.za",
+        "business_registration": "MUGGANDBEAN2024/001",
+        "delivery_instructions": "Coffee shop chain - fresh ingredients for menu",
+        "order_notes": "Regular orders from Mugg and Bean",
+        "is_active": true
+      },
+      {
+        "business_name": "Venue",
+        "contact_person": "Event Manager",
+        "email": "orders@venue.co.za",
+        "phone": "+27 12 876 5432",
+        "address": "963 Event Plaza, Pretoria, 0002",
+        "customer_type": "restaurant",
+        "area": "Pretoria",
+        "cuisine_type": "Event Venue",
+        "website": "",
+        "business_registration": "VENUE2024/001",
+        "delivery_instructions": "Event venue - catering supplies",
+        "order_notes": "Regular orders from Venue",
+        "is_active": true
+      },
+      {
+        "business_name": "T-junction",
+        "contact_person": "Restaurant Manager",
+        "email": "orders@tjunction.co.za",
+        "phone": "+27 12 543 2109",
+        "address": "147 Junction Road, Pretoria, 0002",
+        "customer_type": "restaurant",
+        "area": "Pretoria",
+        "cuisine_type": "Family Restaurant",
+        "website": "",
+        "business_registration": "TJUNCTION2024/001",
+        "delivery_instructions": "Family restaurant - fresh produce orders",
+        "order_notes": "Regular orders from T-junction",
+        "is_active": true
+      },
+      {
+        "business_name": "Barchef Entertainment",
+        "contact_person": "Head Chef",
+        "email": "orders@barchef.co.za",
+        "phone": "+27 14 234 5678",
+        "address": "258 Entertainment District, Sun City, 0316",
+        "customer_type": "restaurant",
+        "area": "Sun City",
+        "cuisine_type": "Entertainment Venue",
+        "website": "",
+        "business_registration": "BARCHEF2024/001",
+        "delivery_instructions": "Entertainment venue - premium ingredients",
+        "order_notes": "Regular orders from Barchef Entertainment",
+        "is_active": true
+      },
+      {
+        "business_name": "Mugg and Bean - Centurion",
+        "contact_person": "Branch Manager",
+        "email": "NEEDS_REAL_EMAIL",
+        "phone": "NEEDS_REAL_PHONE",
+        "address": "456 Mall Plaza, Centurion, 0157",
+        "customer_type": "restaurant",
+        "area": "Centurion",
+        "cuisine_type": "Coffee Shop Chain",
+        "website": "https://muggandbean.co.za",
+        "business_registration": "MUGGANDBEAN2024/002",
+        "delivery_instructions": "Coffee shop branch - fresh ingredients",
+        "order_notes": "Branch orders from Mugg and Bean Centurion",
+        "is_active": true,
+        "branch_type": "Branch",
+        "parent_business": "Mugg and Bean"
+      },
+      {
+        "business_name": "Debonairs Pizza - Centurion",
+        "contact_person": "Branch Manager",
+        "email": "NEEDS_REAL_EMAIL",
+        "phone": "NEEDS_REAL_PHONE",
+        "address": "789 Shopping Center, Centurion, 0157",
+        "customer_type": "restaurant",
+        "area": "Centurion",
+        "cuisine_type": "Pizza Chain",
+        "website": "https://debonairs.co.za",
+        "business_registration": "DEBONAIRSPIZZA2024/002",
+        "delivery_instructions": "Pizza chain branch - vegetable supplies",
+        "order_notes": "Branch orders from Debonairs Pizza Centurion",
+        "is_active": true,
+        "branch_type": "Branch",
+        "parent_business": "Debonairs Pizza"
+      },
+      {
+        "business_name": "Leopard Lodge",
+        "contact_person": "Lodge Manager",
+        "email": "NEEDS_REAL_EMAIL",
+        "phone": "NEEDS_REAL_PHONE",
+        "address": "321 Safari Road, Hartbeespoort, 0216",
+        "customer_type": "restaurant",
+        "area": "Hartbeespoort",
+        "cuisine_type": "Lodge Restaurant",
+        "website": "",
+        "business_registration": "LEOPARDLODGE2024/001",
+        "delivery_instructions": "Safari lodge - premium fresh produce",
+        "order_notes": "Regular orders from Leopard Lodge",
+        "is_active": true
+      }
+    ]
+  },
+  "users": [
+    {
+      "email": "admin@fambrifarms.co.za",
+      "first_name": "Admin",
+      "last_name": "User",
+      "user_type": "staff",
+      "phone": "+27 76 655 4873",
+      "is_verified": true,
+      "is_active": true,
+      "is_staff": true,
+      "is_superuser": true,
+      "password": "defaultpassword123"
+    },
+    {
+      "email": "system@fambrifarms.co.za",
+      "first_name": "System",
+      "last_name": "Admin",
+      "user_type": "admin",
+      "phone": "+27 76 655 4873",
+      "is_verified": true,
+      "is_active": true,
+      "is_staff": true,
+      "is_superuser": true
+    },
+    {
+      "email": "karl@fambrifarms.co.za",
+      "first_name": "Karl",
+      "last_name": "Farm Manager",
+      "user_type": "farm_manager",
+      "phone": "+27 76 655 4873",
+      "is_verified": true,
+      "is_active": true,
+      "is_staff": true,
+      "is_superuser": false
+    },
+    {
+      "email": "hazvinei@fambrifarms.co.za",
+      "first_name": "Hazvinei",
+      "last_name": "Stock Controller",
+      "user_type": "stock_taker",
+      "phone": "+27 61 674 9368",
+      "is_verified": true,
+      "is_active": true,
+      "is_staff": true,
+      "is_superuser": false
+    }
+  ],
+  "products": [
+    {
+      "name": "Artichokes",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Arugula",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Arugula (100g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Arugula (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Arugula (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Arugula (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Arugula (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Arugula (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Arugula (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Arugula (50g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Arugula (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Arugula (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Asparagus",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Aubergine",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Aubergine",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocado Fuerte",
+      "description": "Fresh avocado fuerte",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocado Land Hass",
+      "description": "Fresh avocado land hass",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocados (Hard)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocados (Hard)",
+      "description": "Avocados (Hard) - kg unit variation",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocados (Hard)",
+      "description": "Avocados (Hard) - piece unit variation",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "piece",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocados (Hard) (1kg)",
+      "description": "Avocados (Hard) (1kg) packet",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocados (Hard) (2kg)",
+      "description": "Avocados (Hard) (2kg) packet",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocados (Hard) (3kg)",
+      "description": "Avocados (Hard) (3kg) packet",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocados (Semi-Ripe)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocados (Semi-Ripe) (1kg)",
+      "description": "Avocados (Semi-Ripe) (1kg) packet",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocados (Semi-Ripe) (2kg)",
+      "description": "Avocados (Semi-Ripe) (2kg) packet",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocados (Semi-Ripe) (3kg)",
+      "description": "Avocados (Semi-Ripe) (3kg) packet",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocados (Soft)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 9.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocados (Soft) (1kg)",
+      "description": "Avocados (Soft) (1kg) packet",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocados (Soft) (2kg)",
+      "description": "Avocados (Soft) (2kg) packet",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Avocados (Soft) (3kg)",
+      "description": "Avocados (Soft) (3kg) packet",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Corn",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 12.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (15kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (20kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (25kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (3kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (4kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (6kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (7kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (8kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Marrow (9kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Potatoes",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 2.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Spinach",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.5,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Bananas",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 13.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Bananas (10kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Bananas (1kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Bananas (2kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Bananas (3kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Bananas (5kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Basil",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Basil (100g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Basil (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Basil (200g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Basil (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Basil (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Basil (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Basil (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Basil (50g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Basil (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Basil (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Beans (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Beans (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Beans (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Beetroot",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Beetroot (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Beetroot (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Beetroot (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Beetroot (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Black Grapes",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 16.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Black Grapes (1kg)",
+      "description": "Fresh black grapes (1kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Black Grapes (2kg)",
+      "description": "Fresh black grapes (2kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Black Grapes (500g)",
+      "description": "Fresh black grapes (500g)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Black Grapes (5kg)",
+      "description": "Fresh black grapes (5kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Blueberries",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Blueberries (200g)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 12.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Blueberries (500g)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Brinjals",
+      "description": "Fresh brinjals",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Broccoli",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "head",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Broccoli",
+      "description": "Broccoli - kg unit variation",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 14.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Broccoli (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Broccoli (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Broccoli (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Broccoli (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Brown Mushrooms",
+      "description": "",
+      "department": "Mushrooms",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Brown Mushrooms (10kg)",
+      "description": "",
+      "department": "Mushrooms",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Brown Mushrooms (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 6.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Brown Mushrooms (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Brown Mushrooms (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Brown Mushrooms (5kg)",
+      "description": "",
+      "department": "Mushrooms",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Brown Mushrooms (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Brown Mushrooms (7kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Brussels Sprouts",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butter Nut",
+      "description": "Butter Nut - Added for order processing",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 11.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut (15kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut (20kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut (25kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut (3kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut (4kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut (6kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut (7kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut (8kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut (9kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Butternut Squash",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Button Mushrooms",
+      "description": "",
+      "department": "Mushrooms",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Button Mushrooms (10kg)",
+      "description": "Fresh button mushrooms (10kg)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Button Mushrooms (200g)",
+      "description": "Fresh button mushrooms (200g)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Button Mushrooms (250g)",
+      "description": "Fresh button mushrooms (250g)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Button Mushrooms (500g)",
+      "description": "Fresh button mushrooms (500g)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Button Mushrooms (5kg)",
+      "description": "Fresh button mushrooms (5kg)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Button Mushrooms (750g)",
+      "description": "Fresh button mushrooms (750g)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Button Mushrooms (7kg)",
+      "description": "Fresh button mushrooms (7kg)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cabbage Red",
+      "description": "Fresh cabbage red",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Carrots",
+      "description": "Carrots - bunch unit variation",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Carrots",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Carrots (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Carrots (1kg Packed)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Carrots (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Carrots (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Carrots (3kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Carrots (4kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Carrots (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Carrots (6kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Carrots (7kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Carrots (8kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Carrots (9kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cauliflower",
+      "description": "Cauliflower - box unit variation",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cauliflower",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "head",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cauliflower",
+      "description": "Cauliflower - kg unit variation",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cauliflower (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cauliflower (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cauliflower (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cauliflower (3kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cauliflower (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Celery",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.8,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cherry Tomatoes",
+      "description": "",
+      "department": "Specialty Items",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 20.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Chives",
+      "description": "Fresh chives",
+      "department": "Herbs",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Chives",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "piece",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Chives (100g)",
+      "description": "Fresh chives (100g)",
+      "department": "Herbs",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Chives (200g)",
+      "description": "Fresh chives (200g)",
+      "department": "Herbs",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Chives (250g)",
+      "description": "Fresh chives (250g)",
+      "department": "Herbs",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Chives (50g)",
+      "description": "Fresh chives (50g)",
+      "department": "Herbs",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cocktail Tomatoes (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cocktail Tomatoes (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cocktail Tomatoes (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 5.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cocktail Tomatoes (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Coriander",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Coriander (100g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Coriander (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Coriander (200g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 4.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Coriander (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Coriander (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Coriander (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Coriander (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Coriander (50g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Coriander (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Coriander (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crispy Lettuce (100g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crispy Lettuce (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crispy Lettuce (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crispy Lettuce (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crispy Lettuce (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crispy Lettuce (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crispy Lettuce (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crispy Lettuce (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crispy Lettuce (50g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crispy Lettuce (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crispy Lettuce (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crispy Lettuce (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crushed Garlic",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cucumber",
+      "description": "Cucumber - box unit variation",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cucumber",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "each",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cucumber",
+      "description": "Cucumber - kg unit variation",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cucumbers English",
+      "description": "Fresh cucumbers english",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Deveined Spinach",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Dill",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Dill",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Dill (100g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Dill (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Dill (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Dill (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Dill (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Dill (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Dill (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Dill (50g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Dill (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Dill (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Edible Flowers",
+      "description": "",
+      "department": "Specialty Items",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Edible Flowers (100g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Edible Flowers (200g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Edible Flowers (50g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Eggplant",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Eggs (Jumbo)",
+      "description": "Jumbo eggs - 30 count box",
+      "department": "Specialty Items",
+      "price": 0.0,
+      "unit": "tray",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Eggs (Large)",
+      "description": "Large eggs - 30 count box",
+      "department": "Specialty Items",
+      "price": 0.0,
+      "unit": "tray",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Eggs (Medium)",
+      "description": "Medium eggs - 30 count box",
+      "department": "Specialty Items",
+      "price": 0.0,
+      "unit": "tray",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Free Range Eggs",
+      "description": "Free range eggs - 30 count box",
+      "department": "Specialty Items",
+      "price": 0.0,
+      "unit": "tray",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Garlic Cloves",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Ginger",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape",
+      "description": "Fresh Grape",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Red Globe",
+      "description": "Fresh grape red globe",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Sugradne",
+      "description": "Fresh grape sugradne",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grapefruit",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grapefruit (1kg)",
+      "description": "Fresh grapefruit (1kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grapefruit (2kg)",
+      "description": "Fresh grapefruit (2kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grapefruit (3kg)",
+      "description": "Fresh grapefruit (3kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grapefruit (5kg)",
+      "description": "Fresh grapefruit (5kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Apples",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Apples (10kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Apples (1kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Apples (2kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Apples (5kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Apples (5kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Beans",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Cabbage",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "head",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Chillies",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Chillies (100g)",
+      "description": "Green hot chilies in 100g packet",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Chillies (1kg)",
+      "description": "Green hot chilies in 1kg box",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Chillies (200g)",
+      "description": "Green hot chilies in 200g punnet",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Chillies (2kg)",
+      "description": "Green hot chilies in 2kg box",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Chillies (500g)",
+      "description": "Green hot chilies in 500g punnet",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Grapes",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Grapes (1kg)",
+      "description": "Fresh green grapes (1kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Grapes (2kg)",
+      "description": "Fresh green grapes (2kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Grapes (500g)",
+      "description": "Fresh green grapes (500g)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 9.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Grapes (5kg)",
+      "description": "Fresh green grapes (5kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Peppers",
+      "description": "Green Peppers - box unit variation",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Peppers",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Peppers",
+      "description": "Green Peppers - piece unit variation",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "piece",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Peppers (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Peppers (15kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Peppers (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Peppers (20kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Peppers (25kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Peppers (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Peppers (3kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Peppers (4kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Green Peppers (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Iceberg",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "head",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Iceberg (100g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Iceberg (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Iceberg (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Iceberg (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Iceberg (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Iceberg (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Iceberg (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Iceberg (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Iceberg (50g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Iceberg (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Iceberg (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Istent",
+      "description": "Auto-created from WhatsApp order: 'istent'. Based on SHALLOME inventory patterns.",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kale",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kale (100g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kale (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kale (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kale (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kale (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kale (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kale (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kale (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kale (50g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kale (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kale (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kiwi",
+      "description": "Fresh Kiwi (box)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kiwi",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kiwi (200g)",
+      "description": "Fresh Kiwi (200g punnet)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Kiwi (500g)",
+      "description": "Fresh Kiwi (500g punnet)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Large Veggie Box",
+      "description": "",
+      "department": "Specialty Items",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Leeks",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemon",
+      "description": "Lemon - Added for order processing",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (10kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (10kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (15kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (1kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (20kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (250g)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (25kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (2kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (2kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (3kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (4kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (500g)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (5kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (5kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lemons (750g)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lettuce",
+      "description": "Lettuce Head - box unit variation",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lettuce",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "head",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lettuce",
+      "description": "Lettuce Head - kg unit variation",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 3.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lime",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lime (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lime (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lime (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Lime (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Marrows Dark Green",
+      "description": "Fresh marrows dark green",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Micro Greens",
+      "description": "",
+      "department": "Specialty Items",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Micro Herbs",
+      "description": "",
+      "department": "Specialty Items",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Micro Herbs (100g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Micro Herbs (200g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Micro Herbs (50g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Mint",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mint (100g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Mint (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mint (200g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Mint (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mint (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mint (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mint (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mint (50g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Mint (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mint (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mixed Lettuce",
+      "description": "Mixed Lettuce - box unit",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mixed Lettuce (100g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mixed Lettuce (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mixed Lettuce (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mixed Lettuce (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mixed Lettuce (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mixed Lettuce (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mixed Lettuce (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mixed Lettuce (50g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mixed Lettuce (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mixed Lettuce (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mixed Peppers",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Naartjies",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "None",
+      "description": "Auto-created from WhatsApp order: 'none'. Based on SHALLOME inventory patterns.",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges",
+      "description": "Oranges - bag unit variation",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges",
+      "description": "Oranges - box unit variation",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 9.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges (10kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges (10kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges (15kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges (1kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges (1kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges (20kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges (2kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges (2kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges (3kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges (3kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges (5kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oranges (5kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Order Notes",
+      "description": "",
+      "department": "Special",
+      "price": 0.0,
+      "unit": "note",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oregano",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oregano (100g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Oregano (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oregano (200g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Oregano (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oregano (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oregano (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oregano (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oregano (50g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Oregano (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oregano (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Papaya",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Papinos",
+      "description": "Fresh papinos",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Parsley",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Parsley",
+      "description": "Fresh parsley - bulk",
+      "department": "Herbs",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Parsley (100g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Parsley (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Parsley (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Parsley (200g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Parsley (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Parsley (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Parsley (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Parsley (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Parsley (50g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Parsley (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Parsley (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pan",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "each",
+      "stock_level": 2.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pan (1kg)",
+      "description": "Fresh patty pan (1kg)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pan (200g)",
+      "description": "Fresh patty pan (200g)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pan (2kg)",
+      "description": "Fresh patty pan (2kg)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pan (500g)",
+      "description": "Fresh patty pan (500g)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pan (500g)",
+      "description": "Fresh patty pan (500g)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pan (5kg)",
+      "description": "Fresh patty pan (5kg)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pans Yellow",
+      "description": "Fresh patty pans yellow",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Paw Paw",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Pineapple",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "each",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Pineapple",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Pineapple (10kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Pineapple (2kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Pineapple (5kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Portabellini Mushrooms",
+      "description": "",
+      "department": "Mushrooms",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Portabellini Mushrooms (10kg)",
+      "description": "",
+      "department": "Mushrooms",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Portabellini Mushrooms (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Portabellini Mushrooms (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Portabellini Mushrooms (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Portabellini Mushrooms (5kg)",
+      "description": "",
+      "department": "Mushrooms",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Portabellini Mushrooms (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Portabellini Mushrooms (7kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potato Mondial INA",
+      "description": "Fresh potato mondial ina",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potato SIFRA IWASH",
+      "description": "Fresh potato sifra iwash",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes",
+      "description": "Potatoes - box unit variation",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes (3kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes (4kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes (6kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes (7kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes (8kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes (9kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes 10kg",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes 15kg",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes 20kg",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes 25kg",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Pumpkin",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Pumpkins Crown Pro",
+      "description": "Fresh pumpkins crown pro",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Radishes",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Apples",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 7.3,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Apples (10kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Apples (1kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Apples (2kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Apples (5kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Apples (5kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Cabbage",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "head",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Chillies",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Chillies (100g)",
+      "description": "Red hot chilies in 100g packet",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Chillies (1kg)",
+      "description": "Red hot chilies in 1kg box",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Chillies (200g)",
+      "description": "Red hot chilies in 200g punnet",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Chillies (2kg)",
+      "description": "Red hot chilies in 2kg box",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 2.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Chillies (500g)",
+      "description": "Red hot chilies in 500g punnet",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Grapes",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Grapes (1kg)",
+      "description": "Fresh red grapes (1kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Grapes (2kg)",
+      "description": "Fresh red grapes (2kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Grapes (500g)",
+      "description": "Fresh red grapes (500g)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 10.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Grapes (5kg)",
+      "description": "Fresh red grapes (5kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions (3kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions (4kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions (6kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions (7kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions (8kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions (9kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions 10kg",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions 15kg",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions 20kg",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Onions 5kg",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 3.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (15kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (20kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (25kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (3kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (3kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (4kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (4kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Red Peppers (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rocket",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rocket",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rocket (100g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rocket (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rocket (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rocket (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rocket (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rocket (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rocket (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rocket (50g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rocket (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rocket (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rosemary",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rosemary",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rosemary (100g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Rosemary (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rosemary (200g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Rosemary (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rosemary (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rosemary (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rosemary (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rosemary (50g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Rosemary (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Rosemary (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sage (100g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Sage (200g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Sage (50g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Small Veggie Box",
+      "description": "",
+      "department": "Specialty Items",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Snap Peas",
+      "description": "Fresh Snap Peas (packet)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (100g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (3kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (50g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spinach (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Spring Onions",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Squash (kg)",
+      "description": "Fresh Squash (kg)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Strawberries (1kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 18.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Strawberries (200g)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Strawberries (250g)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Strawberries (2kg)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Strawberries (500g)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Strawberries (750g)",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sun Dried Tomatoes",
+      "description": "Fresh Sun Dried Tomatoes (packet)",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Corn",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "piece",
+      "stock_level": 3.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Corn (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Melon",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "each",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Potatoes",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Potatoes (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Potatoes (15kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Potatoes (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Potatoes (20kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Potatoes (25kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Potatoes (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Potatoes (3kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Potatoes (4kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Potatoes (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Potatoes (6kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Potatoes (7kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Potatoes (8kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Potatoes (9kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweetcorn Baby",
+      "description": "Fresh sweetcorn baby",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (100g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (50g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Thyme",
+      "description": "Fresh thyme - bulk",
+      "department": "Herbs",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Thyme",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Thyme (100g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Thyme (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Thyme (200g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Thyme (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Thyme (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Thyme (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Thyme (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Thyme (50g)",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 10.0,
+      "is_active": true
+    },
+    {
+      "name": "Thyme (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Thyme (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Tomatoes",
+      "description": "Tomatoes - box unit variation",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Tomatoes",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Tomatoes",
+      "description": "Tomatoes - punnet unit variation",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Tomatoes (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Tomatoes (15kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Tomatoes (20kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Tomatoes (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Turmeric",
+      "description": "",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Turnips",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Water Melon",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "each",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (100g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (150g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (200g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (250g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (300g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (400g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (500g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (50g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (600g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (750g)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watermelon",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "each",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Grapes",
+      "description": "",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Grapes (1kg)",
+      "description": "Fresh white grapes (1kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Grapes (2kg)",
+      "description": "Fresh white grapes (2kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Grapes (500g)",
+      "description": "Fresh white grapes (500g)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Grapes (5kg)",
+      "description": "Fresh white grapes (5kg)",
+      "department": "Fruits",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions (3kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions (4kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions (6kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions (7kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions (8kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions (9kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions 10kg",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions 15kg",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions 20kg",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "White Onions 5kg",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "bag",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Whole Tomatoes",
+      "description": "Whole Tomatoes - Added for order processing",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Wild Rocket (100g)",
+      "description": "Wild Rocket in 100g packet size",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Wild Rocket (200g)",
+      "description": "Wild Rocket in 200g packet size",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Wild Rocket (500g)",
+      "description": "Wild Rocket in 500g packet size",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Wild Rocket (50g)",
+      "description": "Wild Rocket in 50g packet size",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Wild Rocket (bulk kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Yellow Peppers",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 1.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Yellow Peppers (10kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Yellow Peppers (15kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Yellow Peppers (1kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Yellow Peppers (20kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Yellow Peppers (25kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Yellow Peppers (2kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Yellow Peppers (3kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Yellow Peppers (4kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Yellow Peppers (5kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Zucchini",
+      "description": "",
+      "department": "Vegetables",
+      "price": 0.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    }
+  ],
+  "units_of_measure": [
+    {
+      "name": "kg",
+      "category": "weight",
+      "description": "Kilogram"
+    },
+    {
+      "name": "box",
+      "category": "container",
+      "description": "Box packaging"
+    },
+    {
+      "name": "bag",
+      "category": "container",
+      "description": "Bag packaging"
+    },
+    {
+      "name": "bunch",
+      "category": "bundle",
+      "description": "Bunch/bundle"
+    },
+    {
+      "name": "punnet",
+      "category": "container",
+      "description": "Punnet container"
+    },
+    {
+      "name": "each",
+      "category": "unit",
+      "description": "Individual item"
+    },
+    {
+      "name": "head",
+      "category": "unit",
+      "description": "Head (lettuce, cabbage)"
+    }
+  ]
+}
