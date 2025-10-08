@@ -84,7 +84,7 @@ class Command(BaseCommand):
         from inventory.models import UnitOfMeasure, FinishedInventory, StockMovement
         from settings.models import MessageType, PaymentMethod, UserType
         
-        # Clear in reverse dependency order
+        # Clear in reverse dependency order - only core models that exist in production
         models_to_clear = [
             (OrderItem, 'Order Items'),
             (Order, 'Orders'),
@@ -99,22 +99,50 @@ class Command(BaseCommand):
             (Product, 'Products'),
             (Department, 'Departments'),
             (UnitOfMeasure, 'Units of Measure'),
+        ]
+        
+        # Optional models that may not exist in production
+        optional_models = [
             (MessageType, 'Message Types'),
             (PaymentMethod, 'Payment Methods'),
             (UserType, 'User Types'),
         ]
         
+        # Clear core models (should always exist)
         for model, name in models_to_clear:
-            count = model.objects.count()
-            if count > 0:
-                model.objects.all().delete()
-                self.stdout.write(f'    🗑️  Cleared {count} {name}')
+            try:
+                count = model.objects.count()
+                if count > 0:
+                    model.objects.all().delete()
+                    self.stdout.write(f'    🗑️  Cleared {count} {name}')
+                else:
+                    self.stdout.write(f'    ✅ No {name} to clear')
+            except Exception as e:
+                self.stdout.write(f'    ❌ Error clearing {name}: {str(e)[:50]}...')
+        
+        # Clear optional models (may not exist in production)
+        for model, name in optional_models:
+            try:
+                count = model.objects.count()
+                if count > 0:
+                    model.objects.all().delete()
+                    self.stdout.write(f'    🗑️  Cleared {count} {name}')
+                else:
+                    self.stdout.write(f'    ✅ No {name} to clear')
+            except Exception as e:
+                # Skip tables that don't exist (like settings models on production)
+                self.stdout.write(f'    ⚠️  Skipped {name} (table may not exist)')
         
         # Clear users except superusers
-        user_count = User.objects.filter(is_superuser=False).count()
-        if user_count > 0:
-            User.objects.filter(is_superuser=False).delete()
-            self.stdout.write(f'    🗑️  Cleared {user_count} Users (kept superusers)')
+        try:
+            user_count = User.objects.filter(is_superuser=False).count()
+            if user_count > 0:
+                User.objects.filter(is_superuser=False).delete()
+                self.stdout.write(f'    🗑️  Cleared {user_count} Users (kept superusers)')
+            else:
+                self.stdout.write(f'    ✅ No non-superuser Users to clear')
+        except Exception as e:
+            self.stdout.write(f'    ⚠️  Could not clear users: {str(e)[:50]}...')
 
     def seed_units_of_measure(self, data, dry_run):
         """Seed units of measure"""
