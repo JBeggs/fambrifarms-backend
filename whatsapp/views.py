@@ -2258,3 +2258,296 @@ def create_order_from_suggestions(request):
             'details': str(e) if settings.DEBUG else 'Internal server error'
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def process_stock_message_with_suggestions(request):
+    """
+    Process a stock message and return suggestions for all items - requires user confirmation
+    """
+    message_id = request.data.get('message_id')
+    
+    if not message_id:
+        return Response({
+            'error': 'message_id is required'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        message = WhatsAppMessage.objects.get(message_id=message_id)
+        
+        # Use the new stock suggestions function
+        from .services import create_stock_update_from_message_with_suggestions
+        result = create_stock_update_from_message_with_suggestions(message)
+        
+        if result['status'] == 'confirmation_required':
+            return Response({
+                'status': 'success',
+                'message': result['message'],
+                'customer': result['customer'],
+                'items': result['items'],
+                'total_items': result['total_items'],
+                'stock_date': result['stock_date'],
+                'order_day': result['order_day']
+            })
+        else:
+            return Response({
+                'status': 'error',
+                'message': result['message'],
+                'items': result.get('items', [])
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+    except WhatsAppMessage.DoesNotExist:
+        return Response({
+            'error': 'Message not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error(f"Failed to process stock message with suggestions: {str(e)}")
+        return Response({
+            'error': 'Failed to process stock message',
+            'details': str(e) if settings.DEBUG else None
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def get_stock_update_history(request):
+    """
+    Get stock update history with WhatsApp message references
+    """
+    try:
+        from .models import StockUpdate
+        from inventory.models import StockMovement
+        from products.models import Product
+        
+        # Get recent stock updates with their WhatsApp messages
+        stock_updates = StockUpdate.objects.select_related('message').order_by('-created_at')[:10]
+        
+        history_data = []
+        for stock_update in stock_updates:
+            message = stock_update.message
+            
+            # Get stock movements created from this update
+            movement_reference = f"SHALLOME-{stock_update.stock_date.strftime('%Y%m%d')}"
+            movements = StockMovement.objects.filter(
+                reference_number=movement_reference
+            ).select_related('product')
+            
+            # Build product updates list
+            product_updates = []
+            for movement in movements:
+                product_updates.append({
+                    'product_id': movement.product.id,
+                    'product_name': movement.product.name,
+                    'quantity_change': float(movement.quantity),
+                    'unit': movement.product.unit,
+                    'notes': movement.notes
+                })
+            
+            history_data.append({
+                'stock_update_id': stock_update.id,
+                'message_id': message.message_id,
+                'sender_name': message.sender_name,
+                'timestamp': message.timestamp.isoformat(),
+                'stock_date': stock_update.stock_date.isoformat(),
+                'order_day': stock_update.order_day,
+                'processed': stock_update.processed,
+                'items_count': len(stock_update.items),
+                'product_updates': product_updates,
+                'movement_reference': movement_reference
+            })
+        
+        return Response({
+            'status': 'success',
+            'history': history_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Failed to get stock update history: {str(e)}")
+        return Response({
+            'error': 'Failed to get stock update history',
+            'details': str(e) if settings.DEBUG else None
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def compare_stock_with_previous(request):
+    """
+    Compare current stock levels with the previous stock take to identify discrepancies
+    """
+    try:
+        from .models import StockUpdate
+        from inventory.models import FinishedInventory, StockMovement
+        from products.models import Product
+        from django.db.models import Q
+        import logging
+        
+        logger = logging.getLogger(__name__)
+        
+        # Get the two most recent processed stock updates
+        recent_stock_updates = StockUpdate.objects.filter(processed=True).order_by('-created_at')[:2]
+        
+        if len(recent_stock_updates) < 2:
+            return Response({
+                'status': 'error',
+                'message': 'Need at least 2 stock takes to compare',
+                'comparison_data': []
+            })
+        
+        current_stock_update = recent_stock_updates[0]
+        previous_stock_update = recent_stock_updates[1]
+        
+        # Build comparison data
+        comparison_data = []
+        all_products = set()
+        
+        # Get all products from both stock takes
+        all_products.update(current_stock_update.items.keys())
+        all_products.update(previous_stock_update.items.keys())
+        
+        for product_name in all_products:
+            # Get current stock take data
+            current_data = current_stock_update.items.get(product_name, {})
+            current_quantity = current_data.get('quantity', 0)
+            current_unit = current_data.get('unit', '')
+            
+            # Get previous stock take data
+            previous_data = previous_stock_update.items.get(product_name, {})
+            previous_quantity = previous_data.get('quantity', 0)
+            previous_unit = previous_data.get('unit', '')
+            
+            # Calculate difference
+            difference = current_quantity - previous_quantity
+            
+            # Get current inventory level
+            try:
+                product = Product.objects.filter(name__iexact=product_name).first()
+                if product:
+                    inventory = FinishedInventory.objects.filter(product=product).first()
+                    current_inventory = float(inventory.available_quantity) if inventory else 0.0
+                    product_id = product.id
+                else:
+                    current_inventory = 0.0
+                    product_id = None
+            except:
+                current_inventory = 0.0
+                product_id = None
+            
+            # Determine status
+            if difference == 0:
+                status = 'unchanged'
+                severity = 'normal'
+            elif abs(difference) <= 1:
+                status = 'minor_change'
+                severity = 'low'
+            elif abs(difference) <= 5:
+                status = 'moderate_change'
+                severity = 'medium'
+            else:
+                status = 'major_change'
+                severity = 'high'
+            
+            # Check if current inventory matches expected
+            inventory_matches = abs(current_inventory - current_quantity) <= 0.1
+            
+            comparison_data.append({
+                'product_name': product_name,
+                'product_id': product_id,
+                'previous_quantity': previous_quantity,
+                'current_quantity': current_quantity,
+                'difference': difference,
+                'unit': current_unit or previous_unit,
+                'current_inventory': current_inventory,
+                'inventory_matches': inventory_matches,
+                'status': status,
+                'severity': severity
+            })
+        
+        # Sort by severity and difference
+        severity_order = {'high': 0, 'medium': 1, 'low': 2, 'normal': 3}
+        comparison_data.sort(key=lambda x: (severity_order[x['severity']], abs(x['difference'])), reverse=True)
+        
+        # Calculate summary statistics
+        total_products = len(comparison_data)
+        unchanged = len([x for x in comparison_data if x['status'] == 'unchanged'])
+        minor_changes = len([x for x in comparison_data if x['status'] == 'minor_change'])
+        moderate_changes = len([x for x in comparison_data if x['status'] == 'moderate_change'])
+        major_changes = len([x for x in comparison_data if x['status'] == 'major_change'])
+        inventory_mismatches = len([x for x in comparison_data if not x['inventory_matches']])
+        
+        return Response({
+            'status': 'success',
+            'current_stock_date': current_stock_update.stock_date.isoformat(),
+            'previous_stock_date': previous_stock_update.stock_date.isoformat(),
+            'current_order_day': current_stock_update.order_day,
+            'previous_order_day': previous_stock_update.order_day,
+            'summary': {
+                'total_products': total_products,
+                'unchanged': unchanged,
+                'minor_changes': minor_changes,
+                'moderate_changes': moderate_changes,
+                'major_changes': major_changes,
+                'inventory_mismatches': inventory_mismatches
+            },
+            'comparison_data': comparison_data
+        })
+        
+    except Exception as e:
+        logger.error(f"Failed to compare stock with previous: {str(e)}")
+        return Response({
+            'error': 'Failed to compare stock with previous',
+            'details': str(e) if settings.DEBUG else None
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+def create_stock_update_from_suggestions(request):
+    """
+    Create a stock update from confirmed suggestions and apply to inventory
+    """
+    message_id = request.data.get('message_id')
+    confirmed_items = request.data.get('confirmed_items', [])
+    stock_date = request.data.get('stock_date')
+    order_day = request.data.get('order_day')
+    reset_before_processing = request.data.get('reset_before_processing', True)
+    
+    if not message_id:
+        return Response({
+            'error': 'message_id is required'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    if not confirmed_items:
+        return Response({
+            'error': 'confirmed_items is required'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        from .services import create_stock_update_from_confirmed_suggestions
+        result = create_stock_update_from_confirmed_suggestions(
+            message_id=message_id,
+            confirmed_items=confirmed_items,
+            stock_date=stock_date,
+            order_day=order_day,
+            reset_before_processing=reset_before_processing
+        )
+        
+        if result['status'] == 'success':
+            return Response({
+                'status': 'success',
+                'message': result['message'],
+                'stock_update_id': result['stock_update_id'],
+                'items_processed': result['items_processed'],
+                'inventory_result': result['inventory_result']
+            })
+        else:
+            return Response({
+                'status': 'error',
+                'message': result['message']
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+    except Exception as e:
+        logger.error(f"Failed to create stock update from suggestions: {str(e)}")
+        return Response({
+            'error': 'Failed to create stock update',
+            'details': str(e) if settings.DEBUG else None
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+

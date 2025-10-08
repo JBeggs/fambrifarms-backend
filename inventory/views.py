@@ -569,7 +569,7 @@ def stock_levels(request):
             'product_id': product.id,
             'product_name': product.name,
             'department': product.department.name,
-            'unit': getattr(product, 'unit_of_measure', 'units'),
+            'unit': product.unit,  # Use the correct unit field from Product model
             'available_quantity': available_quantity,
             'reserved_quantity': reserved_quantity,
             'minimum_level': minimum_level,

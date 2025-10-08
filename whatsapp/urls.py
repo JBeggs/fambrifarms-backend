@@ -40,4 +40,10 @@ urlpatterns = [
     # Always-suggestions processing
     path('messages/process-with-suggestions/', views.process_message_with_suggestions, name='process-message-with-suggestions'),
     path('orders/create-from-suggestions/', views.create_order_from_suggestions, name='create-order-from-suggestions'),
+    
+    # Stock suggestions processing
+    path('stock/process-with-suggestions/', views.process_stock_message_with_suggestions, name='process-stock-message-with-suggestions'),
+    path('stock/create-from-suggestions/', views.create_stock_update_from_suggestions, name='create-stock-update-from-suggestions'),
+    path('stock/history/', views.get_stock_update_history, name='get-stock-update-history'),
+    path('stock/compare-with-previous/', views.compare_stock_with_previous, name='compare-stock-with-previous'),
 ]

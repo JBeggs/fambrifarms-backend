@@ -2155,9 +2155,245 @@ def parse_stock_message(message):
     
     return result
 
+def create_stock_update_from_message_with_suggestions(message):
+    """
+    Parse stock message and return suggestions for all items - requires user confirmation
+    Similar to create_order_from_message_with_suggestions but for stock updates
+    """
+    from .smart_product_matcher import SmartProductMatcher, ParsedMessage
+    from products.models import Product
+    from inventory.models import FinishedInventory
+    import logging
+    
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Parse the stock message using existing logic
+        stock_data = parse_stock_message(message)
+        
+        if not stock_data:
+            return {
+                'status': 'error',
+                'message': 'Could not parse stock message',
+                'items': []
+            }
+        
+        # Initialize the smart matcher
+        matcher = SmartProductMatcher()
+        
+        # Get customer info (SHALLOME)
+        customer = {
+            'name': 'SHALLOME',
+            'phone': '+27 61 674 9368',
+            'company': 'SHALLOME'
+        }
+        
+        items_with_suggestions = []
+        
+        # Process each parsed stock item
+        for item_name, item_data in stock_data['items'].items():
+            # Create ParsedMessage for the stock item
+            parsed_message = ParsedMessage(
+                product_name=item_name,
+                quantity=item_data['quantity'],
+                unit=item_data['unit'],
+                packaging_size=None,
+                extra_descriptions=[],
+                original_message=item_data.get('original_line', item_name)
+            )
+            
+            # Get suggestions for this item
+            suggestions_result = matcher.get_suggestions(
+                parsed_message.product_name, 
+                min_confidence=5.0, 
+                max_suggestions=20
+            )
+            
+            # Format suggestions for frontend
+            suggestions = []
+            if suggestions_result.suggestions:
+                for suggestion in suggestions_result.suggestions:
+                    # Get current inventory level
+                    current_inventory = 0
+                    try:
+                        inventory = FinishedInventory.objects.get(product=suggestion.product)
+                        current_inventory = float(inventory.available_quantity or 0)
+                    except FinishedInventory.DoesNotExist:
+                        current_inventory = 0
+                    
+                    suggestions.append({
+                        'product_id': suggestion.product.id,
+                        'product_name': suggestion.product.name,
+                        'unit': suggestion.product.unit,
+                        'price': float(suggestion.product.price),
+                        'confidence_score': suggestion.confidence_score,
+                        'current_inventory': current_inventory,
+                        'department': suggestion.product.department.name if suggestion.product.department else 'Other'
+                    })
+            
+            items_with_suggestions.append({
+                'original_text': item_data.get('original_line', item_name),
+                'parsed_quantity': item_data['quantity'],
+                'parsed_unit': item_data['unit'],
+                'parsed_product_name': item_name,
+                'suggestions': suggestions,
+                'has_suggestions': len(suggestions) > 0
+            })
+        
+        # Add parsing failures as items needing suggestions
+        for failure in stock_data.get('parsing_failures', []):
+            # Try to get suggestions for failed items
+            suggestions_result = matcher.get_suggestions(
+                failure['original_line'], 
+                min_confidence=5.0, 
+                max_suggestions=20
+            )
+            
+            suggestions = []
+            if suggestions_result.suggestions:
+                for suggestion in suggestions_result.suggestions:
+                    # Get current inventory level
+                    current_inventory = 0
+                    try:
+                        inventory = FinishedInventory.objects.get(product=suggestion.product)
+                        current_inventory = float(inventory.available_quantity or 0)
+                    except FinishedInventory.DoesNotExist:
+                        current_inventory = 0
+                    
+                    suggestions.append({
+                        'product_id': suggestion.product.id,
+                        'product_name': suggestion.product.name,
+                        'unit': suggestion.product.unit,
+                        'price': float(suggestion.product.price),
+                        'confidence_score': suggestion.confidence_score,
+                        'current_inventory': current_inventory,
+                        'department': suggestion.product.department.name if suggestion.product.department else 'Other'
+                    })
+            
+            items_with_suggestions.append({
+                'original_text': failure['original_line'],
+                'parsed_quantity': 1.0,  # Default quantity
+                'parsed_unit': 'piece',  # Default unit
+                'parsed_product_name': failure['original_line'],
+                'suggestions': suggestions,
+                'has_suggestions': len(suggestions) > 0,
+                'parsing_failed': True
+            })
+        
+        return {
+            'status': 'confirmation_required',
+            'message': f'Stock take parsed: {len(items_with_suggestions)} items need confirmation',
+            'customer': customer,
+            'items': items_with_suggestions,
+            'total_items': len(items_with_suggestions),
+            'stock_date': stock_data['date'].isoformat(),
+            'order_day': stock_data['order_day']
+        }
+        
+    except Exception as e:
+        import traceback
+        logger.error(f"Error creating stock suggestions: {str(e)}")
+        logger.error(f"Traceback: {traceback.format_exc()}")
+        return {
+            'status': 'error',
+            'message': f'Failed to process stock message: {str(e)}',
+            'items': []
+        }
+
+def create_stock_update_from_confirmed_suggestions(message_id, confirmed_items, stock_date, order_day, reset_before_processing=True):
+    """
+    Create stock update from user-confirmed suggestions and apply to inventory
+    """
+    from .models import WhatsAppMessage, StockUpdate
+    from products.models import Product
+    from django.db import transaction
+    import logging
+    from datetime import datetime
+    
+    logger = logging.getLogger(__name__)
+    
+    try:
+        # Get the message
+        message = WhatsAppMessage.objects.get(message_id=message_id)
+        
+        # Parse stock_date if it's a string
+        if isinstance(stock_date, str):
+            stock_date = datetime.fromisoformat(stock_date).date()
+        
+        with transaction.atomic():
+            # Build items dictionary from confirmed suggestions
+            items = {}
+            for item in confirmed_items:
+                product_id = item['product_id']
+                quantity = float(item['quantity'])
+                unit = item['unit']
+                
+                # Get product to use its name as key
+                try:
+                    product = Product.objects.get(id=product_id)
+                    items[product.name] = {
+                        'quantity': quantity,
+                        'unit': unit,
+                        'original_line': item.get('original_text', product.name)
+                    }
+                except Product.DoesNotExist:
+                    logger.warning(f"Product with ID {product_id} not found")
+                    continue
+            
+            # Create or update StockUpdate
+            stock_update, created = StockUpdate.objects.get_or_create(
+                message=message,
+                defaults={
+                    'stock_date': stock_date,
+                    'order_day': order_day,
+                    'items': items
+                }
+            )
+            
+            if not created:
+                # Update existing stock update
+                stock_update.stock_date = stock_date
+                stock_update.order_day = order_day
+                stock_update.items = items
+                stock_update.processed = False  # Mark as unprocessed for reprocessing
+                stock_update.save()
+            
+            # Update message status
+            message.processed = True
+            success_count = len(items)
+            total_items = len(confirmed_items)
+            success_rate = (success_count / total_items * 100) if total_items > 0 else 0
+            
+            message.processing_notes = f"✅ Stock confirmed: {success_count}/{total_items} items ({success_rate:.1f}%)"
+            message.save()
+            
+            # Apply to inventory
+            from .services import apply_stock_updates_to_inventory
+            inventory_result = apply_stock_updates_to_inventory(reset_before_processing=reset_before_processing)
+            
+            return {
+                'status': 'success',
+                'message': f'Stock update created and applied: {success_count} items processed',
+                'stock_update_id': stock_update.id,
+                'items_processed': success_count,
+                'inventory_result': inventory_result
+            }
+            
+    except WhatsAppMessage.DoesNotExist:
+        return {
+            'status': 'error',
+            'message': 'Message not found'
+        }
+    except Exception as e:
+        logger.error(f"Error creating stock update from suggestions: {str(e)}")
+        return {
+            'status': 'error',
+            'message': f'Failed to create stock update: {str(e)}'
+        }
+
 def parse_stock_item(line):
     """
-    Parse single stock item line (e.g., "1.Spinach 3kg")
+    Parse single stock item line (e.g., "1.Spinach 3kg" or "18 Strawberry Pun")
     
     Args:
         line: Stock item line
@@ -2168,11 +2404,52 @@ def parse_stock_item(line):
     # Remove number prefix: "1.Spinach 3kg" -> "Spinach 3kg"
     line = re.sub(r'^\d+\.', '', line).strip()
     
-    # First try to handle complex format: "Red onions 2bag (18kg)" or "Parsley 3kg( Fresh)"
+    # Check for explicit quantity at the beginning: "18 Strawberry Pun" or "5 Tomatoes 47kg"
+    qty_at_start_match = re.search(r'^(\d+(?:\.\d+)?)\s+(.+?)\s+(\d+(?:\.\d+)?)\s*(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?$', line, re.IGNORECASE)
+    if qty_at_start_match:
+        quantity = float(qty_at_start_match.group(1))  # The explicit quantity (18, 5, etc.)
+        name = qty_at_start_match.group(2).strip()     # The product name
+        # group(3) is the packaging size number (ignored for stock)
+        unit = normalize_unit(qty_at_start_match.group(4))  # The unit
+        
+        return {
+            'name': clean_product_name(name),
+            'quantity': quantity,
+            'unit': unit
+        }
+    
+    # Check for explicit quantity at the beginning (simple): "18 Strawberry Pun"
+    simple_qty_at_start_match = re.search(r'^(\d+(?:\.\d+)?)\s+(.+?)\s+(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?$', line, re.IGNORECASE)
+    if simple_qty_at_start_match:
+        quantity = float(simple_qty_at_start_match.group(1))  # The explicit quantity
+        name = simple_qty_at_start_match.group(2).strip()     # The product name
+        unit = normalize_unit(simple_qty_at_start_match.group(3))  # The unit
+        
+        return {
+            'name': clean_product_name(name),
+            'quantity': quantity,
+            'unit': unit
+        }
+    
+    # Check for quantity in the middle: "Strawberry 18 Pun" 
+    qty_in_middle_match = re.search(r'^(.+?)\s+(\d+(?:\.\d+)?)\s+(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?$', line, re.IGNORECASE)
+    if qty_in_middle_match:
+        name = qty_in_middle_match.group(1).strip()     # The product name
+        quantity = float(qty_in_middle_match.group(2))  # The explicit quantity (18, etc.)
+        unit = normalize_unit(qty_in_middle_match.group(3))  # The unit
+        
+        return {
+            'name': clean_product_name(name),
+            'quantity': quantity,
+            'unit': unit
+        }
+    
+    # Handle complex format: "Red onions 2bag (18kg)" or "Parsley 3kg( Fresh)"
     complex_match = re.search(r'(.+?)\s+(\d+(?:\.\d+)?)\s*(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?\s*\([^)]*\)', line, re.IGNORECASE)
     if complex_match:
         name = complex_match.group(1).strip()
-        quantity = float(complex_match.group(2))
+        # For stock items without explicit quantity, default to 1.0
+        quantity = 1.0  # No explicit quantity, so default to 1
         unit = normalize_unit(complex_match.group(3))
         
         return {
@@ -2181,7 +2458,7 @@ def parse_stock_item(line):
             'unit': unit
         }
     
-    # Parse quantity and unit at the end - enhanced with more units and flexible spacing
+    # Parse items without explicit quantity: "Tomatoes 47kg" or "Green Grapes 3 pun"
     # Try with space first: "Green Grapes 3 pun"
     match = re.search(r'(.+?)\s+(\d+(?:\.\d+)?)\s*(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?$', line, re.IGNORECASE)
     
@@ -2194,7 +2471,8 @@ def parse_stock_item(line):
         match = re.search(r'(.+?)\s+(\d+(?:\.\d+)?)$', line, re.IGNORECASE)
         if match:
             name = match.group(1).strip()
-            quantity = float(match.group(2))
+            # For stock items without explicit quantity, default to 1.0
+            quantity = 1.0  # No explicit quantity, so default to 1
             unit = 'piece'  # Default unit when none specified
             
             return {
@@ -2205,7 +2483,8 @@ def parse_stock_item(line):
     
     if match:
         name = match.group(1).strip()
-        quantity = float(match.group(2))
+        # For stock items, the number IS the quantity (e.g., "Red Onions 18kg" = 18kg of Red Onions)
+        quantity = float(match.group(2))  # Use the captured number as quantity
         unit = normalize_unit(match.group(3))
         
         return {

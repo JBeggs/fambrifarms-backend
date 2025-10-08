@@ -404,6 +404,9 @@ class SmartProductMatcher:
                             # Quantity should remain 1.0 unless there's an explicit multiplier
                             # The packaging size is already captured in the packaging_size variable
                             
+                            # Explicitly keep quantity as 1.0 for packaging sizes
+                            # Do NOT set quantity = num_info['value'] for packaging sizes
+                            
                             # If we don't have a unit yet, this becomes the unit
                             if unit_index == -1:
                                 unit = valid_unit
@@ -421,12 +424,7 @@ class SmartProductMatcher:
                     if not found_unit_in_word:
                         quantity = num_info['value']
                         words_to_remove.append(num_info['word'])
-                
-                # Standalone number without existing unit
-                else:
-                    quantity = num_info['value']
-                    words_to_remove.append(num_info['word'])
-            else:
+        else:
                 # Multiple numbers - handle special cases like "2 5kg tomatoes"
                 standalone_numbers = [n for n in numbers_found if n['is_standalone']]
                 number_unit_combinations = [n for n in numbers_found if not n['is_standalone']]
@@ -466,7 +464,7 @@ class SmartProductMatcher:
                         if num_info != standalone_numbers[0]:
                             extra_descriptions.append(num_info['word'])
                             words_to_remove.append(num_info['word'])
-                else:
+                elif numbers_found:
                     # No standalone numbers - use first number as quantity
                     quantity = numbers_found[0]['value']
                     words_to_remove.append(numbers_found[0]['word'])
@@ -1022,7 +1020,7 @@ class SmartProductMatcher:
             parsed_words = set(parsed_name.split())
             product_words = set(product_name_lower.split())
             common_words = parsed_words.intersection(product_words)
-        
+            
             if common_words and len(common_words) < len(parsed_words):
                 # Some words match but not all - this is likely a wrong match
                 score -= 50  # Heavy penalty for partial word matches
