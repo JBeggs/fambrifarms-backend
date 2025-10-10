@@ -3136,7 +3136,103 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
         result['reset_summary'] = reset_summary
         result['message'] = f"Reset {reset_summary['total_reset']} items to 0, then applied {applied_updates} stock updates, updated {products_updated} products. Success rate: {success_rate:.1f}% ({len(parsed_items)}/{total_items_processed})"
     
+    # CRITICAL: Sync SHALLOME stock to Fambri Internal supplier products for procurement intelligence
+    sync_result = sync_shallome_to_procurement_intelligence()
+    result['procurement_sync'] = sync_result
+    
     return result
+
+
+def sync_shallome_to_procurement_intelligence():
+    """
+    CRITICAL INTEGRATION: Sync SHALLOME stock levels to Fambri Internal supplier products
+    
+    This ensures procurement intelligence sees real SHALLOME stock when making supplier decisions.
+    Without this, procurement will order from external suppliers even when SHALLOME has stock.
+    
+    Returns:
+        dict: Summary of sync operation
+    """
+    from suppliers.models import Supplier, SupplierProduct
+    from inventory.models import FinishedInventory
+    from decimal import Decimal
+    from django.utils import timezone
+    
+    try:
+        # Get or create Fambri Farms Internal supplier
+        fambri_supplier, created = Supplier.objects.get_or_create(
+            name='Fambri Farms Internal',
+            defaults={
+                'contact_person': 'SHALLOME Stock Manager',
+                'phone': '+27 61 674 9368',
+                'email': 'stock@fambrifarms.co.za',
+                'address': 'SHALLOME Store Room',
+                'supplier_type': 'internal',
+                'is_active': True,
+                'notes': 'Internal stock from SHALLOME - managed via WhatsApp stock takes'
+            }
+        )
+        
+        synced_products = 0
+        created_products = 0
+        updated_products = 0
+        errors = []
+        
+        # Sync all products with inventory to supplier products
+        for inventory in FinishedInventory.objects.select_related('product'):
+            try:
+                # Get or create supplier product for Fambri Internal
+                supplier_product, sp_created = SupplierProduct.objects.get_or_create(
+                    supplier=fambri_supplier,
+                    product=inventory.product,
+                    defaults={
+                        'supplier_product_name': inventory.product.name,
+                        'supplier_product_code': f'SHAL-{inventory.product.id}',
+                        'stock_quantity': inventory.available_quantity,
+                        'is_available': inventory.available_quantity > 0,
+                        'supplier_price': inventory.product.price or Decimal('0.00'),  # Use product's current cost basis
+                        'unit_of_measure': inventory.product.unit,
+                        'minimum_order_quantity': 1,
+                        'lead_time_days': 0,  # Immediate availability
+                        'quality_rating': Decimal('5.0'),  # Perfect internal quality
+                        'notes': f'SHALLOME internal stock - synced from inventory on {timezone.now().date()}'
+                    }
+                )
+                
+                if sp_created:
+                    created_products += 1
+                else:
+                    # Update existing supplier product with current stock levels
+                    old_quantity = supplier_product.stock_quantity
+                    supplier_product.stock_quantity = inventory.available_quantity
+                    supplier_product.is_available = inventory.available_quantity > 0
+                    supplier_product.last_updated = timezone.now()
+                    supplier_product.save()
+                    
+                    if old_quantity != inventory.available_quantity:
+                        updated_products += 1
+                
+                synced_products += 1
+                
+            except Exception as e:
+                errors.append(f"Error syncing {inventory.product.name}: {str(e)}")
+        
+        return {
+            'success': True,
+            'fambri_supplier_created': created,
+            'synced_products': synced_products,
+            'created_supplier_products': created_products,
+            'updated_supplier_products': updated_products,
+            'errors': errors,
+            'message': f"Synced {synced_products} products to Fambri Internal supplier. Created: {created_products}, Updated: {updated_products}"
+        }
+        
+    except Exception as e:
+        return {
+            'success': False,
+            'error': str(e),
+            'message': f"Failed to sync SHALLOME stock to procurement intelligence: {str(e)}"
+        }
 
 
 def get_stock_take_data(only_with_stock=True):

@@ -14,7 +14,8 @@ from .models import (
     RecipeIngredient, FinishedInventory, StockMovement, ProductionBatch,
     StockAlert, StockAnalysis, StockAnalysisItem, MarketPrice, 
     ProcurementRecommendation, PriceAlert, PricingRule, CustomerPriceList,
-    CustomerPriceListItem, WeeklyPriceReport
+    CustomerPriceListItem, WeeklyPriceReport, InvoicePhoto, ExtractedInvoiceData,
+    SupplierProductMapping
 )
 from .serializers import (
     UnitOfMeasureSerializer, RawMaterialListSerializer, RawMaterialDetailSerializer,
@@ -2057,3 +2058,530 @@ class EnhancedMarketPriceViewSet(MarketPriceViewSet):
             return 'volatile'
         else:
             return 'stable'
+
+
+# Invoice Processing Views
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_invoice_upload_status(request):
+    """
+    Check if invoices can be uploaded for today or if stock processing is ready
+    """
+    today = timezone.now().date()
+    
+    # Check if there are any uploaded invoices for today
+    uploaded_invoices = InvoicePhoto.objects.filter(
+        invoice_date=today,
+        status__in=['uploaded', 'processing', 'extracted']
+    )
+    
+    # Check if there are completed invoices ready for stock processing
+    completed_invoices = InvoicePhoto.objects.filter(
+        invoice_date=today,
+        status='completed'
+    )
+    
+    if completed_invoices.exists():
+        # Ready for stock processing
+        return Response({
+            'status': 'ready_for_stock_processing',
+            'message': 'Invoices processed - ready to process stock received',
+            'button_text': 'Process Stock Received',
+            'completed_invoices': completed_invoices.count(),
+            'action': 'process_stock'
+        })
+    
+    elif uploaded_invoices.exists():
+        # Invoices uploaded but not yet completed
+        return Response({
+            'status': 'invoices_pending',
+            'message': 'Invoices uploaded - processing in progress',
+            'button_text': 'Processing Invoices...',
+            'pending_invoices': uploaded_invoices.count(),
+            'action': 'wait'
+        })
+    
+    else:
+        # Ready to upload invoices
+        return Response({
+            'status': 'ready_for_upload',
+            'message': 'Ready to upload invoices for today',
+            'button_text': 'Upload Invoices for Day',
+            'action': 'upload_invoices'
+        })
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_invoice_photo(request):
+    """
+    Upload invoice photo for processing
+    """
+    try:
+        # Get form data
+        supplier_id = request.data.get('supplier_id')
+        invoice_date = request.data.get('invoice_date', timezone.now().date())
+        photo = request.FILES.get('photo')
+        notes = request.data.get('notes', '')
+        
+        if not supplier_id or not photo:
+            return Response({
+                'error': 'supplier_id and photo are required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Get supplier
+        from suppliers.models import Supplier
+        try:
+            supplier = Supplier.objects.get(id=supplier_id)
+        except Supplier.DoesNotExist:
+            return Response({
+                'error': 'Supplier not found'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # Create invoice photo record
+        invoice_photo = InvoicePhoto.objects.create(
+            supplier=supplier,
+            invoice_date=invoice_date,
+            uploaded_by=request.user,
+            photo=photo,
+            original_filename=photo.name,
+            file_size=photo.size,
+            notes=notes
+        )
+        
+        return Response({
+            'status': 'success',
+            'message': f'Invoice uploaded successfully for {supplier.name}',
+            'invoice_id': invoice_photo.id,
+            'next_step': 'Process invoice with: python manage.py process_invoices --invoice-id ' + str(invoice_photo.id)
+        }, status=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        return Response({
+            'error': f'Upload failed: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_pending_invoices(request):
+    """
+    Get list of invoices that need processing
+    """
+    pending_invoices = InvoicePhoto.objects.filter(
+        status__in=['uploaded', 'processing', 'extracted']
+    ).select_related('supplier', 'uploaded_by')
+    
+    invoice_data = []
+    for invoice in pending_invoices:
+        invoice_data.append({
+            'id': invoice.id,
+            'supplier': invoice.supplier.name,
+            'invoice_date': invoice.invoice_date,
+            'status': invoice.status,
+            'uploaded_by': invoice.uploaded_by.email,
+            'created_at': invoice.created_at,
+            'notes': invoice.notes
+        })
+    
+    return Response({
+        'pending_invoices': invoice_data,
+        'count': len(invoice_data)
+    })
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_extracted_invoice_data(request, invoice_id):
+    """
+    Get extracted invoice data for weight input
+    """
+    try:
+        invoice = InvoicePhoto.objects.get(id=invoice_id, status='extracted')
+        extracted_items = invoice.extracted_items.all().order_by('line_number')
+        
+        items_data = []
+        for item in extracted_items:
+            items_data.append({
+                'id': item.id,
+                'line_number': item.line_number,
+                'product_code': item.product_code,
+                'product_description': item.product_description,
+                'quantity': float(item.quantity),
+                'unit': item.unit,
+                'unit_price': float(item.unit_price),
+                'line_total': float(item.line_total),
+                'actual_weight_kg': float(item.actual_weight_kg) if item.actual_weight_kg else None,
+                'needs_weight_input': item.needs_weight_input,
+                'needs_product_matching': item.needs_product_matching
+            })
+        
+        return Response({
+            'invoice_id': invoice.id,
+            'supplier': invoice.supplier.name,
+            'invoice_date': invoice.invoice_date,
+            'items': items_data
+        })
+        
+    except InvoicePhoto.DoesNotExist:
+        return Response({
+            'error': 'Invoice not found or not ready for weight input'
+        }, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def update_invoice_weights(request, invoice_id):
+    """
+    Update weights for extracted invoice items
+    """
+    try:
+        invoice = InvoicePhoto.objects.get(id=invoice_id, status='extracted')
+        weights_data = request.data.get('weights', [])
+        
+        updated_items = []
+        errors = []
+        
+        for weight_entry in weights_data:
+            try:
+                item_id = weight_entry.get('item_id')
+                weight_kg = weight_entry.get('weight_kg')
+                
+                if not item_id or weight_kg is None:
+                    errors.append('Missing item_id or weight_kg')
+                    continue
+                
+                extracted_item = ExtractedInvoiceData.objects.get(
+                    id=item_id, 
+                    invoice_photo=invoice
+                )
+                
+                extracted_item.actual_weight_kg = Decimal(str(weight_kg))
+                extracted_item.needs_weight_input = False
+                extracted_item.save()
+                
+                # Calculate price per kg
+                price_per_kg = extracted_item.calculated_price_per_kg
+                
+                updated_items.append({
+                    'item_id': item_id,
+                    'product_description': extracted_item.product_description,
+                    'weight_kg': float(weight_kg),
+                    'price_per_kg': float(price_per_kg) if price_per_kg else None
+                })
+                
+            except ExtractedInvoiceData.DoesNotExist:
+                errors.append(f'Item {item_id} not found')
+            except Exception as e:
+                errors.append(f'Error updating item {item_id}: {str(e)}')
+        
+        # Check if all items have weights and can move to product matching
+        remaining_items = invoice.extracted_items.filter(needs_weight_input=True)
+        if not remaining_items.exists():
+            # All weights added - ready for product matching
+            invoice.status = 'extracted'  # Keep as extracted until product matching is done
+            invoice.save()
+        
+        return Response({
+            'status': 'success',
+            'updated_items': updated_items,
+            'errors': errors,
+            'ready_for_product_matching': not remaining_items.exists(),
+            'message': f'Updated weights for {len(updated_items)} items'
+        })
+        
+    except InvoicePhoto.DoesNotExist:
+        return Response({
+            'error': 'Invoice not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def process_invoice_complete(request, invoice_id):
+    """
+    Complete invoice processing with weights and product matches
+    """
+    try:
+        invoice = InvoicePhoto.objects.get(id=invoice_id, status='extracted')
+        processed_data = request.data.get('processed_data', [])
+        
+        updated_items = []
+        errors = []
+        created_mappings = []
+        
+        for item_data in processed_data:
+            try:
+                item_id = item_data.get('item_id')
+                weight_kg = item_data.get('weight_kg')
+                product_matches = item_data.get('product_matches', [])
+                
+                if not item_id or weight_kg is None:
+                    errors.append('Missing item_id or weight_kg')
+                    continue
+                
+                extracted_item = ExtractedInvoiceData.objects.get(
+                    id=item_id, 
+                    invoice_photo=invoice
+                )
+                
+                # Update weight
+                extracted_item.actual_weight_kg = Decimal(str(weight_kg))
+                extracted_item.needs_weight_input = False
+                extracted_item.save()
+                
+                # Process product matches
+                for match_data in product_matches:
+                    try:
+                        product_id = match_data.get('product_id')
+                        pricing_strategy = match_data.get('pricing_strategy', 'per_kg')
+                        quantity = match_data.get('quantity', 1)
+                        package_size_kg = match_data.get('package_size_kg')
+                        
+                        if not product_id:
+                            continue
+                        
+                        from products.models import Product
+                        product = Product.objects.get(id=product_id)
+                        
+                        # Create or update supplier product mapping
+                        mapping, created = SupplierProductMapping.objects.get_or_create(
+                            supplier=invoice.supplier,
+                            supplier_product_code=extracted_item.product_code or '',
+                            supplier_product_description=extracted_item.product_description,
+                            defaults={
+                                'our_product': product,
+                                'pricing_strategy': pricing_strategy,
+                                'package_size_kg': package_size_kg,
+                                'units_per_package': int(quantity) if pricing_strategy == 'per_unit' else None,
+                                'created_by': request.user,
+                                'notes': f'Auto-created from invoice processing on {invoice.invoice_date}',
+                            }
+                        )
+                        
+                        if not created:
+                            # Update existing mapping
+                            mapping.our_product = product
+                            mapping.pricing_strategy = pricing_strategy
+                            mapping.package_size_kg = package_size_kg
+                            mapping.units_per_package = int(quantity) if pricing_strategy == 'per_unit' else None
+                            mapping.is_active = True
+                            mapping.save()
+                        
+                        # Link the mapping to the extracted item
+                        extracted_item.supplier_mapping = mapping
+                        extracted_item.needs_product_matching = False
+                        extracted_item.is_processed = True
+                        extracted_item.save()
+                        
+                        created_mappings.append({
+                            'product_name': product.name,
+                            'pricing_strategy': pricing_strategy,
+                            'quantity': quantity,
+                            'package_size_kg': float(package_size_kg) if package_size_kg else None,
+                            'created': created,
+                        })
+                        
+                    except Product.DoesNotExist:
+                        errors.append(f'Product {product_id} not found')
+                    except Exception as e:
+                        errors.append(f'Error processing product match: {str(e)}')
+                
+                updated_items.append({
+                    'item_id': item_id,
+                    'product_description': extracted_item.product_description,
+                    'weight_kg': float(weight_kg),
+                    'price_per_kg': float(extracted_item.calculated_price_per_kg) if extracted_item.calculated_price_per_kg else None,
+                    'product_matches': len(product_matches),
+                })
+                
+            except ExtractedInvoiceData.DoesNotExist:
+                errors.append(f'Item {item_id} not found')
+            except Exception as e:
+                errors.append(f'Error processing item {item_id}: {str(e)}')
+        
+        # Check if all items are processed
+        remaining_items = invoice.extracted_items.filter(
+            needs_weight_input=True
+        ).union(
+            invoice.extracted_items.filter(needs_product_matching=True)
+        )
+        
+        if not remaining_items.exists():
+            # All items processed - mark invoice as completed
+            invoice.status = 'completed'
+            invoice.save()
+        
+        return Response({
+            'status': 'success',
+            'updated_items': updated_items,
+            'created_mappings': created_mappings,
+            'errors': errors,
+            'invoice_completed': not remaining_items.exists(),
+            'message': f'Processed {len(updated_items)} items with {len(created_mappings)} product mappings'
+        })
+        
+    except InvoicePhoto.DoesNotExist:
+        return Response({
+            'error': 'Invoice not found or not ready for processing'
+        }, status=status.HTTP_404_NOT_FOUND)
+
+
+def _update_product_pricing_from_invoice(invoice, created_mappings):
+    """
+    Update product pricing based on new supplier costs from processed invoice
+    """
+    from products.models import Product
+    from suppliers.models import SupplierProduct
+    from decimal import Decimal
+    
+    pricing_updates = []
+    
+    try:
+        # Get business settings for markup
+        from settings.models import BusinessSettings
+        business_settings = BusinessSettings.objects.first()
+        default_markup = business_settings.default_base_markup if business_settings else Decimal('0.25')  # 25% default
+        
+        for mapping_info in created_mappings:
+            try:
+                # Find the corresponding extracted item and mapping
+                mapping = SupplierProductMapping.objects.filter(
+                    supplier=invoice.supplier,
+                    our_product__name=mapping_info['product_name']
+                ).first()
+                
+                if not mapping:
+                    continue
+                
+                extracted_item = mapping.extractedinvoicedata_set.filter(
+                    invoice_photo=invoice
+                ).first()
+                
+                if not extracted_item or not extracted_item.actual_weight_kg:
+                    continue
+                
+                # Calculate new supplier price based on pricing strategy
+                new_supplier_price = None
+                
+                if mapping.pricing_strategy == 'per_kg':
+                    # Price per kg = line_total / actual_weight_kg
+                    new_supplier_price = extracted_item.line_total / extracted_item.actual_weight_kg
+                    
+                elif mapping.pricing_strategy == 'per_package' and mapping.package_size_kg:
+                    # Price per kg = unit_price / package_size_kg
+                    new_supplier_price = extracted_item.unit_price / mapping.package_size_kg
+                    
+                elif mapping.pricing_strategy == 'per_unit' and mapping.units_per_package:
+                    # Price per unit = unit_price / units_per_package
+                    # Then convert to per kg if we know the weight per unit
+                    unit_price = extracted_item.unit_price / mapping.units_per_package
+                    if extracted_item.actual_weight_kg:
+                        # Estimate weight per unit
+                        weight_per_unit = extracted_item.actual_weight_kg / (extracted_item.quantity * mapping.units_per_package)
+                        new_supplier_price = unit_price / weight_per_unit if weight_per_unit > 0 else None
+                
+                if new_supplier_price and new_supplier_price > 0:
+                    # Update or create supplier product
+                    supplier_product, created = SupplierProduct.objects.get_or_create(
+                        supplier=invoice.supplier,
+                        name=extracted_item.product_description,
+                        defaults={
+                            'supplier_price': new_supplier_price,
+                            'unit': 'kg',
+                            'supplier_category_code': 'FRESH',
+                        }
+                    )
+                    
+                    if not created:
+                        # Update existing supplier product price
+                        old_price = supplier_product.supplier_price
+                        supplier_product.supplier_price = new_supplier_price
+                        supplier_product.save()
+                    else:
+                        old_price = Decimal('0.00')
+                    
+                    # Calculate new retail price with markup
+                    new_retail_price = new_supplier_price * (1 + default_markup)
+                    
+                    # Update our product price
+                    product = mapping.our_product
+                    old_retail_price = product.price
+                    product.price = new_retail_price
+                    product.save()
+                    
+                    pricing_updates.append({
+                        'product_name': product.name,
+                        'supplier_product': extracted_item.product_description,
+                        'pricing_strategy': mapping.pricing_strategy,
+                        'old_supplier_price': float(old_price),
+                        'new_supplier_price': float(new_supplier_price),
+                        'old_retail_price': float(old_retail_price),
+                        'new_retail_price': float(new_retail_price),
+                        'markup_percentage': float(default_markup * 100),
+                        'price_change_percentage': float(((new_retail_price - old_retail_price) / old_retail_price * 100) if old_retail_price > 0 else 0),
+                    })
+                    
+            except Exception as e:
+                # Log error but continue processing other items
+                print(f"Error updating pricing for {mapping_info.get('product_name', 'unknown')}: {e}")
+                continue
+        
+        return pricing_updates
+        
+    except Exception as e:
+        print(f"Error in pricing update process: {e}")
+        return []
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def process_stock_received(request):
+    """
+    Process stock received based on completed invoices
+    """
+    today = timezone.now().date()
+    
+    # Get completed invoices for today
+    completed_invoices = InvoicePhoto.objects.filter(
+        invoice_date=today,
+        status='completed'
+    ).prefetch_related('extracted_items__supplier_mapping')
+    
+    if not completed_invoices.exists():
+        return Response({
+            'error': 'No completed invoices found for today'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    # Process each invoice's extracted data
+    processed_items = []
+    errors = []
+    
+    for invoice in completed_invoices:
+        for extracted_item in invoice.extracted_items.all():
+            try:
+                if extracted_item.supplier_mapping and extracted_item.actual_weight_kg:
+                    # Update product pricing based on Karl's mapping decision
+                    final_price = extracted_item.final_unit_price
+                    if final_price:
+                        # Update the product's supplier price
+                        # This would update SupplierProduct model
+                        processed_items.append({
+                            'product': extracted_item.supplier_mapping.our_product.name,
+                            'new_price': float(final_price),
+                            'strategy': extracted_item.supplier_mapping.pricing_strategy
+                        })
+                    
+                    # Mark as processed
+                    extracted_item.is_processed = True
+                    extracted_item.save()
+                    
+            except Exception as e:
+                errors.append(f'Error processing {extracted_item}: {str(e)}')
+    
+    return Response({
+        'status': 'success',
+        'processed_items': processed_items,
+        'errors': errors,
+        'message': f'Processed {len(processed_items)} items from {len(completed_invoices)} invoices'
+    })

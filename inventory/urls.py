@@ -33,4 +33,15 @@ urlpatterns = [
     # Action endpoints
     path('actions/reserve-stock/', views.reserve_stock, name='reserve-stock'),
     path('actions/stock-adjustment/', views.stock_adjustment, name='stock-adjustment'),
+    
+    # Invoice processing endpoints
+    path('invoice-upload-status/', views.get_invoice_upload_status, name='invoice-upload-status'),
+    path('upload-invoice/', views.upload_invoice_photo, name='upload-invoice'),
+    path('pending-invoices/', views.get_pending_invoices, name='pending-invoices'),
+    path('process-stock-received/', views.process_stock_received, name='process-stock-received'),
+    
+    # Weight input endpoints
+    path('invoice/<int:invoice_id>/extracted-data/', views.get_extracted_invoice_data, name='get-extracted-invoice-data'),
+    path('invoice/<int:invoice_id>/update-weights/', views.update_invoice_weights, name='update-invoice-weights'),
+    path('invoice/<int:invoice_id>/process-complete/', views.process_invoice_complete, name='process-invoice-complete'),
 ]

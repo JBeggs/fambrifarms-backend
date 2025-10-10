@@ -1406,5 +1406,163 @@ class WeeklyPriceReport(models.Model):
         return self.report_week_start.year
 
 
+# Invoice Processing Models
+
+class InvoicePhoto(models.Model):
+    """Store uploaded invoice photos for processing"""
+    
+    # Basic info
+    supplier = models.ForeignKey('suppliers.Supplier', on_delete=models.CASCADE)
+    invoice_date = models.DateField()
+    uploaded_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    
+    # File storage
+    photo = models.ImageField(upload_to='invoices/%Y/%m/%d/')
+    original_filename = models.CharField(max_length=255)
+    file_size = models.PositiveIntegerField(help_text="File size in bytes")
+    
+    # Processing status
+    STATUS_CHOICES = [
+        ('uploaded', 'Uploaded - Awaiting Processing'),
+        ('processing', 'Processing - OCR in Progress'),
+        ('extracted', 'Data Extracted - Awaiting Weight Input'),
+        ('completed', 'Completed - Ready for Stock Processing'),
+        ('error', 'Error - Processing Failed'),
+    ]
+    status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='uploaded')
+    
+    # Metadata
+    notes = models.TextField(blank=True, help_text="Additional notes about the invoice")
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['-created_at']
+        unique_together = ['supplier', 'invoice_date', 'original_filename']
+    
+    def __str__(self):
+        return f"{self.supplier.name} - {self.invoice_date} ({self.status})"
+
+
+class SupplierProductMapping(models.Model):
+    """Remember Karl's decisions on how supplier products map to our products"""
+    
+    supplier = models.ForeignKey('suppliers.Supplier', on_delete=models.CASCADE)
+    supplier_product_code = models.CharField(max_length=100, blank=True)
+    supplier_product_description = models.CharField(max_length=255)
+    
+    # Karl's mapping decision
+    our_product = models.ForeignKey('products.Product', on_delete=models.CASCADE)
+    
+    # Pricing strategy Karl selected
+    PRICING_STRATEGY_CHOICES = [
+        ('per_kg', 'Price per kg (loose/bulk)'),
+        ('per_package', 'Price per package (as delivered)'),
+        ('per_unit', 'Price per unit (each, bunch, head)'),
+        ('custom', 'Custom pricing calculation'),
+    ]
+    pricing_strategy = models.CharField(max_length=20, choices=PRICING_STRATEGY_CHOICES)
+    
+    # Additional context for pricing
+    package_size_kg = models.DecimalField(
+        max_digits=10, decimal_places=2, 
+        null=True, blank=True,
+        help_text="If per_package, what's the package size in kg?"
+    )
+    units_per_package = models.PositiveIntegerField(
+        null=True, blank=True,
+        help_text="If per_unit, how many units per package?"
+    )
+    
+    # Metadata
+    created_by = models.ForeignKey(User, on_delete=models.CASCADE)
+    notes = models.TextField(blank=True, help_text="Karl's notes about this mapping")
+    is_active = models.BooleanField(default=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        unique_together = ['supplier', 'supplier_product_code', 'supplier_product_description']
+        ordering = ['supplier', 'supplier_product_description']
+    
+    def __str__(self):
+        return f"{self.supplier.name}: {self.supplier_product_description} → {self.our_product.name} ({self.pricing_strategy})"
+
+
+class ExtractedInvoiceData(models.Model):
+    """Store extracted data from invoice photos before weight input"""
+    
+    invoice_photo = models.ForeignKey(InvoicePhoto, on_delete=models.CASCADE, related_name='extracted_items')
+    
+    # Extracted data
+    line_number = models.PositiveIntegerField(help_text="Line number on invoice")
+    product_code = models.CharField(max_length=100, blank=True, help_text="Supplier product code")
+    product_description = models.CharField(max_length=255, help_text="Product description from invoice")
+    quantity = models.DecimalField(max_digits=10, decimal_places=2, help_text="Quantity from invoice")
+    unit = models.CharField(max_length=50, help_text="Unit from invoice (bag, box, kg, etc)")
+    unit_price = models.DecimalField(max_digits=10, decimal_places=2, help_text="Price per unit")
+    line_total = models.DecimalField(max_digits=10, decimal_places=2, help_text="Total for this line")
+    
+    # Weight input (to be added manually)
+    actual_weight_kg = models.DecimalField(
+        max_digits=10, decimal_places=2, 
+        null=True, blank=True,
+        help_text="Actual weight in kg (handwritten on invoice)"
+    )
+    
+    # Karl's product matching decision
+    supplier_mapping = models.ForeignKey(
+        SupplierProductMapping,
+        on_delete=models.SET_NULL,
+        null=True, blank=True,
+        help_text="Karl's mapping decision for this supplier product"
+    )
+    
+    # Processing flags
+    needs_weight_input = models.BooleanField(default=True)
+    needs_product_matching = models.BooleanField(default=True)
+    is_processed = models.BooleanField(default=False)
+    
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    class Meta:
+        ordering = ['invoice_photo', 'line_number']
+    
+    def __str__(self):
+        return f"{self.invoice_photo} - Line {self.line_number}: {self.product_description}"
+    
+    @property
+    def calculated_price_per_kg(self):
+        """Calculate price per kg if actual weight is provided"""
+        if self.actual_weight_kg and self.actual_weight_kg > 0:
+            return self.line_total / self.actual_weight_kg
+        return None
+    
+    @property
+    def final_unit_price(self):
+        """Calculate final unit price based on Karl's pricing strategy"""
+        if not self.supplier_mapping or not self.actual_weight_kg:
+            return None
+            
+        strategy = self.supplier_mapping.pricing_strategy
+        
+        if strategy == 'per_kg':
+            # Price per kg (loose/bulk)
+            return self.line_total / self.actual_weight_kg
+            
+        elif strategy == 'per_package':
+            # Price per package (as delivered)
+            return self.unit_price
+            
+        elif strategy == 'per_unit':
+            # Price per unit (need to calculate based on units per package)
+            if self.supplier_mapping.units_per_package:
+                return self.unit_price / self.supplier_mapping.units_per_package
+            return None
+            
+        return None
+
+
 # Import price validation models
 from .models_price_validation import PriceHistory, PriceValidationResult, validate_price
