@@ -1,0 +1,876 @@
+id,supplier_name,product_name,supplier_product_code,old_supplier_price,currency,is_available
+298,Fambri Farms Internal,Artichokes,FAM-0083,63.00,ZAR,True
+299,Fambri Farms Internal,Arugula,FAM-0084,63.00,ZAR,True
+300,Fambri Farms Internal,Arugula,FAM-0085,63.00,ZAR,False
+301,Fambri Farms Internal,Arugula (100g),FAM-0086,63.00,ZAR,True
+302,Fambri Farms Internal,Arugula (150g),FAM-0087,63.00,ZAR,True
+303,Fambri Farms Internal,Arugula (1kg),FAM-0096,63.00,ZAR,True
+304,Fambri Farms Internal,Arugula (200g),FAM-0088,63.00,ZAR,True
+305,Fambri Farms Internal,Arugula (250g),FAM-0089,63.00,ZAR,True
+306,Fambri Farms Internal,Arugula (2kg),FAM-0097,63.00,ZAR,True
+307,Fambri Farms Internal,Arugula (300g),FAM-0090,63.00,ZAR,True
+308,Fambri Farms Internal,Arugula (400g),FAM-0091,63.00,ZAR,True
+309,Fambri Farms Internal,Arugula (500g),FAM-0092,63.00,ZAR,True
+310,Fambri Farms Internal,Arugula (50g),FAM-0093,63.00,ZAR,True
+311,Fambri Farms Internal,Arugula (600g),FAM-0094,63.00,ZAR,True
+312,Fambri Farms Internal,Arugula (750g),FAM-0095,63.00,ZAR,True
+313,Fambri Farms Internal,Asparagus,FAM-0098,63.00,ZAR,True
+314,Fambri Farms Internal,Aubergine,FAM-0099,63.00,ZAR,False
+315,Fambri Farms Internal,Aubergine,FAM-0100,63.00,ZAR,True
+48,Fambri Farms Internal,Avocado Fuerte,FAM-0101,70.00,ZAR,True
+49,Fambri Farms Internal,Avocado Land Hass,FAM-0102,70.00,ZAR,True
+50,Fambri Farms Internal,Avocados (Hard),FAM-0103,70.00,ZAR,True
+51,Fambri Farms Internal,Avocados (Hard),FAM-0104,70.00,ZAR,True
+52,Fambri Farms Internal,Avocados (Hard),FAM-0105,70.00,ZAR,True
+53,Fambri Farms Internal,Avocados (Hard) (1kg),FAM-0106,70.00,ZAR,True
+54,Fambri Farms Internal,Avocados (Hard) (2kg),FAM-0107,70.00,ZAR,True
+55,Fambri Farms Internal,Avocados (Hard) (3kg),FAM-0108,70.00,ZAR,True
+56,Fambri Farms Internal,Avocados (Semi-Ripe),FAM-0109,70.00,ZAR,True
+57,Fambri Farms Internal,Avocados (Semi-Ripe) (1kg),FAM-0110,70.00,ZAR,True
+58,Fambri Farms Internal,Avocados (Semi-Ripe) (2kg),FAM-0111,70.00,ZAR,True
+59,Fambri Farms Internal,Avocados (Semi-Ripe) (3kg),FAM-0112,70.00,ZAR,True
+60,Fambri Farms Internal,Avocados (Soft),FAM-0113,70.00,ZAR,True
+61,Fambri Farms Internal,Avocados (Soft) (1kg),FAM-0114,70.00,ZAR,True
+62,Fambri Farms Internal,Avocados (Soft) (2kg),FAM-0115,70.00,ZAR,True
+63,Fambri Farms Internal,Avocados (Soft) (3kg),FAM-0116,70.00,ZAR,True
+316,Fambri Farms Internal,Baby Corn,FAM-0118,63.00,ZAR,True
+317,Fambri Farms Internal,Baby Corn (200g),FAM-0784,63.00,ZAR,True
+318,Fambri Farms Internal,Baby Corn (250g),FAM-0117,63.00,ZAR,True
+319,Fambri Farms Internal,Baby Corn (500g),FAM-0785,63.00,ZAR,False
+320,Fambri Farms Internal,Baby Marrow,FAM-0119,63.00,ZAR,True
+321,Fambri Farms Internal,Baby Marrow (10kg),FAM-0120,63.00,ZAR,True
+322,Fambri Farms Internal,Baby Marrow (15kg),FAM-0121,63.00,ZAR,True
+323,Fambri Farms Internal,Baby Marrow (1kg),FAM-0122,63.00,ZAR,True
+324,Fambri Farms Internal,Baby Marrow (200g),FAM-0123,63.00,ZAR,True
+325,Fambri Farms Internal,Baby Marrow (20kg),FAM-0124,63.00,ZAR,True
+326,Fambri Farms Internal,Baby Marrow (250g),FAM-0125,63.00,ZAR,True
+327,Fambri Farms Internal,Baby Marrow (25kg),FAM-0126,63.00,ZAR,True
+328,Fambri Farms Internal,Baby Marrow (2kg),FAM-0127,63.00,ZAR,True
+329,Fambri Farms Internal,Baby Marrow (3kg),FAM-0128,63.00,ZAR,True
+330,Fambri Farms Internal,Baby Marrow (4kg),FAM-0129,63.00,ZAR,True
+331,Fambri Farms Internal,Baby Marrow (500g),FAM-0130,63.00,ZAR,True
+332,Fambri Farms Internal,Baby Marrow (5kg),FAM-0131,63.00,ZAR,True
+333,Fambri Farms Internal,Baby Marrow (6kg),FAM-0132,63.00,ZAR,True
+334,Fambri Farms Internal,Baby Marrow (750g),FAM-0133,63.00,ZAR,True
+335,Fambri Farms Internal,Baby Marrow (7kg),FAM-0134,63.00,ZAR,True
+336,Fambri Farms Internal,Baby Marrow (8kg),FAM-0135,63.00,ZAR,True
+337,Fambri Farms Internal,Baby Marrow (9kg),FAM-0136,63.00,ZAR,True
+338,Fambri Farms Internal,Baby Potatoes,FAM-0137,63.00,ZAR,True
+220,Fambri Farms Internal,Baby Spinach,FAM-0138,70.00,ZAR,True
+64,Fambri Farms Internal,Bananas,FAM-0139,70.00,ZAR,True
+65,Fambri Farms Internal,Bananas (10kg),FAM-0140,70.00,ZAR,True
+66,Fambri Farms Internal,Bananas (1kg),FAM-0141,70.00,ZAR,True
+67,Fambri Farms Internal,Bananas (2kg),FAM-0142,70.00,ZAR,True
+68,Fambri Farms Internal,Bananas (3kg),FAM-0143,70.00,ZAR,True
+69,Fambri Farms Internal,Bananas (5kg),FAM-0144,70.00,ZAR,True
+221,Fambri Farms Internal,Basil,FAM-0145,70.00,ZAR,True
+222,Fambri Farms Internal,Basil (100g),FAM-0146,70.00,ZAR,True
+339,Fambri Farms Internal,Basil (150g),FAM-0147,63.00,ZAR,True
+223,Fambri Farms Internal,Basil (200g),FAM-0148,70.00,ZAR,True
+340,Fambri Farms Internal,Basil (250g),FAM-0149,63.00,ZAR,True
+341,Fambri Farms Internal,Basil (300g),FAM-0150,63.00,ZAR,True
+342,Fambri Farms Internal,Basil (400g),FAM-0151,63.00,ZAR,True
+343,Fambri Farms Internal,Basil (500g),FAM-0152,63.00,ZAR,True
+224,Fambri Farms Internal,Basil (50g),FAM-0153,70.00,ZAR,True
+344,Fambri Farms Internal,Basil (600g),FAM-0154,63.00,ZAR,True
+345,Fambri Farms Internal,Basil (750g),FAM-0155,63.00,ZAR,True
+346,Fambri Farms Internal,Beans,FAM-0156,63.00,ZAR,True
+347,Fambri Farms Internal,Beans (1kg),FAM-0157,63.00,ZAR,True
+348,Fambri Farms Internal,Beans (200g),FAM-0158,63.00,ZAR,True
+349,Fambri Farms Internal,Beans (250g),FAM-0160,63.00,ZAR,True
+350,Fambri Farms Internal,Beans (2kg),FAM-0162,63.00,ZAR,True
+351,Fambri Farms Internal,Beans (500g),FAM-0159,63.00,ZAR,False
+352,Fambri Farms Internal,Beans (750g),FAM-0161,63.00,ZAR,True
+353,Fambri Farms Internal,Beetroot,FAM-0163,63.00,ZAR,True
+354,Fambri Farms Internal,Beetroot (10kg),FAM-0164,63.00,ZAR,True
+355,Fambri Farms Internal,Beetroot (1kg),FAM-0165,63.00,ZAR,True
+356,Fambri Farms Internal,Beetroot (2kg),FAM-0166,63.00,ZAR,True
+357,Fambri Farms Internal,Beetroot (5kg),FAM-0167,63.00,ZAR,True
+70,Fambri Farms Internal,Black Grapes,FAM-0168,70.00,ZAR,True
+71,Fambri Farms Internal,Black Grapes (1kg),FAM-0169,70.00,ZAR,True
+72,Fambri Farms Internal,Black Grapes (2kg),FAM-0170,70.00,ZAR,True
+73,Fambri Farms Internal,Black Grapes (500g),FAM-0171,70.00,ZAR,True
+74,Fambri Farms Internal,Black Grapes (5kg),FAM-0172,70.00,ZAR,False
+75,Fambri Farms Internal,Blueberries,FAM-0173,70.00,ZAR,True
+76,Fambri Farms Internal,Blueberries (200g),FAM-0174,70.00,ZAR,True
+77,Fambri Farms Internal,Blueberries (500g),FAM-0175,70.00,ZAR,True
+78,Fambri Farms Internal,Brinjals,FAM-0176,70.00,ZAR,True
+358,Fambri Farms Internal,Broccoli,FAM-0177,63.00,ZAR,True
+359,Fambri Farms Internal,Broccoli,FAM-0178,63.00,ZAR,True
+360,Fambri Farms Internal,Broccoli (10kg),FAM-0179,63.00,ZAR,True
+361,Fambri Farms Internal,Broccoli (1kg),FAM-0180,63.00,ZAR,True
+362,Fambri Farms Internal,Broccoli (2kg),FAM-0181,63.00,ZAR,True
+363,Fambri Farms Internal,Broccoli (5kg),FAM-0182,63.00,ZAR,True
+364,Fambri Farms Internal,Brown Mushrooms (200g),FAM-0185,63.00,ZAR,True
+365,Fambri Farms Internal,Brown Mushrooms (250g),FAM-0186,63.00,ZAR,True
+366,Fambri Farms Internal,Brown Mushrooms (500g),FAM-0187,63.00,ZAR,True
+367,Fambri Farms Internal,Brown Mushrooms (750g),FAM-0189,63.00,ZAR,True
+368,Fambri Farms Internal,Brown Mushrooms (7kg),FAM-0190,63.00,ZAR,True
+369,Fambri Farms Internal,Brussels Sprouts,FAM-0191,63.00,ZAR,True
+370,Fambri Farms Internal,Butter Nut,FAM-0192,63.00,ZAR,True
+371,Fambri Farms Internal,Butternut,FAM-0193,63.00,ZAR,False
+372,Fambri Farms Internal,Butternut (10kg),FAM-0194,63.00,ZAR,True
+373,Fambri Farms Internal,Butternut (15kg),FAM-0195,63.00,ZAR,True
+374,Fambri Farms Internal,Butternut (1kg),FAM-0196,63.00,ZAR,True
+375,Fambri Farms Internal,Butternut (20kg),FAM-0197,63.00,ZAR,True
+376,Fambri Farms Internal,Butternut (25kg),FAM-0198,63.00,ZAR,True
+377,Fambri Farms Internal,Butternut (2kg),FAM-0199,63.00,ZAR,True
+378,Fambri Farms Internal,Butternut (3kg),FAM-0200,63.00,ZAR,True
+379,Fambri Farms Internal,Butternut (4kg),FAM-0201,63.00,ZAR,True
+380,Fambri Farms Internal,Butternut (5kg),FAM-0202,63.00,ZAR,True
+381,Fambri Farms Internal,Butternut (6kg),FAM-0203,63.00,ZAR,True
+382,Fambri Farms Internal,Butternut (7kg),FAM-0204,63.00,ZAR,True
+383,Fambri Farms Internal,Butternut (8kg),FAM-0205,63.00,ZAR,True
+384,Fambri Farms Internal,Butternut (9kg),FAM-0206,63.00,ZAR,True
+385,Fambri Farms Internal,Butternut Squash,FAM-0207,63.00,ZAR,True
+386,Fambri Farms Internal,Button Mushrooms (10kg),FAM-0209,63.00,ZAR,True
+387,Fambri Farms Internal,Button Mushrooms (200g),FAM-0210,63.00,ZAR,True
+388,Fambri Farms Internal,Button Mushrooms (250g),FAM-0211,63.00,ZAR,True
+389,Fambri Farms Internal,Button Mushrooms (500g),FAM-0212,63.00,ZAR,True
+390,Fambri Farms Internal,Button Mushrooms (5kg),FAM-0213,63.00,ZAR,True
+391,Fambri Farms Internal,Button Mushrooms (750g),FAM-0214,63.00,ZAR,True
+392,Fambri Farms Internal,Button Mushrooms (7kg),FAM-0215,63.00,ZAR,True
+79,Fambri Farms Internal,Cabbage Red,FAM-0216,70.00,ZAR,True
+393,Fambri Farms Internal,Carrots,FAM-0217,63.00,ZAR,False
+394,Fambri Farms Internal,Carrots,FAM-0218,63.00,ZAR,True
+395,Fambri Farms Internal,Carrots (10kg),FAM-0219,63.00,ZAR,True
+396,Fambri Farms Internal,Carrots (1kg Packed),FAM-0220,63.00,ZAR,True
+397,Fambri Farms Internal,Carrots (1kg),FAM-0221,63.00,ZAR,True
+398,Fambri Farms Internal,Carrots (2kg),FAM-0222,63.00,ZAR,True
+399,Fambri Farms Internal,Carrots (3kg),FAM-0223,63.00,ZAR,True
+400,Fambri Farms Internal,Carrots (4kg),FAM-0224,63.00,ZAR,True
+401,Fambri Farms Internal,Carrots (5kg),FAM-0225,63.00,ZAR,True
+402,Fambri Farms Internal,Carrots (6kg),FAM-0226,63.00,ZAR,False
+403,Fambri Farms Internal,Carrots (7kg),FAM-0227,63.00,ZAR,True
+404,Fambri Farms Internal,Carrots (8kg),FAM-0228,63.00,ZAR,False
+405,Fambri Farms Internal,Carrots (9kg),FAM-0229,63.00,ZAR,True
+406,Fambri Farms Internal,Cauliflower,FAM-0230,63.00,ZAR,True
+407,Fambri Farms Internal,Cauliflower,FAM-0232,63.00,ZAR,True
+408,Fambri Farms Internal,Cauliflower (10kg),FAM-0233,63.00,ZAR,True
+409,Fambri Farms Internal,Cauliflower (1kg),FAM-0234,63.00,ZAR,True
+410,Fambri Farms Internal,Cauliflower (2kg),FAM-0235,63.00,ZAR,True
+411,Fambri Farms Internal,Cauliflower (3kg),FAM-0236,63.00,ZAR,True
+412,Fambri Farms Internal,Cauliflower (5kg),FAM-0237,63.00,ZAR,True
+413,Fambri Farms Internal,Cauliflower (head),FAM-0231,63.00,ZAR,True
+414,Fambri Farms Internal,Celery,FAM-0238,63.00,ZAR,False
+415,Fambri Farms Internal,Cherry Tomatoes,FAM-0245,63.00,ZAR,True
+416,Fambri Farms Internal,Cherry Tomatoes (1kg),FAM-0250,63.00,ZAR,True
+417,Fambri Farms Internal,Cherry Tomatoes (200g),FAM-0246,63.00,ZAR,False
+418,Fambri Farms Internal,Cherry Tomatoes (250g),FAM-0247,63.00,ZAR,True
+419,Fambri Farms Internal,Cherry Tomatoes (2kg),FAM-0251,63.00,ZAR,True
+420,Fambri Farms Internal,Cherry Tomatoes (500g),FAM-0248,63.00,ZAR,True
+421,Fambri Farms Internal,Cherry Tomatoes (750g),FAM-0249,63.00,ZAR,False
+225,Fambri Farms Internal,Chives,FAM-0240,70.00,ZAR,True
+422,Fambri Farms Internal,Cocktail Tomatoes,FAM-0252,63.00,ZAR,True
+423,Fambri Farms Internal,Cocktail Tomatoes (1kg),FAM-0253,63.00,ZAR,True
+424,Fambri Farms Internal,Cocktail Tomatoes (200g),FAM-0254,63.00,ZAR,True
+425,Fambri Farms Internal,Cocktail Tomatoes (250g),FAM-0255,63.00,ZAR,True
+426,Fambri Farms Internal,Cocktail Tomatoes (2kg),FAM-0258,63.00,ZAR,True
+427,Fambri Farms Internal,Cocktail Tomatoes (500g),FAM-0256,63.00,ZAR,True
+428,Fambri Farms Internal,Cocktail Tomatoes (750g),FAM-0257,63.00,ZAR,False
+226,Fambri Farms Internal,Coriander,FAM-0259,70.00,ZAR,True
+227,Fambri Farms Internal,Coriander,FAM-0260,70.00,ZAR,True
+228,Fambri Farms Internal,Coriander (100g),FAM-0261,70.00,ZAR,False
+429,Fambri Farms Internal,Coriander (150g),FAM-0262,63.00,ZAR,True
+229,Fambri Farms Internal,Coriander (1kg),FAM-0271,70.00,ZAR,True
+230,Fambri Farms Internal,Coriander (200g),FAM-0263,70.00,ZAR,True
+430,Fambri Farms Internal,Coriander (250g),FAM-0264,63.00,ZAR,True
+231,Fambri Farms Internal,Coriander (2kg),FAM-0272,70.00,ZAR,True
+431,Fambri Farms Internal,Coriander (300g),FAM-0265,63.00,ZAR,True
+432,Fambri Farms Internal,Coriander (400g),FAM-0266,63.00,ZAR,True
+433,Fambri Farms Internal,Coriander (500g),FAM-0267,63.00,ZAR,True
+232,Fambri Farms Internal,Coriander (50g),FAM-0268,70.00,ZAR,True
+434,Fambri Farms Internal,Coriander (600g),FAM-0269,63.00,ZAR,True
+435,Fambri Farms Internal,Coriander (750g),FAM-0270,63.00,ZAR,True
+436,Fambri Farms Internal,Crispy Lettuce,FAM-0273,63.00,ZAR,True
+437,Fambri Farms Internal,Crispy Lettuce (100g),FAM-0274,63.00,ZAR,True
+438,Fambri Farms Internal,Crispy Lettuce (150g),FAM-0275,63.00,ZAR,True
+439,Fambri Farms Internal,Crispy Lettuce (1kg),FAM-0286,63.00,ZAR,True
+440,Fambri Farms Internal,Crispy Lettuce (200g),FAM-0276,63.00,ZAR,True
+441,Fambri Farms Internal,Crispy Lettuce (250g),FAM-0277,63.00,ZAR,True
+442,Fambri Farms Internal,Crispy Lettuce (2kg),FAM-0278,63.00,ZAR,True
+443,Fambri Farms Internal,Crispy Lettuce (300g),FAM-0279,63.00,ZAR,True
+444,Fambri Farms Internal,Crispy Lettuce (400g),FAM-0280,63.00,ZAR,True
+445,Fambri Farms Internal,Crispy Lettuce (500g),FAM-0281,63.00,ZAR,True
+446,Fambri Farms Internal,Crispy Lettuce (50g),FAM-0282,63.00,ZAR,True
+447,Fambri Farms Internal,Crispy Lettuce (5kg),FAM-0283,63.00,ZAR,True
+448,Fambri Farms Internal,Crispy Lettuce (600g),FAM-0284,63.00,ZAR,True
+449,Fambri Farms Internal,Crispy Lettuce (750g),FAM-0285,63.00,ZAR,True
+233,Fambri Farms Internal,Crushed Garlic,FAM-0287,70.00,ZAR,True
+450,Fambri Farms Internal,Cucumber,FAM-0288,63.00,ZAR,True
+451,Fambri Farms Internal,Cucumber,FAM-0289,63.00,ZAR,True
+452,Fambri Farms Internal,Cucumber,FAM-0290,63.00,ZAR,True
+80,Fambri Farms Internal,Cucumbers English,FAM-0291,70.00,ZAR,True
+453,Fambri Farms Internal,Deveined Spinach,FAM-0292,63.00,ZAR,True
+234,Fambri Farms Internal,Dill,FAM-0293,70.00,ZAR,True
+454,Fambri Farms Internal,Dill,FAM-0294,63.00,ZAR,True
+455,Fambri Farms Internal,Dill (100g),FAM-0295,63.00,ZAR,True
+456,Fambri Farms Internal,Dill (150g),FAM-0296,63.00,ZAR,True
+457,Fambri Farms Internal,Dill (200g),FAM-0297,63.00,ZAR,True
+458,Fambri Farms Internal,Dill (250g),FAM-0298,63.00,ZAR,True
+459,Fambri Farms Internal,Dill (300g),FAM-0299,63.00,ZAR,True
+460,Fambri Farms Internal,Dill (400g),FAM-0300,63.00,ZAR,True
+461,Fambri Farms Internal,Dill (500g),FAM-0301,63.00,ZAR,True
+462,Fambri Farms Internal,Dill (50g),FAM-0302,63.00,ZAR,True
+463,Fambri Farms Internal,Dill (600g),FAM-0303,63.00,ZAR,True
+464,Fambri Farms Internal,Dill (750g),FAM-0304,63.00,ZAR,True
+235,Fambri Farms Internal,Edible Flowers,FAM-0007,70.00,ZAR,True
+236,Fambri Farms Internal,Edible Flowers (100g),FAM-0306,70.00,ZAR,True
+237,Fambri Farms Internal,Edible Flowers (1kg),FAM-0011,70.00,ZAR,True
+238,Fambri Farms Internal,Edible Flowers (200g),FAM-0307,70.00,ZAR,True
+239,Fambri Farms Internal,Edible Flowers (250g),FAM-0008,70.00,ZAR,True
+240,Fambri Farms Internal,Edible Flowers (2kg),FAM-0012,70.00,ZAR,True
+241,Fambri Farms Internal,Edible Flowers (500g),FAM-0009,70.00,ZAR,False
+242,Fambri Farms Internal,Edible Flowers (50g),FAM-0308,70.00,ZAR,True
+243,Fambri Farms Internal,Edible Flowers (750g),FAM-0010,70.00,ZAR,True
+465,Fambri Farms Internal,Eggplant,FAM-0309,63.00,ZAR,True
+244,Fambri Farms Internal,Garlic Cloves,FAM-0314,70.00,ZAR,False
+245,Fambri Farms Internal,Ginger,FAM-0315,70.00,ZAR,True
+81,Fambri Farms Internal,Grape,FAM-0013,70.00,ZAR,True
+82,Fambri Farms Internal,Grape,FAM-0316,70.00,ZAR,True
+83,Fambri Farms Internal,Grape (1kg),FAM-0018,70.00,ZAR,True
+84,Fambri Farms Internal,Grape (200g),FAM-0014,70.00,ZAR,True
+85,Fambri Farms Internal,Grape (250g),FAM-0015,70.00,ZAR,False
+86,Fambri Farms Internal,Grape (2kg),FAM-0019,70.00,ZAR,True
+87,Fambri Farms Internal,Grape (500g),FAM-0016,70.00,ZAR,True
+88,Fambri Farms Internal,Grape (750g),FAM-0017,70.00,ZAR,True
+89,Fambri Farms Internal,Grape Red Globe,FAM-0020,70.00,ZAR,True
+90,Fambri Farms Internal,Grape Red Globe,FAM-0317,70.00,ZAR,True
+91,Fambri Farms Internal,Grape Red Globe (1kg),FAM-0025,70.00,ZAR,True
+92,Fambri Farms Internal,Grape Red Globe (200g),FAM-0021,70.00,ZAR,True
+93,Fambri Farms Internal,Grape Red Globe (250g),FAM-0022,70.00,ZAR,True
+94,Fambri Farms Internal,Grape Red Globe (2kg),FAM-0026,70.00,ZAR,True
+95,Fambri Farms Internal,Grape Red Globe (500g),FAM-0023,70.00,ZAR,True
+96,Fambri Farms Internal,Grape Red Globe (750g),FAM-0024,70.00,ZAR,True
+97,Fambri Farms Internal,Grape Sugradne,FAM-0027,70.00,ZAR,True
+98,Fambri Farms Internal,Grape Sugradne,FAM-0318,70.00,ZAR,True
+99,Fambri Farms Internal,Grape Sugradne (1kg),FAM-0032,70.00,ZAR,True
+100,Fambri Farms Internal,Grape Sugradne (200g),FAM-0028,70.00,ZAR,True
+101,Fambri Farms Internal,Grape Sugradne (250g),FAM-0029,70.00,ZAR,True
+102,Fambri Farms Internal,Grape Sugradne (2kg),FAM-0033,70.00,ZAR,True
+103,Fambri Farms Internal,Grape Sugradne (500g),FAM-0030,70.00,ZAR,True
+104,Fambri Farms Internal,Grape Sugradne (750g),FAM-0031,70.00,ZAR,True
+105,Fambri Farms Internal,Grapefruit,FAM-0319,70.00,ZAR,True
+106,Fambri Farms Internal,Grapefruit (1kg),FAM-0320,70.00,ZAR,True
+107,Fambri Farms Internal,Grapefruit (2kg),FAM-0321,70.00,ZAR,True
+108,Fambri Farms Internal,Grapefruit (3kg),FAM-0322,70.00,ZAR,True
+109,Fambri Farms Internal,Grapefruit (5kg),FAM-0323,70.00,ZAR,True
+110,Fambri Farms Internal,Green Apples,FAM-0324,70.00,ZAR,True
+111,Fambri Farms Internal,Green Apples (10kg),FAM-0325,70.00,ZAR,True
+112,Fambri Farms Internal,Green Apples (1kg),FAM-0326,70.00,ZAR,True
+113,Fambri Farms Internal,Green Apples (2kg),FAM-0327,70.00,ZAR,True
+114,Fambri Farms Internal,Green Apples (5kg),FAM-0328,70.00,ZAR,True
+115,Fambri Farms Internal,Green Apples (5kg),FAM-0329,70.00,ZAR,True
+466,Fambri Farms Internal,Green Beans,FAM-0330,63.00,ZAR,True
+467,Fambri Farms Internal,Green Cabbage,FAM-0331,63.00,ZAR,True
+468,Fambri Farms Internal,Green Chillies,FAM-0332,63.00,ZAR,True
+469,Fambri Farms Internal,Green Chillies (100g),FAM-0333,63.00,ZAR,True
+470,Fambri Farms Internal,Green Chillies (1kg),FAM-0334,63.00,ZAR,True
+471,Fambri Farms Internal,Green Chillies (200g),FAM-0335,63.00,ZAR,True
+472,Fambri Farms Internal,Green Chillies (2kg),FAM-0336,63.00,ZAR,True
+473,Fambri Farms Internal,Green Chillies (500g),FAM-0337,63.00,ZAR,True
+116,Fambri Farms Internal,Green Grapes,FAM-0338,70.00,ZAR,True
+117,Fambri Farms Internal,Green Grapes (1kg),FAM-0339,70.00,ZAR,True
+118,Fambri Farms Internal,Green Grapes (2kg),FAM-0340,70.00,ZAR,True
+119,Fambri Farms Internal,Green Grapes (500g),FAM-0341,70.00,ZAR,True
+120,Fambri Farms Internal,Green Grapes (5kg),FAM-0342,70.00,ZAR,True
+474,Fambri Farms Internal,Green Peppers,FAM-0343,63.00,ZAR,True
+475,Fambri Farms Internal,Green Peppers,FAM-0344,63.00,ZAR,True
+476,Fambri Farms Internal,Green Peppers,FAM-0345,63.00,ZAR,True
+477,Fambri Farms Internal,Green Peppers (10kg),FAM-0346,63.00,ZAR,True
+478,Fambri Farms Internal,Green Peppers (15kg),FAM-0347,63.00,ZAR,True
+479,Fambri Farms Internal,Green Peppers (1kg),FAM-0348,63.00,ZAR,True
+480,Fambri Farms Internal,Green Peppers (20kg),FAM-0349,63.00,ZAR,True
+481,Fambri Farms Internal,Green Peppers (25kg),FAM-0350,63.00,ZAR,True
+482,Fambri Farms Internal,Green Peppers (2kg),FAM-0351,63.00,ZAR,True
+483,Fambri Farms Internal,Green Peppers (3kg),FAM-0352,63.00,ZAR,True
+484,Fambri Farms Internal,Green Peppers (4kg),FAM-0353,63.00,ZAR,True
+485,Fambri Farms Internal,Green Peppers (5kg),FAM-0354,63.00,ZAR,True
+486,Fambri Farms Internal,Iceberg,FAM-0355,63.00,ZAR,True
+487,Fambri Farms Internal,Iceberg,FAM-0356,63.00,ZAR,True
+488,Fambri Farms Internal,Iceberg (100g),FAM-0357,63.00,ZAR,True
+489,Fambri Farms Internal,Iceberg (150g),FAM-0358,63.00,ZAR,True
+490,Fambri Farms Internal,Iceberg (1kg),FAM-0359,63.00,ZAR,True
+491,Fambri Farms Internal,Iceberg (200g),FAM-0360,63.00,ZAR,True
+492,Fambri Farms Internal,Iceberg (250g),FAM-0361,63.00,ZAR,True
+493,Fambri Farms Internal,Iceberg (2kg),FAM-0368,63.00,ZAR,False
+494,Fambri Farms Internal,Iceberg (300g),FAM-0362,63.00,ZAR,True
+495,Fambri Farms Internal,Iceberg (400g),FAM-0363,63.00,ZAR,True
+496,Fambri Farms Internal,Iceberg (500g),FAM-0364,63.00,ZAR,True
+497,Fambri Farms Internal,Iceberg (50g),FAM-0365,63.00,ZAR,True
+498,Fambri Farms Internal,Iceberg (600g),FAM-0366,63.00,ZAR,True
+499,Fambri Farms Internal,Iceberg (750g),FAM-0367,63.00,ZAR,True
+500,Fambri Farms Internal,Istent,FAM-0369,63.00,ZAR,True
+501,Fambri Farms Internal,Kale,FAM-0370,63.00,ZAR,True
+502,Fambri Farms Internal,Kale (100g),FAM-0371,63.00,ZAR,False
+503,Fambri Farms Internal,Kale (150g),FAM-0372,63.00,ZAR,True
+504,Fambri Farms Internal,Kale (1kg),FAM-0373,63.00,ZAR,True
+505,Fambri Farms Internal,Kale (200g),FAM-0374,63.00,ZAR,True
+506,Fambri Farms Internal,Kale (250g),FAM-0375,63.00,ZAR,True
+507,Fambri Farms Internal,Kale (300g),FAM-0376,63.00,ZAR,True
+508,Fambri Farms Internal,Kale (400g),FAM-0377,63.00,ZAR,True
+509,Fambri Farms Internal,Kale (500g),FAM-0378,63.00,ZAR,True
+510,Fambri Farms Internal,Kale (50g),FAM-0379,63.00,ZAR,False
+511,Fambri Farms Internal,Kale (600g),FAM-0380,63.00,ZAR,True
+512,Fambri Farms Internal,Kale (750g),FAM-0381,63.00,ZAR,True
+121,Fambri Farms Internal,Kiwi,FAM-0382,70.00,ZAR,True
+122,Fambri Farms Internal,Kiwi,FAM-0383,70.00,ZAR,True
+123,Fambri Farms Internal,Kiwi (200g),FAM-0384,70.00,ZAR,True
+124,Fambri Farms Internal,Kiwi (500g),FAM-0385,70.00,ZAR,True
+513,Fambri Farms Internal,Leeks,FAM-0387,63.00,ZAR,True
+125,Fambri Farms Internal,Lemon,FAM-0388,70.00,ZAR,True
+126,Fambri Farms Internal,Lemons,FAM-0389,70.00,ZAR,True
+127,Fambri Farms Internal,Lemons (10kg),FAM-0390,70.00,ZAR,True
+128,Fambri Farms Internal,Lemons (10kg),FAM-0391,70.00,ZAR,True
+129,Fambri Farms Internal,Lemons (15kg),FAM-0392,70.00,ZAR,True
+130,Fambri Farms Internal,Lemons (1kg),FAM-0393,70.00,ZAR,False
+131,Fambri Farms Internal,Lemons (20kg),FAM-0394,70.00,ZAR,True
+132,Fambri Farms Internal,Lemons (250g),FAM-0395,70.00,ZAR,True
+133,Fambri Farms Internal,Lemons (25kg),FAM-0396,70.00,ZAR,True
+134,Fambri Farms Internal,Lemons (2kg),FAM-0397,70.00,ZAR,True
+135,Fambri Farms Internal,Lemons (2kg),FAM-0398,70.00,ZAR,True
+136,Fambri Farms Internal,Lemons (3kg),FAM-0399,70.00,ZAR,True
+137,Fambri Farms Internal,Lemons (4kg),FAM-0400,70.00,ZAR,True
+138,Fambri Farms Internal,Lemons (500g),FAM-0401,70.00,ZAR,True
+139,Fambri Farms Internal,Lemons (5kg),FAM-0402,70.00,ZAR,True
+140,Fambri Farms Internal,Lemons (5kg),FAM-0403,70.00,ZAR,True
+141,Fambri Farms Internal,Lemons (750g),FAM-0404,70.00,ZAR,False
+514,Fambri Farms Internal,Lettuce,FAM-0405,63.00,ZAR,True
+515,Fambri Farms Internal,Lettuce,FAM-0406,63.00,ZAR,True
+516,Fambri Farms Internal,Lettuce,FAM-0407,63.00,ZAR,True
+142,Fambri Farms Internal,Lime,FAM-0408,70.00,ZAR,True
+517,Fambri Farms Internal,Lime (10kg),FAM-0409,63.00,ZAR,True
+518,Fambri Farms Internal,Lime (1kg),FAM-0410,63.00,ZAR,True
+519,Fambri Farms Internal,Lime (2kg),FAM-0411,63.00,ZAR,True
+520,Fambri Farms Internal,Lime (5kg),FAM-0412,63.00,ZAR,True
+143,Fambri Farms Internal,Marrows Dark Green,FAM-0413,70.00,ZAR,True
+246,Fambri Farms Internal,Micro Herbs,FAM-0416,70.00,ZAR,True
+247,Fambri Farms Internal,Micro Herbs (100g),FAM-0417,70.00,ZAR,False
+248,Fambri Farms Internal,Micro Herbs (1kg),FAM-0423,70.00,ZAR,True
+249,Fambri Farms Internal,Micro Herbs (200g),FAM-0418,70.00,ZAR,True
+250,Fambri Farms Internal,Micro Herbs (250g),FAM-0420,70.00,ZAR,True
+251,Fambri Farms Internal,Micro Herbs (2kg),FAM-0424,70.00,ZAR,True
+252,Fambri Farms Internal,Micro Herbs (500g),FAM-0421,70.00,ZAR,True
+253,Fambri Farms Internal,Micro Herbs (50g),FAM-0419,70.00,ZAR,True
+254,Fambri Farms Internal,Micro Herbs (750g),FAM-0422,70.00,ZAR,True
+255,Fambri Farms Internal,Mint,FAM-0425,70.00,ZAR,True
+256,Fambri Farms Internal,Mint,FAM-0426,70.00,ZAR,True
+257,Fambri Farms Internal,Mint (100g),FAM-0427,70.00,ZAR,True
+521,Fambri Farms Internal,Mint (150g),FAM-0428,63.00,ZAR,True
+258,Fambri Farms Internal,Mint (1kg),FAM-0437,70.00,ZAR,True
+259,Fambri Farms Internal,Mint (200g),FAM-0429,70.00,ZAR,True
+522,Fambri Farms Internal,Mint (250g),FAM-0430,63.00,ZAR,True
+260,Fambri Farms Internal,Mint (2kg),FAM-0438,70.00,ZAR,True
+523,Fambri Farms Internal,Mint (300g),FAM-0431,63.00,ZAR,True
+524,Fambri Farms Internal,Mint (400g),FAM-0432,63.00,ZAR,True
+525,Fambri Farms Internal,Mint (500g),FAM-0433,63.00,ZAR,True
+261,Fambri Farms Internal,Mint (50g),FAM-0434,70.00,ZAR,True
+526,Fambri Farms Internal,Mint (600g),FAM-0435,63.00,ZAR,True
+527,Fambri Farms Internal,Mint (750g),FAM-0436,63.00,ZAR,True
+528,Fambri Farms Internal,Mixed Lettuce,FAM-0439,63.00,ZAR,True
+529,Fambri Farms Internal,Mixed Lettuce,FAM-0440,63.00,ZAR,True
+530,Fambri Farms Internal,Mixed Lettuce (100g),FAM-0441,63.00,ZAR,True
+531,Fambri Farms Internal,Mixed Lettuce (150g),FAM-0442,63.00,ZAR,True
+532,Fambri Farms Internal,Mixed Lettuce (200g),FAM-0443,63.00,ZAR,True
+533,Fambri Farms Internal,Mixed Lettuce (250g),FAM-0444,63.00,ZAR,True
+534,Fambri Farms Internal,Mixed Lettuce (300g),FAM-0445,63.00,ZAR,True
+535,Fambri Farms Internal,Mixed Lettuce (400g),FAM-0446,63.00,ZAR,True
+536,Fambri Farms Internal,Mixed Lettuce (500g),FAM-0447,63.00,ZAR,True
+537,Fambri Farms Internal,Mixed Lettuce (50g),FAM-0448,63.00,ZAR,True
+538,Fambri Farms Internal,Mixed Lettuce (600g),FAM-0449,63.00,ZAR,True
+539,Fambri Farms Internal,Mixed Lettuce (750g),FAM-0450,63.00,ZAR,True
+540,Fambri Farms Internal,Mixed Peppers,FAM-0451,63.00,ZAR,False
+144,Fambri Farms Internal,Naartjies,FAM-0041,70.00,ZAR,True
+145,Fambri Farms Internal,Naartjies,FAM-0452,70.00,ZAR,True
+146,Fambri Farms Internal,Naartjies (1kg),FAM-0046,70.00,ZAR,True
+147,Fambri Farms Internal,Naartjies (200g),FAM-0042,70.00,ZAR,True
+148,Fambri Farms Internal,Naartjies (250g),FAM-0043,70.00,ZAR,True
+149,Fambri Farms Internal,Naartjies (2kg),FAM-0047,70.00,ZAR,True
+150,Fambri Farms Internal,Naartjies (500g),FAM-0044,70.00,ZAR,True
+151,Fambri Farms Internal,Naartjies (750g),FAM-0045,70.00,ZAR,True
+541,Fambri Farms Internal,None,FAM-0453,63.00,ZAR,True
+152,Fambri Farms Internal,Oranges,FAM-0454,70.00,ZAR,True
+153,Fambri Farms Internal,Oranges,FAM-0455,70.00,ZAR,True
+154,Fambri Farms Internal,Oranges,FAM-0456,70.00,ZAR,True
+155,Fambri Farms Internal,Oranges (10kg),FAM-0457,70.00,ZAR,True
+156,Fambri Farms Internal,Oranges (10kg),FAM-0458,70.00,ZAR,True
+157,Fambri Farms Internal,Oranges (15kg),FAM-0459,70.00,ZAR,True
+158,Fambri Farms Internal,Oranges (1kg),FAM-0460,70.00,ZAR,True
+159,Fambri Farms Internal,Oranges (1kg),FAM-0461,70.00,ZAR,True
+160,Fambri Farms Internal,Oranges (20kg),FAM-0462,70.00,ZAR,True
+161,Fambri Farms Internal,Oranges (2kg),FAM-0463,70.00,ZAR,True
+162,Fambri Farms Internal,Oranges (2kg),FAM-0464,70.00,ZAR,True
+163,Fambri Farms Internal,Oranges (3kg),FAM-0465,70.00,ZAR,True
+164,Fambri Farms Internal,Oranges (3kg),FAM-0466,70.00,ZAR,True
+165,Fambri Farms Internal,Oranges (5kg),FAM-0467,70.00,ZAR,True
+166,Fambri Farms Internal,Oranges (5kg),FAM-0468,70.00,ZAR,True
+262,Fambri Farms Internal,Oregano,FAM-0471,70.00,ZAR,True
+542,Fambri Farms Internal,Oregano,FAM-0470,63.00,ZAR,True
+263,Fambri Farms Internal,Oregano (100g),FAM-0472,70.00,ZAR,True
+543,Fambri Farms Internal,Oregano (150g),FAM-0473,63.00,ZAR,True
+264,Fambri Farms Internal,Oregano (1kg),FAM-0482,70.00,ZAR,False
+265,Fambri Farms Internal,Oregano (200g),FAM-0474,70.00,ZAR,True
+544,Fambri Farms Internal,Oregano (250g),FAM-0475,63.00,ZAR,True
+266,Fambri Farms Internal,Oregano (2kg),FAM-0483,70.00,ZAR,True
+545,Fambri Farms Internal,Oregano (300g),FAM-0476,63.00,ZAR,True
+546,Fambri Farms Internal,Oregano (400g),FAM-0477,63.00,ZAR,True
+547,Fambri Farms Internal,Oregano (500g),FAM-0478,63.00,ZAR,True
+267,Fambri Farms Internal,Oregano (50g),FAM-0479,70.00,ZAR,True
+548,Fambri Farms Internal,Oregano (600g),FAM-0480,63.00,ZAR,True
+549,Fambri Farms Internal,Oregano (750g),FAM-0481,63.00,ZAR,True
+167,Fambri Farms Internal,Papaya,FAM-0484,70.00,ZAR,True
+168,Fambri Farms Internal,Papaya,FAM-0485,70.00,ZAR,True
+169,Fambri Farms Internal,Papaya (1kg),FAM-0490,70.00,ZAR,True
+170,Fambri Farms Internal,Papaya (200g),FAM-0486,70.00,ZAR,True
+171,Fambri Farms Internal,Papaya (250g),FAM-0487,70.00,ZAR,True
+172,Fambri Farms Internal,Papaya (2kg),FAM-0491,70.00,ZAR,True
+173,Fambri Farms Internal,Papaya (500g),FAM-0488,70.00,ZAR,True
+174,Fambri Farms Internal,Papaya (750g),FAM-0489,70.00,ZAR,True
+175,Fambri Farms Internal,Papinos,FAM-0492,70.00,ZAR,True
+268,Fambri Farms Internal,Parsley,FAM-0493,70.00,ZAR,False
+269,Fambri Farms Internal,Parsley (100g),FAM-0495,70.00,ZAR,True
+550,Fambri Farms Internal,Parsley (150g),FAM-0496,63.00,ZAR,True
+551,Fambri Farms Internal,Parsley (1kg),FAM-0497,63.00,ZAR,True
+270,Fambri Farms Internal,Parsley (200g),FAM-0498,70.00,ZAR,True
+552,Fambri Farms Internal,Parsley (250g),FAM-0499,63.00,ZAR,True
+553,Fambri Farms Internal,Parsley (300g),FAM-0500,63.00,ZAR,True
+554,Fambri Farms Internal,Parsley (400g),FAM-0501,63.00,ZAR,False
+555,Fambri Farms Internal,Parsley (500g),FAM-0502,63.00,ZAR,True
+271,Fambri Farms Internal,Parsley (50g),FAM-0503,70.00,ZAR,True
+556,Fambri Farms Internal,Parsley (600g),FAM-0504,63.00,ZAR,True
+557,Fambri Farms Internal,Parsley (750g),FAM-0505,63.00,ZAR,True
+558,Fambri Farms Internal,Patty Pan,FAM-0048,63.00,ZAR,True
+559,Fambri Farms Internal,Patty Pan,FAM-0506,63.00,ZAR,True
+560,Fambri Farms Internal,Patty Pan (1kg),FAM-0053,63.00,ZAR,True
+561,Fambri Farms Internal,Patty Pan (1kg),FAM-0507,63.00,ZAR,True
+562,Fambri Farms Internal,Patty Pan (200g),FAM-0049,63.00,ZAR,True
+563,Fambri Farms Internal,Patty Pan (250g),FAM-0050,63.00,ZAR,True
+564,Fambri Farms Internal,Patty Pan (2kg),FAM-0054,63.00,ZAR,True
+565,Fambri Farms Internal,Patty Pan (2kg),FAM-0508,63.00,ZAR,True
+566,Fambri Farms Internal,Patty Pan (500g),FAM-0051,63.00,ZAR,True
+567,Fambri Farms Internal,Patty Pan (500g),FAM-0509,63.00,ZAR,True
+568,Fambri Farms Internal,Patty Pan (5kg),FAM-0510,63.00,ZAR,True
+569,Fambri Farms Internal,Patty Pan (750g),FAM-0052,63.00,ZAR,True
+176,Fambri Farms Internal,Patty Pans Yellow,FAM-0511,70.00,ZAR,True
+177,Fambri Farms Internal,Paw Paw,FAM-0055,70.00,ZAR,True
+178,Fambri Farms Internal,Paw Paw,FAM-0512,70.00,ZAR,True
+179,Fambri Farms Internal,Paw Paw (1kg),FAM-0060,70.00,ZAR,True
+180,Fambri Farms Internal,Paw Paw (200g),FAM-0056,70.00,ZAR,True
+181,Fambri Farms Internal,Paw Paw (250g),FAM-0057,70.00,ZAR,True
+182,Fambri Farms Internal,Paw Paw (2kg),FAM-0061,70.00,ZAR,True
+183,Fambri Farms Internal,Paw Paw (500g),FAM-0058,70.00,ZAR,True
+184,Fambri Farms Internal,Paw Paw (750g),FAM-0059,70.00,ZAR,True
+185,Fambri Farms Internal,Pineapple,FAM-0513,70.00,ZAR,True
+186,Fambri Farms Internal,Pineapple,FAM-0514,70.00,ZAR,True
+187,Fambri Farms Internal,Pineapple (10kg),FAM-0515,70.00,ZAR,True
+188,Fambri Farms Internal,Pineapple (2kg),FAM-0516,70.00,ZAR,True
+189,Fambri Farms Internal,Pineapple (5kg),FAM-0517,70.00,ZAR,True
+570,Fambri Farms Internal,Portabellini Mushrooms (200g),FAM-0520,63.00,ZAR,True
+571,Fambri Farms Internal,Portabellini Mushrooms (250g),FAM-0521,63.00,ZAR,True
+572,Fambri Farms Internal,Portabellini Mushrooms (500g),FAM-0522,63.00,ZAR,True
+573,Fambri Farms Internal,Portabellini Mushrooms (750g),FAM-0524,63.00,ZAR,True
+574,Fambri Farms Internal,Portabellini Mushrooms (7kg),FAM-0525,63.00,ZAR,True
+190,Fambri Farms Internal,Potato Mondial INA,FAM-0526,70.00,ZAR,False
+191,Fambri Farms Internal,Potato SIFRA IWASH,FAM-0527,70.00,ZAR,True
+575,Fambri Farms Internal,Potatoes,FAM-0528,63.00,ZAR,True
+576,Fambri Farms Internal,Potatoes,FAM-0529,63.00,ZAR,True
+577,Fambri Farms Internal,Potatoes (10kg),FAM-0534,63.00,ZAR,True
+578,Fambri Farms Internal,Potatoes (1kg),FAM-0535,63.00,ZAR,True
+579,Fambri Farms Internal,Potatoes (200g),FAM-0530,63.00,ZAR,True
+580,Fambri Farms Internal,Potatoes (250g),FAM-0531,63.00,ZAR,True
+581,Fambri Farms Internal,Potatoes (2kg),FAM-0536,63.00,ZAR,True
+582,Fambri Farms Internal,Potatoes (3kg),FAM-0537,63.00,ZAR,True
+583,Fambri Farms Internal,Potatoes (4kg),FAM-0538,63.00,ZAR,True
+584,Fambri Farms Internal,Potatoes (500g),FAM-0532,63.00,ZAR,True
+585,Fambri Farms Internal,Potatoes (5kg),FAM-0539,63.00,ZAR,True
+586,Fambri Farms Internal,Potatoes (6kg),FAM-0540,63.00,ZAR,True
+587,Fambri Farms Internal,Potatoes (750g),FAM-0533,63.00,ZAR,True
+588,Fambri Farms Internal,Potatoes (7kg),FAM-0541,63.00,ZAR,True
+589,Fambri Farms Internal,Potatoes (8kg),FAM-0542,63.00,ZAR,True
+590,Fambri Farms Internal,Potatoes (9kg),FAM-0543,63.00,ZAR,True
+591,Fambri Farms Internal,Potatoes 10kg,FAM-0544,63.00,ZAR,True
+592,Fambri Farms Internal,Potatoes 15kg,FAM-0545,63.00,ZAR,False
+593,Fambri Farms Internal,Potatoes 20kg,FAM-0546,63.00,ZAR,True
+594,Fambri Farms Internal,Potatoes 25kg,FAM-0547,63.00,ZAR,True
+595,Fambri Farms Internal,Pumpkin,FAM-0548,63.00,ZAR,True
+192,Fambri Farms Internal,Pumpkins Crown Pro,FAM-0549,70.00,ZAR,True
+596,Fambri Farms Internal,Radishes,FAM-0550,63.00,ZAR,True
+193,Fambri Farms Internal,Red Apples,FAM-0551,70.00,ZAR,True
+194,Fambri Farms Internal,Red Apples (10kg),FAM-0552,70.00,ZAR,True
+195,Fambri Farms Internal,Red Apples (1kg),FAM-0553,70.00,ZAR,True
+196,Fambri Farms Internal,Red Apples (2kg),FAM-0554,70.00,ZAR,True
+197,Fambri Farms Internal,Red Apples (5kg),FAM-0555,70.00,ZAR,True
+198,Fambri Farms Internal,Red Apples (5kg),FAM-0556,70.00,ZAR,True
+597,Fambri Farms Internal,Red Cabbage,FAM-0557,63.00,ZAR,True
+598,Fambri Farms Internal,Red Chillies,FAM-0558,63.00,ZAR,True
+599,Fambri Farms Internal,Red Chillies (100g),FAM-0559,63.00,ZAR,True
+600,Fambri Farms Internal,Red Chillies (1kg),FAM-0560,63.00,ZAR,True
+601,Fambri Farms Internal,Red Chillies (200g),FAM-0561,63.00,ZAR,True
+602,Fambri Farms Internal,Red Chillies (2kg),FAM-0562,63.00,ZAR,True
+603,Fambri Farms Internal,Red Chillies (500g),FAM-0563,63.00,ZAR,True
+199,Fambri Farms Internal,Red Grapes,FAM-0564,70.00,ZAR,True
+200,Fambri Farms Internal,Red Grapes (1kg),FAM-0565,70.00,ZAR,True
+201,Fambri Farms Internal,Red Grapes (2kg),FAM-0566,70.00,ZAR,True
+202,Fambri Farms Internal,Red Grapes (500g),FAM-0567,70.00,ZAR,True
+203,Fambri Farms Internal,Red Grapes (5kg),FAM-0568,70.00,ZAR,True
+604,Fambri Farms Internal,Red Onions,FAM-0569,63.00,ZAR,True
+605,Fambri Farms Internal,Red Onions (10kg),FAM-0570,63.00,ZAR,True
+606,Fambri Farms Internal,Red Onions (15kg),FAM-0581,63.00,ZAR,True
+607,Fambri Farms Internal,Red Onions (18kg),FAM-0582,63.00,ZAR,True
+608,Fambri Farms Internal,Red Onions (1kg),FAM-0571,63.00,ZAR,True
+609,Fambri Farms Internal,Red Onions (2kg),FAM-0572,63.00,ZAR,True
+610,Fambri Farms Internal,Red Onions (3kg),FAM-0573,63.00,ZAR,True
+611,Fambri Farms Internal,Red Onions (4kg),FAM-0574,63.00,ZAR,True
+612,Fambri Farms Internal,Red Onions (5kg),FAM-0575,63.00,ZAR,True
+613,Fambri Farms Internal,Red Onions (6kg),FAM-0576,63.00,ZAR,True
+614,Fambri Farms Internal,Red Onions (7kg),FAM-0577,63.00,ZAR,False
+615,Fambri Farms Internal,Red Onions (8kg),FAM-0578,63.00,ZAR,True
+616,Fambri Farms Internal,Red Onions (9kg),FAM-0579,63.00,ZAR,True
+617,Fambri Farms Internal,Red Peppers,FAM-0584,63.00,ZAR,True
+618,Fambri Farms Internal,Red Peppers (10kg),FAM-0585,63.00,ZAR,True
+619,Fambri Farms Internal,Red Peppers (10kg),FAM-0586,63.00,ZAR,True
+620,Fambri Farms Internal,Red Peppers (15kg),FAM-0587,63.00,ZAR,True
+621,Fambri Farms Internal,Red Peppers (1kg),FAM-0588,63.00,ZAR,True
+622,Fambri Farms Internal,Red Peppers (1kg),FAM-0589,63.00,ZAR,True
+623,Fambri Farms Internal,Red Peppers (20kg),FAM-0590,63.00,ZAR,True
+624,Fambri Farms Internal,Red Peppers (250g),FAM-0591,63.00,ZAR,True
+625,Fambri Farms Internal,Red Peppers (25kg),FAM-0592,63.00,ZAR,True
+626,Fambri Farms Internal,Red Peppers (2kg),FAM-0593,63.00,ZAR,True
+627,Fambri Farms Internal,Red Peppers (2kg),FAM-0594,63.00,ZAR,True
+628,Fambri Farms Internal,Red Peppers (3kg),FAM-0595,63.00,ZAR,True
+629,Fambri Farms Internal,Red Peppers (3kg),FAM-0596,63.00,ZAR,True
+630,Fambri Farms Internal,Red Peppers (4kg),FAM-0597,63.00,ZAR,True
+631,Fambri Farms Internal,Red Peppers (4kg),FAM-0598,63.00,ZAR,True
+632,Fambri Farms Internal,Red Peppers (500g),FAM-0599,63.00,ZAR,True
+633,Fambri Farms Internal,Red Peppers (5kg),FAM-0600,63.00,ZAR,True
+634,Fambri Farms Internal,Red Peppers (5kg),FAM-0601,63.00,ZAR,True
+635,Fambri Farms Internal,Red Peppers (750g),FAM-0602,63.00,ZAR,True
+272,Fambri Farms Internal,Rocket,FAM-0603,70.00,ZAR,True
+636,Fambri Farms Internal,Rocket (100g),FAM-0604,63.00,ZAR,True
+637,Fambri Farms Internal,Rocket (150g),FAM-0605,63.00,ZAR,True
+638,Fambri Farms Internal,Rocket (200g),FAM-0606,63.00,ZAR,True
+639,Fambri Farms Internal,Rocket (250g),FAM-0607,63.00,ZAR,True
+640,Fambri Farms Internal,Rocket (300g),FAM-0608,63.00,ZAR,True
+641,Fambri Farms Internal,Rocket (400g),FAM-0609,63.00,ZAR,True
+642,Fambri Farms Internal,Rocket (500g),FAM-0610,63.00,ZAR,True
+643,Fambri Farms Internal,Rocket (50g),FAM-0611,63.00,ZAR,True
+644,Fambri Farms Internal,Rocket (600g),FAM-0612,63.00,ZAR,True
+645,Fambri Farms Internal,Rocket (750g),FAM-0613,63.00,ZAR,True
+273,Fambri Farms Internal,Rosemary,FAM-0614,70.00,ZAR,True
+274,Fambri Farms Internal,Rosemary,FAM-0615,70.00,ZAR,True
+275,Fambri Farms Internal,Rosemary (100g),FAM-0616,70.00,ZAR,True
+646,Fambri Farms Internal,Rosemary (150g),FAM-0617,63.00,ZAR,True
+276,Fambri Farms Internal,Rosemary (200g),FAM-0618,70.00,ZAR,True
+647,Fambri Farms Internal,Rosemary (250g),FAM-0619,63.00,ZAR,True
+648,Fambri Farms Internal,Rosemary (300g),FAM-0620,63.00,ZAR,True
+649,Fambri Farms Internal,Rosemary (400g),FAM-0621,63.00,ZAR,True
+650,Fambri Farms Internal,Rosemary (500g),FAM-0622,63.00,ZAR,True
+277,Fambri Farms Internal,Rosemary (50g),FAM-0623,70.00,ZAR,True
+651,Fambri Farms Internal,Rosemary (600g),FAM-0624,63.00,ZAR,True
+652,Fambri Farms Internal,Rosemary (750g),FAM-0625,63.00,ZAR,True
+278,Fambri Farms Internal,Sage,FAM-0626,70.00,ZAR,True
+279,Fambri Farms Internal,Sage,FAM-0627,70.00,ZAR,True
+280,Fambri Farms Internal,Sage (100g),FAM-0628,70.00,ZAR,True
+281,Fambri Farms Internal,Sage (1kg),FAM-0634,70.00,ZAR,True
+282,Fambri Farms Internal,Sage (200g),FAM-0629,70.00,ZAR,True
+283,Fambri Farms Internal,Sage (250g),FAM-0631,70.00,ZAR,True
+284,Fambri Farms Internal,Sage (2kg),FAM-0635,70.00,ZAR,True
+285,Fambri Farms Internal,Sage (500g),FAM-0632,70.00,ZAR,True
+286,Fambri Farms Internal,Sage (50g),FAM-0630,70.00,ZAR,True
+287,Fambri Farms Internal,Sage (750g),FAM-0633,70.00,ZAR,True
+653,Fambri Farms Internal,Snap Peas,FAM-0644,63.00,ZAR,True
+654,Fambri Farms Internal,Snap Peas,FAM-0645,63.00,ZAR,True
+655,Fambri Farms Internal,Snap Peas (1kg),FAM-0650,63.00,ZAR,True
+656,Fambri Farms Internal,Snap Peas (200g),FAM-0646,63.00,ZAR,True
+657,Fambri Farms Internal,Snap Peas (250g),FAM-0647,63.00,ZAR,True
+658,Fambri Farms Internal,Snap Peas (2kg),FAM-0651,63.00,ZAR,True
+659,Fambri Farms Internal,Snap Peas (500g),FAM-0648,63.00,ZAR,True
+660,Fambri Farms Internal,Snap Peas (750g),FAM-0649,63.00,ZAR,True
+661,Fambri Farms Internal,Spinach,FAM-0652,63.00,ZAR,True
+662,Fambri Farms Internal,Spinach,FAM-0653,63.00,ZAR,True
+663,Fambri Farms Internal,Spinach (100g),FAM-0654,63.00,ZAR,True
+664,Fambri Farms Internal,Spinach (10kg),FAM-0655,63.00,ZAR,True
+665,Fambri Farms Internal,Spinach (150g),FAM-0656,63.00,ZAR,True
+666,Fambri Farms Internal,Spinach (1kg),FAM-0657,63.00,ZAR,True
+667,Fambri Farms Internal,Spinach (200g),FAM-0658,63.00,ZAR,True
+668,Fambri Farms Internal,Spinach (250g),FAM-0659,63.00,ZAR,True
+669,Fambri Farms Internal,Spinach (2kg),FAM-0660,63.00,ZAR,False
+670,Fambri Farms Internal,Spinach (300g),FAM-0661,63.00,ZAR,True
+671,Fambri Farms Internal,Spinach (3kg),FAM-0662,63.00,ZAR,True
+672,Fambri Farms Internal,Spinach (400g),FAM-0663,63.00,ZAR,True
+673,Fambri Farms Internal,Spinach (500g),FAM-0664,63.00,ZAR,False
+674,Fambri Farms Internal,Spinach (50g),FAM-0665,63.00,ZAR,True
+675,Fambri Farms Internal,Spinach (5kg),FAM-0666,63.00,ZAR,True
+676,Fambri Farms Internal,Spinach (600g),FAM-0667,63.00,ZAR,True
+677,Fambri Farms Internal,Spinach (750g),FAM-0668,63.00,ZAR,True
+678,Fambri Farms Internal,Spring Onions,FAM-0669,63.00,ZAR,True
+679,Fambri Farms Internal,Squash (kg),FAM-0670,63.00,ZAR,True
+204,Fambri Farms Internal,Strawberries,FAM-0671,70.00,ZAR,True
+205,Fambri Farms Internal,Strawberries (1kg),FAM-0672,70.00,ZAR,True
+206,Fambri Farms Internal,Strawberries (200g),FAM-0673,70.00,ZAR,True
+207,Fambri Farms Internal,Strawberries (250g),FAM-0674,70.00,ZAR,True
+208,Fambri Farms Internal,Strawberries (2kg),FAM-0675,70.00,ZAR,True
+209,Fambri Farms Internal,Strawberries (500g),FAM-0676,70.00,ZAR,True
+210,Fambri Farms Internal,Strawberries (750g),FAM-0677,70.00,ZAR,True
+680,Fambri Farms Internal,Sun Dried Tomatoes,FAM-0062,63.00,ZAR,True
+681,Fambri Farms Internal,Sun Dried Tomatoes,FAM-0678,63.00,ZAR,True
+682,Fambri Farms Internal,Sun Dried Tomatoes (1kg),FAM-0067,63.00,ZAR,False
+683,Fambri Farms Internal,Sun Dried Tomatoes (200g),FAM-0063,63.00,ZAR,True
+684,Fambri Farms Internal,Sun Dried Tomatoes (250g),FAM-0064,63.00,ZAR,True
+685,Fambri Farms Internal,Sun Dried Tomatoes (2kg),FAM-0068,63.00,ZAR,True
+686,Fambri Farms Internal,Sun Dried Tomatoes (500g),FAM-0065,63.00,ZAR,True
+687,Fambri Farms Internal,Sun Dried Tomatoes (750g),FAM-0066,63.00,ZAR,True
+688,Fambri Farms Internal,Sweet Corn,FAM-0679,63.00,ZAR,True
+689,Fambri Farms Internal,Sweet Corn,FAM-0680,63.00,ZAR,True
+690,Fambri Farms Internal,Sweet Corn (1kg),FAM-0685,63.00,ZAR,True
+691,Fambri Farms Internal,Sweet Corn (200g),FAM-0681,63.00,ZAR,True
+692,Fambri Farms Internal,Sweet Corn (250g),FAM-0682,63.00,ZAR,True
+693,Fambri Farms Internal,Sweet Corn (2kg),FAM-0686,63.00,ZAR,True
+694,Fambri Farms Internal,Sweet Corn (500g),FAM-0683,63.00,ZAR,True
+695,Fambri Farms Internal,Sweet Corn (750g),FAM-0684,63.00,ZAR,True
+211,Fambri Farms Internal,Sweet Melon,FAM-0687,70.00,ZAR,True
+696,Fambri Farms Internal,Sweet Potatoes,FAM-0688,63.00,ZAR,True
+697,Fambri Farms Internal,Sweet Potatoes (10kg),FAM-0689,63.00,ZAR,True
+698,Fambri Farms Internal,Sweet Potatoes (15kg),FAM-0690,63.00,ZAR,True
+699,Fambri Farms Internal,Sweet Potatoes (1kg),FAM-0691,63.00,ZAR,True
+700,Fambri Farms Internal,Sweet Potatoes (20kg),FAM-0692,63.00,ZAR,True
+701,Fambri Farms Internal,Sweet Potatoes (25kg),FAM-0693,63.00,ZAR,True
+702,Fambri Farms Internal,Sweet Potatoes (2kg),FAM-0694,63.00,ZAR,True
+703,Fambri Farms Internal,Sweet Potatoes (3kg),FAM-0695,63.00,ZAR,True
+704,Fambri Farms Internal,Sweet Potatoes (4kg),FAM-0696,63.00,ZAR,True
+705,Fambri Farms Internal,Sweet Potatoes (5kg),FAM-0697,63.00,ZAR,True
+706,Fambri Farms Internal,Sweet Potatoes (6kg),FAM-0698,63.00,ZAR,True
+707,Fambri Farms Internal,Sweet Potatoes (7kg),FAM-0699,63.00,ZAR,True
+708,Fambri Farms Internal,Sweet Potatoes (8kg),FAM-0700,63.00,ZAR,True
+709,Fambri Farms Internal,Sweet Potatoes (9kg),FAM-0701,63.00,ZAR,True
+212,Fambri Farms Internal,Sweetcorn Baby,FAM-0702,70.00,ZAR,True
+710,Fambri Farms Internal,Swiss Chard,FAM-0069,63.00,ZAR,True
+711,Fambri Farms Internal,Swiss Chard,FAM-0703,63.00,ZAR,True
+712,Fambri Farms Internal,Swiss Chard (100g),FAM-0704,63.00,ZAR,True
+713,Fambri Farms Internal,Swiss Chard (150g),FAM-0705,63.00,ZAR,True
+714,Fambri Farms Internal,Swiss Chard (1kg),FAM-0074,63.00,ZAR,True
+715,Fambri Farms Internal,Swiss Chard (200g),FAM-0070,63.00,ZAR,True
+716,Fambri Farms Internal,Swiss Chard (200g),FAM-0706,63.00,ZAR,True
+717,Fambri Farms Internal,Swiss Chard (250g),FAM-0071,63.00,ZAR,True
+718,Fambri Farms Internal,Swiss Chard (250g),FAM-0707,63.00,ZAR,True
+719,Fambri Farms Internal,Swiss Chard (2kg),FAM-0075,63.00,ZAR,True
+720,Fambri Farms Internal,Swiss Chard (300g),FAM-0708,63.00,ZAR,True
+721,Fambri Farms Internal,Swiss Chard (400g),FAM-0709,63.00,ZAR,True
+722,Fambri Farms Internal,Swiss Chard (500g),FAM-0072,63.00,ZAR,True
+723,Fambri Farms Internal,Swiss Chard (500g),FAM-0710,63.00,ZAR,True
+724,Fambri Farms Internal,Swiss Chard (50g),FAM-0711,63.00,ZAR,True
+725,Fambri Farms Internal,Swiss Chard (600g),FAM-0712,63.00,ZAR,True
+726,Fambri Farms Internal,Swiss Chard (750g),FAM-0073,63.00,ZAR,True
+288,Fambri Farms Internal,Thyme,FAM-0714,70.00,ZAR,True
+289,Fambri Farms Internal,Thyme (100g),FAM-0715,70.00,ZAR,True
+727,Fambri Farms Internal,Thyme (150g),FAM-0716,63.00,ZAR,True
+290,Fambri Farms Internal,Thyme (200g),FAM-0717,70.00,ZAR,True
+728,Fambri Farms Internal,Thyme (250g),FAM-0718,63.00,ZAR,True
+729,Fambri Farms Internal,Thyme (300g),FAM-0719,63.00,ZAR,True
+730,Fambri Farms Internal,Thyme (400g),FAM-0720,63.00,ZAR,True
+731,Fambri Farms Internal,Thyme (500g),FAM-0721,63.00,ZAR,True
+291,Fambri Farms Internal,Thyme (50g),FAM-0722,70.00,ZAR,True
+732,Fambri Farms Internal,Thyme (600g),FAM-0723,63.00,ZAR,True
+733,Fambri Farms Internal,Thyme (750g),FAM-0724,63.00,ZAR,True
+734,Fambri Farms Internal,Tomatoes,FAM-0726,63.00,ZAR,True
+735,Fambri Farms Internal,Tomatoes (10kg),FAM-0728,63.00,ZAR,True
+736,Fambri Farms Internal,Tomatoes (15kg),FAM-0729,63.00,ZAR,True
+737,Fambri Farms Internal,Tomatoes (20kg),FAM-0730,63.00,ZAR,True
+738,Fambri Farms Internal,Tomatoes (3kg),FAM-0731,63.00,ZAR,True
+739,Fambri Farms Internal,Tomatoes (5kg),FAM-0732,63.00,ZAR,True
+292,Fambri Farms Internal,Turmeric,FAM-0001,70.00,ZAR,True
+293,Fambri Farms Internal,Turmeric (100g),FAM-0002,70.00,ZAR,True
+294,Fambri Farms Internal,Turmeric (200g),FAM-0003,70.00,ZAR,True
+295,Fambri Farms Internal,Turmeric (250g),FAM-0004,70.00,ZAR,True
+296,Fambri Farms Internal,Turmeric (500g),FAM-0005,70.00,ZAR,True
+297,Fambri Farms Internal,Turmeric (750g),FAM-0006,70.00,ZAR,True
+740,Fambri Farms Internal,Turnips,FAM-0733,63.00,ZAR,False
+213,Fambri Farms Internal,Water Melon,FAM-0734,70.00,ZAR,True
+741,Fambri Farms Internal,Watercress,FAM-0076,63.00,ZAR,True
+742,Fambri Farms Internal,Watercress,FAM-0735,63.00,ZAR,True
+743,Fambri Farms Internal,Watercress (100g),FAM-0736,63.00,ZAR,True
+744,Fambri Farms Internal,Watercress (150g),FAM-0737,63.00,ZAR,True
+745,Fambri Farms Internal,Watercress (1kg),FAM-0081,63.00,ZAR,True
+746,Fambri Farms Internal,Watercress (200g),FAM-0077,63.00,ZAR,True
+747,Fambri Farms Internal,Watercress (200g),FAM-0738,63.00,ZAR,True
+748,Fambri Farms Internal,Watercress (250g),FAM-0078,63.00,ZAR,False
+749,Fambri Farms Internal,Watercress (250g),FAM-0739,63.00,ZAR,True
+750,Fambri Farms Internal,Watercress (2kg),FAM-0082,63.00,ZAR,True
+751,Fambri Farms Internal,Watercress (300g),FAM-0740,63.00,ZAR,True
+752,Fambri Farms Internal,Watercress (400g),FAM-0741,63.00,ZAR,True
+753,Fambri Farms Internal,Watercress (500g),FAM-0079,63.00,ZAR,True
+754,Fambri Farms Internal,Watercress (500g),FAM-0742,63.00,ZAR,True
+755,Fambri Farms Internal,Watercress (50g),FAM-0743,63.00,ZAR,True
+756,Fambri Farms Internal,Watercress (600g),FAM-0744,63.00,ZAR,True
+757,Fambri Farms Internal,Watercress (750g),FAM-0080,63.00,ZAR,True
+214,Fambri Farms Internal,Watermelon,FAM-0745,70.00,ZAR,True
+215,Fambri Farms Internal,White Grapes,FAM-0746,70.00,ZAR,True
+216,Fambri Farms Internal,White Grapes (1kg),FAM-0747,70.00,ZAR,True
+217,Fambri Farms Internal,White Grapes (2kg),FAM-0748,70.00,ZAR,True
+218,Fambri Farms Internal,White Grapes (500g),FAM-0749,70.00,ZAR,True
+219,Fambri Farms Internal,White Grapes (5kg),FAM-0750,70.00,ZAR,True
+758,Fambri Farms Internal,White Onions,FAM-0751,63.00,ZAR,True
+759,Fambri Farms Internal,White Onions (10kg),FAM-0752,63.00,ZAR,True
+760,Fambri Farms Internal,White Onions (1kg),FAM-0753,63.00,ZAR,True
+761,Fambri Farms Internal,White Onions (2kg),FAM-0754,63.00,ZAR,True
+762,Fambri Farms Internal,White Onions (3kg),FAM-0755,63.00,ZAR,True
+763,Fambri Farms Internal,White Onions (4kg),FAM-0756,63.00,ZAR,True
+764,Fambri Farms Internal,White Onions (5kg),FAM-0757,63.00,ZAR,True
+765,Fambri Farms Internal,White Onions (6kg),FAM-0758,63.00,ZAR,True
+766,Fambri Farms Internal,White Onions (7kg),FAM-0759,63.00,ZAR,True
+767,Fambri Farms Internal,White Onions (8kg),FAM-0760,63.00,ZAR,True
+768,Fambri Farms Internal,White Onions (9kg),FAM-0761,63.00,ZAR,True
+769,Fambri Farms Internal,White Onions 10kg,FAM-0762,63.00,ZAR,False
+770,Fambri Farms Internal,White Onions 15kg,FAM-0763,63.00,ZAR,False
+771,Fambri Farms Internal,White Onions 20kg,FAM-0764,63.00,ZAR,True
+772,Fambri Farms Internal,White Onions 5kg,FAM-0765,63.00,ZAR,True
+773,Fambri Farms Internal,Wild Rocket (100g),FAM-0767,63.00,ZAR,True
+774,Fambri Farms Internal,Wild Rocket (200g),FAM-0768,63.00,ZAR,True
+775,Fambri Farms Internal,Wild Rocket (500g),FAM-0769,63.00,ZAR,True
+776,Fambri Farms Internal,Wild Rocket (50g),FAM-0770,63.00,ZAR,True
+777,Fambri Farms Internal,Wild Rocket (bulk kg),FAM-0771,63.00,ZAR,True
+778,Fambri Farms Internal,Yellow Peppers,FAM-0772,63.00,ZAR,True
+779,Fambri Farms Internal,Yellow Peppers (10kg),FAM-0773,63.00,ZAR,True
+780,Fambri Farms Internal,Yellow Peppers (15kg),FAM-0774,63.00,ZAR,True
+781,Fambri Farms Internal,Yellow Peppers (1kg),FAM-0775,63.00,ZAR,True
+782,Fambri Farms Internal,Yellow Peppers (20kg),FAM-0776,63.00,ZAR,True
+783,Fambri Farms Internal,Yellow Peppers (25kg),FAM-0777,63.00,ZAR,False
+784,Fambri Farms Internal,Yellow Peppers (2kg),FAM-0778,63.00,ZAR,True
+785,Fambri Farms Internal,Yellow Peppers (3kg),FAM-0779,63.00,ZAR,True
+786,Fambri Farms Internal,Yellow Peppers (4kg),FAM-0780,63.00,ZAR,True
+787,Fambri Farms Internal,Yellow Peppers (5kg),FAM-0781,63.00,ZAR,True
+788,Fambri Farms Internal,Zucchini,FAM-0782,63.00,ZAR,True
+802,Prudence AgriBusiness,Artichokes,PRU-0083,85.00,ZAR,True
+795,Prudence AgriBusiness,Baby Marrow (6kg),PRU-0132,85.00,ZAR,True
+45,Prudence AgriBusiness,Baby Spinach,BABY_SPINACH,333.33,ZAR,True
+792,Prudence AgriBusiness,Black Grapes (5kg),PRU-0172,85.00,ZAR,True
+789,Prudence AgriBusiness,Brown Mushrooms,PRU-0183,85.00,ZAR,False
+806,Prudence AgriBusiness,Button Mushrooms (250g),PRU-0211,85.00,ZAR,True
+796,Prudence AgriBusiness,Button Mushrooms (750g),PRU-0214,85.00,ZAR,True
+44,Prudence AgriBusiness,Chives,CHIVES,500.00,ZAR,True
+799,Prudence AgriBusiness,Coriander,PRU-0260,85.00,ZAR,False
+803,Prudence AgriBusiness,Crispy Lettuce (750g),PRU-0285,85.00,ZAR,True
+801,Prudence AgriBusiness,Green Peppers (25kg),PRU-0350,85.00,ZAR,True
+807,Prudence AgriBusiness,Iceberg (750g),PRU-0367,85.00,ZAR,True
+790,Prudence AgriBusiness,Kale (100g),PRU-0371,85.00,ZAR,False
+798,Prudence AgriBusiness,Micro Herbs (1kg),PRU-0423,85.00,ZAR,True
+791,Prudence AgriBusiness,Oregano (750g),PRU-0481,85.00,ZAR,True
+47,Prudence AgriBusiness,Parsley,PARSLEY,250.00,ZAR,True
+808,Prudence AgriBusiness,Portabellini Mushrooms (10kg),PRU-0519,85.00,ZAR,True
+804,Prudence AgriBusiness,Potatoes 15kg,PRU-0545,85.00,ZAR,True
+794,Prudence AgriBusiness,Red Peppers (10kg),PRU-0585,85.00,ZAR,True
+43,Prudence AgriBusiness,Rocket,ROCKET,250.00,ZAR,True
+800,Prudence AgriBusiness,Sage (100g),PRU-0628,85.00,ZAR,True
+42,Prudence AgriBusiness,Spinach,SPINACH_BUNDLES,35.00,ZAR,True
+805,Prudence AgriBusiness,Swiss Chard (200g),PRU-0070,85.00,ZAR,True
+793,Prudence AgriBusiness,Swiss Chard (2kg),PRU-0075,85.00,ZAR,True
+797,Prudence AgriBusiness,White Onions (2kg),PRU-0754,85.00,ZAR,True
+46,Prudence AgriBusiness,Wild Rocket (100g),WILD_ROCKET,333.33,ZAR,True
+1,Reese Mushrooms,Brown Mushrooms,BROWN_MUSHROOMS,38.25,ZAR,True
+809,Reese Mushrooms,Brown Mushrooms (10kg),REE-0184,126.50,ZAR,True
+810,Reese Mushrooms,Brown Mushrooms (5kg),REE-0188,126.50,ZAR,True
+2,Reese Mushrooms,Button Mushrooms,BUTTON_MUSHROOMS,68.00,ZAR,True
+3,Reese Mushrooms,Portabellini Mushrooms,PORTABELLINI_MUSHROOMS,39.38,ZAR,True
+811,Reese Mushrooms,Portabellini Mushrooms (10kg),REE-0519,126.50,ZAR,True
+812,Reese Mushrooms,Portabellini Mushrooms (5kg),REE-0523,126.50,ZAR,True
+821,Rooted (Pty) Ltd,Arugula,ROO-0085,85.00,ZAR,False
+817,Rooted (Pty) Ltd,Beans,ROO-0156,85.00,ZAR,True
+827,Rooted (Pty) Ltd,Beans (750g),ROO-0161,85.00,ZAR,True
+816,Rooted (Pty) Ltd,Butternut Squash,ROO-0207,85.00,ZAR,False
+813,Rooted (Pty) Ltd,Cauliflower (head),ROO-0231,85.00,ZAR,True
+829,Rooted (Pty) Ltd,Cocktail Tomatoes (250g),ROO-0255,85.00,ZAR,True
+832,Rooted (Pty) Ltd,Crispy Lettuce (100g),ROO-0274,85.00,ZAR,True
+822,Rooted (Pty) Ltd,Edible Flowers (50g),ROO-0308,85.00,ZAR,True
+818,Rooted (Pty) Ltd,Green Chillies,ROO-0332,85.00,ZAR,True
+815,Rooted (Pty) Ltd,Large Veggie Box,ROO-0034,85.00,ZAR,True
+831,Rooted (Pty) Ltd,Lettuce,ROO-0406,85.00,ZAR,True
+41,Rooted (Pty) Ltd,Micro Herbs,MICRO_HERBS_KG,325.00,ZAR,True
+824,Rooted (Pty) Ltd,Mint (200g),ROO-0429,85.00,ZAR,False
+814,Rooted (Pty) Ltd,Mixed Lettuce (400g),ROO-0446,85.00,ZAR,True
+828,Rooted (Pty) Ltd,Potatoes,ROO-0529,85.00,ZAR,True
+830,Rooted (Pty) Ltd,Red Grapes (5kg),ROO-0568,85.00,ZAR,False
+820,Rooted (Pty) Ltd,Rosemary (200g),ROO-0618,85.00,ZAR,False
+826,Rooted (Pty) Ltd,Small Veggie Box (1kg),ROO-0642,85.00,ZAR,True
+819,Rooted (Pty) Ltd,Squash (kg),ROO-0670,85.00,ZAR,True
+825,Rooted (Pty) Ltd,Sun Dried Tomatoes,ROO-0062,85.00,ZAR,True
+823,Rooted (Pty) Ltd,Thyme (750g),ROO-0724,85.00,ZAR,False
+4,Tshwane Market,Avocado Fuerte,AVOCADO_FUERTE,10.87,ZAR,True
+833,Tshwane Market,Avocado Land Hass,TSH-0102,85.00,ZAR,True
+834,Tshwane Market,Avocados (Hard),TSH-0103,85.00,ZAR,True
+835,Tshwane Market,Avocados (Hard),TSH-0104,85.00,ZAR,True
+836,Tshwane Market,Avocados (Hard),TSH-0105,85.00,ZAR,True
+837,Tshwane Market,Avocados (Hard) (1kg),TSH-0106,85.00,ZAR,True
+838,Tshwane Market,Avocados (Hard) (2kg),TSH-0107,85.00,ZAR,True
+839,Tshwane Market,Avocados (Hard) (3kg),TSH-0108,85.00,ZAR,True
+840,Tshwane Market,Avocados (Semi-Ripe),TSH-0109,85.00,ZAR,True
+841,Tshwane Market,Avocados (Semi-Ripe) (1kg),TSH-0110,85.00,ZAR,True
+842,Tshwane Market,Avocados (Semi-Ripe) (2kg),TSH-0111,85.00,ZAR,True
+843,Tshwane Market,Avocados (Semi-Ripe) (3kg),TSH-0112,85.00,ZAR,True
+844,Tshwane Market,Avocados (Soft),TSH-0113,85.00,ZAR,True
+845,Tshwane Market,Avocados (Soft) (1kg),TSH-0114,85.00,ZAR,True
+846,Tshwane Market,Avocados (Soft) (2kg),TSH-0115,85.00,ZAR,True
+847,Tshwane Market,Avocados (Soft) (3kg),TSH-0116,85.00,ZAR,False
+5,Tshwane Market,Baby Spinach,BABY_SPINACH,73.00,ZAR,True
+6,Tshwane Market,Bananas,BANANAS,44.00,ZAR,True
+848,Tshwane Market,Bananas (10kg),TSH-0140,85.00,ZAR,True
+849,Tshwane Market,Bananas (1kg),TSH-0141,85.00,ZAR,True
+850,Tshwane Market,Bananas (2kg),TSH-0142,85.00,ZAR,True
+851,Tshwane Market,Bananas (3kg),TSH-0143,85.00,ZAR,True
+852,Tshwane Market,Bananas (5kg),TSH-0144,85.00,ZAR,True
+7,Tshwane Market,Black Grapes,BLACK_GRAPES,28.13,ZAR,True
+853,Tshwane Market,Black Grapes (1kg),TSH-0169,85.00,ZAR,True
+854,Tshwane Market,Black Grapes (2kg),TSH-0170,85.00,ZAR,True
+855,Tshwane Market,Black Grapes (500g),TSH-0171,85.00,ZAR,True
+856,Tshwane Market,Black Grapes (5kg),TSH-0172,85.00,ZAR,True
+8,Tshwane Market,Blueberries,BLUEBERRIES,270.00,ZAR,True
+857,Tshwane Market,Blueberries (200g),TSH-0174,85.00,ZAR,True
+858,Tshwane Market,Blueberries (500g),TSH-0175,85.00,ZAR,True
+9,Tshwane Market,Brinjals,BRINJALS,11.32,ZAR,True
+10,Tshwane Market,Broccoli,BROCCOLI,16.36,ZAR,True
+11,Tshwane Market,Butternut,BUTTERNUT,3.80,ZAR,True
+12,Tshwane Market,Cabbage Red,CABBAGE_RED,86.67,ZAR,True
+13,Tshwane Market,Carrots,CARROTS,2.43,ZAR,True
+14,Tshwane Market,Cauliflower,CAULIFLOWER,5.27,ZAR,True
+15,Tshwane Market,Celery,CELERY,18.87,ZAR,True
+16,Tshwane Market,Cherry Tomatoes,CHERRY_TOMATOES,72.00,ZAR,True
+17,Tshwane Market,Crispy Lettuce (100g),CRISPY_LETTUCE_(100G),236.67,ZAR,True
+18,Tshwane Market,Crushed Garlic,CRUSHED_GARLIC,176.47,ZAR,True
+19,Tshwane Market,Cucumbers English,CUCUMBERS_ENGLISH,80.00,ZAR,True
+20,Tshwane Market,Ginger,GINGER,94.44,ZAR,True
+859,Tshwane Market,Grape,TSH-0013,85.00,ZAR,True
+860,Tshwane Market,Grape,TSH-0316,85.00,ZAR,True
+861,Tshwane Market,Grape (1kg),TSH-0018,85.00,ZAR,False
+862,Tshwane Market,Grape (200g),TSH-0014,85.00,ZAR,True
+863,Tshwane Market,Grape (250g),TSH-0015,85.00,ZAR,True
+864,Tshwane Market,Grape (2kg),TSH-0019,85.00,ZAR,True
+865,Tshwane Market,Grape (500g),TSH-0016,85.00,ZAR,True
+866,Tshwane Market,Grape (750g),TSH-0017,85.00,ZAR,True
+867,Tshwane Market,Grape Red Globe,TSH-0020,85.00,ZAR,True
+868,Tshwane Market,Grape Red Globe,TSH-0317,85.00,ZAR,True
+869,Tshwane Market,Grape Red Globe (1kg),TSH-0025,85.00,ZAR,True
+870,Tshwane Market,Grape Red Globe (200g),TSH-0021,85.00,ZAR,True
+871,Tshwane Market,Grape Red Globe (250g),TSH-0022,85.00,ZAR,True
+872,Tshwane Market,Grape Red Globe (2kg),TSH-0026,85.00,ZAR,True
+873,Tshwane Market,Grape Red Globe (500g),TSH-0023,85.00,ZAR,True
+874,Tshwane Market,Grape Red Globe (750g),TSH-0024,85.00,ZAR,True
+875,Tshwane Market,Grape Sugradne,TSH-0027,85.00,ZAR,True
+21,Tshwane Market,Grapefruit,GRAPEFRUIT,16.00,ZAR,True
+22,Tshwane Market,Green Apples,GREEN_APPLES,236.67,ZAR,True
+23,Tshwane Market,Green Beans,GREEN_BEANS,70.00,ZAR,True
+24,Tshwane Market,Green Peppers,GREEN_PEPPERS,15.48,ZAR,True
+25,Tshwane Market,Lemon,LEMON,2.11,ZAR,True
+26,Tshwane Market,Oranges,ORANGES,3.52,ZAR,True
+27,Tshwane Market,Papinos,PAPINOS,80.00,ZAR,True
+28,Tshwane Market,Parsley,PARSLEY,80.00,ZAR,True
+29,Tshwane Market,Patty Pans Yellow,PATTY_PANS_YELLOW,100.00,ZAR,True
+30,Tshwane Market,Pineapple,PINEAPPLE,1.94,ZAR,True
+31,Tshwane Market,Potato Mondial INA,POTATO_MONDIAL_INA,5.77,ZAR,True
+32,Tshwane Market,Red Onions,RED_ONIONS,7.02,ZAR,True
+33,Tshwane Market,Rosemary,ROSEMARY,80.00,ZAR,True
+34,Tshwane Market,Snap Peas,SNAP_PEAS,130.00,ZAR,True
+35,Tshwane Market,Strawberries (1kg),STRAWBERRIES_(1KG),29.89,ZAR,True
+36,Tshwane Market,Sweet Melon,SWEET_MELON,450.00,ZAR,True
+37,Tshwane Market,Sweet Potatoes,SWEET_POTATOES,9.26,ZAR,True
+38,Tshwane Market,Sweetcorn Baby,SWEETCORN_BABY,640.00,ZAR,True
+39,Tshwane Market,Water Melon,WATER_MELON,450.00,ZAR,True
+40,Tshwane Market,Watermelon,WATERMELON,450.00,ZAR,True
