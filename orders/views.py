@@ -541,6 +541,29 @@ def order_item_detail(request, order_id, item_id):
             return Response({'message': 'Order item deleted successfully'}, status=status.HTTP_200_OK)
         
         elif request.method in ['PUT', 'PATCH']:
+            # Log incoming data
+            print(f"[ORDER ITEM UPDATE] Received data: {request.data}")
+            print(f"[ORDER ITEM UPDATE] Current item - Qty: {order_item.quantity}, Unit: {order_item.unit}, Price: {order_item.price}, Product: {order_item.product.id}")
+            
+            # Check if unit is changing - if so, find the matching product with that unit
+            if 'unit' in request.data:
+                new_unit = request.data['unit'].strip()
+                if new_unit and new_unit != order_item.unit:
+                    # Try to find a product with the same name but different unit
+                    from products.models import Product
+                    product_name = order_item.product.name
+                    matching_product = Product.objects.filter(
+                        name=product_name,
+                        unit=new_unit,
+                        department=order_item.product.department
+                    ).first()
+                    
+                    if matching_product:
+                        print(f"[ORDER ITEM UPDATE] Switching product from {order_item.product.id} ({order_item.product.unit}) to {matching_product.id} ({matching_product.unit})")
+                        order_item.product = matching_product
+                    else:
+                        print(f"[ORDER ITEM UPDATE] No matching product found for {product_name} with unit {new_unit}")
+            
             # Update fields if provided
             if 'quantity' in request.data:
                 try:
@@ -563,14 +586,24 @@ def order_item_detail(request, order_id, item_id):
                     return Response({'error': 'price must be a valid number'}, status=status.HTTP_400_BAD_REQUEST)
             
             if 'unit' in request.data:
-                order_item.unit = request.data['unit'].strip()
+                new_unit = request.data['unit'].strip()
+                if new_unit:  # Only update if not empty
+                    order_item.unit = new_unit
+                    print(f"[ORDER ITEM UPDATE] Unit changed to: {new_unit}")
             
             if 'notes' in request.data:
                 order_item.notes = request.data['notes']
             
+            # Recalculate total_price based on updated quantity and price
+            order_item.total_price = order_item.quantity * order_item.price
+            
             # Mark as manually corrected
             order_item.manually_corrected = True
             order_item.save()
+            
+            # Refresh from database to confirm what was actually saved
+            order_item.refresh_from_db()
+            print(f"[ORDER ITEM UPDATE] Saved and verified - Item {order_item.id}: {order_item.product.name}, Qty: {order_item.quantity} {order_item.unit}, Price: R{order_item.price}, Total: R{order_item.total_price}")
             
             # Recalculate order totals
             order.subtotal = sum(item.total_price for item in order.items.all())
@@ -579,7 +612,9 @@ def order_item_detail(request, order_id, item_id):
             
             # Return updated item
             from .serializers import OrderItemSerializer
-            return Response(OrderItemSerializer(order_item).data)
+            serialized_data = OrderItemSerializer(order_item).data
+            print(f"[ORDER ITEM UPDATE] Returning serialized data: {serialized_data}")
+            return Response(serialized_data)
         
     except Exception as e:
         return Response({'error': f'Failed to process item: {str(e)}'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

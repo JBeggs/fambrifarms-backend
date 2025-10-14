@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product, Department, ProductAlert, Recipe
+from .models import Product, Department, ProductAlert, Recipe, MarketProcurementRecommendation, MarketProcurementItem
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -50,4 +50,29 @@ class RecipeSerializer(serializers.ModelSerializer):
             'id', 'product', 'product_name', 'ingredients', 'instructions',
             'prep_time_minutes', 'yield_quantity', 'yield_unit',
             'created_at', 'updated_at'
+        ]
+
+class MarketProcurementItemSerializer(serializers.ModelSerializer):
+    product_name = serializers.CharField(source='product.name', read_only=True)
+    unit = serializers.CharField(source='product.unit', read_only=True)
+    supplier_name = serializers.CharField(source='preferred_supplier.name', read_only=True)
+    supplier_id = serializers.IntegerField(source='preferred_supplier.id', read_only=True)
+    
+    class Meta:
+        model = MarketProcurementItem
+        fields = [
+            'id', 'product', 'product_name', 'unit', 'priority', 'reasoning',
+            'needed_quantity', 'recommended_quantity', 'estimated_unit_price',
+            'estimated_total_cost', 'supplier_name', 'supplier_id',
+            'preferred_supplier', 'supplier_product', 'procurement_method'
+        ]
+
+class MarketProcurementRecommendationSerializer(serializers.ModelSerializer):
+    items = MarketProcurementItemSerializer(many=True, read_only=True)
+    
+    class Meta:
+        model = MarketProcurementRecommendation
+        fields = [
+            'id', 'for_date', 'status', 'total_estimated_cost',
+            'created_at', 'approved_at', 'approved_by', 'items'
         ]

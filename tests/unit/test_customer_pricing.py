@@ -192,6 +192,7 @@ class CustomerPriceListTest(TestCase):
             name='Standard Rule',
             customer_segment='standard',
             base_markup_percentage=Decimal('25.00'),
+            minimum_margin_percentage=Decimal('15.00'),
             effective_from=date.today(),
             created_by=self.admin_user
         )
@@ -297,6 +298,7 @@ class CustomerPriceListItemTest(TestCase):
             name='Test Rule',
             customer_segment='standard',
             base_markup_percentage=Decimal('25.00'),
+            minimum_margin_percentage=Decimal('15.00'),
             effective_from=date.today(),
             created_by=self.admin_user
         )
@@ -389,6 +391,7 @@ class ProductCustomerPriceTest(TestCase):
             name='Test Rule',
             customer_segment='standard',
             base_markup_percentage=Decimal('25.00'),
+            minimum_margin_percentage=Decimal('15.00'),
             effective_from=date.today(),
             created_by=self.admin_user
         )
@@ -434,6 +437,7 @@ class ProductCustomerPriceTest(TestCase):
             name='Test Rule',
             customer_segment='standard',
             base_markup_percentage=Decimal('25.00'),
+            minimum_margin_percentage=Decimal('15.00'),
             effective_from=date.today() - timedelta(days=10),
             created_by=self.admin_user
         )

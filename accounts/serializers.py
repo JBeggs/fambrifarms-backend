@@ -121,6 +121,8 @@ class CustomerSerializer(serializers.ModelSerializer):
                     'business_name': profile.business_name,
                     'branch_name': profile.branch_name,
                     'delivery_address': profile.address,
+                    'city': profile.city,
+                    'postal_code': profile.postal_code,
                     'delivery_notes': profile.delivery_notes,
                     'order_pattern': profile.order_pattern,
                     'payment_terms_days': self._extract_payment_days(profile.payment_terms),

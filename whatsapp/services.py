@@ -21,6 +21,91 @@ Handles classification, parsing, and order creation from WhatsApp messages
 
 User = get_user_model()
 
+# Global cached matcher instance for performance
+_global_smart_matcher = None
+_matcher_last_refresh = None
+_matcher_cache_timeout = 3600  # 1 hour
+
+def get_cached_smart_matcher():
+    """Get cached SmartProductMatcher instance for performance"""
+    global _global_smart_matcher, _matcher_last_refresh
+    import time
+    
+    current_time = time.time()
+    
+    # Create new instance if cache is empty or expired
+    if (_global_smart_matcher is None or 
+        _matcher_last_refresh is None or 
+        current_time - _matcher_last_refresh > _matcher_cache_timeout):
+        
+        from .smart_product_matcher import SmartProductMatcher
+        _global_smart_matcher = SmartProductMatcher()
+        _matcher_last_refresh = current_time
+    
+    return _global_smart_matcher
+
+def get_inventory_status_bulk(product_ids):
+    """
+    Get inventory status for multiple products in a single query
+    
+    Args:
+        product_ids: List of product IDs
+        
+    Returns:
+        dict: product_id -> FinishedInventory object
+    """
+    from inventory.models import FinishedInventory
+    
+    # OPTIMIZATION: Single query with select_related for all products
+    inventory_map = {}
+    inventories = FinishedInventory.objects.filter(
+        product_id__in=product_ids
+    ).select_related('product')
+    
+    for inventory in inventories:
+        inventory_map[inventory.product_id] = inventory
+    
+    return inventory_map
+
+def check_stock_availability_bulk(product_quantity_pairs):
+    """
+    Check stock availability for multiple products at once
+    
+    Args:
+        product_quantity_pairs: List of (product_id, quantity) tuples
+        
+    Returns:
+        dict: product_id -> {'available': bool, 'current_stock': Decimal, 'requested': Decimal}
+    """
+    from decimal import Decimal
+    
+    product_ids = [pair[0] for pair in product_quantity_pairs]
+    inventory_map = get_inventory_status_bulk(product_ids)
+    
+    results = {}
+    for product_id, requested_qty in product_quantity_pairs:
+        requested_decimal = Decimal(str(requested_qty))
+        
+        if product_id in inventory_map:
+            inventory = inventory_map[product_id]
+            available_qty = inventory.available_quantity or Decimal('0')
+            
+            results[product_id] = {
+                'available': available_qty >= requested_decimal,
+                'current_stock': available_qty,
+                'requested': requested_decimal,
+                'inventory_object': inventory
+            }
+        else:
+            results[product_id] = {
+                'available': False,
+                'current_stock': Decimal('0'),
+                'requested': requested_decimal,
+                'inventory_object': None
+            }
+    
+    return results
+
 def classify_message_type(msg_data):
     """
     Classify message type based on content and sender
@@ -357,13 +442,20 @@ def create_order_from_message(message):
 
 def create_order_from_message_with_suggestions(message):
     """
-    Create suggestions for all items in a WhatsApp message - always requires user confirmation
+    Create suggestions for all items in a WhatsApp message with SHALLOME stock checking
+    
+    NEW FLOW:
+    1. Parse message items
+    2. Check SHALLOME stock availability for each item
+    3. Reserve available internal stock immediately
+    4. Generate suggestions for all items (with stock status)
+    5. Identify items needing procurement
     
     Args:
         message: WhatsAppMessage instance
         
     Returns:
-        dict: Always returns confirmation_required status with suggestions for all items
+        dict: Always returns confirmation_required status with suggestions and stock info
     """
     try:
         # Extract company name
@@ -386,8 +478,13 @@ def create_order_from_message_with_suggestions(message):
                 'suggestions': []
             }
         
-        # Parse the message content
-        parsed_result = parse_order_items(message.content)
+        # Clean the message content first (remove stray x characters, etc.)
+        from .message_parser import MessageParser
+        parser = MessageParser()
+        cleaned_content = parser.clean_message_content(message.content)
+        
+        # Parse the cleaned message content
+        parsed_result = parse_order_items(cleaned_content)
         parsed_items = parsed_result['items']
         parsing_failures = parsed_result.get('parsing_failures', [])
         
@@ -399,9 +496,11 @@ def create_order_from_message_with_suggestions(message):
                 'suggestions': []
             }
         
-        # Get suggestions for ALL parsed items
-        matcher = SmartProductMatcher()
+        # OPTIMIZATION: Get suggestions for ALL parsed items WITH STOCK CHECKING
+        matcher = get_cached_smart_matcher()
         items_with_suggestions = []
+        stock_reservations = []  # Track what we reserve
+        procurement_needed = []  # Track what needs procurement
         
         for item_data in parsed_items:
             # Parse the item to get structured data
@@ -418,20 +517,39 @@ def create_order_from_message_with_suggestions(message):
             suggestions_result = matcher.get_suggestions(
                 parsed_message.product_name, 
                 min_confidence=5.0, 
-                max_suggestions=20
+                max_suggestions=30
             )
             
-            # Format suggestions for frontend
+            # Format suggestions for frontend WITH STOCK INFORMATION
             suggestions = []
             if suggestions_result.suggestions:
+                # Get stock information for all suggested products in one query
+                product_ids = [s.product.id for s in suggestions_result.suggestions]
+                from inventory.models import FinishedInventory
+                stock_info = {}
+                for inventory in FinishedInventory.objects.filter(product_id__in=product_ids).select_related('product'):
+                    stock_info[inventory.product_id] = {
+                        'available_quantity': float(inventory.available_quantity or 0),
+                        'reserved_quantity': float(inventory.reserved_quantity or 0),
+                        'total_quantity': float((inventory.available_quantity or 0) + (inventory.reserved_quantity or 0))
+                    }
+                
                 for suggestion in suggestions_result.suggestions:
+                    stock = stock_info.get(suggestion.product.id, {
+                        'available_quantity': 0.0,
+                        'reserved_quantity': 0.0,
+                        'total_quantity': 0.0
+                    })
+                    
                     suggestions.append({
                         'product_id': suggestion.product.id,
                         'product_name': suggestion.product.name,
                         'unit': suggestion.product.unit,
                         'price': float(suggestion.product.price),
                         'confidence_score': suggestion.confidence_score,
-                        'packaging_size': suggestion.product.name.split('(')[1].split(')')[0] if '(' in suggestion.product.name and ')' in suggestion.product.name else None
+                        'packaging_size': suggestion.product.name.split('(')[1].split(')')[0] if '(' in suggestion.product.name and ')' in suggestion.product.name else None,
+                        'stock': stock,
+                        'in_stock': stock['available_quantity'] > 0
                     })
             
             items_with_suggestions.append({
@@ -450,11 +568,15 @@ def create_order_from_message_with_suggestions(message):
         
         # Handle parsing failures as suggestions too
         for failure in parsing_failures:
-            # Get suggestions based on the original name
+            # Get suggestions based on the original text
+            original_text = failure.get('original_text', failure.get('original_name', ''))
+            if not original_text:
+                continue
+                
             suggestions_result = matcher.get_suggestions(
-                failure['original_name'], 
+                original_text, 
                 min_confidence=5.0, 
-                max_suggestions=20
+                max_suggestions=30
             )
             
             suggestions = []
@@ -470,9 +592,9 @@ def create_order_from_message_with_suggestions(message):
                     })
             
             items_with_suggestions.append({
-                'original_text': failure['original_name'],
+                'original_text': original_text,
                 'parsed': {
-                    'product_name': failure['original_name'],
+                    'product_name': original_text,
                     'quantity': failure.get('quantity', 1.0),
                     'unit': failure.get('unit', 'each'),
                     'packaging_size': None,
@@ -489,7 +611,7 @@ def create_order_from_message_with_suggestions(message):
             'message': f'Please confirm {len(items_with_suggestions)} items for {company_name}',
             'customer': {
                 'id': customer.id,
-                'name': customer.username,
+                'name': company_name,
                 'email': customer.email
             },
             'items': items_with_suggestions,
@@ -643,7 +765,7 @@ def get_product_suggestions(product_name):
         matcher = get_product_suggestions._matcher
         
         # Get suggestions for the product
-        suggestions = matcher.get_suggestions(product_name, min_confidence=10.0, max_suggestions=20)
+        suggestions = matcher.get_suggestions(product_name, min_confidence=10.0, max_suggestions=30)
         
         # Convert to the format expected by the frontend
         suggestion_list = []
@@ -898,9 +1020,13 @@ def create_order_items(order, message):
                         # Fix: Use order.restaurant instead of order.customer
                         customer_price = get_customer_specific_price(product, order.restaurant)
                         customer_prices[product.id] = customer_price
+                        print(f"[PRICING_PRE_CALC] {product.name}: R{product.price} -> R{customer_price}")
                     except Exception as pricing_e:
-                        print(f"Pre-pricing error for {product.name}: {pricing_e}")
+                        import traceback
+                        print(f"[PRICING_ERROR] Pre-pricing error for {product.name}: {pricing_e}")
+                        traceback.print_exc()
                         customer_prices[product.id] = product.price
+                        print(f"[PRICING_FALLBACK] Using base price R{product.price} for {product.name}")
             
         except Exception as e:
             print(f"Pre-matching error for {item_data['product_name']}: {e}")
@@ -953,6 +1079,8 @@ def create_order_items(order, message):
             
             # Use pre-calculated pricing to avoid transaction conflicts
             customer_price = customer_prices.get(product.id, product.price)
+            if product.id not in customer_prices:
+                print(f"[PRICING_WARNING] No pre-calculated price for {product.name} (ID: {product.id}), using base price R{product.price}")
             quantity_decimal = Decimal(str(item_data['quantity']))
             
             # Ensure customer_price is a Decimal
@@ -1084,26 +1212,102 @@ def create_order_items(order, message):
         'success_rate': success_rate
     }
 
+def parse_order_item(line):
+    """
+    Parse a single order item line - handles both order and stock formats
+    """
+    # Use the improved single item parser that handles all formats
+    result = parse_single_item(line)
+    if result:
+        # Map the result to expected format
+        return {
+            'name': result.get('product_name'),
+            'quantity': result.get('quantity'),
+            'unit': result.get('unit'),
+            'package_size': result.get('package_size')
+        }
+    
+    # If that fails, try order formats (Qty Unit Product) with dynamic units
+    line = line.strip()
+    
+    # Get database units for patterns
+    db_units = get_database_units()
+    units_pattern = '|'.join(re.escape(unit) for unit in db_units)
+    
+    # Order Pattern 1: "Qty Unit Product (PackageSize)" - "200.0 each Coriander (100g)"
+    match = re.search(rf'^(\d+(?:\.\d+)?)\s+({units_pattern})s?\s+(.+?)\s*\(([^)]+)\).*$', line, re.IGNORECASE)
+    if match:
+        return {
+            'name': clean_product_name(match.group(3).strip()),
+            'quantity': float(match.group(1)),
+            'unit': normalize_unit(match.group(2)),
+            'package_size': match.group(4)
+        }
+    
+    # Order Pattern 2: "Qty Unit Product" - "300.0 each parsley"
+    match = re.search(rf'^(\d+(?:\.\d+)?)\s+({units_pattern})s?\s+(.+)$', line, re.IGNORECASE)
+    if match:
+        return {
+            'name': clean_product_name(match.group(3).strip()),
+            'quantity': float(match.group(1)),
+            'unit': normalize_unit(match.group(2))
+        }
+    
+    # Order Pattern 3: "PackageSize Container Product" - "20kg bag butternut", "30kg bag sweet potatoes"
+    match = re.search(r'^(\d+(?:\.\d+)?)\s*(kg|g|ml|l)\s+(bag|box|packet|punnet|bunch|head)\s+(.+)$', line, re.IGNORECASE)
+    if match:
+        return {
+            'name': clean_product_name(match.group(4).strip()),
+            'quantity': 1.0,  # One container
+            'unit': normalize_unit(match.group(3)),  # bag, box, etc.
+            'package_size': f"{match.group(1)}{match.group(2)}"  # 20kg, 30kg, etc.
+        }
+    
+    # Order Pattern 4: "PackageSize Product" - "5kg tomatoes" (no container specified)
+    match = re.search(r'^(\d+(?:\.\d+)?)\s*(kg|g|ml|l)\s+(.+)$', line, re.IGNORECASE)
+    if match:
+        return {
+            'name': clean_product_name(match.group(3).strip()),
+            'quantity': 1.0,  # No standalone number = quantity 1
+            'unit': normalize_unit(match.group(2)),
+            'package_size': f"{match.group(1)}{match.group(2)}"
+        }
+    
+    # Order Pattern 5: "Qty Container Product" - "6 box round tomatoes", "2 bag carrots"
+    match = re.search(r'^(\d+(?:\.\d+)?)\s+(bag|box|packet|punnet|bunch|head)\s+(.+)$', line, re.IGNORECASE)
+    if match:
+        return {
+            'name': clean_product_name(match.group(3).strip()),
+            'quantity': float(match.group(1)),  # Number of containers
+            'unit': normalize_unit(match.group(2)),  # bag, box, etc.
+            'package_size': None  # No specific package size mentioned
+        }
+    
+    # Order Pattern 6: "Qty x PackageSize Product" - "3 x 5kg tomatoes"
+    match = re.search(r'^(\d+(?:\.\d+)?)\s*(?:×|x)\s*(\d+(?:\.\d+)?)\s*(kg|g|ml|l)\s+(.+)$', line, re.IGNORECASE)
+    if match:
+        return {
+            'name': clean_product_name(match.group(4).strip()),
+            'quantity': float(match.group(1)),  # The standalone number (3)
+            'unit': normalize_unit(match.group(3)),
+            'package_size': f"{match.group(2)}{match.group(3)}"
+        }
+    
+    return None
+
 def parse_order_items(content):
     """
-    Parse order items from message content using SmartProductMatcher
+    Parse order items from message content using the SAME LOGIC as stock parsing
     
     Args:
         content: Message content string
         
     Returns:
-        list: List of parsed item dictionaries
+        dict: Dictionary with 'items' and 'parsing_failures' lists
     """
-    from .smart_product_matcher import SmartProductMatcher
     from .message_parser import MessageParser
     
     try:
-        # Get or create smart matcher instance
-        if not hasattr(parse_order_items, '_matcher'):
-            parse_order_items._matcher = SmartProductMatcher()
-        
-        matcher = parse_order_items._matcher
-        
         # Extract company name to exclude it from product parsing
         message_parser = MessageParser()
         company_name = message_parser.to_canonical_company(content)
@@ -1124,179 +1328,214 @@ def parse_order_items(content):
                     continue
             content_for_parsing = '\n'.join(filtered_lines)
         
-        # Parse the message (excluding company name)
-        parsed_items = matcher.parse_message(content_for_parsing)
+        # Normalize common abbreviations before parsing
+        normalized_content = content_for_parsing
+        normalized_content = re.sub(r'\bpkts\b', 'packets', normalized_content, flags=re.IGNORECASE)
+        normalized_content = re.sub(r'\bpkt\b', 'packet', normalized_content, flags=re.IGNORECASE)
         
-        # Get all lines from the filtered content to identify rejected items
-        content_lines = [line.strip() for line in content_for_parsing.split('\n') if line.strip()]
+        # Get all lines from the filtered content
+        content_lines = [line.strip() for line in normalized_content.split('\n') if line.strip()]
         
-        # Convert to Django's expected format using matched quantities
+        # Parse each line using the same logic as stock parsing
         items = []
         parsing_failures = []
-        for parsed_item in parsed_items:
-            # Check if this is ambiguous packaging that needs suggestions
-            is_ambiguous_packaging = "AMBIGUOUS_PACKAGING" in parsed_item.extra_descriptions
-            
-            if is_ambiguous_packaging:
-                # For ambiguous packaging, always generate suggestions based on product name
-                suggestions = matcher.get_suggestions(parsed_item.product_name, min_confidence=5.0, max_suggestions=20)
-                suggestions_list = []
-                
-                if suggestions.suggestions:
-                    for suggestion in suggestions.suggestions:
-                        suggestions_list.append({
-                            'name': suggestion.product.name,
-                            'confidence': suggestion.confidence_score,
-                            'unit': suggestion.product.unit,
-                            'price': float(suggestion.product.price) if suggestion.product.price else 0.0,
-                            'id': suggestion.product.id
-                        })
-                
-                # Add to parsing_failures instead of items for Flutter display
-                parsing_failure = {
-                    'original_name': parsed_item.product_name,
-                    'failure_reason': 'Ambiguous packaging specification - please specify size (e.g., "5kg box" instead of "box")',
-                    'original_text': parsed_item.original_message,
-                    'error_type': 'parsing_error',
-                    'suggestions': suggestions_list,
-                    'quantity': parsed_item.quantity,
-                    'unit': parsed_item.unit
-                }
-                parsing_failures.append(parsing_failure)
-                # Skip adding to items - only add to parsing_failures
-                continue
-            else:
-                # Normal processing for non-ambiguous items
-                matches = matcher.find_matches(parsed_item)
-                if matches and matches[0].confidence_score >= 60.0:  # Stricter threshold for main matching
-                    best_match = matches[0]
-                    
-                    # Always use database product name when we have a good match
-                    product_name = best_match.product.name
-                    
-                    item = {
-                        'product_name': product_name,
-                        'quantity': best_match.quantity,  # Use matched quantity, not parsed quantity
-                        'unit': best_match.unit,  # Use matched unit, not parsed unit
-                        'original_text': parsed_item.original_message,
-                        'confidence': best_match.confidence_score
-                    }
-                else:
-                    # No good match found - get suggestions for this product
-                    suggestions = matcher.get_suggestions(parsed_item.product_name, min_confidence=5.0, max_suggestions=20)
-                    suggestions_list = []
-                    
-                    if suggestions.suggestions:
-                        for suggestion in suggestions.suggestions:
-                            suggestions_list.append({
-                                'name': suggestion.product.name,
-                                'confidence': suggestion.confidence_score,
-                                'unit': suggestion.product.unit,
-                                'price': float(suggestion.product.price) if suggestion.product.price else 0.0,
-                                'id': suggestion.product.id
-                            })
-                    
-                    # Fallback to parsed values if no good match, but include suggestions
-                    item = {
-                        'product_name': parsed_item.product_name,
-                        'quantity': parsed_item.quantity,
-                        'unit': parsed_item.unit,
-                        'original_text': parsed_item.original_message,
-                        'confidence': 0.0,  # Low confidence since no match found
-                        'suggestions': suggestions_list,
-                        'parsing_error': True,
-                        'error_reason': 'No matching product found in database'
-                    }
-                items.append(item)
         
-        # Handle rejected items (lines that couldn't be parsed due to ambiguous packaging)
-        # Include both items and parsing_failures to avoid processing the same line twice
-        parsed_line_texts = [item['original_text'] for item in items]
-        parsed_line_texts.extend([failure['original_text'] for failure in parsing_failures])
         for line in content_lines:
-            # Skip if this line was already parsed
-            if any(parsed_text.lower() in line.lower() for parsed_text in parsed_line_texts):
+            # Skip lines that are clearly not product descriptions
+            if _is_non_product_line_order(line):
                 continue
-                
-            # Skip company names and common headers
-            if (not re.match(r'^(good\s+morning|hi|hello|order|please)', line.lower()) and
-                len(line) > 3):  # Ignore very short lines
-                
-                # Try to extract a product name from the rejected line
-                # Remove common prefixes and clean up the line
-                clean_line = re.sub(r'^\d+[\.\)]\s*', '', line)  # Remove "1.", "2)", etc.
-                clean_line = re.sub(r'^\d+\s*[x×]\s*', '', clean_line)  # Remove "3x", "2×", etc.
-                clean_line = re.sub(r'\s+\d+\s*[x×]\s*', ' ', clean_line)  # Remove " 3x", " 2×", etc.
-                
-                # Extract potential product name
-                product_name = clean_line
-                
-                # Remove container words and quantities to get the base product name
-                container_words = ['box', 'bag', 'packet', 'pack', 'punnet', 'bunch', 'head', 'each', 'piece']
-                words = clean_line.split()
-                
-                # Find the last container word and remove everything after it
-                last_container_index = -1
-                for i, word in enumerate(words):
-                    if word.lower() in container_words:
-                        last_container_index = i
-                
-                if last_container_index >= 0:
-                    # Keep only words before the last container word
-                    product_name = ' '.join(words[:last_container_index]).strip()
-                else:
-                    # No container word found, try to remove number+unit combinations
-                    if re.search(r'\d+[a-zA-Z]+', clean_line):
-                        parts = re.split(r'\s+(\d+[a-zA-Z]+)', clean_line)
-                        if len(parts) >= 2:
-                            product_name = parts[0].strip()
-                
-                # If product name is empty or too short, use the original line
-                if not product_name or len(product_name) < 2:
-                    product_name = clean_line
-                
-                # Generate suggestions for the rejected item
-                suggestions = matcher.get_suggestions(product_name, min_confidence=5.0, max_suggestions=20)
-                suggestions_list = []
-                
-                if suggestions.suggestions:
-                    for suggestion in suggestions.suggestions:
-                        suggestions_list.append({
-                            'name': suggestion.product.name,
-                            'confidence': suggestion.confidence_score,
-                            'unit': suggestion.product.unit,
-                            'price': float(suggestion.product.price) if suggestion.product.price else 0.0,
-                            'id': suggestion.product.id
-                        })
-                
-                # Add as a rejected item with suggestions
-                item = {
-                    'product_name': product_name,
-                    'quantity': 1.0,  # Default quantity
-                    'unit': None,
+            
+            # Parse the line using the same logic as stock parsing
+            parsed_item = parse_order_item(line)
+            
+            if parsed_item:
+                # Convert to the format expected by the rest of the system
+                items.append({
                     'original_text': line,
-                    'confidence': 0.0,
-                    'suggestions': suggestions_list,
-                    'parsing_error': True,
-                    'error_reason': 'Ambiguous packaging specification - please specify size (e.g., "5kg box" instead of "box")'
-                }
-                items.append(item)
+                    'product_name': parsed_item['name'],
+                    'quantity': parsed_item['quantity'],
+                    'unit': parsed_item['unit'],
+                    'packaging_size': parsed_item.get('package_size', ''),
+                    'confidence': 0.9  # High confidence for successful parsing
+                })
+            else:
+                # Failed to parse - add to parsing failures
+                parsing_failures.append({
+                    'original_text': line,
+                    'error': 'Could not parse quantity and product name'
+                })
         
         return {
             'items': items,
-            'parsing_failures': parsing_failures,
-            'failed_products': []
+            'parsing_failures': parsing_failures
         }
         
     except Exception as e:
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.error(f"Error parsing order items: {e}")
+        print(f"Error in parse_order_items: {e}")
         return {
             'items': [],
-            'parsing_failures': [],
-            'failed_products': []
+            'parsing_failures': [{'original_text': content, 'error': str(e)}]
         }
+
+def _is_non_product_line_order(line: str) -> bool:
+    """Check if a line is clearly not a product description for orders"""
+    line_lower = line.lower().strip()
+    
+    # Skip empty lines
+    if not line_lower:
+        return True
+    
+    # Skip comment lines (lines starting with #)
+    if line.strip().startswith('#'):
+        return True
+        
+    # Skip lines that are clearly greetings or headers
+    non_product_patterns = [
+        r'^(hi|hello|hey|good morning|good afternoon|good evening)',
+        r'^(here is|here\'s) my order',
+        r'^(please|plz|pls) send',
+        r'^(thanks|thank you)',
+        r'^(regards|best regards)',
+        r'^(order|order for)',
+        r'^(for|to) \w+$',  # Lines like "for John" or "to Mary"
+        r'^\w+ and \w+$',  # Lines like "Mugg and Bean"
+        r'^\d+$',  # Just numbers
+        r'^confirmed order:',  # Order confirmation headers
+        r'^original message:',  # Original message headers
+    ]
+    
+    for pattern in non_product_patterns:
+        if re.match(pattern, line_lower):
+            return True
+            
+    return False
+
+# # OLD BROKEN CODE - KEEPING FOR REFERENCE BUT NOT USING
+# def _old_broken_function():
+#     # best_match = matches[0]
+#     # 
+#     # # Always use database product name when we have a good match
+#     # product_name = best_match.product.name
+#     pass
+    
+# def _more_old_broken_code():
+#     # This is orphaned code that needs proper indentation
+#     if True:  # Placeholder condition
+#         item = {
+#             'product_name': 'product_name',  # placeholder
+#             'quantity': 1.0,  # placeholder
+#             'unit': 'unit',  # placeholder
+#             'original_text': 'original_message',  # placeholder
+#             'confidence': 0.0  # placeholder
+#         }
+#     else:
+#         # No good match found - get suggestions for this product
+#         suggestions_list = []
+        
+#         if True:  # placeholder condition
+#             pass  # placeholder for suggestions logic
+        
+#         # Fallback to parsed values if no good match, but include suggestions
+#         item = {
+#             'product_name': 'parsed_product_name',  # placeholder
+#             'quantity': 1.0,  # placeholder
+#             'unit': 'unit',  # placeholder
+#             'original_text': 'original_message',  # placeholder
+#             'confidence': 0.0,  # Low confidence since no match found
+#             'suggestions': suggestions_list,
+#             'parsing_error': True,
+#             'error_reason': 'No matching product found in database'
+#         }
+#         # items.append(item)  # placeholder
+        
+#         # Handle rejected items (lines that couldn't be parsed due to ambiguous packaging)
+#         # Include both items and parsing_failures to avoid processing the same line twice
+#         parsed_line_texts = [item['original_text'] for item in items]
+#         parsed_line_texts.extend([failure['original_text'] for failure in parsing_failures])
+#         for line in content_lines:
+#             # Skip if this line was already parsed
+#             if any(parsed_text.lower() in line.lower() for parsed_text in parsed_line_texts):
+#                 continue
+                
+#             # Skip company names and common headers
+#             if (not re.match(r'^(good\s+morning|hi|hello|order|please)', line.lower()) and
+#                 len(line) > 3):  # Ignore very short lines
+                
+#                 # Try to extract a product name from the rejected line
+#                 # Remove common prefixes and clean up the line
+#                 clean_line = re.sub(r'^\d+[\.\)]\s*', '', line)  # Remove "1.", "2)", etc.
+#                 clean_line = re.sub(r'^\d+\s*[x×]\s*', '', clean_line)  # Remove "3x", "2×", etc.
+#                 clean_line = re.sub(r'\s+\d+\s*[x×]\s*', ' ', clean_line)  # Remove " 3x", " 2×", etc.
+                
+#                 # Extract potential product name
+#                 product_name = clean_line
+                
+#                 # Remove container words and quantities to get the base product name
+#                 container_words = ['box', 'bag', 'packet', 'pack', 'punnet', 'bunch', 'head', 'each', 'piece']
+#                 words = clean_line.split()
+                
+#                 # Find the last container word and remove everything after it
+#                 last_container_index = -1
+#                 for i, word in enumerate(words):
+#                     if word.lower() in container_words:
+#                         last_container_index = i
+                
+#                 if last_container_index >= 0:
+#                     # Keep only words before the last container word
+#                     product_name = ' '.join(words[:last_container_index]).strip()
+#                 else:
+#                     # No container word found, try to remove number+unit combinations
+#                     if re.search(r'\d+[a-zA-Z]+', clean_line):
+#                         parts = re.split(r'\s+(\d+[a-zA-Z]+)', clean_line)
+#                         if len(parts) >= 2:
+#                             product_name = parts[0].strip()
+                
+#                 # If product name is empty or too short, use the original line
+#                 if not product_name or len(product_name) < 2:
+#                     product_name = clean_line
+                
+#                 # Generate suggestions for the rejected item
+#                 suggestions = matcher.get_suggestions(product_name, min_confidence=5.0, max_suggestions=20)
+#                 suggestions_list = []
+                
+#                 if suggestions.suggestions:
+#                     for suggestion in suggestions.suggestions:
+#                         suggestions_list.append({
+#                             'name': suggestion.product.name,
+#                             'confidence': suggestion.confidence_score,
+#                             'unit': suggestion.product.unit,
+#                             'price': float(suggestion.product.price) if suggestion.product.price else 0.0,
+#                             'id': suggestion.product.id
+#                         })
+                
+#                 # Add as a rejected item with suggestions
+#                 item = {
+#                     'product_name': product_name,
+#                     'quantity': 1.0,  # Default quantity
+#                     'unit': None,
+#                     'original_text': line,
+#                     'confidence': 0.0,
+#                     'suggestions': suggestions_list,
+#                     'parsing_error': True,
+#                     'error_reason': 'Ambiguous packaging specification - please specify size (e.g., "5kg box" instead of "box")'
+#                 }
+#                 items.append(item)
+        
+#         return {
+#             'items': items,
+#             'parsing_failures': parsing_failures,
+#             'failed_products': []
+#         }
+        
+#     except Exception as e:
+#         import logging
+#         logger = logging.getLogger(__name__)
+#         logger.error(f"Error parsing order items: {e}")
+#         return {
+#             'items': [],
+#             'parsing_failures': [],
+#             'failed_products': []
+#         }
 
 def detect_and_correct_irregular_format(line):
     """
@@ -1371,17 +1610,34 @@ def detect_and_correct_irregular_format(line):
     return original_line
 
 def get_database_units():
-    """Get all units from database for regex patterns"""
+    """Get all units from database for regex patterns plus common order units"""
     from settings.models import UnitOfMeasure
     try:
         # Get units from the new configuration system
         units = list(UnitOfMeasure.objects.filter(is_active=True).values_list('name', flat=True))
-        return units
     except:
         # Fallback to old method if new system not available
         from products.models import Product
         units = list(Product.objects.values_list('unit', flat=True).distinct())
-        return units
+    
+    # Add common order units that might not be in database
+    common_order_units = [
+        'pkts', 'packets', 'pkt',      # packets
+        'pcs', 'pieces', 'piece',      # pieces  
+        'boxes', 'box',                # boxes
+        'bags', 'bag',                 # bags
+        'bunches', 'bunch',            # bunches
+        'heads', 'head',               # heads
+        'punnets', 'punnet', 'pun',    # punnets
+        'each', 'ea',                  # each
+        'kg', 'g', 'ml', 'l',          # weights/volumes
+        'tubs', 'tub',                 # tubs
+        'trays', 'tray'                # trays
+    ]
+    
+    # Combine and remove duplicates
+    all_units = list(set(units + common_order_units))
+    return [unit for unit in all_units if unit]  # Remove None/empty values
 
 def parse_single_item(line):
     """
@@ -1408,14 +1664,34 @@ def parse_single_item(line):
         # Special pattern for packet items: "3 x mint packet 100g" -> extract 100g as the key info
         (rf'(\d+(?:\.\d+)?)\s*[x×]\s*(.+?)\s+packet\s+(\d+(?:\.\d+)?)\s*g', 'qty_x_product_packet_grams'),
         
-        # Product x Quantity Unit: "Carrots x 10kg", "Onions x 20kg" 
+        # NEW: Product Qty PackageSize Container: "Cherry tomatoes 20 200g punnet" -> product=Cherry tomatoes, qty=20, unit=punnet, package_size=200g
+        # THIS MUST COME FIRST to match before the general patterns below
+        (rf'(.+?)\s+(\d+(?:\.\d+)?)\s+(\d+(?:\.\d+)?)\s*(kg|g|ml|l)\s+(box|bag|packet|punnet|bunch|head)s?', 'product_qty_packagesize_container'),
+        
+        # FIXED: Product x PackageSize Container: "Carrots x 10kg box" -> product=Carrots, qty=1, unit=box, package_size=10kg
+        (rf'(.+?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*(kg|g|ml|l)\s+(box|bag|packet|punnet|bunch|head)s?', 'product_x_packagesize_container'),
+        
+        # FIXED: Product PackageSize Container: "Carrots 10kg box" -> product=Carrots, qty=1, unit=box, package_size=10kg
+        (rf'(.+?)\s+(\d+(?:\.\d+)?)\s*(kg|g|ml|l)\s+(box|bag|packet|punnet|bunch|head)s?', 'product_packagesize_container'),
+        
+        # Product Quantity Unit PackageSize: "Crispy lettuce 2 boxes 2kg" -> product=Crispy lettuce, qty=2, unit=boxes
+        (rf'(.+?)\s+(\d+(?:\.\d+)?)\s+({units_pattern})s?\s+\d+(?:\.\d+)?(?:kg|g|ml|l)', 'product_qty_unit_packagesize'),
+        
+        # Product x Quantity Unit: "Carrots x 10", "Onions x 20" (no weight specified)
         (rf'(.+?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*({units_pattern})', 'product_x_qty_unit'),
         
         # Product x Quantity: "Cucumber x 10", "Broccoli x 5 heads"
         (rf'(.+?)\s*[x×]\s*(\d+(?:\.\d+)?)\s*({units_pattern})?', 'product_x_qty'),
         
+        # FIXED: Product Quantity Unit: "Cocktail tomatoes 5 packet" -> product=Cocktail tomatoes, qty=5, unit=packet
+        # Handle both singular and plural forms of units
+        (rf'(.+?)\s+(\d+(?:\.\d+)?)\s+(packet|box|bag|punnet|bunch|head|piece|each)s?$', 'product_qty_unit_fixed'),
+        
         # Quantity x Unit Product: "2x box lemons", "1 x bag oranges"
         (rf'(\d+(?:\.\d+)?)\s*[x×]\s*({units_pattern})\s+(.+)', 'qty_x_unit_product'),
+        
+        # Product Quantity Unit: "Cocktail tomatoes 1 kg", "Red peppers 2.5 kg"
+        (rf'(.+?)\s+(\d+(?:\.\d+)?)\s+({units_pattern})$', 'product_qty_unit'),
         
         # Quantity Unit Product (with space): "2 box lemons", "5 kg tomatoes"  
         (rf'(\d+(?:\.\d+)?)\s+({units_pattern})\s+(.+)', 'qty_unit_product'),
@@ -1453,6 +1729,38 @@ def parse_single_item(line):
                     quantity = packet_size
                     unit = 'packet'
                     
+                elif pattern_type == 'product_qty_packagesize_container':
+                    # "Cherry tomatoes 20 200g punnet" -> product=Cherry tomatoes, qty=20, unit=punnet, package_size=200g
+                    product_name = groups[0].strip()
+                    quantity = float(groups[1])  # The standalone number (20)
+                    package_size = f"{groups[2]}{groups[3]}"  # e.g., "200g"
+                    container = groups[4]  # e.g., "punnet"
+                    unit = normalize_unit(container)
+                    
+                elif pattern_type == 'product_packagesize_container':
+                    # "Carrots 10kg box" -> product=Carrots, qty=1, unit=box, package_size=10kg
+                    product_name = groups[0].strip()
+                    package_size = f"{groups[1]}{groups[2]}"  # e.g., "10kg"
+                    container = groups[3]  # e.g., "box"
+                    quantity = 1.0  # Default to 1 when no explicit quantity
+                    unit = normalize_unit(container)
+                    
+                elif pattern_type == 'product_x_packagesize_container':
+                    # "Carrots x 10kg box" -> product=Carrots, qty=1, unit=box, package_size=10kg
+                    product_name = groups[0].strip()
+                    # Remove trailing 'x' from product name if present
+                    product_name = re.sub(r'\s*[xX]\s*$', '', product_name).strip()
+                    package_size = f"{groups[1]}{groups[2]}"  # e.g., "10kg"
+                    container = groups[3]  # e.g., "box"
+                    quantity = 1.0  # Default to 1 when no explicit quantity
+                    unit = normalize_unit(container)
+                    
+                elif pattern_type == 'product_qty_unit_packagesize':
+                    # "Crispy lettuce 2 boxes 2kg" -> product=Crispy lettuce, qty=2, unit=boxes
+                    product_name = groups[0].strip()
+                    quantity = float(groups[1])
+                    unit = normalize_unit(groups[2])
+                    
                 elif pattern_type == 'product_x_qty_unit':
                     # "Carrots x 10kg" -> product=Carrots, qty=10, unit=kg
                     product_name = groups[0].strip()
@@ -1464,6 +1772,18 @@ def parse_single_item(line):
                     product_name = groups[0].strip()
                     quantity = float(groups[1])
                     unit = normalize_unit(groups[2]) if groups[2] else 'piece'
+                    
+                elif pattern_type == 'product_qty_unit_fixed':
+                    # "Cocktail tomatoes 5 packet" -> product=Cocktail tomatoes, qty=5, unit=packet
+                    product_name = groups[0].strip()
+                    quantity = float(groups[1])
+                    unit = normalize_unit(groups[2])
+                    
+                elif pattern_type == 'product_qty_unit':
+                    # "Cocktail tomatoes 1 kg" -> product=Cocktail tomatoes, qty=1, unit=kg
+                    product_name = groups[0].strip()
+                    quantity = float(groups[1])
+                    unit = normalize_unit(groups[2])
                     
                 elif pattern_type == 'qty_x_unit_product':
                     # "2x box lemons" -> qty=2, unit=box, product=lemons
@@ -1519,13 +1839,19 @@ def parse_single_item(line):
                 product_name = clean_product_name(product_name)
                 
                 if product_name and quantity > 0:
-                    return {
+                    result = {
                         'quantity': quantity,
                         'unit': unit,
                         'product_name': product_name,
                         'original_text': original_line,
                         'confidence': 0.8
                     }
+                    
+                    # Add package_size if it was extracted
+                    if 'package_size' in locals():
+                        result['package_size'] = package_size
+                    
+                    return result
                     
             except (ValueError, IndexError):
                 continue
@@ -1593,6 +1919,7 @@ def clean_product_name(name):
         name = name.title()
     
     return name.strip()
+
 
 def match_size_specific_product(product_name, quantity, unit):
     """
@@ -1687,11 +2014,8 @@ def get_or_create_product_enhanced(product_name, quantity, unit, customer=None, 
         if confidence_threshold_config:
             confidence_threshold = float(confidence_threshold_config.get_value())
         
-        # Get or create smart matcher instance
-        if not hasattr(get_or_create_product_enhanced, '_matcher'):
-            get_or_create_product_enhanced._matcher = SmartProductMatcher()
-        
-        matcher = get_or_create_product_enhanced._matcher
+        # OPTIMIZATION: Use cached smart matcher instance
+        matcher = get_cached_smart_matcher()
         
         # If we have an original message, re-parse it for better matching
         if original_message:
@@ -2096,7 +2420,9 @@ def parse_stock_message(message):
             stock_date = timezone.now().date()
     
     # Parse stock items (both numbered and unnumbered) with detailed tracking
-    items = {}
+    # Use OrderedDict to preserve original message order
+    from collections import OrderedDict
+    items = OrderedDict()
     parsing_failures = []
     total_lines_processed = 0
     
@@ -2107,6 +2433,7 @@ def parse_stock_message(message):
             
         # Skip header lines and non-stock lines
         skip_patterns = [
+            r'^#',  # Comment lines
             r'^hazvinei',  # Contact info
             r'^stock as at',  # Date header
             r'^temp \d+',  # Temperature
@@ -2130,6 +2457,7 @@ def parse_stock_message(message):
                 items[item['name']] = {
                     'quantity': item['quantity'],
                     'unit': item['unit'],
+                    'package_size': item.get('package_size'),  # Include package size for better matching
                     'original_line': line
                 }
             else:
@@ -2197,16 +2525,27 @@ def create_stock_update_from_message_with_suggestions(message):
                 product_name=item_name,
                 quantity=item_data['quantity'],
                 unit=item_data['unit'],
-                packaging_size=None,
+                packaging_size=item_data.get('package_size'),  # Include package size for better matching
                 extra_descriptions=[],
                 original_message=item_data.get('original_line', item_name)
             )
             
-            # Get suggestions for this item
-            suggestions_result = matcher.get_suggestions(
-                parsed_message.product_name, 
-                min_confidence=5.0, 
-                max_suggestions=20
+            # Get suggestions for this item using find_matches for better context
+            all_matches = matcher.find_matches(parsed_message)
+            
+            # Filter matches above minimum confidence and limit results
+            min_confidence = 50.0  # Higher threshold for better matches
+            max_suggestions = 8    # Fewer suggestions to reduce clutter
+            valid_matches = [m for m in all_matches if m.confidence_score >= min_confidence]
+            suggestions_list = valid_matches[:max_suggestions]
+            
+            # Create suggestions result object
+            from .smart_product_matcher import SmartMatchSuggestions
+            suggestions_result = SmartMatchSuggestions(
+                best_match=suggestions_list[0] if suggestions_list else None,
+                suggestions=suggestions_list,
+                parsed_input=parsed_message,
+                total_candidates=len(all_matches)
             )
             
             # Format suggestions for frontend
@@ -2245,8 +2584,8 @@ def create_stock_update_from_message_with_suggestions(message):
             # Try to get suggestions for failed items
             suggestions_result = matcher.get_suggestions(
                 failure['original_line'], 
-                min_confidence=5.0, 
-                max_suggestions=20
+                min_confidence=50.0, 
+                max_suggestions=8
             )
             
             suggestions = []
@@ -2321,6 +2660,10 @@ def create_stock_update_from_confirmed_suggestions(message_id, confirmed_items, 
             stock_date = datetime.fromisoformat(stock_date).date()
         
         with transaction.atomic():
+            # 🚀 OPTIMIZATION: Bulk fetch all products at once instead of N+1 queries
+            product_ids = [item['product_id'] for item in confirmed_items]
+            products_dict = {p.id: p for p in Product.objects.filter(id__in=product_ids)}
+            
             # Build items dictionary from confirmed suggestions
             items = {}
             for item in confirmed_items:
@@ -2328,15 +2671,15 @@ def create_stock_update_from_confirmed_suggestions(message_id, confirmed_items, 
                 quantity = float(item['quantity'])
                 unit = item['unit']
                 
-                # Get product to use its name as key
-                try:
-                    product = Product.objects.get(id=product_id)
+                # Get product from cached dict
+                product = products_dict.get(product_id)
+                if product:
                     items[product.name] = {
                         'quantity': quantity,
                         'unit': unit,
                         'original_line': item.get('original_text', product.name)
                     }
-                except Product.DoesNotExist:
+                else:
                     logger.warning(f"Product with ID {product_id} not found")
                     continue
             
@@ -2393,7 +2736,8 @@ def create_stock_update_from_confirmed_suggestions(message_id, confirmed_items, 
 
 def parse_stock_item(line):
     """
-    Parse single stock item line (e.g., "1.Spinach 3kg" or "18 Strawberry Pun")
+    Parse a single stock item line into components
+    ONE FUCKING RULE: First standalone number = quantity. Default to 1. DONE.
     
     Args:
         line: Stock item line
@@ -2401,99 +2745,129 @@ def parse_stock_item(line):
     Returns:
         dict: Parsed item data or None
     """
+    import re
+    
+    
     # Remove number prefix: "1.Spinach 3kg" -> "Spinach 3kg"
     line = re.sub(r'^\d+\.', '', line).strip()
     
-    # Check for explicit quantity at the beginning: "18 Strawberry Pun" or "5 Tomatoes 47kg"
-    qty_at_start_match = re.search(r'^(\d+(?:\.\d+)?)\s+(.+?)\s+(\d+(?:\.\d+)?)\s*(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?$', line, re.IGNORECASE)
-    if qty_at_start_match:
-        quantity = float(qty_at_start_match.group(1))  # The explicit quantity (18, 5, etc.)
-        name = qty_at_start_match.group(2).strip()     # The product name
-        # group(3) is the packaging size number (ignored for stock)
-        unit = normalize_unit(qty_at_start_match.group(4))  # The unit
+    # Fix comma decimal separators: "1,3kg" -> "1.3kg"
+    line = re.sub(r'(\d),(\d)', r'\1.\2', line)
+    
+    # STEP 0: Extract unit from ORIGINAL line FIRST (before any processing)
+    unit = None
+    original_lower = line.lower()
+    
+    # Priority order: kg > g > specific containers
+    if 'kg' in original_lower:
+        unit = 'kg'
+    elif 'g' in original_lower and 'kg' not in original_lower:
+        unit = 'g'
+    elif 'box' in original_lower:
+        unit = 'box'
+    elif 'bag' in original_lower:
+        unit = 'bag'
+    elif 'bunch' in original_lower:
+        unit = 'bunch'
+    elif 'head' in original_lower:
+        unit = 'head'
+    elif 'punnet' in original_lower or 'pun' in original_lower:
+        unit = 'punnet'
+    elif 'each' in original_lower:
+        unit = 'each'
+    else:
+        unit = 'each'  # Default
+
+    # STEP 1: Find quantity - first standalone number only
+    quantity = 1.0  # DEFAULT
+    product_name = line
+    
+    # Find all numbers
+    all_numbers = list(re.finditer(r'(\d+(?:\.\d+)?)', line))
+    
+    for match in all_numbers:
+        number = match.group(1)
+        start_pos = match.start()
+        end_pos = match.end()
         
-        return {
-            'name': clean_product_name(name),
+        # Check if attached to unit (like 500g, 2kg, 200ml)
+        # NOTE: Numbers with SPACES before units (like "20 kg") are treated as STANDALONE
+        after_number = line[end_pos:end_pos+10]
+        is_attached = re.match(r'^(g|kg|ml|l)\b', after_number, re.IGNORECASE)  # Only no-space attachments
+        
+        if not is_attached:
+            # First standalone number = quantity
+            quantity = float(number)
+            # Remove from product name
+            product_name = line[:start_pos] + line[end_pos:]
+            product_name = re.sub(r'\s+', ' ', product_name).strip()
+            break
+    
+    # STEP 2: Clean unit from product name if it exists at the end
+    unit_match = re.search(r'\b(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)\s*$', product_name, re.IGNORECASE)
+    if unit_match:
+        product_name = product_name[:unit_match.start()].strip()
+    
+    # STEP 3: Extract package size
+    package_size = None
+    package_match = re.search(r'(\d+(?:\.\d+)?)(g|kg|ml|l)\b', line, re.IGNORECASE)
+    if package_match:
+        package_size = f"{package_match.group(1)}{package_match.group(2)}"
+        # Clean from product name
+        product_name = re.sub(r'\d+(?:\.\d+)?(g|kg|ml|l)\b', '', product_name, flags=re.IGNORECASE).strip()
+        product_name = re.sub(r'\s+', ' ', product_name).strip()
+    
+    # Unit is already determined from original line - no fallback needed
+    
+    # Clean product name
+    product_name = clean_product_name(product_name)
+    
+    if not product_name:
+        return None
+    
+    result = {
+        'name': product_name,
             'quantity': quantity,
             'unit': unit
         }
     
-    # Check for explicit quantity at the beginning (simple): "18 Strawberry Pun"
-    simple_qty_at_start_match = re.search(r'^(\d+(?:\.\d+)?)\s+(.+?)\s+(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?$', line, re.IGNORECASE)
-    if simple_qty_at_start_match:
-        quantity = float(simple_qty_at_start_match.group(1))  # The explicit quantity
-        name = simple_qty_at_start_match.group(2).strip()     # The product name
-        unit = normalize_unit(simple_qty_at_start_match.group(3))  # The unit
+    if package_size:
+        result['package_size'] = package_size
+    
+    return result
+
+def _is_non_product_line_order(line: str) -> bool:
+    """Check if a line is clearly not a product description for orders"""
+    line_lower = line.lower().strip()
+    
+    # Skip empty lines
+    if not line_lower:
+        return True
+    
+    # Skip comment lines (lines starting with #)
+    if line.strip().startswith('#'):
+        return True
         
-        return {
-            'name': clean_product_name(name),
-            'quantity': quantity,
-            'unit': unit
-        }
+    # Skip lines that are clearly greetings or headers
+    non_product_patterns = [
+        r'^(hi|hello|hey|good morning|good afternoon|good evening)',
+        r'^(here is|here\'s) my order',
+        r'^(please|plz|pls) send',
+        r'^(thanks|thank you)',
+        r'^(regards|best regards)',
+        r'^(order|order for)',
+        r'^(for|to) \w+$',  # Lines like "for John" or "to Mary"
+        r'^\w+ and \w+$',  # Lines like "Mugg and Bean"
+        r'^\d+$',  # Just numbers
+        r'^confirmed order:',  # Order confirmation headers
+        r'^original message:',  # Original message headers
+    ]
     
-    # Check for quantity in the middle: "Strawberry 18 Pun" 
-    qty_in_middle_match = re.search(r'^(.+?)\s+(\d+(?:\.\d+)?)\s+(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?$', line, re.IGNORECASE)
-    if qty_in_middle_match:
-        name = qty_in_middle_match.group(1).strip()     # The product name
-        quantity = float(qty_in_middle_match.group(2))  # The explicit quantity (18, etc.)
-        unit = normalize_unit(qty_in_middle_match.group(3))  # The unit
-        
-        return {
-            'name': clean_product_name(name),
-            'quantity': quantity,
-            'unit': unit
-        }
-    
-    # Handle complex format: "Red onions 2bag (18kg)" or "Parsley 3kg( Fresh)"
-    complex_match = re.search(r'(.+?)\s+(\d+(?:\.\d+)?)\s*(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?\s*\([^)]*\)', line, re.IGNORECASE)
-    if complex_match:
-        name = complex_match.group(1).strip()
-        # For stock items without explicit quantity, default to 1.0
-        quantity = 1.0  # No explicit quantity, so default to 1
-        unit = normalize_unit(complex_match.group(3))
-        
-        return {
-            'name': clean_product_name(name),
-            'quantity': quantity,
-            'unit': unit
-        }
-    
-    # Parse items without explicit quantity: "Tomatoes 47kg" or "Green Grapes 3 pun"
-    # Try with space first: "Green Grapes 3 pun"
-    match = re.search(r'(.+?)\s+(\d+(?:\.\d+)?)\s*(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?$', line, re.IGNORECASE)
-    
-    # If no match, try without space: "Green Grapes3pun" or "Parsley1.5kg"
-    if not match:
-        match = re.search(r'(.+?)(\d+(?:\.\d+)?)\s*(kg|g|ml|l|pcs?|pieces?|boxes?|box|bags?|bag|bunches?|bunch|heads?|head|punnets?|punnet|pun|each)s?$', line, re.IGNORECASE)
-    
-    # If still no match, try without unit (default to "piece"): "Avo Soft 5"
-    if not match:
-        match = re.search(r'(.+?)\s+(\d+(?:\.\d+)?)$', line, re.IGNORECASE)
-        if match:
-            name = match.group(1).strip()
-            # For stock items without explicit quantity, default to 1.0
-            quantity = 1.0  # No explicit quantity, so default to 1
-            unit = 'piece'  # Default unit when none specified
+    for pattern in non_product_patterns:
+        if re.match(pattern, line_lower):
+            return True
             
-            return {
-                'name': clean_product_name(name),
-                'quantity': quantity,
-                'unit': unit
-            }
-    
-    if match:
-        name = match.group(1).strip()
-        # For stock items, the number IS the quantity (e.g., "Red Onions 18kg" = 18kg of Red Onions)
-        quantity = float(match.group(2))  # Use the captured number as quantity
-        unit = normalize_unit(match.group(3))
-        
-        return {
-            'name': clean_product_name(name),
-            'quantity': quantity,
-            'unit': unit
-        }
-    
-    return None
+    return False
 
 def get_product_alias(product_name):
     """
@@ -2692,31 +3066,46 @@ def select_best_product_match(product_name, products):
         if p.name.lower().strip() == product_name_lower:
             return p
     
-    # Strategy 2: Prefer products without parentheses (more generic)
+    # Strategy 2: Exact match ignoring case and extra words (e.g., "Spinach" should match "Spinach" not "Baby Spinach")
+    for p in products:
+        p_name_lower = p.name.lower().strip()
+        # Check if the product name starts with the search term (avoids "Baby Spinach" matching "Spinach")
+        if p_name_lower.startswith(product_name_lower + ' ') or p_name_lower == product_name_lower:
+            return p
+    
+    # Strategy 3: Prefer products without parentheses (more generic)
     simple_products = [p for p in products if '(' not in p.name]
     if simple_products:
+        # Among simple products, prefer exact word matches
+        for p in simple_products:
+            p_words = p.name.lower().split()
+            if product_name_lower in p_words:
+                return p
         return simple_products[0]
     
-    # Strategy 3: For avocados, prefer "Hard" as default
+    # Strategy 4: For avocados, prefer "Hard" as default
     if 'avo' in product_name_lower:
         for p in products:
             if 'hard' in p.name.lower():
                 return p
     
-    # Strategy 4: For mushrooms, prefer "Brown" as default
+    # Strategy 5: For mushrooms, prefer "Brown" as default
     if 'mushroom' in product_name_lower:
         for p in products:
             if 'brown' in p.name.lower():
                 return p
     
-    # Strategy 5: For cabbage, prefer "Green" as default
+    # Strategy 6: For cabbage, prefer "Green" as default
     if 'cabbage' in product_name_lower:
         for p in products:
             if 'green' in p.name.lower():
                 return p
     
-    # Fallback: Return first match
-    return products.first()
+    # Strategy 7: Prefer shorter names (more generic) over longer ones
+    sorted_products = sorted(products, key=lambda p: len(p.name))
+    
+    # Fallback: Return shortest match (most generic)
+    return sorted_products[0]
 
 def determine_order_day(message_date):
     """
@@ -2918,8 +3307,8 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
         reset_summary = reset_all_stock_levels()
         print(f"[STOCK] Reset {reset_summary['total_reset']} items to 0 before processing new stock take")
     
-    # Get unprocessed stock updates
-    unprocessed_updates = StockUpdate.objects.filter(processed=False)
+    # 🚀 OPTIMIZATION: Prefetch related message data to avoid N+1 queries
+    unprocessed_updates = StockUpdate.objects.filter(processed=False).select_related('message')
     
     if not unprocessed_updates.exists():
         return {
@@ -2944,6 +3333,37 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
     except:
         system_user = None
     
+    # 🚀 OPTIMIZATION: Pre-cache ALL products to avoid repeated database hits
+    all_products = list(Product.objects.all())
+    products_by_name_exact = {}
+    products_by_name_lower = {}
+    products_by_name_contains = {}
+    
+    # Build lookup indexes for fast matching
+    for product in all_products:
+        name_lower = product.name.lower()
+        
+        # Exact match index
+        if name_lower not in products_by_name_exact:
+            products_by_name_exact[name_lower] = []
+        products_by_name_exact[name_lower].append(product)
+        
+        # Contains match index (for partial matching)
+        for i in range(len(name_lower)):
+            for j in range(i+3, len(name_lower)+1):  # Min 3 chars
+                substring = name_lower[i:j]
+                if substring not in products_by_name_contains:
+                    products_by_name_contains[substring] = []
+                products_by_name_contains[substring].append(product)
+    
+    print(f"[STOCK] Cached {len(all_products)} products for fast lookup")
+
+    # 🚀 OPTIMIZATION: Collect all inventory updates for bulk operations
+    inventory_updates = []  # For bulk_update
+    inventory_creates = []  # For bulk_create
+    product_updates = []    # For bulk_update
+    stock_movements = []    # For bulk_create
+    
     with transaction.atomic():
         for stock_update in unprocessed_updates:
             try:
@@ -2963,67 +3383,78 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
                         'message_id': stock_update.message.message_id if stock_update.message else None
                     }
                     
-                    # Try to match product by name with enhanced matching logic
+                    # 🚀 OPTIMIZED: Use cached lookups instead of database queries
                     product = None
                     matching_info = []
                     matching_method = None
                     
-                    # Step 1: Try exact match
-                    try:
-                        products = Product.objects.filter(name__iexact=product_name)
-                        if products.count() == 1:
-                            product = products.first()
+                    product_name_lower = product_name.lower()
+                    
+                    # Step 1: Try exact match using cache
+                    if product_name_lower in products_by_name_exact:
+                        products = products_by_name_exact[product_name_lower]
+                        if len(products) == 1:
+                            product = products[0]
                             matching_method = 'exact_match'
-                        elif products.count() > 1:
+                        elif len(products) > 1:
                             # Multiple matches - prefer kg unit as default
-                            kg_product = products.filter(unit='kg').first()
+                            kg_product = next((p for p in products if p.unit == 'kg'), None)
                             if kg_product:
                                 product = kg_product
                                 matching_method = 'exact_match_kg_preferred'
                             else:
-                                product = products.first()
+                                product = products[0]
                                 matching_method = 'exact_match_first'
-                        else:
-                            raise Product.DoesNotExist()
-                    except Product.DoesNotExist:
-                        # Step 2: Try with aliases
+                    
+                    # Step 2: Try with aliases using cache
+                    if not product:
                         aliased_name = get_product_alias(product_name)
                         if aliased_name != product_name:
-                            try:
-                                alias_products = Product.objects.filter(name__iexact=aliased_name)
-                                if alias_products.count() == 1:
-                                    product = alias_products.first()
-                                elif alias_products.count() > 1:
+                            aliased_name_lower = aliased_name.lower()
+                            if aliased_name_lower in products_by_name_exact:
+                                alias_products = products_by_name_exact[aliased_name_lower]
+                                if len(alias_products) == 1:
+                                    product = alias_products[0]
+                                elif len(alias_products) > 1:
                                     # Multiple matches - prefer kg unit as default
-                                    kg_product = alias_products.filter(unit='kg').first()
+                                    kg_product = next((p for p in alias_products if p.unit == 'kg'), None)
                                     if kg_product:
                                         product = kg_product
                                     else:
-                                        product = alias_products.first()
-                                else:
-                                    raise Product.DoesNotExist()
+                                        product = alias_products[0]
                                 matching_method = 'alias_match'
                                 matching_info.append(f"Used alias: '{product_name}' -> '{aliased_name}'")
-                            except Product.DoesNotExist:
-                                pass
                         
-                        # Step 3: Try partial match if no alias worked
+                    # Step 3: Try partial match using cache
                         if not product:
-                            products = Product.objects.filter(name__icontains=product_name)
-                            if products.count() == 1:
-                                product = products.first()
+                        # Find products containing the product name
+                            matching_products = []
+                            for cached_product in all_products:
+                                if product_name_lower in cached_product.name.lower():
+                                    matching_products.append(cached_product)
+                            
+                            if len(matching_products) == 1:
+                                product = matching_products[0]
                                 matching_method = 'partial_match'
-                            elif products.count() > 1:
-                                # Multiple matches - use smart selection
-                                product = select_best_product_match(product_name, products)
+                            elif len(matching_products) > 1:
+                                    # Multiple matches - use smart selection
+                                product = select_best_product_match(product_name, matching_products)
                                 matching_method = 'smart_selection'
-                                matching_info.append(f"Multiple matches found: {[p.name for p in products]}")
+                                matching_info.append(f"Multiple matches found: {[p.name for p in matching_products]}")
                                 matching_info.append(f"Smart selection chose: '{product.name}'")
-                                processing_warnings.append(f"Multiple matches for '{product_name}': {[p.name for p in products]}. Selected: '{product.name}'")
-                    
+                                processing_warnings.append(f"Multiple matches for '{product_name}': {[p.name for p in matching_products]}. Selected: '{product.name}'")
+                        
                     if not product:
-                        # Enhanced error reporting for failed items
-                        similar_products = Product.objects.filter(name__icontains=product_name[:3])[:3]
+                        # Enhanced error reporting for failed items using cache
+                        similar_products = []
+                        if len(product_name) >= 3:
+                            prefix = product_name_lower[:3]
+                            for cached_product in all_products:
+                                if prefix in cached_product.name.lower():
+                                    similar_products.append(cached_product)
+                                    if len(similar_products) >= 3:  # Limit to 3
+                                        break
+                        
                         failure_reason = "Product not found"
                         suggestions = []
                         
@@ -3046,21 +3477,60 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
                         continue
                     
                     # Get or create FinishedInventory record
-                    inventory, created = FinishedInventory.objects.get_or_create(
-                        product=product,
-                        defaults={
-                            'available_quantity': 0,
-                            'reserved_quantity': 0,
-                            'minimum_level': product.minimum_stock or 10,
-                            'reorder_level': product.minimum_stock or 20,
-                            'average_cost': product.price or 0,
-                        }
-                    )
+                    # 🚀 OPTIMIZED: Collect for bulk operations instead of individual saves
+                    from decimal import Decimal
+                    new_quantity = Decimal(str(quantity))
                     
-                    # Calculate the difference
-                    old_quantity = inventory.available_quantity or 0
-                    new_quantity = quantity
-                    difference = new_quantity - old_quantity
+                    # Get existing inventory or prepare for creation
+                    try:
+                        inventory = FinishedInventory.objects.get(product=product)
+                        old_quantity = inventory.available_quantity or Decimal('0')
+                        difference = new_quantity - old_quantity
+                        created = False
+                        
+                        if difference != 0:
+                            # Collect for bulk update
+                            inventory.available_quantity = new_quantity
+                            inventory_updates.append(inventory)
+                            
+                            # Collect product update
+                            product.stock_level = new_quantity
+                            product_updates.append(product)
+                            
+                            products_updated += 1
+                    except FinishedInventory.DoesNotExist:
+                        # Collect for bulk create
+                        inventory = FinishedInventory(
+                            product=product,
+                            available_quantity=new_quantity,
+                            reserved_quantity=0,
+                            minimum_level=product.minimum_stock or 10,
+                            reorder_level=product.minimum_stock or 20,
+                            average_cost=product.price or 0,
+                        )
+                        inventory_creates.append(inventory)
+                        
+                        # Collect product update
+                        product.stock_level = new_quantity
+                        product_updates.append(product)
+                        
+                        old_quantity = Decimal('0')
+                        difference = new_quantity
+                        created = True
+                        products_updated += 1
+                    
+                    # Create stock movement for bulk create
+                    movement_reference = f"SHALLOME-{stock_update.stock_date.strftime('%Y%m%d')}"
+                    if system_user and difference != 0:
+                        stock_movements.append(StockMovement(
+                            movement_type='finished_adjust',
+                            reference_number=movement_reference,
+                            product=product,
+                            quantity=difference,
+                            user=system_user,
+                            notes=f"Stock update from SHALLOME message on {stock_update.stock_date}. "
+                                  f"Updated from {old_quantity} to {new_quantity} {unit}"
+                        ))
                     
                     # Create successful item record
                     parsed_item = {
@@ -3073,33 +3543,9 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
                         'new_quantity': float(new_quantity),
                         'quantity_difference': float(difference),
                         'inventory_created': created,
-                        'status': 'updated' if difference != 0 else 'no_change'
+                        'status': 'updated' if difference != 0 else 'no_change',
+                        'movement_reference': movement_reference if difference != 0 else None
                     }
-                    
-                    if difference != 0:
-                        # Update inventory
-                        inventory.available_quantity = new_quantity
-                        inventory.save()
-                        
-                        # Update product stock level to match
-                        product.stock_level = new_quantity
-                        product.save()
-                        
-                        # Create stock movement record
-                        movement_reference = f"SHALLOME-{stock_update.stock_date.strftime('%Y%m%d')}"
-                        if system_user:
-                            StockMovement.objects.create(
-                                movement_type='finished_adjust',
-                                reference_number=movement_reference,
-                                product=product,
-                                quantity=difference,
-                                user=system_user,
-                                notes=f"Stock update from SHALLOME message on {stock_update.stock_date}. "
-                                      f"Updated from {old_quantity} to {new_quantity} {unit}"
-                            )
-                        
-                        parsed_item['movement_reference'] = movement_reference
-                        products_updated += 1
                     
                     # Add to parsed items
                     parsed_items.append(parsed_item)
@@ -3112,6 +3558,39 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
                 
             except Exception as e:
                 errors.append(f"Error processing stock update {stock_update.id}: {str(e)}")
+        
+        # 🚀 BULK OPERATIONS: Execute all database operations at once
+        print(f"[STOCK] Executing bulk operations...")
+        
+        # Bulk create new inventory records
+        if inventory_creates:
+            FinishedInventory.objects.bulk_create(inventory_creates, batch_size=100)
+            print(f"[STOCK] Bulk created {len(inventory_creates)} inventory records")
+        
+        # Bulk update existing inventory records
+        if inventory_updates:
+            FinishedInventory.objects.bulk_update(
+                inventory_updates, 
+                ['available_quantity'], 
+                batch_size=100
+            )
+            print(f"[STOCK] Bulk updated {len(inventory_updates)} inventory records")
+        
+        # Bulk update product stock levels
+        if product_updates:
+            Product.objects.bulk_update(
+                product_updates, 
+                ['stock_level'], 
+                batch_size=100
+            )
+            print(f"[STOCK] Bulk updated {len(product_updates)} product stock levels")
+        
+        # Bulk create stock movements
+        if stock_movements:
+            StockMovement.objects.bulk_create(stock_movements, batch_size=100)
+            print(f"[STOCK] Bulk created {len(stock_movements)} stock movements")
+        
+        print(f"[STOCK] Bulk operations completed successfully!")
     
     # Calculate summary statistics
     total_items_processed = len(parsed_items) + len(failed_items)
@@ -3299,3 +3778,893 @@ def get_stock_take_data(only_with_stock=True):
         'products_needing_attention': len([p for p in products_data if p['needs_attention']]),
         'last_updated': StockUpdate.objects.filter(processed=True).order_by('-stock_date').first()
     }
+
+
+# ========================================
+# NEW PROCUREMENT FLOW - INVENTORY-AWARE MATCHING
+# ========================================
+
+def get_inventory_aware_suggestions(parsed_item, customer=None):
+    """
+    Get product suggestions with real-time SHALLOME stock availability
+    
+    Args:
+        parsed_item: Dict with product_name, quantity, unit
+        customer: Customer instance (for future priority logic)
+        
+    Returns:
+        List of suggestions with stock availability and fulfillment options
+    """
+    from products.models import Product
+    from inventory.models import FinishedInventory
+    from whatsapp.smart_product_matcher import SmartProductMatcher
+    
+    # Get base product suggestions
+    matcher = SmartProductMatcher()
+    suggestions_result = matcher.get_suggestions(
+        parsed_item['product_name'], 
+        min_confidence=5.0, 
+        max_suggestions=20
+    )
+    
+    inventory_aware_suggestions = []
+    
+    if suggestions_result.suggestions:
+        for suggestion in suggestions_result.suggestions:
+            product = suggestion.product
+            requested_quantity = parsed_item['quantity']
+            
+            # Check inventory availability
+            try:
+                inventory = FinishedInventory.objects.get(product=product)
+                available_quantity = inventory.available_quantity or 0
+            except FinishedInventory.DoesNotExist:
+                available_quantity = 0
+            
+            # Calculate fulfillment options
+            fulfillment_options = calculate_fulfillment_options(
+                product, requested_quantity, available_quantity
+            )
+            
+            inventory_aware_suggestions.append({
+                'product_id': product.id,
+                'product_name': product.name,
+                'unit': product.unit,
+                'price': float(product.price),
+                'confidence_score': suggestion.confidence_score,
+                'available_quantity': float(available_quantity),
+                'can_fulfill': any(opt['can_fulfill'] for opt in fulfillment_options),
+                'fulfillment_options': fulfillment_options,
+                'stock_status': get_stock_status(available_quantity, requested_quantity)
+            })
+    
+    return inventory_aware_suggestions
+
+
+def calculate_fulfillment_options(product, requested_quantity, available_quantity):
+    """
+    Calculate different ways to fulfill the requested quantity from available stock
+    
+    Args:
+        product: Product instance
+        requested_quantity: Decimal - amount requested
+        available_quantity: Decimal - amount available in stock
+        
+    Returns:
+        List of fulfillment option dictionaries
+    """
+    from decimal import Decimal
+    
+    options = []
+    requested_qty = Decimal(str(requested_quantity))
+    available_qty = Decimal(str(available_quantity))
+    
+    # Option 1: Exact match (if we have enough)
+    if available_qty >= requested_qty:
+        options.append({
+            'method': 'exact_match',
+            'description': f'Reserve {requested_qty}{product.unit} from available stock',
+            'reserve_quantity': requested_qty,
+            'can_fulfill': True,
+            'remaining_stock': available_qty - requested_qty,
+            'efficiency': 100  # Perfect match
+        })
+    
+    # Option 2: Partial fulfillment (if we have some but not enough)
+    if available_qty > 0 and available_qty < requested_qty:
+        shortfall = requested_qty - available_qty
+        options.append({
+            'method': 'partial_fulfillment',
+            'description': f'Reserve {available_qty}{product.unit} from stock, need {shortfall}{product.unit} from procurement',
+            'reserve_quantity': available_qty,
+            'shortfall_quantity': shortfall,
+            'can_fulfill': False,  # Needs procurement for complete fulfillment
+            'remaining_stock': Decimal('0'),
+            'efficiency': int((available_qty / requested_qty) * 100)
+        })
+    
+    # Option 3: Alternative package sizes (future enhancement)
+    # This would check for related products like 2kg bags vs 5kg boxes
+    alternative_options = find_alternative_package_options(product, requested_qty)
+    options.extend(alternative_options)
+    
+    # If no stock available
+    if available_qty == 0:
+        options.append({
+            'method': 'procurement_required',
+            'description': f'No stock available - procurement required for {requested_qty}{product.unit}',
+            'reserve_quantity': Decimal('0'),
+            'shortfall_quantity': requested_qty,
+            'can_fulfill': False,
+            'remaining_stock': Decimal('0'),
+            'efficiency': 0
+        })
+    
+    return options
+
+
+def find_alternative_package_options(product, requested_quantity):
+    """
+    Find alternative packaging options for the same base product
+    
+    Args:
+        product: Product instance
+        requested_quantity: Decimal - amount requested
+        
+    Returns:
+        List of alternative fulfillment options
+    """
+    from products.models import Product
+    from inventory.models import FinishedInventory
+    from decimal import Decimal
+    
+    alternatives = []
+    requested_qty = Decimal(str(requested_quantity))
+    
+    # Extract base product name (remove packaging info)
+    base_name = product.name.split('(')[0].strip()
+    
+    # Find related products with same base name
+    related_products = Product.objects.filter(
+        name__icontains=base_name
+    ).exclude(id=product.id)
+    
+    for related_product in related_products:
+        try:
+            inventory = FinishedInventory.objects.get(product=related_product)
+            available_qty = inventory.available_quantity or 0
+            
+            if available_qty > 0:
+                # Try to calculate if this package size can fulfill the request
+                package_info = extract_package_size(related_product.name)
+                if package_info:
+                    package_size = package_info['size']
+                    
+                    # Calculate how many packages needed
+                    packages_needed = (requested_qty / package_size).quantize(Decimal('0.01'))
+                    
+                    if available_qty >= packages_needed:
+                        alternatives.append({
+                            'method': 'alternative_packaging',
+                            'product_id': related_product.id,
+                            'product_name': related_product.name,
+                            'description': f'Use {packages_needed} x {related_product.name}',
+                            'reserve_quantity': packages_needed,
+                            'package_size': package_size,
+                            'can_fulfill': True,
+                            'remaining_stock': available_qty - packages_needed,
+                            'efficiency': 95  # Slightly less efficient than exact match
+                        })
+        except FinishedInventory.DoesNotExist:
+            continue
+    
+    return alternatives
+
+
+def extract_package_size(product_name):
+    """
+    Extract package size from product name
+    
+    Args:
+        product_name: String like "Potatoes (2kg bag)" or "Tomatoes (5kg box)"
+        
+    Returns:
+        Dict with size info or None
+    """
+    import re
+    from decimal import Decimal
+    
+    # Look for patterns like (2kg), (5kg box), (1kg bag)
+    pattern = r'\((\d+(?:\.\d+)?)(kg|g|l|ml)\s*(?:bag|box|packet|punnet)?\)'
+    match = re.search(pattern, product_name, re.IGNORECASE)
+    
+    if match:
+        size_value = Decimal(match.group(1))
+        unit = match.group(2).lower()
+        
+        # Convert to kg for consistency
+        if unit == 'g':
+            size_value = size_value / 1000
+        elif unit in ['l', 'ml']:
+            # For liquids, assume 1:1 ratio with kg for simplicity
+            if unit == 'ml':
+                size_value = size_value / 1000
+        
+        return {
+            'size': size_value,
+            'unit': 'kg',
+            'original_unit': unit
+        }
+    
+    return None
+
+
+def get_stock_status(available_quantity, requested_quantity):
+    """
+    Get human-readable stock status
+    
+    Args:
+        available_quantity: Decimal - available stock
+        requested_quantity: Decimal - requested amount
+        
+    Returns:
+        String status
+    """
+    from decimal import Decimal
+    
+    available = Decimal(str(available_quantity))
+    requested = Decimal(str(requested_quantity))
+    
+    if available == 0:
+        return 'out_of_stock'
+    elif available >= requested:
+        return 'in_stock'
+    else:
+        return 'low_stock'
+
+
+def reserve_stock_for_customer(product, quantity, customer, fulfillment_method='exact_match'):
+    """
+    Immediately reserve stock for a customer when they make a selection
+    
+    Args:
+        product: Product instance
+        quantity: Decimal - amount to reserve
+        customer: Customer instance
+        fulfillment_method: String - how the stock is being fulfilled
+        
+    Returns:
+        Dict with reservation details
+    """
+    from inventory.models import FinishedInventory, StockMovement
+    from decimal import Decimal
+    from django.db import transaction
+    from django.utils import timezone
+    
+    reserve_qty = Decimal(str(quantity))
+    
+    try:
+        with transaction.atomic():
+            # Get inventory record
+            inventory = FinishedInventory.objects.select_for_update().get(product=product)
+            
+            # Check if we have enough stock
+            available = inventory.available_quantity or Decimal('0')
+            if available < reserve_qty:
+                return {
+                    'success': False,
+                    'message': f'Insufficient stock. Available: {available}, Requested: {reserve_qty}',
+                    'available_quantity': float(available)
+                }
+            
+            # Reserve the stock
+            inventory.available_quantity = available - reserve_qty
+            inventory.reserved_quantity = (inventory.reserved_quantity or Decimal('0')) + reserve_qty
+            inventory.save()
+            
+            # Create stock movement record
+            # customer is already a User object, use it directly
+            StockMovement.objects.create(
+                movement_type='finished_reserve',
+                reference_number=f'RESERVE-{customer.id}-{timezone.now().strftime("%Y%m%d%H%M%S")}',
+                product=product,
+                quantity=reserve_qty,
+                user=customer,
+                notes=f'Reserved for customer {customer} using {fulfillment_method} method'
+            )
+            
+            return {
+                'success': True,
+                'message': f'Reserved {reserve_qty}{product.unit} for {customer}',
+                'reserved_quantity': float(reserve_qty),
+                'remaining_available': float(inventory.available_quantity),
+                'reservation_reference': f'RESERVE-{customer.id}-{timezone.now().strftime("%Y%m%d%H%M%S")}'
+            }
+            
+    except FinishedInventory.DoesNotExist:
+        return {
+            'success': False,
+            'message': f'No inventory record found for {product.name}',
+            'available_quantity': 0
+        }
+    except Exception as e:
+        return {
+            'success': False,
+            'message': f'Reservation failed: {str(e)}',
+            'error': str(e)
+        }
+
+
+def create_auto_procurement_for_shortfall(items_needing_procurement, customer_order=None):
+    """
+    Automatically create procurement requests for items that can't be fulfilled from SHALLOME stock
+    
+    Args:
+        items_needing_procurement: List of items with shortfall quantities
+        customer_order: Optional Order instance to link procurement to
+        
+    Returns:
+        Dict with procurement creation results
+    """
+    from procurement.models import PurchaseOrder, PurchaseOrderItem
+    from suppliers.models import Supplier
+    from products.unified_procurement_service import UnifiedProcurementService
+    from django.db import transaction
+    from django.utils import timezone
+    
+    procurement_service = UnifiedProcurementService()
+    created_pos = []
+    errors = []
+    
+    try:
+        with transaction.atomic():
+            # Group items by best supplier
+            supplier_groups = {}
+            
+            for item in items_needing_procurement:
+                product = item['product']
+                shortfall_qty = item['shortfall_quantity']
+                
+                # Get best supplier for this product
+                supplier_option = procurement_service.get_best_supplier_for_product(
+                    product, shortfall_qty
+                )
+                
+                if supplier_option:
+                    supplier = supplier_option['supplier']
+                    if supplier not in supplier_groups:
+                        supplier_groups[supplier] = []
+                    
+                    supplier_groups[supplier].append({
+                        'product': product,
+                        'quantity': shortfall_qty,
+                        'supplier_option': supplier_option
+                    })
+                else:
+                    errors.append(f'No supplier found for {product.name}')
+            
+            # Create purchase orders for each supplier
+            for supplier, items in supplier_groups.items():
+                try:
+                    # Calculate total cost
+                    total_cost = sum(
+                        item['supplier_option']['unit_price'] * item['quantity'] 
+                        for item in items
+                    )
+                    
+                    # Create purchase order
+                    po = PurchaseOrder.objects.create(
+                        supplier=supplier,
+                        order=customer_order,  # Link to customer order
+                        status='pending',
+                        order_date=timezone.now().date(),
+                        expected_delivery_date=timezone.now().date() + timezone.timedelta(days=2),
+                        total_amount=total_cost,
+                        notes=f'Auto-generated for stock shortfall. Customer order: {customer_order.order_number if customer_order else "N/A"}'
+                    )
+                    
+                    # Create purchase order items
+                    for item in items:
+                        PurchaseOrderItem.objects.create(
+                            purchase_order=po,
+                            product=item['product'],
+                            quantity_ordered=item['quantity'],
+                            unit_price=item['supplier_option']['unit_price'],
+                            total_price=item['supplier_option']['unit_price'] * item['quantity']
+                        )
+                    
+                    created_pos.append({
+                        'po_number': po.po_number,
+                        'supplier': supplier.name,
+                        'total_cost': float(total_cost),
+                        'item_count': len(items)
+                    })
+                    
+                except Exception as e:
+                    errors.append(f'Failed to create PO for {supplier.name}: {str(e)}')
+        
+        return {
+            'success': len(created_pos) > 0,
+            'created_purchase_orders': created_pos,
+            'errors': errors,
+            'message': f'Created {len(created_pos)} purchase orders for stock shortfall'
+        }
+        
+    except Exception as e:
+        return {
+            'success': False,
+            'created_purchase_orders': [],
+            'errors': [f'Procurement creation failed: {str(e)}'],
+            'message': 'Auto-procurement failed'
+        }
+
+
+# ========================================
+# MARKET INVOICE PROCESSING - STOCK CONVERSION
+# ========================================
+
+def process_market_invoice_with_conversion(invoice_items, conversion_strategy='flexible_kg'):
+    """
+    Process market invoice items and convert them into flexible inventory
+    
+    Args:
+        invoice_items: List of ExtractedInvoiceData instances
+        conversion_strategy: 'flexible_kg', 'package_breakdown', 'mixed'
+        
+    Returns:
+        Dict with conversion results
+    """
+    from inventory.models import FinishedInventory, StockMovement
+    from products.models import Product
+    from django.db import transaction
+    from django.utils import timezone
+    from decimal import Decimal
+    
+    conversion_results = []
+    errors = []
+    
+    try:
+        with transaction.atomic():
+            for item in invoice_items:
+                if not item.actual_weight_kg or not item.supplier_mapping:
+                    continue
+                
+                try:
+                    result = convert_market_item_to_inventory(
+                        item, conversion_strategy
+                    )
+                    conversion_results.append(result)
+                    
+                except Exception as e:
+                    errors.append(f'Failed to convert {item.product_description}: {str(e)}')
+        
+        return {
+            'success': len(conversion_results) > 0,
+            'conversions': conversion_results,
+            'errors': errors,
+            'total_items_processed': len(conversion_results),
+            'message': f'Converted {len(conversion_results)} market items to inventory'
+        }
+        
+    except Exception as e:
+        return {
+            'success': False,
+            'conversions': [],
+            'errors': [f'Conversion failed: {str(e)}'],
+            'message': 'Market invoice conversion failed'
+        }
+
+
+def convert_market_item_to_inventory(extracted_item, strategy='flexible_kg'):
+    """
+    Convert a single market item into flexible inventory
+    
+    Args:
+        extracted_item: ExtractedInvoiceData instance
+        strategy: Conversion strategy
+        
+    Returns:
+        Dict with conversion details
+    """
+    from inventory.models import FinishedInventory, StockMovement
+    from products.models import Product
+    from decimal import Decimal
+    from django.utils import timezone
+    
+    product = extracted_item.supplier_mapping.our_product
+    total_weight_kg = extracted_item.actual_weight_kg
+    total_cost = extracted_item.line_total
+    cost_per_kg = total_cost / total_weight_kg
+    
+    conversion_options = analyze_conversion_options(
+        product, total_weight_kg, extracted_item.product_description
+    )
+    
+    if strategy == 'flexible_kg':
+        # Convert everything to kg-based inventory for maximum flexibility
+        return convert_to_kg_inventory(
+            product, total_weight_kg, cost_per_kg, extracted_item
+        )
+    elif strategy == 'package_breakdown':
+        # Break down into standard package sizes
+        return convert_to_package_inventory(
+            product, total_weight_kg, cost_per_kg, extracted_item, conversion_options
+        )
+    else:
+        # Mixed strategy - use best option based on product type
+        return convert_with_mixed_strategy(
+            product, total_weight_kg, cost_per_kg, extracted_item, conversion_options
+        )
+
+
+def analyze_conversion_options(product, total_weight_kg, supplier_description):
+    """
+    Analyze the best conversion options for a market item
+    
+    Args:
+        product: Product instance
+        total_weight_kg: Decimal - total weight received
+        supplier_description: String - original supplier description
+        
+    Returns:
+        Dict with conversion options
+    """
+    from products.models import Product
+    from decimal import Decimal
+    
+    # Find existing product variations for this base product
+    base_name = product.name.split('(')[0].strip()
+    related_products = Product.objects.filter(
+        name__icontains=base_name
+    ).exclude(id=product.id)
+    
+    package_options = []
+    for related_product in related_products:
+        package_info = extract_package_size(related_product.name)
+        if package_info:
+            package_options.append({
+                'product': related_product,
+                'package_size_kg': package_info['size'],
+                'packages_possible': int(total_weight_kg / package_info['size']),
+                'remainder_kg': total_weight_kg % package_info['size']
+            })
+    
+    # Sort by efficiency (least remainder)
+    package_options.sort(key=lambda x: x['remainder_kg'])
+    
+    return {
+        'total_weight_kg': total_weight_kg,
+        'package_options': package_options,
+        'supplier_description': supplier_description,
+        'recommended_strategy': determine_recommended_strategy(
+            total_weight_kg, package_options, supplier_description
+        )
+    }
+
+
+def determine_recommended_strategy(total_weight_kg, package_options, supplier_description):
+    """
+    Determine the best conversion strategy based on the item characteristics
+    
+    Args:
+        total_weight_kg: Decimal - total weight
+        package_options: List of package breakdown options
+        supplier_description: String - supplier description
+        
+    Returns:
+        String - recommended strategy
+    """
+    from decimal import Decimal
+    
+    # If it's already in a specific package format, try to maintain it
+    if any(word in supplier_description.lower() for word in ['bag', 'box', 'packet', 'punnet']):
+        if package_options and package_options[0]['remainder_kg'] < Decimal('0.5'):
+            return 'package_breakdown'
+    
+    # For large quantities, kg-based is usually more flexible
+    if total_weight_kg > Decimal('20'):
+        return 'flexible_kg'
+    
+    # For small quantities with good package options, use packages
+    if package_options and total_weight_kg <= Decimal('10'):
+        return 'package_breakdown'
+    
+    # Default to flexible kg
+    return 'flexible_kg'
+
+
+def convert_to_bulk_kg_for_order(product, quantity, customer):
+    """
+    Convert bag/box items to kg equivalent for order fulfillment
+    
+    Args:
+        product: Product instance (e.g., "Tomatoes (5kg)")
+        quantity: Decimal - number of bags/boxes requested
+        customer: Customer instance
+        
+    Returns:
+        Dict with conversion results
+    """
+    from inventory.models import FinishedInventory, StockMovement
+    from products.models import Product
+    from decimal import Decimal
+    from django.utils import timezone
+    import re
+    
+    try:
+        # Extract weight from product name (e.g., "Tomatoes (5kg)" -> 5)
+        weight_match = re.search(r'\((\d+(?:\.\d+)?)kg\)', product.name)
+        if not weight_match:
+            return {
+                'success': False,
+                'message': f'Cannot extract weight from product name: {product.name}'
+            }
+        
+        package_weight_kg = Decimal(weight_match.group(1))
+        total_kg_needed = quantity * package_weight_kg
+        
+        # Find or create kg-based product variant
+        base_name = product.name.split('(')[0].strip()
+        kg_product_name = f"{base_name} (kg)"
+        
+        try:
+            kg_product = Product.objects.get(name=kg_product_name)
+        except Product.DoesNotExist:
+            # Create kg product if it doesn't exist
+            kg_product = Product.objects.create(
+                name=kg_product_name,
+                unit='kg',
+                price=product.price / package_weight_kg,  # Price per kg
+                department=product.department,
+                description=f'Bulk kg variant of {product.name}'
+            )
+        
+        # Check if we have enough kg stock
+        try:
+            kg_inventory = FinishedInventory.objects.get(product=kg_product)
+            available_kg = kg_inventory.available_quantity or Decimal('0')
+            
+            if available_kg < total_kg_needed:
+                return {
+                    'success': False,
+                    'message': f'Insufficient kg stock. Available: {available_kg}kg, Needed: {total_kg_needed}kg'
+                }
+            
+            # Reserve the kg stock
+            kg_inventory.available_quantity = available_kg - total_kg_needed
+            kg_inventory.reserved_quantity = (kg_inventory.reserved_quantity or Decimal('0')) + total_kg_needed
+            kg_inventory.save()
+            
+            # Create stock movement record
+            # customer is already a User object, use it directly
+            StockMovement.objects.create(
+                movement_type='finished_reserve',
+                reference_number=f'KG-CONVERT-{customer.id}-{timezone.now().strftime("%Y%m%d%H%M%S")}',
+                product=kg_product,
+                quantity=total_kg_needed,
+                user=customer,
+                notes=f'Converted from {quantity} x {product.name} to {total_kg_needed}kg for customer {customer}'
+            )
+            
+            return {
+                'success': True,
+                'kg_product': kg_product,
+                'kg_quantity': total_kg_needed,
+                'kg_price': kg_product.price,
+                'message': f'Converted {quantity} x {product.name} to {total_kg_needed}kg'
+            }
+            
+        except FinishedInventory.DoesNotExist:
+            return {
+                'success': False,
+                'message': f'No kg inventory found for {kg_product_name}'
+            }
+            
+    except Exception as e:
+        return {
+            'success': False,
+            'message': f'Conversion failed: {str(e)}'
+        }
+
+
+def convert_to_kg_inventory(product, total_weight_kg, cost_per_kg, extracted_item):
+    """
+    Convert market item to kg-based inventory for maximum flexibility
+    
+    Args:
+        product: Product instance
+        total_weight_kg: Decimal - total weight
+        cost_per_kg: Decimal - cost per kg
+        extracted_item: ExtractedInvoiceData instance
+        
+    Returns:
+        Dict with conversion results
+    """
+    from inventory.models import FinishedInventory, StockMovement
+    from products.models import Product
+    from decimal import Decimal
+    from django.utils import timezone
+    
+    # Find or create kg-based product variant
+    kg_product_name = f"{product.name.split('(')[0].strip()} (kg)"
+    kg_product, created = Product.objects.get_or_create(
+        name=kg_product_name,
+        defaults={
+            'unit': 'kg',
+            'price': cost_per_kg * Decimal('1.25'),  # 25% markup
+            'department': product.department,
+            'description': f'Flexible kg-based inventory from market purchases'
+        }
+    )
+    
+    # Update or create inventory
+    inventory, inv_created = FinishedInventory.objects.get_or_create(
+        product=kg_product,
+        defaults={
+            'available_quantity': Decimal('0'),
+            'reserved_quantity': Decimal('0'),
+            'average_cost': cost_per_kg
+        }
+    )
+    
+    # Add to inventory
+    old_quantity = inventory.available_quantity or Decimal('0')
+    inventory.available_quantity = old_quantity + total_weight_kg
+    
+    # Update average cost
+    if old_quantity > 0:
+        total_old_cost = old_quantity * (inventory.average_cost or cost_per_kg)
+        total_new_cost = total_weight_kg * cost_per_kg
+        new_total_quantity = old_quantity + total_weight_kg
+        inventory.average_cost = (total_old_cost + total_new_cost) / new_total_quantity
+    else:
+        inventory.average_cost = cost_per_kg
+    
+    inventory.save()
+    
+    # Create stock movement record
+    # Use system user for automated market inventory operations
+    from django.contrib.auth import get_user_model
+    User = get_user_model()
+    system_user = User.objects.filter(is_staff=True).first()
+    if not system_user:
+        system_user = User.objects.first()  # Fallback to any user
+    
+    StockMovement.objects.create(
+        movement_type='finished_receive',
+        reference_number=f'MARKET-{extracted_item.invoice_photo.id}-{extracted_item.id}',
+        product=kg_product,
+        quantity=total_weight_kg,
+        unit_cost=cost_per_kg,
+        total_value=total_weight_kg * cost_per_kg,
+        user=system_user,
+        notes=f'Market conversion: {extracted_item.product_description} → {total_weight_kg}kg flexible inventory'
+    )
+    
+    return {
+        'conversion_method': 'flexible_kg',
+        'original_item': extracted_item.product_description,
+        'converted_to': kg_product.name,
+        'quantity_added': float(total_weight_kg),
+        'cost_per_kg': float(cost_per_kg),
+        'total_cost': float(total_weight_kg * cost_per_kg),
+        'new_inventory_total': float(inventory.available_quantity),
+        'product_created': created
+    }
+
+
+def convert_to_package_inventory(product, total_weight_kg, cost_per_kg, extracted_item, conversion_options):
+    """
+    Convert market item to specific package sizes
+    
+    Args:
+        product: Product instance  
+        total_weight_kg: Decimal - total weight
+        cost_per_kg: Decimal - cost per kg
+        extracted_item: ExtractedInvoiceData instance
+        conversion_options: Dict with package options
+        
+    Returns:
+        Dict with conversion results
+    """
+    from inventory.models import FinishedInventory, StockMovement
+    from decimal import Decimal
+    from django.utils import timezone
+    
+    conversions = []
+    
+    if not conversion_options['package_options']:
+        # Fallback to kg conversion
+        return convert_to_kg_inventory(product, total_weight_kg, cost_per_kg, extracted_item)
+    
+    # Use the best package option
+    best_option = conversion_options['package_options'][0]
+    package_product = best_option['product']
+    packages_to_create = best_option['packages_possible']
+    remainder_kg = best_option['remainder_kg']
+    
+    if packages_to_create > 0:
+        # Add packages to inventory
+        inventory, created = FinishedInventory.objects.get_or_create(
+            product=package_product,
+            defaults={
+                'available_quantity': Decimal('0'),
+                'reserved_quantity': Decimal('0'),
+                'average_cost': cost_per_kg * best_option['package_size_kg']
+            }
+        )
+        
+        old_quantity = inventory.available_quantity or Decimal('0')
+        inventory.available_quantity = old_quantity + Decimal(str(packages_to_create))
+        inventory.save()
+        
+        # Create stock movement
+        # Use system user for automated market inventory operations
+        from django.contrib.auth import get_user_model
+        User = get_user_model()
+        system_user = User.objects.filter(is_staff=True).first()
+        if not system_user:
+            system_user = User.objects.first()  # Fallback to any user
+        
+        StockMovement.objects.create(
+            movement_type='finished_receive',
+            reference_number=f'MARKET-PKG-{extracted_item.invoice_photo.id}-{extracted_item.id}',
+            product=package_product,
+            quantity=Decimal(str(packages_to_create)),
+            unit_cost=cost_per_kg * best_option['package_size_kg'],
+            total_value=Decimal(str(packages_to_create)) * cost_per_kg * best_option['package_size_kg'],
+            user=system_user,
+            notes=f'Market package conversion: {extracted_item.product_description}'
+        )
+        
+        conversions.append({
+            'product': package_product.name,
+            'packages_added': packages_to_create,
+            'package_size_kg': float(best_option['package_size_kg']),
+            'total_weight_kg': float(Decimal(str(packages_to_create)) * best_option['package_size_kg'])
+        })
+    
+    # Handle remainder as kg inventory if significant
+    if remainder_kg > Decimal('0.5'):
+        remainder_conversion = convert_to_kg_inventory(
+            product, remainder_kg, cost_per_kg, extracted_item
+        )
+        conversions.append({
+            'product': remainder_conversion['converted_to'],
+            'remainder_kg': float(remainder_kg),
+            'note': 'Remainder converted to flexible kg inventory'
+        })
+    
+    return {
+        'conversion_method': 'package_breakdown',
+        'original_item': extracted_item.product_description,
+        'conversions': conversions,
+        'total_weight_processed': float(total_weight_kg),
+        'cost_per_kg': float(cost_per_kg)
+    }
+
+
+def convert_with_mixed_strategy(product, total_weight_kg, cost_per_kg, extracted_item, conversion_options):
+    """
+    Use mixed strategy based on product characteristics and available options
+    
+    Args:
+        product: Product instance
+        total_weight_kg: Decimal - total weight  
+        cost_per_kg: Decimal - cost per kg
+        extracted_item: ExtractedInvoiceData instance
+        conversion_options: Dict with conversion analysis
+        
+    Returns:
+        Dict with conversion results
+    """
+    recommended = conversion_options['recommended_strategy']
+    
+    if recommended == 'package_breakdown':
+        return convert_to_package_inventory(
+            product, total_weight_kg, cost_per_kg, extracted_item, conversion_options
+        )
+    else:
+        return convert_to_kg_inventory(
+            product, total_weight_kg, cost_per_kg, extracted_item
+        )

@@ -172,7 +172,8 @@ def approve_market_recommendation(request, recommendation_id):
         return Response({
             'success': True,
             'message': 'Market recommendation approved',
-            'recommendation': serializer.data
+            'recommendation': serializer.data,
+            'print_url': f'/api/products/procurement/recommendations/{recommendation_id}/print/'
         })
         
     except MarketProcurementRecommendation.DoesNotExist:
@@ -479,6 +480,305 @@ def procurement_dashboard_data(request):
         
     except Exception as e:
         logger.error(f"Error fetching procurement dashboard data: {e}", exc_info=True)
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def print_market_recommendation(request, recommendation_id):
+    """
+    Generate printable market trip list for approved recommendation
+    
+    GET /api/products/procurement/recommendations/{id}/print/
+    """
+    try:
+        recommendation = MarketProcurementRecommendation.objects.get(id=recommendation_id)
+        
+        if recommendation.status != 'approved':
+            return Response({
+                'success': False,
+                'error': f'Can only print approved recommendations. Current status: {recommendation.status}'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Get procurement items
+        items = recommendation.items.all().order_by('priority', 'product__name')
+        
+        # Generate printable data
+        print_data = {
+            'recommendation_id': recommendation.id,
+            'trip_date': recommendation.for_date.strftime('%A, %B %d, %Y'),
+            'approved_by': recommendation.approved_by.get_full_name() if recommendation.approved_by else 'Unknown',
+            'approved_at': recommendation.approved_at.strftime('%Y-%m-%d %H:%M') if recommendation.approved_at else '',
+            'total_cost': float(recommendation.total_estimated_cost),
+            'total_items': items.count(),
+            'items': []
+        }
+        
+        # Add items with priority grouping
+        priority_order = {'critical': 1, 'high': 2, 'medium': 3, 'low': 4}
+        
+        for item in items:
+            print_data['items'].append({
+                'product_name': item.product.name,
+                'needed_quantity': float(item.needed_quantity),
+                'recommended_quantity': float(item.recommended_quantity),
+                'unit': item.product.unit,
+                'estimated_price': float(item.estimated_unit_price),
+                'estimated_total': float(item.estimated_total_cost),
+                'priority': item.priority,
+                'priority_order': priority_order.get(item.priority, 5),
+                'reasoning': item.reasoning,
+                'department': item.product.department.name if item.product.department else 'General'
+            })
+        
+        # Group by priority for better printing
+        from itertools import groupby
+        grouped_items = {}
+        for priority, group in groupby(print_data['items'], key=lambda x: x['priority']):
+            grouped_items[priority] = list(group)
+        
+        print_data['grouped_items'] = grouped_items
+        
+        return Response({
+            'success': True,
+            'print_data': print_data
+        })
+        
+    except MarketProcurementRecommendation.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Recommendation not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['DELETE'])
+@permission_classes([IsAuthenticated])
+def delete_market_recommendation(request, recommendation_id):
+    """
+    Delete a market procurement recommendation
+    
+    DELETE /api/products/procurement/recommendations/{id}/delete/
+    """
+    try:
+        recommendation = MarketProcurementRecommendation.objects.get(id=recommendation_id)
+        
+        # Store info for response
+        recommendation_info = {
+            'id': recommendation.id,
+            'for_date': recommendation.for_date.strftime('%Y-%m-%d'),
+            'status': recommendation.status,
+            'total_cost': float(recommendation.total_estimated_cost)
+        }
+        
+        # Delete the recommendation (this will cascade delete related items)
+        recommendation.delete()
+        
+        return Response({
+            'success': True,
+            'message': f'Market recommendation for {recommendation_info["for_date"]} deleted successfully',
+            'deleted_recommendation': recommendation_info
+        })
+        
+    except MarketProcurementRecommendation.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Recommendation not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['PATCH'])
+@permission_classes([IsAuthenticated])
+def update_procurement_item_quantity(request, recommendation_id, item_id):
+    """
+    Update the quantity of a specific procurement item
+    
+    PATCH /api/products/procurement/recommendations/{recommendation_id}/items/{item_id}/
+    Body: {
+        "recommended_quantity": 5.0
+    }
+    """
+    try:
+        # Get the recommendation and item
+        recommendation = MarketProcurementRecommendation.objects.get(id=recommendation_id)
+        item = recommendation.items.get(id=item_id)
+        
+        # Only allow editing pending recommendations
+        if recommendation.status != 'pending':
+            return Response({
+                'success': False,
+                'error': f'Cannot edit {recommendation.status} recommendations. Only pending recommendations can be modified.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Get new quantity from request
+        new_quantity = request.data.get('recommended_quantity')
+        if new_quantity is None:
+            return Response({
+                'success': False,
+                'error': 'recommended_quantity is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        try:
+            new_quantity = float(new_quantity)
+            if new_quantity <= 0:
+                return Response({
+                    'success': False,
+                    'error': 'Quantity must be greater than 0'
+                }, status=status.HTTP_400_BAD_REQUEST)
+        except (ValueError, TypeError):
+            return Response({
+                'success': False,
+                'error': 'Invalid quantity format'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Update the item
+        old_quantity = float(item.recommended_quantity)
+        old_total = float(item.estimated_total_cost)
+        
+        item.recommended_quantity = new_quantity
+        item.estimated_total_cost = new_quantity * float(item.estimated_unit_price)
+        item.save()
+        
+        # Recalculate recommendation total
+        recommendation.total_estimated_cost = sum(
+            float(i.estimated_total_cost) for i in recommendation.items.all()
+        )
+        recommendation.save()
+        
+        # Serialize the updated item
+        from .serializers import MarketProcurementItemSerializer
+        item_serializer = MarketProcurementItemSerializer(item)
+        
+        return Response({
+            'success': True,
+            'message': f'Updated {item.product.name} quantity from {old_quantity} to {new_quantity}',
+            'item': item_serializer.data,
+            'recommendation_total': float(recommendation.total_estimated_cost),
+            'changes': {
+                'old_quantity': old_quantity,
+                'new_quantity': new_quantity,
+                'old_total': old_total,
+                'new_total': float(item.estimated_total_cost)
+            }
+        })
+        
+    except MarketProcurementRecommendation.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Recommendation not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except MarketProcurementItem.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Procurement item not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_procurement_by_supplier(request, recommendation_id):
+    """
+    Get procurement recommendation grouped by supplier
+    
+    GET /api/products/procurement/recommendations/{id}/by-supplier/
+    """
+    try:
+        recommendation = MarketProcurementRecommendation.objects.get(id=recommendation_id)
+        
+        # Refresh from database to ensure we have latest data
+        recommendation.refresh_from_db()
+        
+        # Group items by supplier
+        supplier_groups = {}
+        items_without_supplier = []
+        
+        # Force fresh query - don't use cached items
+        for item in recommendation.items.select_related('product', 'preferred_supplier').all():
+            if item.preferred_supplier:
+                supplier_id = item.preferred_supplier.id
+                supplier_name = item.preferred_supplier.name
+                
+                if supplier_id not in supplier_groups:
+                    supplier_groups[supplier_id] = {
+                        'supplier_id': supplier_id,
+                        'supplier_name': supplier_name,
+                        'items': [],
+                        'total_cost': 0,
+                        'item_count': 0
+                    }
+                
+                # Serialize the item
+                from .serializers import MarketProcurementItemSerializer
+                item_data = MarketProcurementItemSerializer(item).data
+                
+                # Debug logging
+                print(f"[SUPPLIER VIEW] Item: {item.product.name}, Rec Qty: {item.recommended_quantity}, Unit Price: {item.estimated_unit_price}, Total: {item.estimated_total_cost}")
+                print(f"[SUPPLIER VIEW] Serialized data: {item_data}")
+                
+                supplier_groups[supplier_id]['items'].append(item_data)
+                supplier_groups[supplier_id]['total_cost'] += float(item.estimated_total_cost)
+                supplier_groups[supplier_id]['item_count'] += 1
+            else:
+                # Items without a preferred supplier (market/general procurement)
+                from .serializers import MarketProcurementItemSerializer
+                item_data = MarketProcurementItemSerializer(item).data
+                
+                # Debug logging for market items
+                print(f"[SUPPLIER VIEW - MARKET] Item: {item.product.name}, Rec Qty: {item.recommended_quantity}, Unit Price: {item.estimated_unit_price}, Total: {item.estimated_total_cost}")
+                print(f"[SUPPLIER VIEW - MARKET] Serialized data: {item_data}")
+                
+                items_without_supplier.append(item_data)
+        
+        # Convert to list and sort by total cost (highest first)
+        supplier_list = list(supplier_groups.values())
+        supplier_list.sort(key=lambda x: x['total_cost'], reverse=True)
+        
+        # Add market/general procurement group if there are items without suppliers
+        if items_without_supplier:
+            market_group = {
+                'supplier_id': None,
+                'supplier_name': 'Market/General Procurement',
+                'items': items_without_supplier,
+                'total_cost': sum(float(item['estimated_total_cost']) for item in items_without_supplier),
+                'item_count': len(items_without_supplier)
+            }
+            supplier_list.append(market_group)
+        
+        return Response({
+            'success': True,
+            'recommendation': {
+                'id': recommendation.id,
+                'for_date': recommendation.for_date.strftime('%Y-%m-%d'),
+                'status': recommendation.status,
+                'total_estimated_cost': float(recommendation.total_estimated_cost),
+                'created_at': recommendation.created_at.isoformat(),
+                'approved_at': recommendation.approved_at.isoformat() if recommendation.approved_at else None,
+                'approved_by': recommendation.approved_by.username if recommendation.approved_by else None,
+            },
+            'suppliers': supplier_list,
+            'total_suppliers': len(supplier_list),
+            'total_items': sum(group['item_count'] for group in supplier_list)
+        })
+        
+    except MarketProcurementRecommendation.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Recommendation not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
         return Response({
             'success': False,
             'error': str(e)

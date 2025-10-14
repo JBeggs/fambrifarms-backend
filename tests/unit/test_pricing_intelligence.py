@@ -47,7 +47,7 @@ class PricingRuleTest(TestCase):
             base_markup_percentage=Decimal('35.00'),
             volatility_adjustment=Decimal('5.00'),
             minimum_margin_percentage=Decimal('25.00'),
-            category_adjustments={'vegetables': 10},
+            category_adjustments={'test vegetables': 10},
             trend_multiplier=Decimal('1.10'),
             seasonal_adjustment=Decimal('5.00'),
             effective_from=date.today(),

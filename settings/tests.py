@@ -8,7 +8,7 @@ from accounts.models import User
 from products.models import Department, Product
 from .models import (
     SystemSetting, CustomerSegment, OrderStatus, 
-    StockAdjustmentType, BusinessConfiguration
+    StockAdjustmentType, BusinessConfiguration, UnitOfMeasure
 )
 
 
@@ -328,6 +328,13 @@ class SettingsAPITest(APITestCase):
             name='Test Department'
         )
         
+        # Create test unit of measure
+        self.unit_of_measure = UnitOfMeasure.objects.create(
+            name='kg',
+            display_name='Kilogram',
+            sort_order=1
+        )
+        
         self.product = Product.objects.create(
             name='Test Product',
             price=Decimal('25.00'),
@@ -411,7 +418,7 @@ class SettingsAPITest(APITestCase):
         self.assertGreaterEqual(len(response.data), 1)
         
         # Check that our test unit is in the response
-        units = [unit['value'] for unit in response.data]
+        units = [unit['name'] for unit in response.data]
         self.assertIn('kg', units)
     
     def test_get_business_configuration(self):

@@ -46,4 +46,8 @@ urlpatterns = [
     path('stock/create-from-suggestions/', views.create_stock_update_from_suggestions, name='create-stock-update-from-suggestions'),
     path('stock/history/', views.get_stock_update_history, name='get-stock-update-history'),
     path('stock/compare-with-previous/', views.compare_stock_with_previous, name='compare-stock-with-previous'),
+    
+    # Item analysis and quick fixes
+    path('analyze-items/', views.analyze_items, name='analyze-items'),
+    path('apply-quick-fix/', views.apply_quick_fix, name='apply-quick-fix'),
 ]

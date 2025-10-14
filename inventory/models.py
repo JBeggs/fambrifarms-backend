@@ -128,7 +128,8 @@ class RawMaterialBatch(models.Model):
         """Days until expiry (negative if already expired)"""
         if not self.expiry_date:
             return None
-        return (self.expiry_date - timezone.now().date()).days
+        from datetime import date
+        return (self.expiry_date - date.today()).days
     
     def __str__(self):
         return f"{self.raw_material.name} - {self.batch_number}"
@@ -222,35 +223,47 @@ class FinishedInventory(models.Model):
     @property
     def total_quantity(self):
         """Total quantity (available + reserved)"""
-        return self.available_quantity + self.reserved_quantity
+        available = self.available_quantity or Decimal('0.00')
+        reserved = self.reserved_quantity or Decimal('0.00')
+        return available + reserved
     
     @property
     def needs_production(self):
         """Check if production is needed"""
-        return self.available_quantity <= self.reorder_level
+        available = self.available_quantity or Decimal('0.00')
+        reorder = self.reorder_level or Decimal('0.00')
+        return available <= reorder
     
     def reserve_stock(self, quantity):
         """Reserve stock for an order"""
-        if self.available_quantity >= quantity:
-            self.available_quantity -= quantity
-            self.reserved_quantity += quantity
+        available = self.available_quantity or Decimal('0.00')
+        reserved = self.reserved_quantity or Decimal('0.00')
+        
+        if available >= quantity:
+            self.available_quantity = available - quantity
+            self.reserved_quantity = reserved + quantity
             self.save()
             return True
         return False
     
     def release_stock(self, quantity):
         """Release reserved stock (order cancelled)"""
-        if self.reserved_quantity >= quantity:
-            self.reserved_quantity -= quantity
-            self.available_quantity += quantity
+        available = self.available_quantity or Decimal('0.00')
+        reserved = self.reserved_quantity or Decimal('0.00')
+        
+        if reserved >= quantity:
+            self.reserved_quantity = reserved - quantity
+            self.available_quantity = available + quantity
             self.save()
             return True
         return False
     
     def sell_stock(self, quantity):
         """Sell reserved stock (order delivered)"""
-        if self.reserved_quantity >= quantity:
-            self.reserved_quantity -= quantity
+        reserved = self.reserved_quantity or Decimal('0.00')
+        
+        if reserved >= quantity:
+            self.reserved_quantity = reserved - quantity
             self.save()
             return True
         return False

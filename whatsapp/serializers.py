@@ -8,9 +8,26 @@ from .models import WhatsAppMessage, StockUpdate, MessageProcessingLog
 
 class WhatsAppMessageSerializer(serializers.ModelSerializer):
     """Serializer for WhatsApp messages"""
+    company_name = serializers.SerializerMethodField()
+    is_stock_controller = serializers.SerializerMethodField()
+    
     class Meta:
         model = WhatsAppMessage
         fields = '__all__'
+    
+    def get_company_name(self, obj):
+        """Get the company name for the message"""
+        try:
+            return obj.extract_company_name() or obj.manual_company or ''
+        except Exception:
+            return obj.manual_company or ''
+    
+    def get_is_stock_controller(self, obj):
+        """Check if the sender is a stock controller"""
+        # Check if sender name indicates stock control role
+        stock_controller_names = ['hazvinei', 'stock', 'shallome']
+        sender_name = obj.sender_name.lower() if obj.sender_name else ''
+        return any(name in sender_name for name in stock_controller_names)
 
 
 class StockUpdateSerializer(serializers.ModelSerializer):

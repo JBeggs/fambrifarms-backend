@@ -51,6 +51,9 @@ class MessageParser:
             "venue": "Venue",
             "revue": "Revue Bar",
             "revue bar": "Revue Bar",
+            "pemba": "Pemba Mozambican Restaurant",
+            "pemba mozambican": "Pemba Mozambican Restaurant", 
+            "pemba mozambican restaurant": "Pemba Mozambican Restaurant",
             
             # Hospitality & Institutions
             "pecanwood": "Pecanwood Golf Estate",
@@ -186,6 +189,10 @@ class MessageParser:
         items = []
         
         for line in lines:
+            # Skip comment lines (lines starting with #)
+            if line.startswith('#'):
+                continue
+                
             # Skip greetings and instructions
             if self._is_greeting_or_instruction(line):
                 continue
@@ -234,6 +241,7 @@ class MessageParser:
             cleaned_lines.append(line)
             
         return '\n'.join(cleaned_lines)
+    
     
     def _is_greeting_or_instruction(self, text: str) -> bool:
         """Check if text is a greeting or instruction"""

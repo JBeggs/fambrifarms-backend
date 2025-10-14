@@ -182,7 +182,7 @@ class OrderModelTest(TestCase):
         self.assertEqual(order.restaurant, self.user)
         self.assertEqual(order.order_date, self.monday)
         self.assertEqual(order.delivery_date, self.tuesday)
-        self.assertEqual(order.status, 'pending')
+        self.assertEqual(order.status, 'received')
         self.assertIsNotNone(order.order_number)
         self.assertTrue(order.order_number.startswith('FB'))
         self.assertIsNotNone(order.created_at)
@@ -395,6 +395,14 @@ class OrderAPITest(APITestCase):
             user=self.user,
             business_name='Test Restaurant'
         )
+        
+        # Authenticate the client
+        self.client.force_authenticate(user=self.user)
+        
+        # Create required order statuses for testing
+        from settings.models import OrderStatus
+        OrderStatus.objects.get_or_create(name='received', defaults={'display_name': 'Received', 'sort_order': 1})
+        OrderStatus.objects.get_or_create(name='confirmed', defaults={'display_name': 'Confirmed', 'sort_order': 2})
         
         self.department = Department.objects.create(name='Vegetables')
         self.product = Product.objects.create(

@@ -185,6 +185,12 @@ class ProductAPITest(APITestCase):
     
     def setUp(self):
         self.client = APIClient()
+        
+        # Create required units for testing
+        from settings.models import UnitOfMeasure
+        UnitOfMeasure.objects.get_or_create(name='kg', defaults={'display_name': 'Kilogram', 'sort_order': 1})
+        UnitOfMeasure.objects.get_or_create(name='head', defaults={'display_name': 'Head', 'sort_order': 2})
+        
         self.department = Department.objects.create(name='Vegetables')
         self.product = Product.objects.create(
             name='Lettuce',
@@ -233,7 +239,7 @@ class ProductAPITest(APITestCase):
             'name': 'Updated Lettuce',
             'department': self.department.id,
             'price': '18.00',
-            'unit': 'head'
+            'unit': 'kg'
         }
         response = self.client.put(url, data)
         

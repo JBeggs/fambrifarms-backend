@@ -1,6 +1,7 @@
 from rest_framework import generics, status
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.authentication import TokenAuthentication
 from rest_framework.response import Response
 from familyfarms_api.authentication import FlexibleAuthentication
 from django.shortcuts import get_object_or_404
@@ -53,6 +54,56 @@ def clean_timestamp_from_text(text):
             # Only keep non-empty lines that aren't just timestamps
             if line and not re.match(r'^\d{1,2}:\d{2}$', line):
                 cleaned_lines.append(line)
+    
+    return '\n'.join(cleaned_lines)
+
+
+def clean_numbering_from_text(text):
+    """
+    Remove numbering from stock messages and order lists.
+    Handles various numbering formats commonly found in stock messages.
+    """
+    if not text:
+        return text
+    
+    lines = text.split('\n')
+    cleaned_lines = []
+    
+    for line in lines:
+        line = line.strip()
+        if not line:
+            continue
+        
+        # Pattern 1: "1.Product name" -> "Product name"  
+        line = re.sub(r'^\d+\.\s*', '', line)
+        
+        # Pattern 2: "1) Product name" -> "Product name"
+        line = re.sub(r'^\d+\)\s*', '', line)
+        
+        # Pattern 3: "1 Product name" -> "Product name" (only at start, be careful not to remove quantities)
+        # Only remove if it looks like a list number (single digit at start)
+        if re.match(r'^\d\s+[A-Za-z]', line):
+            line = re.sub(r'^\d\s+', '', line)
+        
+        # Pattern 4: "(1) Product name" -> "Product name"
+        line = re.sub(r'^\(\d+\)\s*', '', line)
+        
+        # Pattern 5: "# Product name" -> "Product name" (hash numbering)
+        line = re.sub(r'^#\s*', '', line)
+        
+        # Pattern 6: "- Product name" -> "Product name" (dash numbering)  
+        line = re.sub(r'^-\s+', '', line)
+        
+        # Pattern 7: "• Product name" -> "Product name" (bullet points)
+        line = re.sub(r'^•\s*', '', line)
+        
+        # Pattern 8: "* Product name" -> "Product name" (asterisk bullets)
+        line = re.sub(r'^\*\s*', '', line)
+        
+        # Only keep non-empty lines
+        line = line.strip()
+        if line:
+            cleaned_lines.append(line)
     
     return '\n'.join(cleaned_lines)
 
@@ -768,8 +819,8 @@ def get_messages(request):
     # Calculate offset
     offset = (page - 1) * page_size
     
-    # Get messages for current page
-    messages = queryset.order_by('-timestamp')[offset:offset + page_size]
+    # Get messages for current page - order by timestamp ascending (oldest first) to match frontend expectation
+    messages = queryset.order_by('timestamp')[offset:offset + page_size]
     
     serializer = WhatsAppMessageSerializer(messages, many=True)
     
@@ -1100,7 +1151,7 @@ def process_messages_to_orders(request):
                             # Use the smart matcher to get suggestions
                             from .smart_product_matcher import SmartProductMatcher
                             matcher = SmartProductMatcher()
-                            suggestions = matcher.get_suggestions(product_name, min_confidence=10.0, max_suggestions=20)
+                            suggestions = matcher.get_suggestions(product_name, min_confidence=10.0, max_suggestions=30)
                             
                             for suggestion in suggestions.suggestions:
                                 suggestions_list.append({
@@ -2188,8 +2239,53 @@ def create_order_from_suggestions(request):
                 product = Product.objects.get(id=item_data['product_id'])
                 quantity = Decimal(str(item_data.get('quantity', 1.0)))
                 unit = item_data.get('unit', product.unit)
-                price = Decimal(str(item_data.get('price', product.price)))
+                
+                # CRITICAL: Calculate customer-specific price on backend (don't trust frontend)
+                from .services import get_customer_specific_price
+                price = get_customer_specific_price(product, customer)
+                print(f"[ORDER_CREATION] {product.name}: Base={product.price}, Customer Price={price}, Segment={customer.get_full_name()}")
+                
                 total_price = quantity * price
+                stock_action = item_data.get('stock_action', 'reserve')  # Default to reserve
+                
+                # Handle stock actions
+                stock_result = None
+                if stock_action == 'reserve':
+                    # Reserve stock for this item
+                    from .services import reserve_stock_for_customer
+                    stock_result = reserve_stock_for_customer(
+                        product=product,
+                        quantity=quantity,
+                        customer=customer,
+                        fulfillment_method='user_confirmed'
+                    )
+                    
+                    if not stock_result.get('success', False):
+                        logger.warning(f"Failed to reserve stock for {product.name}: {stock_result.get('message', 'Unknown error')}")
+                
+                elif stock_action == 'convert_to_kg':
+                    # Convert bag/box items to kg equivalent
+                    from .services import convert_to_bulk_kg_for_order
+                    conversion_result = convert_to_bulk_kg_for_order(
+                        product=product,
+                        quantity=quantity,
+                        customer=customer
+                    )
+                    
+                    if conversion_result.get('success', False):
+                        # Use the kg product instead
+                        product = conversion_result['kg_product']
+                        quantity = conversion_result['kg_quantity']
+                        unit = 'kg'
+                        # Recalculate customer price for the kg product
+                        price = get_customer_specific_price(product, customer)
+                        total_price = quantity * price
+                        logger.info(f"Converted to bulk kg: {conversion_result['message']}")
+                        print(f"[KG_CONVERSION] {product.name}: Customer Price={price}")
+                    else:
+                        logger.warning(f"Failed to convert to kg: {conversion_result.get('message', 'Unknown error')}")
+                
+                # stock_action == 'no_reserve' requires no special handling - just create the order item
                 
                 from orders.models import OrderItem
                 order_item = OrderItem.objects.create(
@@ -2210,6 +2306,8 @@ def create_order_from_suggestions(request):
                     'unit': unit,
                     'price': float(price),
                     'total_price': float(total_price),
+                    'stock_action': stock_action,
+                    'stock_result': stock_result
                 })
                 
                 total_amount += total_price
@@ -2237,7 +2335,7 @@ def create_order_from_suggestions(request):
         
         # Mark message as processed
         message.is_processed = True
-        message.processing_notes = f"Order created: {order.id} with {len(created_items)} items"
+        message.processing_notes = f"✅ Order #{order.order_number} created successfully with {len(created_items)} items for {customer.first_name or customer.email}"
         message.content = updated_content
         message.save()
         
@@ -2551,4 +2649,726 @@ def create_stock_update_from_suggestions(request):
             'error': 'Failed to create stock update',
             'details': str(e) if settings.DEBUG else None
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['POST'])
+@authentication_classes([FlexibleAuthentication])
+@permission_classes([IsAuthenticated])
+def analyze_items(request):
+    """
+    Analyze message content and provide suggestions for improving each item line.
+    """
+    try:
+        content = request.data.get('content', '').strip()
+        if not content:
+            return Response({'error': 'No content provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        lines = [line.strip() for line in content.split('\n') if line.strip()]
+        improvements = []
+        
+        for i, line in enumerate(lines):
+            # Skip comment lines (lines starting with #)
+            if line.startswith('#'):
+                improvements.append({
+                    'line_index': i,
+                    'original_text': line,
+                    'suggestions': [],  # No suggestions for comments
+                    'is_comment': True
+                })
+                continue
+                
+            line_improvements = analyze_single_item(line)
+            improvements.append({
+                'line_index': i,
+                'original_text': line,
+                'suggestions': line_improvements,
+                'is_comment': False
+            })
+        
+        return Response({
+            'improvements': improvements
+        })
+        
+    except Exception as e:
+        logger.error(f"Error analyzing items: {str(e)}")
+        return Response({
+            'error': 'Failed to analyze items',
+            'details': str(e) if settings.DEBUG else None
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def analyze_single_item(line):
+    """
+    Analyze a single item line and provide parser-friendly improvement suggestions.
+    All suggestions are validated against the actual parser before being recommended.
+    """
+    suggestions = []
+    
+    # Skip non-product lines
+    if not line or len(line.strip()) < 3:
+        return suggestions
+    
+    # Check for common greeting patterns
+    greeting_patterns = [
+        r'\b(hi|hello|hey|good morning|good afternoon|good evening)\b',
+        r'\b(please|thank you|thanks)\b',
+        r'\b(order|ordering|need|want)\b'
+    ]
+    
+    is_greeting = any(re.search(pattern, line.lower()) for pattern in greeting_patterns)
+    if is_greeting:
+        return suggestions  # Skip greeting lines
+    
+    # Skip lines that appear to be already processed through suggestions
+    # Use dynamic pattern detection instead of hardcoded product names
+    
+    # Pattern 1: Any text with parentheses containing size and optional container
+    # Examples: "Potatoes (10kg bag)", "Strawberries (500g)", "Red Onions (3kg)"
+    if re.search(r'\([0-9]+(?:\.[0-9]+)?\s*(?:kg|g|ml|l)\s*(?:bag|box|punnet|packet|bunch|head)?\)', line, re.IGNORECASE):
+        return suggestions  # Skip - has parentheses with size/container pattern
+    
+    # Pattern 2: Capitalized product names with size in parentheses
+    # Examples: "Sweet Potatoes (5kg)", "Cherry Tomatoes (200g)"
+    if re.search(r'\b[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s*\([0-9]+(?:\.[0-9]+)?\s*(?:kg|g|ml|l)\)', line):
+        return suggestions  # Skip - capitalized product with size in parentheses
+    
+    # Pattern 3: Quantity-first format with proper capitalization
+    # Examples: "500.0 g Strawberries", "2.5 kg Sweet Potatoes"
+    if re.search(r'^\s*[0-9]+(?:\.[0-9]+)?\s+(?:g|kg|ml|l)\s+[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s*$', line):
+        return suggestions  # Skip - quantity-first with proper capitalization
+    
+    # Pattern 5: Product name followed by weight (processed format)
+    # Examples: "Butternut 3.0kg", "Carrots 5.5kg", "Tomatoes 2.0kg"
+    if re.search(r'^\s*[A-Z][a-z]+(?:\s+[A-Z][a-z]+)*\s+[0-9]+(?:\.[0-9]+)?\s*(?:kg|g|ml|l)\s*$', line):
+        return suggestions  # Skip - product with weight (processed format)
+    
+    # Pattern 4: Check if this looks like a database product name by checking format
+    # Examples: "Red Onions", "White Onions", "Green Apples" (proper case, multiple words)
+    # Dynamic check: if it has proper capitalization and matches database naming patterns
+    if re.search(r'^\s*[A-Z][a-z]+(?:\s+[A-Z][a-z]+)+\s*(?:\([^)]*\))?\s*$', line):
+        # Additional check: see if this matches any existing product name pattern
+        from products.models import Product
+        try:
+            # Check if there's a product with similar name structure
+            line_clean = re.sub(r'\s*\([^)]*\)', '', line).strip()  # Remove parentheses content
+            if Product.objects.filter(name__icontains=line_clean.split()[0]).exists():
+                return suggestions  # Skip - likely a database product name
+        except:
+            pass  # If database check fails, continue with analysis
+    
+    # Test if current line parses correctly
+    from whatsapp.services import parse_single_item
+    current_parse_result = parse_single_item(line)
+    
+    # Generate potential improvements
+    potential_suggestions = generate_parser_friendly_suggestions(line, current_parse_result)
+    
+    # Validate each suggestion against the parser
+    for suggestion in potential_suggestions:
+        improved_text = suggestion.get('improved_text', '')
+        suggestion_type = suggestion.get('type', '')
+        
+        if improved_text and improved_text != line:
+            # Test the improved text against the parser
+            test_result = parse_single_item(improved_text)
+            
+            # Always allow formatting suggestions if they parse correctly
+            if suggestion_type == 'formatting' and test_result:
+                suggestions.append(suggestion)
+            elif test_result and is_better_parse_result(current_parse_result, test_result, line, improved_text):
+                # Only add non-formatting suggestions that parse correctly and are better
+                suggestions.append(suggestion)
+    
+    return suggestions
+
+
+def generate_parser_friendly_suggestions(line, current_parse_result):
+    """
+    Generate potential improvements using parser-friendly formats.
+    Includes 10 perfect examples that work 100% of the time.
+    """
+    suggestions = []
+    line_lower = line.lower()
+    
+    # ADD PERFECT EXAMPLES that work 100% - these are the gold standard formats
+    perfect_examples = [
+        "5 Potatoes 2kg bag",           # quantity + product + weight + container
+        "3 Tomatoes 500g punnet",       # quantity + product + weight + container  
+        "1 Spinach 200g packet",        # quantity + product + weight + container
+        "2 Carrots 1kg bag",            # quantity + product + weight + container
+        "4 Mushrooms 200g punnet",      # quantity + product + weight + container
+        "1 Broccoli 500g head",         # quantity + product + weight + unit
+        "6 Lemons 2kg box",             # quantity + product + weight + container
+        "1 Lettuce 300g head",          # quantity + product + weight + unit
+        "3 Onions 5kg bag",             # quantity + product + weight + container  
+        "2 Strawberries 250g punnet"    # quantity + product + weight + container
+    ]
+    
+    # If line is very unclear, suggest one of the perfect examples
+    if (len(line.strip()) < 5 or 
+        not re.search(r'\d', line) or 
+        not current_parse_result):
+        suggestions.append({
+            'suggestion': '💡 Use these perfect formats that work 100%: quantity + product + weight + container',
+            'improved_text': '\n'.join([f"✅ {ex}" for ex in perfect_examples]),
+            'type': 'perfect_examples',
+            'examples': perfect_examples
+        })
+    
+    # 1. MISSING QUANTITY - Use parser-friendly format: "quantity product"
+    if not re.search(r'^\s*\d+', line):  # No number at start
+        suggestions.append({
+            'suggestion': 'Missing quantity - defaulting to 1 item',
+            'improved_text': f'1 {line}',
+            'type': 'missing_quantity'
+        })
+    
+    # 2. WEIGHT WITHOUT CONTAINER - Use format: "quantity product weight"
+    weight_match = re.search(r'(\d+(?:\.\d+)?)\s*(kg|g)\b', line, re.IGNORECASE)
+    if weight_match and not re.search(r'\b(box|bag|packet|punnet|bunch|head)\b', line_lower):
+        weight_num, weight_unit = weight_match.groups()
+        # Ensure no space between weight and unit
+        weight = f'{weight_num}{weight_unit}'
+        product_name = re.sub(r'\d+(?:\.\d+)?\s*(kg|g)\b', '', line, flags=re.IGNORECASE).strip()
+        
+        # Try different container formats that parse well
+        container_options = ['box', 'bag', 'packet', 'punnet']
+        for container in container_options:
+            if should_use_container(product_name, container):
+                improved_text = f'{product_name} {weight} {container}'
+                suggestions.append({
+                    'suggestion': f'Weight without container - consider specifying {container}',
+                    'improved_text': improved_text,
+                    'type': 'missing_container'
+                })
+                break
+    
+    # 3. CONTAINER WITHOUT WEIGHT - Use format: "quantity product weight container"
+    container_match = re.search(r'\b(box|bag|packet|punnet|bunch|head)\b', line_lower)
+    if container_match and not re.search(r'\d+(?:\.\d+)?(kg|g|ml|l)\b', line):
+        container = container_match.group(1)
+        suggested_weight = get_standard_weight_for_container(line, container)
+        if suggested_weight and container not in ['bunch', 'head']:  # Skip bunches and heads
+            # Remove existing container and add weight + container
+            product_base = re.sub(r'\b(box|bag|packet|punnet|bunch|head)\b', '', line, flags=re.IGNORECASE).strip()
+            # Clean up any extra spaces and fix weight formatting
+            product_base = re.sub(r'\s+', ' ', product_base).strip()
+            # Fix any spaced weights in the product base
+            product_base = re.sub(r'(\d+)\s+(kg|g|ml|l)\b', r'\1\2', product_base, flags=re.IGNORECASE)
+            improved_text = f'{product_base} {suggested_weight} {container}'
+            suggestions.append({
+                'suggestion': f'Container without weight - consider specifying {suggested_weight}',
+                'improved_text': improved_text,
+                'type': 'missing_weight'
+            })
+    
+    # 4. REORDER FOR BETTER PARSING - Use format: "quantity product weight[container]"
+    if re.search(r'\d+\s*(box|bag|packet|punnet)\s*\d+(kg|g)', line, re.IGNORECASE):
+        # Pattern like "1 box 3kg green pepper" -> "1 green pepper 3kg box"
+        match = re.search(r'(\d+)\s*(box|bag|packet|punnet)\s*(\d+(?:\.\d+)?)\s*(kg|g)\s*(.+)', line, re.IGNORECASE)
+        if match:
+            quantity, container, weight_num, weight_unit, product = match.groups()
+            # Ensure no space between weight and unit
+            improved_text = f'{quantity} {product.strip()} {weight_num}{weight_unit} {container}'
+            suggestions.append({
+                'suggestion': 'Reorder for better parsing - put product name first',
+                'improved_text': improved_text,
+                'type': 'reorder_parsing'
+            })
+    
+    # 5. FORMATTING FIXES - Always suggest removing spaces from weight units
+    formatting_issues = []
+    cleaned_line = line
+    
+    # Multiple spaces
+    if '  ' in line:
+        formatting_issues.append('multiple spaces')
+        cleaned_line = re.sub(r'\s+', ' ', cleaned_line)
+    
+    # Stray characters
+    if re.search(r'\s+[xX*]\s*$', line) or re.search(r'^\s*[xX*]\s+', line):
+        formatting_issues.append('stray characters (x, *)')
+        cleaned_line = re.sub(r'\s+[xX*]\s*$', '', cleaned_line)
+        cleaned_line = re.sub(r'^\s*[xX*]\s+', '', cleaned_line)
+        cleaned_line = cleaned_line.replace('*', ' ')
+    
+    # Fix spaces in weight units (e.g., "100 g" -> "100g", "5 kg" -> "5kg")
+    # This is ALWAYS a formatting issue that should be fixed
+    if re.search(r'\d+\s+(kg|g|ml|l)\b', line, re.IGNORECASE):
+        formatting_issues.append('spaces in weight units (should be 100g not 100 g)')
+        cleaned_line = re.sub(r'(\d+)\s+(kg|g|ml|l)\b', r'\1\2', cleaned_line, flags=re.IGNORECASE)
+    
+    # Missing spaces around numbers (but not for weight units)
+    if re.search(r'[a-zA-Z]\d|\d[a-zA-Z]', line) and not re.search(r'\d+(kg|g|ml|l)', line, re.IGNORECASE):
+        formatting_issues.append('missing spaces around numbers')
+        cleaned_line = re.sub(r'([a-zA-Z])(\d)', r'\1 \2', cleaned_line)
+        cleaned_line = re.sub(r'(\d)([a-zA-Z])', r'\1 \2', cleaned_line)
+        # Re-fix weight units that might have been affected
+        cleaned_line = re.sub(r'(\d+)\s+(kg|g|ml|l)\b', r'\1\2', cleaned_line, flags=re.IGNORECASE)
+    
+    if formatting_issues:
+        cleaned_line = re.sub(r'\s+', ' ', cleaned_line).strip()
+        suggestions.append({
+            'suggestion': f'Formatting issues: {", ".join(formatting_issues)}',
+            'improved_text': cleaned_line,
+            'type': 'formatting'
+        })
+    
+    return suggestions
+
+
+def is_better_parse_result(current_result, new_result, original_line, improved_line):
+    """
+    Determine if the new parse result is better than the current one.
+    """
+    # If current doesn't parse but new does, new is better
+    if not current_result and new_result:
+        return True
+    
+    # If current parses but new doesn't, new is worse
+    if current_result and not new_result:
+        return False
+    
+    # If neither parse, no improvement
+    if not current_result and not new_result:
+        return False
+    
+    # Both parse - check quality
+    current_product = current_result.get('product_name', '').lower()
+    new_product = new_result.get('product_name', '').lower()
+    
+    # Avoid truncated product names like "1 Bo", "200 G"
+    if (len(new_product) < 3 or 
+        new_product in ['1 bo', '2 bo', '3 bo'] or
+        re.match(r'^\d+\s*[a-z]$', new_product)):
+        return False
+    
+    # Check for obvious parsing failures in current result
+    current_is_bad = (
+        len(current_product) < 3 or
+        current_product in ['1 bo', '2 bo', '3 bo'] or
+        re.match(r'^\d+\s*[a-z]$', current_product) or  # Like "200 g"
+        current_product.startswith('1 bo') or
+        current_product.startswith('2 bo') or
+        current_product.startswith('3 bo')
+    )
+    
+    # If current result is already good, be very conservative
+    if not current_is_bad:
+        # Check if the current result already looks like a proper product name
+        # If it contains actual product words and reasonable structure, don't suggest changes
+        original_words = set(original_line.lower().split())
+        product_words = set(current_product.split())
+        
+        # If current product name contains most of the meaningful words from original, it's probably good
+        meaningful_words = [w for w in original_words if len(w) > 2 and w not in ['box', 'bag', 'packet', 'punnet', 'kg', 'g']]
+        current_meaningful_overlap = len([w for w in meaningful_words if any(pw in w or w in pw for pw in product_words)])
+        
+        # If current result captures most meaningful words, don't suggest changes
+        if meaningful_words and current_meaningful_overlap >= len(meaningful_words) * 0.7:
+            return False
+        
+        # Check if product name makes more sense
+        current_word_overlap = len([word for word in current_product.split() if word in original_words])
+        new_word_overlap = len([word for word in new_product.split() if word in original_words])
+        
+        # Only suggest if significantly better
+        if new_word_overlap > current_word_overlap + 1:
+            return True
+        
+        # Prefer results with proper package sizes
+        current_has_package = bool(current_result.get('package_size'))
+        new_has_package = bool(new_result.get('package_size'))
+        
+        if new_has_package and not current_has_package and new_word_overlap >= current_word_overlap:
+            return True
+    
+    # If current is bad and new is good, suggest the improvement
+    if current_is_bad and len(new_product) > 3:
+        return True
+    
+    return False
+
+
+def should_use_container(product_name, container):
+    """
+    Determine if a container type is appropriate for a product.
+    """
+    product_lower = product_name.lower()
+    
+    container_mappings = {
+        'punnet': ['strawberries', 'cherry tomatoes', 'mushrooms', 'berries'],
+        'packet': ['herbs', 'mint', 'parsley', 'coriander', 'spinach', 'dill'],
+        'box': ['tomatoes', 'potatoes', 'onions', 'carrots', 'peppers', 'cucumber', 'lettuce', 'avocados', 'lemons'],
+        'bag': ['potatoes', 'onions', 'carrots']
+    }
+    
+    suitable_products = container_mappings.get(container, [])
+    return any(product in product_lower for product in suitable_products)
+
+
+def get_standard_weight_for_container(line, container):
+    """
+    Get standard weight for a container type based on the product.
+    Returns weight without spaces (e.g., '5kg' not '5 kg').
+    """
+    line_lower = line.lower()
+    
+    weight_mappings = {
+        'punnet': '200g',
+        'packet': '100g',
+        'box': '5kg',
+        'bag': '10kg',
+        'bunch': None,  # Bunches don't need weights
+        'head': None    # Heads don't need weights
+    }
+    
+    # Special cases based on product
+    if 'strawberries' in line_lower or 'mushrooms' in line_lower:
+        return '200g'
+    elif 'herbs' in line_lower or 'mint' in line_lower or 'parsley' in line_lower or 'dill' in line_lower:
+        return '100g'
+    elif 'potatoes' in line_lower or 'onions' in line_lower:
+        return '10kg'
+    elif 'tomatoes' in line_lower or 'peppers' in line_lower or 'carrots' in line_lower or 'butternut' in line_lower or 'pineapple' in line_lower:
+        return '5kg'
+    elif 'cucumber' in line_lower:
+        return '5kg'  # Updated from your list
+    elif 'spinach' in line_lower:
+        return '5kg'  # For packet spinach
+    
+    return weight_mappings.get(container)
+
+
+def suggest_weight_for_container_product(line):
+    """
+    Suggest appropriate weight for products with containers but no weight specified.
+    """
+    line_lower = line.lower()
+    
+    # Common weight suggestions based on product and container type
+    weight_suggestions = {
+        # Punnet products
+        ('strawberries', 'punnet'): '200g',
+        ('cherry tomatoes', 'punnet'): '200g',
+        ('mushrooms', 'punnet'): '200g',
+        ('berries', 'punnet'): '200g',
+        
+        # Box products
+        ('tomatoes', 'box'): '5kg',
+        ('potatoes', 'box'): '10kg',
+        ('onions', 'box'): '10kg',
+        ('carrots', 'box'): '10kg',
+        ('peppers', 'box'): '5kg',
+        ('cucumber', 'box'): '5kg',
+        ('lettuce', 'box'): '2kg',
+        
+        # Bag products
+        ('potatoes', 'bag'): '10kg',
+        ('onions', 'bag'): '10kg',
+        ('carrots', 'bag'): '5kg',
+        
+        # Packet products
+        ('herbs', 'packet'): '100g',
+        ('spinach', 'packet'): '200g',
+        ('mint', 'packet'): '100g',
+        ('parsley', 'packet'): '100g',
+    }
+    
+    # Try to match product and container
+    for (product, container), weight in weight_suggestions.items():
+        if product in line_lower and container in line_lower:
+            return weight
+    
+    # Default suggestions based on container type
+    if 'punnet' in line_lower:
+        return '200g'
+    elif 'box' in line_lower:
+        return '5kg'
+    elif 'bag' in line_lower:
+        return '5kg'
+    elif 'packet' in line_lower:
+        return '100g'
+    
+    return None
+
+
+def suggest_container_for_product(line):
+    """
+    Suggest appropriate container for products with weight but no container.
+    """
+    line_lower = line.lower()
+    
+    # Container suggestions based on product type and weight
+    if any(product in line_lower for product in ['strawberries', 'cherry tomatoes', 'mushrooms', 'berries']):
+        return 'punnet'
+    elif any(product in line_lower for product in ['herbs', 'mint', 'parsley', 'coriander', 'spinach']):
+        return 'packet'
+    elif any(product in line_lower for product in ['tomatoes', 'potatoes', 'onions', 'carrots', 'peppers']):
+        # Check weight to determine container
+        if re.search(r'[1-9]\d*kg', line_lower):  # Multi-kg suggests box
+            return 'box'
+        else:
+            return 'bag'
+    
+    # Default based on weight
+    if re.search(r'[5-9]\d*kg|[1-9]\d+kg', line_lower):  # 5kg+ suggests box
+        return 'box'
+    elif re.search(r'\d+g', line_lower):  # Grams suggest packet or punnet
+        return 'packet'
+    
+    return 'box'  # Default
+
+
+def suggest_specific_packaging(line):
+    """
+    Suggest specific packaging to replace ambiguous terms.
+    """
+    line_lower = line.lower()
+    
+    # Replace ambiguous terms with specific suggestions
+    replacements = {
+        r'\bsmall\s+box\b': '2kg box',
+        r'\blarge\s+box\b': '10kg box',
+        r'\bbig\s+box\b': '15kg box',
+        r'\bsmall\s+bag\b': '2kg bag',
+        r'\blarge\s+bag\b': '10kg bag',
+        r'\bsmall\s+packet\b': '100g packet',
+        r'\blarge\s+packet\b': '500g packet',
+        r'\bsmall\s+punnet\b': '200g punnet',
+        r'\blarge\s+punnet\b': '500g punnet',
+    }
+    
+    improved_text = line
+    for pattern, replacement in replacements.items():
+        improved_text = re.sub(pattern, replacement, improved_text, flags=re.IGNORECASE)
+    
+    # If no specific replacement, add default weights
+    if improved_text == line:
+        if 'box' in line_lower and not re.search(r'\d+kg', line_lower):
+            improved_text = re.sub(r'\bbox\b', '5kg box', line, flags=re.IGNORECASE)
+        elif 'bag' in line_lower and not re.search(r'\d+kg', line_lower):
+            improved_text = re.sub(r'\bbag\b', '5kg bag', line, flags=re.IGNORECASE)
+        elif 'packet' in line_lower and not re.search(r'\d+g', line_lower):
+            improved_text = re.sub(r'\bpacket\b', '200g packet', line, flags=re.IGNORECASE)
+        elif 'punnet' in line_lower and not re.search(r'\d+g', line_lower):
+            improved_text = re.sub(r'\bpunnet\b', '200g punnet', line, flags=re.IGNORECASE)
+    
+    return improved_text if improved_text != line else None
+
+
+def get_product_specific_suggestions(line):
+    """
+    Get product-specific packaging and quantity suggestions.
+    """
+    suggestions = []
+    line_lower = line.lower()
+    
+    # Specific product recommendations
+    product_recommendations = {
+        'strawberries': {
+            'container': 'punnet',
+            'weight': '200g',
+            'example': 'Strawberries 5 punnet 200g'
+        },
+        'cherry tomatoes': {
+            'container': 'punnet',
+            'weight': '200g',
+            'example': 'Cherry tomatoes 10 punnet 200g'
+        },
+        'mushrooms': {
+            'container': 'punnet',
+            'weight': '200g',
+            'example': 'Mushrooms 3 punnet 200g'
+        },
+        'herbs': {
+            'container': 'packet',
+            'weight': '100g',
+            'example': 'Fresh herbs 2 packet 100g'
+        },
+        'spinach': {
+            'container': 'bunch',
+            'weight': None,
+            'example': 'Spinach 5 bunch'
+        }
+    }
+    
+    for product, recommendation in product_recommendations.items():
+        if product in line_lower:
+            # Check if the line is missing the recommended packaging
+            has_recommended_container = recommendation['container'] in line_lower
+            has_recommended_weight = recommendation['weight'] and recommendation['weight'] in line_lower
+            
+            if not has_recommended_container or (recommendation['weight'] and not has_recommended_weight):
+                suggestions.append({
+                    'suggestion': f'Consider standard {product} packaging',
+                    'improved_text': recommendation['example'],
+                    'type': 'product_specific'
+                })
+                break
+    
+    return suggestions
+
+
+def suggest_unit_for_product(line):
+    """
+    Suggest appropriate unit based on product type.
+    """
+    line_lower = line.lower()
+    
+    # Weight-based products (usually sold by kg)
+    weight_products = [
+        'tomato', 'potato', 'onion', 'carrot', 'cabbage', 'lettuce',
+        'spinach', 'broccoli', 'cauliflower', 'pepper', 'cucumber'
+    ]
+    
+    # Count-based products (usually sold by piece/each)
+    count_products = [
+        'pineapple', 'melon', 'watermelon', 'avocado', 'mango'
+    ]
+    
+    # Bunch-based products
+    bunch_products = [
+        'spinach', 'parsley', 'coriander', 'mint', 'basil'
+    ]
+    
+    # Check product type and suggest unit
+    for product in weight_products:
+        if product in line_lower:
+            return 'kg'
+    
+    for product in count_products:
+        if product in line_lower:
+            return 'each'
+    
+    for product in bunch_products:
+        if product in line_lower:
+            return 'bunch'
+    
+    # Default suggestion
+    return 'kg'
+
+
+def clean_line_formatting(line):
+    """
+    Clean up common formatting issues in a line.
+    """
+    # Remove stray x/X/* at end or beginning
+    cleaned = re.sub(r'\s+[xX*]\s*$', '', line)
+    cleaned = re.sub(r'^\s*[xX*]\s+', '', cleaned)
+    
+    # Replace asterisks with spaces
+    cleaned = cleaned.replace('*', ' ')
+    
+    # Add spaces around numbers where missing
+    cleaned = re.sub(r'([a-zA-Z])(\d)', r'\1 \2', cleaned)
+    cleaned = re.sub(r'(\d)([a-zA-Z])', r'\1 \2', cleaned)
+    
+    # Normalize multiple spaces
+    cleaned = re.sub(r'\s+', ' ', cleaned)
+    
+    return cleaned.strip()
+
+
+@api_view(['POST'])
+@authentication_classes([FlexibleAuthentication])
+@permission_classes([IsAuthenticated])
+def apply_quick_fix(request):
+    """
+    Apply quick fixes to message content including Remove Numbering.
+    """
+    try:
+        content = request.data.get('content', '').strip()
+        fix_type = request.data.get('fix_type', '').strip()
+        
+        if not content:
+            return Response({'error': 'No content provided'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not fix_type:
+            return Response({'error': 'No fix type specified'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        fixed_content = content
+        
+        if fix_type == 'remove_numbering':
+            fixed_content = clean_numbering_from_text(content)
+        elif fix_type == 'remove_timestamps':
+            fixed_content = clean_timestamp_from_text(content)
+        elif fix_type == 'clean_spacing':
+            # Clean spacing: remove extra spaces, normalize whitespace
+            fixed_content = re.sub(r'\s+', ' ', content.strip())
+            # Clean line by line
+            lines = fixed_content.split('\n')
+            cleaned_lines = [clean_line_formatting(line) for line in lines if line.strip()]
+            fixed_content = '\n'.join(cleaned_lines)
+        elif fix_type == 'remove_greetings':
+            # Remove greeting lines
+            lines = content.split('\n')
+            cleaned_lines = []
+            for line in lines:
+                line = line.strip()
+                if line and not _is_greeting_line(line):
+                    cleaned_lines.append(line)
+            fixed_content = '\n'.join(cleaned_lines)
+        elif fix_type == 'remove_emojis':
+            # Remove emojis and special characters
+            fixed_content = re.sub(r'[^\w\s\d\.\(\)\-\+\×\*\/\,\:\;]', '', content)
+            fixed_content = re.sub(r'\s+', ' ', fixed_content).strip()
+        elif fix_type == 'items_only':
+            # Keep only lines that look like items (have numbers/quantities)
+            lines = content.split('\n')
+            item_lines = []
+            for line in lines:
+                line = line.strip()
+                if line and _looks_like_item_line(line):
+                    item_lines.append(line)
+            fixed_content = '\n'.join(item_lines)
+        else:
+            return Response({'error': f'Unknown fix type: {fix_type}'}, status=status.HTTP_400_BAD_REQUEST)
+        
+        return Response({
+            'fixed_content': fixed_content,
+            'original_content': content,
+            'fix_applied': fix_type
+        })
+        
+    except Exception as e:
+        logger.error(f"Error applying quick fix: {str(e)}")
+        return Response({
+            'error': 'Failed to apply quick fix',
+            'details': str(e) if settings.DEBUG else None
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+def _is_greeting_line(line):
+    """Check if a line is a greeting or polite expression"""
+    line_upper = line.upper()
+    greeting_patterns = [
+        r'\b(GOOD MORNING|MORNING|HELLO|HI|HALLO|GREETINGS)\b',
+        r'\b(THANKS?|THANK YOU|PLEASE|PLZ|PLIZ)\b', 
+        r'\b(THAT\'?S ALL|THATS ALL|TNX|CHEERS)\b',
+        r'\b(HERE IS MY ORDER|MY ORDER|ORDER FOR)\b',
+        r'\b(MAY I PLEASE|CAN I|COULD I)\b'
+    ]
+    
+    for pattern in greeting_patterns:
+        if re.search(pattern, line_upper):
+            return True
+    return False
+
+
+def _looks_like_item_line(line):
+    """Check if a line looks like a product item (has quantities/numbers)"""
+    # Must have at least a number and some text
+    if not re.search(r'\d', line):
+        return False
+    
+    # Skip if it's just a greeting with numbers
+    if _is_greeting_line(line):
+        return False
+    
+    # Must have some alphabetic characters (product name)
+    if not re.search(r'[a-zA-Z]', line):
+        return False
+    
+    return True
 

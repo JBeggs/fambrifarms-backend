@@ -79,7 +79,7 @@ class WhatsAppMessage(models.Model):
     review_reason = models.CharField(max_length=255, blank=True, help_text="Reason for manual review")
     
     class Meta:
-        ordering = ['-timestamp']
+        ordering = ['timestamp']  # Ascending order (oldest first) to match frontend expectation
         indexes = [
             models.Index(fields=['message_type', 'processed']),
             models.Index(fields=['timestamp']),

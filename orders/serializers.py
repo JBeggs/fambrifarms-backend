@@ -13,12 +13,16 @@ class OrderItemSerializer(serializers.ModelSerializer):
     product_base_price = serializers.CharField(source='product.price', read_only=True)
     pricing_breakdown = serializers.SerializerMethodField()
     
+    # Stock status information
+    stock_action = serializers.SerializerMethodField()
+    stock_result = serializers.SerializerMethodField()
+    
     class Meta:
         model = OrderItem
         fields = ['id', 'product', 'product_name', 'product_description', 'product_department', 
                  'product_stock_level', 'product_default_unit', 'quantity', 'unit', 'price', 
                  'total_price', 'original_text', 'confidence_score', 'manually_corrected', 'notes',
-                 'product_base_price', 'pricing_breakdown']
+                 'product_base_price', 'pricing_breakdown', 'stock_action', 'stock_result']
     
     def get_pricing_breakdown(self, obj):
         """Get detailed pricing breakdown for this order item"""
@@ -96,6 +100,102 @@ class OrderItemSerializer(serializers.ModelSerializer):
                 'pricing_source': 'base_price',
                 'error': str(e)
             }
+    
+    def get_stock_action(self, obj):
+        """Determine the stock action that was taken for this order item"""
+        try:
+            from inventory.models import StockMovement
+            
+            # Look for stock movement for this order item
+            # Check by customer, product, and timing since reference doesn't contain order number
+            from datetime import timedelta
+            time_window = timedelta(minutes=5)
+            start_time = obj.order.created_at - time_window
+            end_time = obj.order.created_at + time_window
+            
+            movement = StockMovement.objects.filter(
+                product=obj.product,
+                user=obj.order.restaurant,  # Match by customer
+                movement_type__in=['finished_reserve', 'finished_release'],
+                timestamp__gte=start_time,
+                timestamp__lte=end_time
+            ).order_by('-timestamp').first()
+            
+            if movement:
+                if movement.movement_type == 'finished_reserve':
+                    return 'reserve'
+                elif movement.movement_type == 'finished_release':
+                    return 'no_reserve'
+            
+            # Only check for kg conversion if no actual stock movement found
+            # AND if there's evidence this was converted from a different unit
+            if (obj.unit and 'kg' in obj.unit.lower() and 
+                obj.product and obj.product.unit and 
+                obj.product.unit.lower() != obj.unit.lower()):
+                return 'convert_to_kg'
+            
+            # Default: no reserve
+            return 'no_reserve'
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error getting stock action for order item {obj.id}: {e}")
+            return None
+    
+    def get_stock_result(self, obj):
+        """Get the result of the stock action"""
+        try:
+            from inventory.models import StockMovement, FinishedInventory
+            
+            # Look for stock movement for this order item
+            # Check by customer, product, and timing since reference doesn't contain order number
+            from datetime import timedelta
+            time_window = timedelta(minutes=5)
+            start_time = obj.order.created_at - time_window
+            end_time = obj.order.created_at + time_window
+            
+            movement = StockMovement.objects.filter(
+                product=obj.product,
+                user=obj.order.restaurant,  # Match by customer
+                movement_type='finished_reserve',
+                timestamp__gte=start_time,
+                timestamp__lte=end_time
+            ).order_by('-timestamp').first()
+            
+            if movement:
+                return {
+                    'success': True,
+                    'message': f'Reserved {movement.quantity} {obj.unit}',
+                    'reserved_quantity': float(movement.quantity)
+                }
+            
+            # Check if stock exists but wasn't reserved
+            try:
+                inventory = FinishedInventory.objects.get(product=obj.product)
+                available = inventory.available_quantity or 0
+                
+                if available < obj.quantity:
+                    return {
+                        'success': False,
+                        'message': f'Insufficient stock - Available: {available}, Needed: {obj.quantity}',
+                        'available_quantity': float(available)
+                    }
+                else:
+                    return {
+                        'success': False,
+                        'message': 'Stock not reserved - needs to be ordered',
+                        'available_quantity': float(available)
+                    }
+            except FinishedInventory.DoesNotExist:
+                return {
+                    'success': False,
+                    'message': 'No inventory record - needs to be ordered'
+                }
+        except Exception as e:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.error(f"Error getting stock result for order item {obj.id}: {e}")
+            return None
 
 class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(many=True, read_only=True)

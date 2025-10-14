@@ -72,6 +72,21 @@
         "delivery_address": "Wimpy Mooikloof, Pretoria",
         "delivery_instructions": "Restaurant service entrance",
         "order_notes": "Family restaurant - consistent quality produce requirements"
+      },
+      {
+        "business_name": "The T Junction",
+        "contact_person": "Restaurant Manager",
+        "email": "info@thetjunction.co.za",
+        "phone": "+27 78 254 8948",
+        "address": "Plot 157, Pelindaba Road, Broederstroom, North West",
+        "customer_type": "restaurant",
+        "area": "Mooi Nooi",
+        "cuisine_type": "Grillhouse & Pizzeria",
+        "is_active": true,
+        "delivery_address": "The T Junction, Plot 157, Pelindaba Road, Broederstroom",
+        "delivery_instructions": "Main entrance - restaurant delivery",
+        "order_notes": "Grillhouse and pizzeria - steaks, pizzas, burgers, pasta. Pet-friendly venue with live music weekends",
+        "website": "https://www.thetjunction.co.za/"
       }
     ],
     "sun_city_area": [
@@ -306,6 +321,856 @@
   ],
   "products": [
     {
+      "name": "Baby Corn (200g)",
+      "description": "Baby Corn (200g) - punnet",
+      "department": "Vegetables",
+      "price": 12.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Corn (250g)",
+      "description": "Baby Corn (250g) - punnet",
+      "department": "Vegetables",
+      "price": 15.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Corn (500g)",
+      "description": "Baby Corn (500g) - punnet",
+      "department": "Vegetables",
+      "price": 30.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },    
+    {
+      "name": "Turmeric",
+      "description": "Turmeric - kg unit",
+      "department": "Herbs & Spices",
+      "price": 180.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Turmeric (100g)",
+      "description": "Turmeric (100g) - packet",
+      "department": "Herbs & Spices",
+      "price": 18.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Turmeric (200g)",
+      "description": "Turmeric (200g) - packet",
+      "department": "Herbs & Spices",
+      "price": 36.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Turmeric (250g)",
+      "description": "Turmeric (250g) - packet",
+      "department": "Herbs & Spices",
+      "price": 45.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Turmeric (500g)",
+      "description": "Turmeric (500g) - packet",
+      "department": "Herbs & Spices",
+      "price": 90.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Turmeric (750g)",
+      "description": "Turmeric (750g) - packet",
+      "department": "Herbs & Spices",
+      "price": 135.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },    
+    {
+      "name": "Edible Flowers",
+      "description": "Edible Flowers - kg unit",
+      "department": "Herbs & Spices",
+      "price": 295.84,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Edible Flowers (250g)",
+      "description": "Edible Flowers (250g) - punnet",
+      "department": "Herbs & Spices",
+      "price": 73.96,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Edible Flowers (500g)",
+      "description": "Edible Flowers (500g) - punnet",
+      "department": "Herbs & Spices",
+      "price": 147.92,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Edible Flowers (750g)",
+      "description": "Edible Flowers (750g) - packet",
+      "department": "Herbs & Spices",
+      "price": 221.88,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Edible Flowers (1kg)",
+      "description": "Edible Flowers (1kg) - packet",
+      "department": "Herbs & Spices",
+      "price": 295.84,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Edible Flowers (2kg)",
+      "description": "Edible Flowers (2kg) - packet",
+      "department": "Herbs & Spices",
+      "price": 591.68,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape",
+      "description": "Grape - kg unit",
+      "department": "Fruits",
+      "price": 60.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape (200g)",
+      "description": "Grape (200g) - punnet",
+      "department": "Fruits",
+      "price": 12.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape (250g)",
+      "description": "Grape (250g) - punnet",
+      "department": "Fruits",
+      "price": 15.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape (500g)",
+      "description": "Grape (500g) - punnet",
+      "department": "Fruits",
+      "price": 30.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape (750g)",
+      "description": "Grape (750g) - packet",
+      "department": "Fruits",
+      "price": 45.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape (1kg)",
+      "description": "Grape (1kg) - packet",
+      "department": "Fruits",
+      "price": 60.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape (2kg)",
+      "description": "Grape (2kg) - packet",
+      "department": "Fruits",
+      "price": 120.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Red Globe",
+      "description": "Grape Red Globe - kg unit",
+      "department": "Fruits",
+      "price": 65.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Red Globe (200g)",
+      "description": "Grape Red Globe (200g) - punnet",
+      "department": "Fruits",
+      "price": 13.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Red Globe (250g)",
+      "description": "Grape Red Globe (250g) - punnet",
+      "department": "Fruits",
+      "price": 16.25,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Red Globe (500g)",
+      "description": "Grape Red Globe (500g) - punnet",
+      "department": "Fruits",
+      "price": 32.5,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Red Globe (750g)",
+      "description": "Grape Red Globe (750g) - packet",
+      "department": "Fruits",
+      "price": 48.75,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Red Globe (1kg)",
+      "description": "Grape Red Globe (1kg) - packet",
+      "department": "Fruits",
+      "price": 65.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Red Globe (2kg)",
+      "description": "Grape Red Globe (2kg) - packet",
+      "department": "Fruits",
+      "price": 130.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Sugradne",
+      "description": "Grape Sugradne - kg unit",
+      "department": "Fruits",
+      "price": 70.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Sugradne (200g)",
+      "description": "Grape Sugradne (200g) - punnet",
+      "department": "Fruits",
+      "price": 14.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Sugradne (250g)",
+      "description": "Grape Sugradne (250g) - punnet",
+      "department": "Fruits",
+      "price": 17.5,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Sugradne (500g)",
+      "description": "Grape Sugradne (500g) - punnet",
+      "department": "Fruits",
+      "price": 35.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Sugradne (750g)",
+      "description": "Grape Sugradne (750g) - packet",
+      "department": "Fruits",
+      "price": 52.5,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Sugradne (1kg)",
+      "description": "Grape Sugradne (1kg) - packet",
+      "department": "Fruits",
+      "price": 70.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Grape Sugradne (2kg)",
+      "description": "Grape Sugradne (2kg) - packet",
+      "department": "Fruits",
+      "price": 140.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Large Veggie Box",
+      "description": "Large Veggie Box - kg unit",
+      "department": "Specialty Items",
+      "price": 86.68,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Large Veggie Box (200g)",
+      "description": "Large Veggie Box (200g) - punnet",
+      "department": "Specialty Items",
+      "price": 17.34,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Large Veggie Box (250g)",
+      "description": "Large Veggie Box (250g) - punnet",
+      "department": "Specialty Items",
+      "price": 21.67,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Large Veggie Box (500g)",
+      "description": "Large Veggie Box (500g) - punnet",
+      "department": "Specialty Items",
+      "price": 43.34,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Large Veggie Box (750g)",
+      "description": "Large Veggie Box (750g) - packet",
+      "department": "Specialty Items",
+      "price": 65.01,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Large Veggie Box (1kg)",
+      "description": "Large Veggie Box (1kg) - packet",
+      "department": "Specialty Items",
+      "price": 86.68,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Large Veggie Box (2kg)",
+      "description": "Large Veggie Box (2kg) - packet",
+      "department": "Specialty Items",
+      "price": 173.36,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Naartjies",
+      "description": "Naartjies - kg unit",
+      "department": "Fruits",
+      "price": 30.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Naartjies (200g)",
+      "description": "Naartjies (200g) - punnet",
+      "department": "Fruits",
+      "price": 6.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Naartjies (250g)",
+      "description": "Naartjies (250g) - punnet",
+      "department": "Fruits",
+      "price": 7.5,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Naartjies (500g)",
+      "description": "Naartjies (500g) - punnet",
+      "department": "Fruits",
+      "price": 15.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Naartjies (750g)",
+      "description": "Naartjies (750g) - packet",
+      "department": "Fruits",
+      "price": 22.5,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Naartjies (1kg)",
+      "description": "Naartjies (1kg) - packet",
+      "department": "Fruits",
+      "price": 30.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Naartjies (2kg)",
+      "description": "Naartjies (2kg) - packet",
+      "department": "Fruits",
+      "price": 60.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pan",
+      "description": "Patty Pan - kg unit",
+      "department": "Vegetables",
+      "price": 30.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pan (200g)",
+      "description": "Patty Pan (200g) - punnet",
+      "department": "Vegetables",
+      "price": 6.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pan (250g)",
+      "description": "Patty Pan (250g) - punnet",
+      "department": "Vegetables",
+      "price": 7.5,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pan (500g)",
+      "description": "Patty Pan (500g) - punnet",
+      "department": "Vegetables",
+      "price": 15.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pan (750g)",
+      "description": "Patty Pan (750g) - packet",
+      "department": "Vegetables",
+      "price": 22.5,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pan (1kg)",
+      "description": "Patty Pan (1kg) - packet",
+      "department": "Vegetables",
+      "price": 30.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Patty Pan (2kg)",
+      "description": "Patty Pan (2kg) - packet",
+      "department": "Vegetables",
+      "price": 60.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Paw Paw",
+      "description": "Paw Paw - kg unit",
+      "department": "Fruits",
+      "price": 25.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Paw Paw (200g)",
+      "description": "Paw Paw (200g) - punnet",
+      "department": "Fruits",
+      "price": 5.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Paw Paw (250g)",
+      "description": "Paw Paw (250g) - punnet",
+      "department": "Fruits",
+      "price": 6.25,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Paw Paw (500g)",
+      "description": "Paw Paw (500g) - punnet",
+      "department": "Fruits",
+      "price": 12.5,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Paw Paw (750g)",
+      "description": "Paw Paw (750g) - packet",
+      "department": "Fruits",
+      "price": 18.75,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Paw Paw (1kg)",
+      "description": "Paw Paw (1kg) - packet",
+      "department": "Fruits",
+      "price": 25.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Paw Paw (2kg)",
+      "description": "Paw Paw (2kg) - packet",
+      "department": "Fruits",
+      "price": 50.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sun Dried Tomatoes",
+      "description": "Sun Dried Tomatoes - kg unit",
+      "department": "Vegetables",
+      "price": 200.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sun Dried Tomatoes (200g)",
+      "description": "Sun Dried Tomatoes (200g) - punnet",
+      "department": "Vegetables",
+      "price": 40.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sun Dried Tomatoes (250g)",
+      "description": "Sun Dried Tomatoes (250g) - punnet",
+      "department": "Vegetables",
+      "price": 50.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sun Dried Tomatoes (500g)",
+      "description": "Sun Dried Tomatoes (500g) - punnet",
+      "department": "Vegetables",
+      "price": 100.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sun Dried Tomatoes (750g)",
+      "description": "Sun Dried Tomatoes (750g) - packet",
+      "department": "Vegetables",
+      "price": 150.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sun Dried Tomatoes (1kg)",
+      "description": "Sun Dried Tomatoes (1kg) - packet",
+      "department": "Vegetables",
+      "price": 200.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sun Dried Tomatoes (2kg)",
+      "description": "Sun Dried Tomatoes (2kg) - packet",
+      "department": "Vegetables",
+      "price": 400.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard",
+      "description": "Swiss Chard - kg unit",
+      "department": "Vegetables",
+      "price": 35.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (200g)",
+      "description": "Swiss Chard (200g) - punnet",
+      "department": "Vegetables",
+      "price": 7.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (250g)",
+      "description": "Swiss Chard (250g) - punnet",
+      "department": "Vegetables",
+      "price": 8.75,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (500g)",
+      "description": "Swiss Chard (500g) - punnet",
+      "department": "Vegetables",
+      "price": 17.5,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (750g)",
+      "description": "Swiss Chard (750g) - packet",
+      "department": "Vegetables",
+      "price": 26.25,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (1kg)",
+      "description": "Swiss Chard (1kg) - packet",
+      "department": "Vegetables",
+      "price": 35.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Swiss Chard (2kg)",
+      "description": "Swiss Chard (2kg) - packet",
+      "department": "Vegetables",
+      "price": 70.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress",
+      "description": "Watercress - kg unit",
+      "department": "Vegetables",
+      "price": 120.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (200g)",
+      "description": "Watercress (200g) - punnet",
+      "department": "Vegetables",
+      "price": 24.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (250g)",
+      "description": "Watercress (250g) - punnet",
+      "department": "Vegetables",
+      "price": 30.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (500g)",
+      "description": "Watercress (500g) - punnet",
+      "department": "Vegetables",
+      "price": 60.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (750g)",
+      "description": "Watercress (750g) - packet",
+      "department": "Vegetables",
+      "price": 90.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (1kg)",
+      "description": "Watercress (1kg) - packet",
+      "department": "Vegetables",
+      "price": 120.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Watercress (2kg)",
+      "description": "Watercress (2kg) - packet",
+      "department": "Vegetables",
+      "price": 240.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
       "name": "Artichokes",
       "description": "",
       "department": "Vegetables",
@@ -321,6 +1186,16 @@
       "department": "Vegetables",
       "price": 0.0,
       "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Arugula",
+      "description": "Arugula - kg unit",
+      "department": "Vegetables",
+      "price": 295.84,
+      "unit": "kg",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -420,6 +1295,26 @@
       "description": "",
       "department": "Vegetables",
       "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Arugula (1kg)",
+      "description": "Arugula (1kg) - packet",
+      "department": "Vegetables",
+      "price": 295.84,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Arugula (2kg)",
+      "description": "Arugula (2kg) - packet",
+      "department": "Vegetables",
+      "price": 591.68,
       "unit": "packet",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
@@ -621,6 +1516,16 @@
       "department": "Vegetables",
       "price": 416.66,
       "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Baby Corn",
+      "description": "Baby Corn - kg unit",
+      "department": "Vegetables",
+      "price": 416.66,
+      "unit": "kg",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -996,6 +1901,16 @@
       "is_active": true
     },
     {
+      "name": "Beans",
+      "description": "Beans - kg unit",
+      "department": "Vegetables",
+      "price": 87.5,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
       "name": "Beans (1kg)",
       "description": "",
       "department": "Vegetables",
@@ -1009,8 +1924,8 @@
       "name": "Beans (200g)",
       "description": "",
       "department": "Vegetables",
-      "price": 87.5,
-      "unit": "packet",
+      "price": 17.5,
+      "unit": "punnet",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -1019,7 +1934,37 @@
       "name": "Beans (500g)",
       "description": "",
       "department": "Vegetables",
-      "price": 87.5,
+      "price": 43.75,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Beans (250g)",
+      "description": "Beans (250g) - punnet",
+      "department": "Vegetables",
+      "price": 21.88,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Beans (750g)",
+      "description": "Beans (750g) - packet",
+      "department": "Vegetables",
+      "price": 65.63,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Beans (2kg)",
+      "description": "Beans (2kg) - packet",
+      "department": "Vegetables",
+      "price": 175.0,
       "unit": "packet",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
@@ -1706,7 +2651,7 @@
       "is_active": true
     },
     {
-      "name": "Cauliflower",
+      "name": "Cauliflower (head)",
       "description": "",
       "department": "Vegetables",
       "price": 6.59,
@@ -1786,16 +2731,6 @@
       "is_active": true
     },
     {
-      "name": "Cherry Tomatoes",
-      "description": "",
-      "department": "Specialty Items",
-      "price": 90.0,
-      "unit": "punnet",
-      "stock_level": 20.0,
-      "minimum_stock": 5.0,
-      "is_active": true
-    },
-    {
       "name": "Chives",
       "description": "Fresh chives",
       "department": "Herbs",
@@ -1856,6 +2791,86 @@
       "is_active": true
     },
     {
+      "name": "Cherry Tomatoes",
+      "description": "Cherry Tomatoes - kg unit",
+      "department": "Vegetables",
+      "price": 90.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cherry Tomatoes (200g)",
+      "description": "Cherry Tomatoes (200g) - punnet",
+      "department": "Vegetables",
+      "price": 18.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cherry Tomatoes (250g)",
+      "description": "Cherry Tomatoes (250g) - punnet", 
+      "department": "Vegetables",
+      "price": 22.5,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cherry Tomatoes (500g)",
+      "description": "Cherry Tomatoes (500g) - punnet",
+      "department": "Vegetables", 
+      "price": 45.0,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cherry Tomatoes (750g)",
+      "description": "Cherry Tomatoes (750g) - packet",
+      "department": "Vegetables",
+      "price": 67.5,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cherry Tomatoes (1kg)",
+      "description": "Cherry Tomatoes (1kg) - packet",
+      "department": "Vegetables",
+      "price": 90.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cherry Tomatoes (2kg)",
+      "description": "Cherry Tomatoes (2kg) - packet",
+      "department": "Vegetables",
+      "price": 180.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cocktail Tomatoes",
+      "description": "Cocktail Tomatoes - kg unit",
+      "department": "Vegetables",
+      "price": 90.0,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
       "name": "Cocktail Tomatoes (1kg)",
       "description": "",
       "department": "Vegetables",
@@ -1896,11 +2911,41 @@
       "is_active": true
     },
     {
+      "name": "Cocktail Tomatoes (750g)",
+      "description": "Cocktail Tomatoes (750g) - packet",
+      "department": "Vegetables",
+      "price": 67.5,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Cocktail Tomatoes (2kg)",
+      "description": "Cocktail Tomatoes (2kg) - packet",
+      "department": "Vegetables",
+      "price": 180.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
       "name": "Coriander",
       "description": "",
       "department": "Herbs & Spices",
       "price": 0.0,
       "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Coriander",
+      "description": "Coriander - kg unit",
+      "department": "Herbs & Spices",
+      "price": 295.84,
+      "unit": "kg",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -2001,6 +3046,36 @@
       "department": "Vegetables",
       "price": 0.0,
       "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Coriander (1kg)",
+      "description": "Coriander (1kg) - packet",
+      "department": "Herbs & Spices",
+      "price": 295.84,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Coriander (2kg)",
+      "description": "Coriander (2kg) - packet",
+      "department": "Herbs & Spices",
+      "price": 591.68,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crispy Lettuce",
+      "description": "Crispy Lettuce - kg unit",
+      "department": "Vegetables",
+      "price": 295.84,
+      "unit": "kg",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -2118,6 +3193,16 @@
     {
       "name": "Crispy Lettuce (750g)",
       "description": "",
+      "department": "Vegetables",
+      "price": 295.84,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Crispy Lettuce (1kg)",
+      "description": "Crispy Lettuce (1kg) - packet",
       "department": "Vegetables",
       "price": 295.84,
       "unit": "packet",
@@ -2816,6 +3901,16 @@
       "is_active": true
     },
     {
+      "name": "Iceberg",
+      "description": "Iceberg - kg unit",
+      "department": "Vegetables",
+      "price": 295.84,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
       "name": "Iceberg (100g)",
       "description": "",
       "department": "Vegetables",
@@ -2920,6 +4015,16 @@
       "description": "",
       "department": "Vegetables",
       "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Iceberg (2kg)",
+      "description": "Iceberg (2kg) - packet",
+      "department": "Vegetables",
+      "price": 591.68,
       "unit": "packet",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
@@ -3320,7 +4425,7 @@
       "description": "",
       "department": "Fruits",
       "price": 0.0,
-      "unit": "bag",
+      "unit": "kg",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -3330,7 +4435,7 @@
       "description": "",
       "department": "Vegetables",
       "price": 0.0,
-      "unit": "kg",
+      "unit": "bag",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -3340,7 +4445,7 @@
       "description": "",
       "department": "Vegetables",
       "price": 37.36,
-      "unit": "kg",
+      "unit": "bag",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -3350,7 +4455,7 @@
       "description": "",
       "department": "Vegetables",
       "price": 0.0,
-      "unit": "kg",
+      "unit": "bag",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -3360,7 +4465,7 @@
       "description": "",
       "department": "Vegetables",
       "price": 0.0,
-      "unit": "kg",
+      "unit": "bag",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -3396,6 +4501,16 @@
       "is_active": true
     },
     {
+      "name": "Micro Herbs",
+      "description": "Micro Herbs - kg unit",
+      "department": "Herbs & Spices",
+      "price": 406.25,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
       "name": "Micro Herbs (100g)",
       "description": "",
       "department": "Herbs & Spices",
@@ -3426,11 +4541,71 @@
       "is_active": true
     },
     {
+      "name": "Micro Herbs (250g)",
+      "description": "Micro Herbs (250g) - punnet",
+      "department": "Herbs & Spices",
+      "price": 101.56,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Micro Herbs (500g)",
+      "description": "Micro Herbs (500g) - punnet",
+      "department": "Herbs & Spices",
+      "price": 203.13,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Micro Herbs (750g)",
+      "description": "Micro Herbs (750g) - packet",
+      "department": "Herbs & Spices",
+      "price": 304.69,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Micro Herbs (1kg)",
+      "description": "Micro Herbs (1kg) - packet",
+      "department": "Herbs & Spices",
+      "price": 406.25,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Micro Herbs (2kg)",
+      "description": "Micro Herbs (2kg) - packet",
+      "department": "Herbs & Spices",
+      "price": 812.5,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
       "name": "Mint",
       "description": "",
       "department": "Herbs & Spices",
       "price": 0.0,
       "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mint",
+      "description": "Mint - kg unit",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "kg",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -3536,11 +4711,41 @@
       "is_active": true
     },
     {
+      "name": "Mint (1kg)",
+      "description": "Mint (1kg) - packet",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mint (2kg)",
+      "description": "Mint (2kg) - packet",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
       "name": "Mixed Lettuce",
       "description": "Mixed Lettuce - box unit",
       "department": "Vegetables",
       "price": 295.84,
       "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Mixed Lettuce",
+      "description": "Mixed Lettuce - kg unit",
+      "department": "Vegetables",
+      "price": 295.84,
+      "unit": "kg",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -3846,6 +5051,16 @@
       "is_active": true
     },
     {
+      "name": "Oregano",
+      "description": "Oregano - kg unit",
+      "department": "Herbs & Spices",
+      "price": 295.84,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
       "name": "Oregano (100g)",
       "description": "",
       "department": "Herbs & Spices",
@@ -3946,11 +5161,101 @@
       "is_active": true
     },
     {
+      "name": "Oregano (1kg)",
+      "description": "Oregano (1kg) - packet",
+      "department": "Herbs & Spices",
+      "price": 295.84,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Oregano (2kg)",
+      "description": "Oregano (2kg) - packet",
+      "department": "Herbs & Spices",
+      "price": 591.68,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
       "name": "Papaya",
       "description": "",
       "department": "Fruits",
       "price": 0.0,
       "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Papaya",
+      "description": "Papaya - kg unit",
+      "department": "Fruits",
+      "price": 37.36,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Papaya (200g)",
+      "description": "Papaya (200g) - punnet",
+      "department": "Fruits",
+      "price": 7.47,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Papaya (250g)",
+      "description": "Papaya (250g) - punnet",
+      "department": "Fruits",
+      "price": 9.34,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Papaya (500g)",
+      "description": "Papaya (500g) - punnet",
+      "department": "Fruits",
+      "price": 18.68,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Papaya (750g)",
+      "description": "Papaya (750g) - packet",
+      "department": "Fruits",
+      "price": 28.02,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Papaya (1kg)",
+      "description": "Papaya (1kg) - packet",
+      "department": "Fruits",
+      "price": 37.36,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Papaya (2kg)",
+      "description": "Papaya (2kg) - packet",
+      "department": "Fruits",
+      "price": 74.72,
+      "unit": "packet",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -4341,6 +5646,56 @@
       "department": "Vegetables",
       "price": 11.57,
       "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes",
+      "description": "Potatoes - kg unit",
+      "department": "Vegetables",
+      "price": 11.57,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes (200g)",
+      "description": "Potatoes (200g) - punnet",
+      "department": "Vegetables",
+      "price": 2.31,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes (250g)",
+      "description": "Potatoes (250g) - punnet",
+      "department": "Vegetables",
+      "price": 2.89,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes (500g)",
+      "description": "Potatoes (500g) - punnet",
+      "department": "Vegetables",
+      "price": 5.79,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Potatoes (750g)",
+      "description": "Potatoes (750g) - packet",
+      "department": "Vegetables",
+      "price": 8.68,
+      "unit": "packet",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -5276,6 +6631,26 @@
       "is_active": true
     },
     {
+      "name": "Sage",
+      "description": "Sage - bunch unit",
+      "department": "Herbs & Spices",
+      "price": 0.0,
+      "unit": "bunch",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sage",
+      "description": "Sage - kg unit",
+      "department": "Herbs & Spices",
+      "price": 295.84,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
       "name": "Sage (100g)",
       "description": "",
       "department": "Herbs & Spices",
@@ -5306,6 +6681,56 @@
       "is_active": true
     },
     {
+      "name": "Sage (250g)",
+      "description": "Sage (250g) - punnet",
+      "department": "Herbs & Spices",
+      "price": 73.96,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sage (500g)",
+      "description": "Sage (500g) - punnet",
+      "department": "Herbs & Spices",
+      "price": 147.92,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sage (750g)",
+      "description": "Sage (750g) - packet",
+      "department": "Herbs & Spices",
+      "price": 221.88,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sage (1kg)",
+      "description": "Sage (1kg) - packet",
+      "department": "Herbs & Spices",
+      "price": 295.84,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sage (2kg)",
+      "description": "Sage (2kg) - packet",
+      "department": "Herbs & Spices",
+      "price": 591.68,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
       "name": "Small Veggie Box",
       "description": "",
       "department": "Specialty Items",
@@ -5316,10 +6741,150 @@
       "is_active": true
     },
     {
+      "name": "Small Veggie Box",
+      "description": "Small Veggie Box - kg unit",
+      "department": "Specialty Items",
+      "price": 43.34,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Small Veggie Box (200g)",
+      "description": "Small Veggie Box (200g) - punnet",
+      "department": "Specialty Items",
+      "price": 8.67,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Small Veggie Box (250g)",
+      "description": "Small Veggie Box (250g) - punnet",
+      "department": "Specialty Items",
+      "price": 10.84,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Small Veggie Box (500g)",
+      "description": "Small Veggie Box (500g) - punnet",
+      "department": "Specialty Items",
+      "price": 21.67,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Small Veggie Box (750g)",
+      "description": "Small Veggie Box (750g) - packet",
+      "department": "Specialty Items",
+      "price": 32.51,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Small Veggie Box (1kg)",
+      "description": "Small Veggie Box (1kg) - packet",
+      "department": "Specialty Items",
+      "price": 43.34,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Small Veggie Box (2kg)",
+      "description": "Small Veggie Box (2kg) - packet",
+      "department": "Specialty Items",
+      "price": 86.68,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
       "name": "Snap Peas",
       "description": "Fresh Snap Peas (packet)",
       "department": "Vegetables",
       "price": 162.5,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Snap Peas",
+      "description": "Snap Peas - kg unit",
+      "department": "Vegetables",
+      "price": 162.5,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Snap Peas (200g)",
+      "description": "Snap Peas (200g) - punnet",
+      "department": "Vegetables",
+      "price": 32.5,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Snap Peas (250g)",
+      "description": "Snap Peas (250g) - punnet",
+      "department": "Vegetables",
+      "price": 40.63,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Snap Peas (500g)",
+      "description": "Snap Peas (500g) - punnet",
+      "department": "Vegetables",
+      "price": 81.25,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Snap Peas (750g)",
+      "description": "Snap Peas (750g) - packet",
+      "department": "Vegetables",
+      "price": 121.88,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Snap Peas (1kg)",
+      "description": "Snap Peas (1kg) - packet",
+      "department": "Vegetables",
+      "price": 162.5,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Snap Peas (2kg)",
+      "description": "Snap Peas (2kg) - packet",
+      "department": "Vegetables",
+      "price": 325.0,
       "unit": "packet",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
@@ -5516,6 +7081,16 @@
       "is_active": true
     },
     {
+      "name": "Strawberries",
+      "description": "Strawberries - kg unit",
+      "department": "Fruits",
+      "price": 37.36,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
       "name": "Strawberries (1kg)",
       "description": "",
       "department": "Fruits",
@@ -5592,6 +7167,76 @@
       "price": 562.5,
       "unit": "piece",
       "stock_level": 3.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Corn",
+      "description": "Sweet Corn - kg unit",
+      "department": "Vegetables",
+      "price": 562.5,
+      "unit": "kg",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Corn (200g)",
+      "description": "Sweet Corn (200g) - punnet",
+      "department": "Vegetables",
+      "price": 112.5,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Corn (250g)",
+      "description": "Sweet Corn (250g) - punnet",
+      "department": "Vegetables",
+      "price": 140.6,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Corn (500g)",
+      "description": "Sweet Corn (500g) - punnet",
+      "department": "Vegetables",
+      "price": 281.25,
+      "unit": "punnet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Corn (750g)",
+      "description": "Sweet Corn (750g) - packet",
+      "department": "Vegetables",
+      "price": 421.9,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Corn (1kg)",
+      "description": "Sweet Corn (1kg) - packet",
+      "department": "Vegetables",
+      "price": 562.5,
+      "unit": "packet",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Sweet Corn (2kg)",
+      "description": "Sweet Corn (2kg) - packet",
+      "department": "Vegetables",
+      "price": 1125.0,
+      "unit": "packet",
+      "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
     },
@@ -5997,30 +7642,10 @@
     },
     {
       "name": "Tomatoes",
-      "description": "Tomatoes - box unit variation",
-      "department": "Vegetables",
-      "price": 90.0,
-      "unit": "box",
-      "stock_level": 0.0,
-      "minimum_stock": 5.0,
-      "is_active": true
-    },
-    {
-      "name": "Tomatoes",
       "description": "",
       "department": "Vegetables",
       "price": 90.0,
       "unit": "kg",
-      "stock_level": 0.0,
-      "minimum_stock": 5.0,
-      "is_active": true
-    },
-    {
-      "name": "Tomatoes",
-      "description": "Tomatoes - punnet unit variation",
-      "department": "Vegetables",
-      "price": 90.0,
-      "unit": "punnet",
       "stock_level": 0.0,
       "minimum_stock": 5.0,
       "is_active": true
@@ -6047,6 +7672,16 @@
     },
     {
       "name": "Tomatoes (20kg)",
+      "description": "",
+      "department": "Vegetables",
+      "price": 90.0,
+      "unit": "box",
+      "stock_level": 0.0,
+      "minimum_stock": 5.0,
+      "is_active": true
+    },
+    {
+      "name": "Tomatoes (3kg)",
       "description": "",
       "department": "Vegetables",
       "price": 90.0,
@@ -6586,6 +8221,7 @@
       "is_active": true
     }
   ],
+
   "units_of_measure": [
     {
       "name": "kg",

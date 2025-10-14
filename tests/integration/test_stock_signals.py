@@ -59,23 +59,43 @@ class StockSignalsIntegrationTest(TestCase):
         )
         
         # Create inventory records
-        self.inventory1 = FinishedInventory.objects.create(
+        self.inventory1, _ = FinishedInventory.objects.get_or_create(
             product=self.product1,
-            available_quantity=Decimal('100.00'),
-            reserved_quantity=Decimal('0.00'),
-            minimum_level=Decimal('10.00'),
-            reorder_level=Decimal('25.00'),
-            average_cost=Decimal('15.00')
+            defaults={
+                'available_quantity': Decimal('100.00'),
+                'reserved_quantity': Decimal('0.00'),
+                'minimum_level': Decimal('10.00'),
+                'reorder_level': Decimal('25.00'),
+                'average_cost': Decimal('15.00')
+            }
         )
         
-        self.inventory2 = FinishedInventory.objects.create(
+        # Ensure inventory1 has the correct values (in case it was created by signal with different values)
+        self.inventory1.available_quantity = Decimal('100.00')
+        self.inventory1.reserved_quantity = Decimal('0.00')
+        self.inventory1.minimum_level = Decimal('10.00')
+        self.inventory1.reorder_level = Decimal('25.00')
+        self.inventory1.average_cost = Decimal('15.00')
+        self.inventory1.save()
+        
+        self.inventory2, _ = FinishedInventory.objects.get_or_create(
             product=self.product2,
-            available_quantity=Decimal('50.00'),
-            reserved_quantity=Decimal('0.00'),
-            minimum_level=Decimal('5.00'),
-            reorder_level=Decimal('15.00'),
-            average_cost=Decimal('20.00')
+            defaults={
+                'available_quantity': Decimal('50.00'),
+                'reserved_quantity': Decimal('0.00'),
+                'minimum_level': Decimal('5.00'),
+                'reorder_level': Decimal('15.00'),
+                'average_cost': Decimal('20.00')
+            }
         )
+        
+        # Ensure inventory2 has the correct values (in case it was created by signal with different values)
+        self.inventory2.available_quantity = Decimal('50.00')
+        self.inventory2.reserved_quantity = Decimal('0.00')
+        self.inventory2.minimum_level = Decimal('5.00')
+        self.inventory2.reorder_level = Decimal('15.00')
+        self.inventory2.average_cost = Decimal('20.00')
+        self.inventory2.save()
         
         # Find next valid order date
         today = date.today()
@@ -205,6 +225,18 @@ class StockSignalsIntegrationTest(TestCase):
         # Manually reserve stock (simulating confirmation signal)
         initial_available = self.inventory1.available_quantity
         self.inventory1.reserve_stock(Decimal('25.00'))
+        
+        # Create the corresponding stock movement record
+        StockMovement.objects.create(
+            movement_type='finished_reserve',
+            reference_number=order.order_number,
+            product=self.product1,
+            quantity=Decimal('25.00'),
+            unit_cost=Decimal('25.00'),
+            total_value=Decimal('625.00'),
+            user=self.customer,
+            notes=f"Reserved for order {order.order_number}"
+        )
         
         # Cancel the order (this should trigger stock release)
         order.status = 'cancelled'

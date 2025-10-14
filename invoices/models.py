@@ -116,10 +116,11 @@ class Invoice(models.Model):
     @property
     def days_overdue(self):
         if self.is_overdue:
+            from datetime import date
             due_date = self.due_date
             if hasattr(due_date, 'date'):
                 due_date = due_date.date()
-            return (timezone.now().date() - due_date).days
+            return (date.today() - due_date).days
         return 0
 
 class InvoiceItem(models.Model):

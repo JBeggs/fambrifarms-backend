@@ -21,24 +21,44 @@ def handle_order_status_change(sender, instance, created, **kwargs):
     """
     Handle stock movements when order status changes
     """
-    if created:
-        return  # Don't do anything on order creation, only status changes
-    
     # Get the order instance
     order = instance
     
-    # Handle different status changes
+    # Handle different status changes (both on creation and updates)
     if order.status == 'confirmed':
         # Reserve stock for confirmed orders
-        reserve_stock_for_order(order)
+        # Check if stock is already reserved to avoid double reservation
+        existing_reservations = StockMovement.objects.filter(
+            movement_type='finished_reserve',
+            reference_number=order.order_number
+        ).exists()
+        
+        if not existing_reservations:
+            reserve_stock_for_order(order)
     
     elif order.status == 'delivered':
         # Mark stock as sold
-        sell_stock_for_order(order)
+        # Check if stock is already sold to avoid double processing
+        existing_sales = StockMovement.objects.filter(
+            movement_type='finished_sell',
+            reference_number=order.order_number
+        ).exists()
+        
+        if not existing_sales:
+            sell_stock_for_order(order)
+            # Check for production alerts after delivery
+            check_production_alerts_for_order(order)
     
     elif order.status == 'cancelled':
         # Release reserved stock
-        release_stock_for_order(order)
+        # Only release if there are reservations to release
+        existing_reservations = StockMovement.objects.filter(
+            movement_type='finished_reserve',
+            reference_number=order.order_number
+        ).exists()
+        
+        if existing_reservations:
+            release_stock_for_order(order)
 
 
 def reserve_stock_for_order(order):
@@ -370,3 +390,35 @@ def update_stock_alerts(sender, instance, **kwargs):
             message=f'{instance.product.name} is running low. Available: {instance.available_quantity} {instance.product.unit}, Minimum: {instance.minimum_level} {instance.product.unit}',
             severity=severity
         )
+
+
+def check_production_alerts_for_order(order):
+    """Check if production alerts should be created after order delivery"""
+    from .models import FinishedInventory, StockAlert
+    
+    for item in order.items.all():
+        try:
+            inventory = FinishedInventory.objects.get(product=item.product)
+            
+            # Check if stock is below reorder level
+            if inventory.available_quantity <= inventory.reorder_level:
+                # Check if alert already exists
+                existing_alert = StockAlert.objects.filter(
+                    alert_type='production_needed',
+                    product=item.product,
+                    is_active=True
+                ).exists()
+                
+                if not existing_alert:
+                    StockAlert.objects.create(
+                        alert_type='production_needed',
+                        product=item.product,
+                        severity='medium',
+                        message=f'Production needed for {item.product.name}. Current stock: {inventory.available_quantity}, Reorder level: {inventory.reorder_level}',
+                        is_active=True
+                    )
+                    
+        except FinishedInventory.DoesNotExist:
+            pass  # No inventory found
+        except Exception as e:
+            pass  # Handle silently in production

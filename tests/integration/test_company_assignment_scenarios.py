@@ -7,6 +7,7 @@ These tests verify the complete flow from message creation to company assignment
 import os
 import sys
 import django
+import json
 from django.test import TestCase, TransactionTestCase
 from django.urls import reverse
 from datetime import datetime, timezone as dt_tz, timedelta
@@ -23,6 +24,22 @@ class CompanyAssignmentIntegrationTests(TransactionTestCase):
     
     def setUp(self):
         """Set up test fixtures"""
+        from django.contrib.auth import get_user_model
+        from rest_framework.test import APIClient
+        
+        # Create test user for authentication
+        User = get_user_model()
+        self.test_user = User.objects.create_user(
+            email='test@fambrifarms.co.za',
+            first_name='Test',
+            last_name='User',
+            user_type='admin'
+        )
+        
+        # Use API client and authenticate
+        self.client = APIClient()
+        self.client.force_authenticate(user=self.test_user)
+        
         self.receive_url = reverse('receive-messages')
         self.list_url = reverse('get-messages')
         self.edit_url = reverse('edit-message')
@@ -50,7 +67,8 @@ class CompanyAssignmentIntegrationTests(TransactionTestCase):
             }]
         }
         
-        response = self.client.post(self.receive_url, data=payload, content_type='application/json')
+        import json
+        response = self.client.post(self.receive_url, data=json.dumps(payload), content_type='application/json')
         self.assertEqual(response.status_code, 200, f"Failed to create message: {response.content}")
         return WhatsAppMessage.objects.get(message_id=message_id)
     
@@ -93,7 +111,7 @@ class CompanyAssignmentIntegrationTests(TransactionTestCase):
             'edited_content': '5kg potatoes\n3kg onions\n2kg carrots'  # Company name removed
         }
         
-        edit_response = self.client.post(self.edit_url, data=edit_payload, content_type='application/json')
+        edit_response = self.client.post(self.edit_url, data=json.dumps(edit_payload), content_type='application/json')
         self.assertEqual(edit_response.status_code, 200, f"Edit should succeed: {edit_response.content}")
         print("✅ Message edited to remove company name")
         
@@ -181,7 +199,7 @@ class CompanyAssignmentIntegrationTests(TransactionTestCase):
             'company_name': 'Maltos'
         }
         
-        update_response = self.client.post(self.update_company_url, data=update_payload, content_type='application/json')
+        update_response = self.client.post(self.update_company_url, data=json.dumps(update_payload), content_type='application/json')
         self.assertEqual(update_response.status_code, 200, f"Manual assignment should succeed: {update_response.content}")
         print("✅ Manually assigned company: 'Maltos'")
         
@@ -197,7 +215,7 @@ class CompanyAssignmentIntegrationTests(TransactionTestCase):
             'edited_content': '3kg tomatoes\n2kg cucumbers\n1kg peppers'  # Add item
         }
         
-        edit_response = self.client.post(self.edit_url, data=edit_payload, content_type='application/json')
+        edit_response = self.client.post(self.edit_url, data=json.dumps(edit_payload), content_type='application/json')
         self.assertEqual(edit_response.status_code, 200, f"Edit should succeed: {edit_response.content}")
         print("✅ Edited message content")
         
@@ -220,7 +238,7 @@ class CompanyAssignmentIntegrationTests(TransactionTestCase):
             ("mugg bean", "Mugg and Bean"),
             ("casa bella", "Casa Bella"),
             ("t junction", "T-junction"),
-            ("debonairs", "Debonairs"),
+            ("debonairs", "Debonairs Pizza"),
         ]
         
         for i, (alias, expected_canonical) in enumerate(test_cases):

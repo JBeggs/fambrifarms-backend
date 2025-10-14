@@ -36,8 +36,14 @@ class SmartMatchSuggestions:
     total_candidates: int
 
 class SmartProductMatcher:
+    # Class-level cache to share across instances
+    _products_cache = None
+    _name_index = None
+    _last_cache_time = None
+    _cache_timeout = 3600  # 1 hour cache timeout
+    
     def __init__(self):
-        """Initialize with dynamic database analysis"""
+        """Initialize with dynamic database analysis and caching"""
         # Initialize scoring weights
         self.scoring_weights = {
             'exact_name_match': 50,
@@ -49,22 +55,72 @@ class SmartProductMatcher:
             'alias_match': 25
         }
         
-        self._load_database_info()
+        self._load_database_info_cached()
         self._build_aliases()
     
-    def _load_database_info(self):
-        """Load and analyze all products from database"""
-        # Use database directly
-        all_products = Product.objects.all()
-        all_products_data = [
-            {
+    def _load_database_info_cached(self):
+        """Load database info with caching for performance"""
+        import time
+        
+        # Check if cache is valid
+        current_time = time.time()
+        if (self._products_cache is not None and 
+            self._last_cache_time is not None and 
+            current_time - self._last_cache_time < self._cache_timeout):
+            # Use cached data
+            self._use_cached_data()
+            return
+        
+        # Load fresh data with optimized queries
+        self._load_database_info_fresh()
+        self._last_cache_time = current_time
+    
+    def _use_cached_data(self):
+        """Use cached product data"""
+        self.all_products_data = self._products_cache
+        self.name_index = self._name_index
+        self._extract_metadata_from_cache()
+    
+    def _load_database_info_fresh(self):
+        """Load fresh data from database with optimizations"""
+        # OPTIMIZATION: Use select_related and prefetch_related for efficient loading
+        all_products = Product.objects.select_related('department').prefetch_related('supplier_products').all()
+        
+        # Convert to optimized data structure
+        all_products_data = []
+        name_index = {}  # word -> list of product indices
+        
+        for i, p in enumerate(all_products):
+            product_data = {
                 'id': p.id,
                 'name': p.name,
                 'unit': p.unit,
-                'price': float(p.price) if p.price else 0.0
+                'price': float(p.price) if p.price else 0.0,
+                'department': p.department.name if p.department else '',
+                'common_names': getattr(p, 'common_names', '') or '',
+                'django_object': p  # Keep reference to Django object
             }
-            for p in all_products
-        ]
+            all_products_data.append(product_data)
+            
+            # Build search index for O(1) lookups
+            words = p.name.lower().split()
+            for word in words:
+                if word not in name_index:
+                    name_index[word] = []
+                name_index[word].append(i)
+        
+        # Cache the data
+        self._products_cache = all_products_data
+        self._name_index = name_index
+        
+        # Set instance variables
+        self.all_products_data = all_products_data
+        self.name_index = name_index
+        
+        self._extract_metadata_from_cache()
+    
+    def _extract_metadata_from_cache(self):
+        """Extract metadata from cached product data"""
         
         # Extract all unique units
         self.valid_units = set()
@@ -75,7 +131,7 @@ class SmartProductMatcher:
         self.product_names = set()
         self.product_descriptions = {}  # product_name -> list of descriptions
         
-        for product_data in all_products_data:
+        for product_data in self.all_products_data:
             unit = product_data['unit'].lower()
             
             # Add unit
@@ -620,8 +676,7 @@ class SmartProductMatcher:
     def _get_color_words(self) -> List[str]:
         """Extract color words from product names in the database"""
         if not hasattr(self, '_cached_color_words'):
-            # Get all product names and extract potential color words
-            all_products = Product.objects.all()
+            # OPTIMIZATION: Use cached product data instead of database queries
             color_words = set()
             
             # Common color patterns in product names
@@ -630,8 +685,8 @@ class SmartProductMatcher:
                 r'\b(light|dark|bright|pale|deep|vivid|muted|neon|pastel)\s+(red|green|yellow|white|brown|black|blue|purple|orange|pink|violet|indigo|turquoise|maroon|navy|olive|lime|cyan|magenta)\b'
             ]
             
-            for product in all_products:
-                product_name = product.name.lower()
+            for product_data in self.all_products_data:
+                product_name = product_data['name'].lower()
                 for pattern in color_patterns:
                     matches = re.findall(pattern, product_name)
                     for match in matches:
@@ -648,9 +703,9 @@ class SmartProductMatcher:
     def _get_product_type_words(self) -> List[str]:
         """Extract product type words from product names in the database"""
         if not hasattr(self, '_cached_product_type_words'):
-            # Get all product names and extract potential product type words
-            all_products = Product.objects.all()
+            # OPTIMIZATION: Use cached product data instead of database queries
             type_words = set()
+            word_counts = {}  # Track word frequency
             
             # Words to exclude (units, containers, measurements, etc.)
             exclude_words = {
@@ -661,8 +716,9 @@ class SmartProductMatcher:
                 'with', 'by', 'from', 'up', 'down', 'out', 'off', 'over', 'under', 'through'
             }
             
-            for product in all_products:
-                product_words = product.name.lower().split()
+            # First pass: count word frequencies
+            for product_data in self.all_products_data:
+                product_words = product_data['name'].lower().split()
                 for word in product_words:
                     # Clean the word (remove punctuation, numbers)
                     clean_word = re.sub(r'[^\w]', '', word)
@@ -674,9 +730,12 @@ class SmartProductMatcher:
                         clean_word in ['', ' ']):
                         continue
                     
-                    # Check if this word appears in multiple products (likely a product type)
-                    if Product.objects.filter(name__icontains=clean_word).count() > 1:
-                        type_words.add(clean_word)
+                    word_counts[clean_word] = word_counts.get(clean_word, 0) + 1
+            
+            # Second pass: add words that appear in multiple products
+            for word, count in word_counts.items():
+                if count > 1:  # Word appears in multiple products
+                    type_words.add(word)
             
             self._cached_product_type_words = list(type_words)
         
@@ -688,7 +747,7 @@ class SmartProductMatcher:
     
     
     def _find_matches_from_database(self, parsed_message: ParsedMessage) -> List[SmartMatchResult]:
-        """Find matches from Django database (fallback)"""
+        """Find matches using cached data (optimized)"""
         product_name = parsed_message.product_name
         quantity = parsed_message.quantity
         unit = parsed_message.unit
@@ -698,10 +757,10 @@ class SmartProductMatcher:
         # Extract base product name by removing common container/weight words
         base_product_name = self._extract_base_product_name(product_name)
         
-        # Build Q query for product name matching
-        name_queries = Q()
+        # OPTIMIZATION: Use cached name index for fast lookups
+        candidate_indices = set()
         
-        # Try multiple search strategies
+        # Try multiple search strategies using cached index
         search_terms = [
             product_name,  # Full parsed name
             base_product_name,  # Base product name
@@ -719,12 +778,20 @@ class SmartProductMatcher:
                 if len(word) > 3 and word.lower() not in ['the', 'and', 'for', 'with', 'from', 'that', 'this']:
                     search_terms.append(word)
         
-        # Create queries for all search terms
+        # OPTIMIZATION: Use name index for O(1) lookups instead of database queries
         for term in search_terms:
-            name_queries |= Q(name__icontains=term)
+            term_lower = term.lower()
+            # Direct word match
+            if term_lower in self.name_index:
+                candidate_indices.update(self.name_index[term_lower])
+            
+            # Partial matches within words
+            for indexed_word in self.name_index:
+                if term_lower in indexed_word or indexed_word in term_lower:
+                    candidate_indices.update(self.name_index[indexed_word])
         
-        # Get initial candidates
-        candidates = Product.objects.filter(name_queries)
+        # Get candidate products from cache
+        candidates = [self.all_products_data[i] for i in candidate_indices]
         
         # If we have packaging size, prioritize products that contain it with word boundaries
         if packaging_size:
@@ -732,7 +799,7 @@ class SmartProductMatcher:
             # This prevents "5kg" from matching within "15kg"
             import re
             packaging_pattern = r'\b' + re.escape(packaging_size) + r'\b'
-            packaging_candidates = [c for c in candidates if re.search(packaging_pattern, c.name, re.IGNORECASE)]
+            packaging_candidates = [c for c in candidates if re.search(packaging_pattern, c['name'], re.IGNORECASE)]
             if packaging_candidates:
                 # Use packaging-specific candidates as primary, others as secondary
                 all_candidates = list(candidates)
@@ -742,48 +809,84 @@ class SmartProductMatcher:
         # Filter by unit if specified, but don't force it if it reduces matches too much
         # If packaging size is present, skip unit filtering to prioritize packaging size matching
         if unit and not packaging_size:
-            unit_candidates = candidates.filter(unit=unit)
+            unit_candidates = [c for c in candidates if c['unit'] == unit]
             # Use unit filtering if we have any candidates, but prefer more candidates
-            if unit_candidates.exists():
+            if unit_candidates:
                 if len(unit_candidates) >= 3:
                     candidates = unit_candidates
-            else:
+                else:
                     # If unit filtering gives us too few candidates, use both but prioritize unit matches
                     all_candidates = list(candidates)
-                    unit_candidates_list = list(unit_candidates)
                     # Put unit matches first
-                    candidates = unit_candidates_list + [c for c in all_candidates if c not in unit_candidates_list]
+                    candidates = unit_candidates + [c for c in all_candidates if c not in unit_candidates]
         
         # Filter by extra descriptions (like "200g", "large", etc.)
-        if extra_descriptions and not isinstance(candidates, list):
+        if extra_descriptions:
             for desc in extra_descriptions:
-                desc_candidates = candidates.filter(name__icontains=desc)
-                if desc_candidates.exists():
+                desc_candidates = [c for c in candidates if desc.lower() in c['name'].lower()]
+                if desc_candidates:
                     candidates = desc_candidates
                     break  # Use first matching description
         
         # Score and rank candidates
         results = []
-        for product in candidates:
-            score = self._calculate_score(product, parsed_message)
+        for product_data in candidates:
+            # Get Django object for scoring
+            django_product = product_data['django_object']
+            score = self._calculate_score(django_product, parsed_message)
             if score > 0:
                 results.append(SmartMatchResult(
-                    product=product,
+                    product=django_product,
                     quantity=quantity,
-                    unit=unit or product.unit,
+                    unit=product_data['unit'],  # Always use the product's unit, not parsed unit
                     confidence_score=score,
                     match_details={
                         'parsed_name': product_name,
                         'base_name': base_product_name,
-                        'matched_name': product.name,
-                        'unit_match': unit == product.unit if unit else False,
-                        'description_matches': [d for d in extra_descriptions if d in product.name.lower()],
-                        'name_word_matches': [w for w in base_product_name.split() if w in product.name.lower()]
+                        'matched_name': product_data['name'],
+                        'unit_match': unit == product_data['unit'] if unit else False,
+                        'description_matches': [d for d in extra_descriptions if d in product_data['name'].lower()],
+                        'name_word_matches': [w for w in base_product_name.split() if w in product_data['name'].lower()]
                     }
                 ))
         
-        # Sort by confidence score
-        results.sort(key=lambda x: x.confidence_score, reverse=True)
+        # Sort by confidence score, with name matching and packaging size as secondary criteria
+        def sort_key(match):
+            confidence = match.confidence_score
+            
+            # Add name match bonus for sorting (prioritize exact matches over partial matches)
+            name_match_bonus = 0
+            parsed_name_words = set(parsed_message.product_name.lower().split())
+            product_name_words = set(match.product.name.lower().split())
+            
+            # Check if all parsed words are in the product name (exact match priority)
+            if parsed_name_words.issubset(product_name_words):
+                # Prioritize products that contain all parsed words
+                name_match_bonus = 0.3  # Base bonus for containing all words
+                
+                # Add bonus for descriptive words (bulk, fresh, etc.) that indicate more specific products
+                descriptive_words = {'bulk', 'fresh', 'organic', 'premium', 'large', 'small', 'medium'}
+                if any(word in product_name_words for word in descriptive_words):
+                    name_match_bonus += 0.2  # Extra bonus for descriptive products
+            
+            # Add packaging size bonus for sorting (doesn't affect the actual score)
+            packaging_bonus = 0
+            if parsed_message.packaging_size:
+                import re
+                packaging_size = parsed_message.packaging_size.lower()
+                product_name_lower = match.product.name.lower()
+                packaging_pattern = r'\b' + re.escape(packaging_size) + r'\b'
+                if re.search(packaging_pattern, product_name_lower):
+                    packaging_bonus = 0.1  # Small bonus to break ties
+            
+            # Add price bonus for sorting (prefer products with prices > 0)
+            price_bonus = 0
+            if match.product.price and match.product.price > 0:
+                price_bonus = 0.05  # Small bonus for products with valid prices
+            
+            return (confidence, name_match_bonus, packaging_bonus, price_bonus)
+        
+        results.sort(key=sort_key, reverse=True)
         
         return results
     
@@ -868,7 +971,7 @@ class SmartProductMatcher:
                         alias_matches.append(SmartMatchResult(
                             product=product,
                             quantity=quantity,
-                            unit=unit or product.unit,
+                            unit=product.unit,  # Always use product's unit
                             confidence_score=score,
                             match_details={
                                 'strategy': 'alias_match',
@@ -940,7 +1043,7 @@ class SmartProductMatcher:
                         spelling_corrections.append(SmartMatchResult(
                             product=product,
                             quantity=quantity,
-                            unit=unit or product.unit,
+                            unit=product.unit,  # Always use product's unit
                             confidence_score=score,
                             match_details={
                                 'strategy': 'spelling_correction',
@@ -965,7 +1068,7 @@ class SmartProductMatcher:
                         spelling_corrections.append(SmartMatchResult(
                             product=product,
                             quantity=quantity,
-                            unit=unit or product.unit,
+                            unit=product.unit,  # Always use product's unit
                             confidence_score=score,
                             match_details={
                                 'strategy': 'spelling_correction',
@@ -992,41 +1095,62 @@ class SmartProductMatcher:
         elif parsed_name in self.aliases and self.aliases[parsed_name] in product_name_lower:
             score += 45
         
-        # Check for exact phrase match in product name (highest priority)
-        elif parsed_name in product_name_lower:
-            score += 45
-        
-        # Check for exact word matches in product name (ALL words must match)
-        elif all(word in product_name_lower for word in parsed_name.split()):
-            # Count how many words match exactly
-            matched_words = sum(1 for word in parsed_name.split() if word in product_name_lower)
-            total_words = len(parsed_name.split())
-            if matched_words == total_words:
-                score += 50  # High score for exact word match
-            else:
-                score += 30  # Lower score for partial word match
-        
-        # Base product name matching (high priority for container/weight products)
-        elif base_product_name and base_product_name in product_name_lower:
-            score += 35
-        
-        # Check for base product word matches (ALL words must match)
-        elif base_product_name and all(word in product_name_lower for word in base_product_name.split()):
-            score += 30
-        
-        # Penalty for partial matches that don't include all words
+        # Check for exact word matches using word boundaries (prevents "potatoes" matching "sweet potatoes")
         else:
-            # Check if we have some words matching but not all
-            parsed_words = set(parsed_name.split())
-            product_words = set(product_name_lower.split())
-            common_words = parsed_words.intersection(product_words)
-        
-            if common_words and len(common_words) < len(parsed_words):
-                # Some words match but not all - this is likely a wrong match
-                score -= 50  # Heavy penalty for partial word matches
-            elif not common_words:
-                # No words match at all
-                score -= 100  # Very heavy penalty for no word matches
+            parsed_words = parsed_name.split()
+            
+            # Check if ALL parsed words exist as complete words in product name
+            # BUT also ensure we're not matching a subset (e.g., "potatoes" shouldn't match "sweet potatoes")
+            parsed_word_set = set(parsed_words)
+            product_word_set = set(product_name_lower.split())
+            
+            # Only match if:
+            # 1. All parsed words exist as complete words in product name, AND
+            # 2. Either the parsed words are exactly the product words, OR
+            # 3. The product words are a superset that makes sense (like "baby potatoes" for "potatoes")
+            
+            all_words_match = True
+            for word in parsed_words:
+                # Use word boundaries to ensure exact word match, not substring
+                if not re.search(r'\b' + re.escape(word) + r'\b', product_name_lower):
+                    all_words_match = False
+                    break
+            
+            if all_words_match:
+                # Additional check: if parsed is subset of product, ensure it's a valid relationship
+                extra_words = product_word_set - parsed_word_set
+                
+                # Allow certain modifier words (like "baby", "mini", "organic", etc.)
+                allowed_modifiers = {'baby', 'mini', 'organic', 'fresh', 'crispy', 'mixed'}
+                
+                if not extra_words:
+                    # Exact match - highest score
+                    score += 50
+                elif extra_words.issubset(allowed_modifiers):
+                    # Valid modifier relationship (e.g., "baby potatoes" for "potatoes")
+                    score += 40
+                else:
+                    # Invalid relationship (e.g., "sweet potatoes" for "potatoes")
+                    score += 5  # Very low score
+            
+            # Base product name matching (high priority for container/weight products)
+            elif base_product_name and base_product_name in product_name_lower:
+                score += 35
+            
+            # Check for base product word matches (ALL words must match)
+            elif base_product_name:
+                base_words_match = True
+                for word in base_product_name.split():
+                    if not re.search(r'\b' + re.escape(word) + r'\b', product_name_lower):
+                        base_words_match = False
+                        break
+                if base_words_match:
+                    score += 30
+                else:
+                    score += 5  # Low score for no match
+            else:
+                # No match at all
+                score += 5
         
         # Packaging size matching (highest priority when available)
         if parsed_message.packaging_size:
@@ -1047,13 +1171,18 @@ class SmartProductMatcher:
                     size_pattern = r'\b' + re.escape(f"{size_num}{size_unit}") + r'\b'
                     if re.search(size_pattern, product_name_lower):
                         score += 45  # High bonus for same size
-                    else:
-                        score -= 30  # Penalty for different packaging size
+                    # Penalty logic moved to end of function for consistency
         
         # Color-specific matching bonus/penalty
+        # Enhanced color matching logic for better product variations
         color_words = self._get_color_words()
         parsed_colors = [word for word in parsed_name.split() if word in color_words]
         product_colors = [word for word in product_name_lower.split() if word in color_words]
+        
+        # Check if this is a color-variant product (like onions, apples, peppers)
+        color_variant_products = {'onions', 'onion', 'apples', 'apple', 'peppers', 'pepper', 'grapes', 'grape', 'chillies', 'chilli', 'chili'}
+        is_color_variant_product = any(variant in parsed_name.lower() for variant in color_variant_products) or \
+                                 any(variant in product_name_lower for variant in color_variant_products)
         
         if parsed_colors and product_colors:
             if set(parsed_colors) == set(product_colors):
@@ -1061,27 +1190,123 @@ class SmartProductMatcher:
             elif any(color in product_colors for color in parsed_colors):
                 score += 15  # Partial color match bonus
             else:
-                # Different colors - strong penalty
-                score -= 40  # Strong penalty for different colors
+                # Different colors - penalty depends on product type
+                if is_color_variant_product:
+                    score -= 20  # Moderate penalty for color variants (red vs white onions)
+                else:
+                    score -= 40  # Strong penalty for different colors on non-variants
         elif parsed_colors and not product_colors:
-            # Penalty for color mismatch - if parsed has color but product doesn't
-            score -= 50  # Very strong penalty for missing expected color
+            # Parsed has color but product doesn't - penalty depends on context
+            if is_color_variant_product:
+                score -= 25  # Moderate penalty for color variants
+            else:
+                score -= 50  # Strong penalty for missing expected color
         elif not parsed_colors and product_colors:
-            # Penalty for extra color - if product has color but parsed doesn't
-            score -= 30  # Strong penalty for unexpected color
+            # Product has color but parsed doesn't - this is often acceptable for variants
+            if is_color_variant_product:
+                # For color variants like onions/apples, having a color when none specified is OK
+                # "onions" should match "red onions" reasonably well
+                score += 5   # Small bonus - color variants are more specific/better
+            else:
+                score -= 15  # Small penalty for unexpected color on non-variants
         
-        # Product type matching bonus/penalty
+        # Enhanced product type matching with exact product prioritization
         product_type_words = self._get_product_type_words()
         parsed_types = [word for word in parsed_name.split() if word in product_type_words]
         product_types = [word for word in product_name_lower.split() if word in product_type_words]
         
+        # Check for product variations (spring onions vs regular onions)
+        variation_words = {'spring', 'cocktail', 'cherry', 'baby', 'mini', 'wild', 'crispy'}
+        parsed_variations = [word for word in parsed_name.lower().split() if word in variation_words]
+        product_variations = [word for word in product_name_lower.split() if word in variation_words]
+        
+        # Exact product name matching (highest priority)
+        # Add words that indicate DIFFERENT products, not just variations
+        different_product_words = {'sweet', 'sour', 'bitter', 'hot', 'cold', 'frozen', 'dried', 'pickled'}
+        
+        parsed_core_words = set(parsed_name.lower().split()) - set(color_words) - set(variation_words) - {'kg', 'g', 'box', 'bag', 'punnet', 'packet', 'bunch', 'head', 'each', 'piece'}
+        product_core_words = set(product_name_lower.split()) - set(color_words) - set(variation_words) - {'kg', 'g', 'box', 'bag', 'punnet', 'packet', 'bunch', 'head', 'each', 'piece'}
+        
+        # Check if there are different-product words that would make this a mismatch
+        parsed_different_words = set(parsed_name.lower().split()) & different_product_words
+        product_different_words = set(product_name_lower.split()) & different_product_words
+        
+        if parsed_core_words and product_core_words:
+            if parsed_core_words == product_core_words:
+                # Check for different-product word conflicts
+                if parsed_different_words != product_different_words:
+                    # Different product types (e.g., "potatoes" vs "sweet potatoes")
+                    score += 5  # Very low score for different product types
+            else:
+                score += 50  # Huge bonus for exact core product match (onions = onions)
+                
+                # Additional bonus for exact product type matches with colors
+                if parsed_colors and product_colors and set(parsed_colors) == set(product_colors):
+                    score += 25  # Extra bonus for exact color + product match
+            
+            if parsed_core_words.issubset(product_core_words) or product_core_words.issubset(parsed_core_words):
+                # Check for different-product word conflicts in subset matching
+                if parsed_different_words != product_different_words:
+                    # Different product types - don't allow subset matching
+                    score += 5  # Very low score
+                else:
+                    score += 35  # Large bonus for subset match
+            elif len(parsed_core_words.intersection(product_core_words)) > 0:
+                score += 20  # Medium bonus for partial core match
+            else:
+                score -= 30  # Penalty for completely different products
+                
+        # Specific product type prioritization to fix common mismatches
+        parsed_lower = parsed_name.lower()
+        product_lower = product_name_lower
+        
+        # Prioritize exact product matches over similar-sounding ones
+        specific_matches = {
+            'onions': ['onions', 'onion'],
+            'apples': ['apples', 'apple'], 
+            'peppers': ['peppers', 'pepper'],
+            'grapes': ['grapes', 'grape'],
+            'chillies': ['chillies', 'chilli', 'chili']
+        }
+        
+        for product_key, product_terms in specific_matches.items():
+            if any(term in parsed_lower for term in product_terms):
+                if any(term in product_lower for term in product_terms):
+                    score += 30  # Strong bonus for matching the right product category
+                else:
+                    # Check if this is a different product category
+                    other_categories = [cat for cat in specific_matches.keys() if cat != product_key]
+                    if any(any(term in product_lower for term in specific_matches[other_cat]) for other_cat in other_categories):
+                        score -= 25  # Penalty for wrong product category
+        
         if parsed_types and product_types:
             if set(parsed_types) == set(product_types):
-                score += 20  # Exact product type match bonus
+                # Same base product type - now check variations
+                if parsed_variations and product_variations:
+                    if set(parsed_variations) == set(product_variations):
+                        score += 30  # Exact product type + variation match
+                    else:
+                        score -= 25  # Same product type but wrong variation
+                elif parsed_variations and not product_variations:
+                    score -= 30  # Expected variation but product doesn't have it
+                elif not parsed_variations and product_variations:
+                    # No variation specified but product has one
+                    # This is often OK for base products (onions -> spring onions is less preferred)
+                    if is_color_variant_product:
+                        score -= 15  # Moderate penalty - prefer base variants over specialized ones
+                    else:
+                        score -= 5   # Very small penalty for other products
+                else:
+                    score += 25  # Perfect match - same type, no variations
             elif any(ptype in product_types for ptype in parsed_types):
                 score += 10  # Partial product type match bonus
             else:
                 score -= 15  # Penalty for wrong product type
+        elif parsed_types and not product_types:
+            score -= 20  # Penalty for missing product type
+        elif not parsed_types and product_types:
+            # Product has type words but parsed doesn't - usually OK
+            score -= 5   # Small penalty
         
         # Specific tomato type matching (cherry vs cocktail)
         if 'cherry' in parsed_name and 'cherry' in product_name_lower:
@@ -1163,12 +1388,50 @@ class SmartProductMatcher:
             for desc in parsed_message.extra_descriptions:
                 if desc in product_name_lower:
                     score += 15
-            
+        
         # Penalize if no meaningful match
         if score < 10:
             return 0
         
-        return min(score, 100)  # Cap at 100
+        # Apply packaging size penalties before capping
+        if parsed_message.packaging_size:
+            packaging_size = parsed_message.packaging_size.lower()
+            packaging_pattern = r'\b' + re.escape(packaging_size) + r'\b'
+            if not re.search(packaging_pattern, product_name_lower):
+                # Check if the product has any packaging size at all
+                has_packaging = re.search(r'\b\d+(?:\.\d+)?(kg|g|ml|l)\b', product_name_lower)
+                if has_packaging:
+                    score -= 25  # Penalty for wrong packaging size (applied before cap)
+        else:
+                    score -= 10  # Lighter penalty for products without specific packaging
+        
+        # Unit matching bonus - IMPROVED PRIORITY (MOVED BEFORE RETURN)
+        if parsed_message.unit and product.unit:
+            parsed_unit = parsed_message.unit.lower()
+            product_unit = product.unit.lower()
+            
+            if parsed_unit == product_unit:
+                # Unit match bonus - reasonable but not overwhelming
+                score += 20  # Reasonable bonus for unit match
+            elif self._compatible_units(parsed_message.unit, product.unit):
+                score += 15  # Compatible unit bonus
+            else:
+                # PENALTY for unit mismatch when user specified a unit
+                score -= 10  # Increased penalty for wrong unit
+        
+        # FINAL CHECK: Strong penalty for different-product words (applied after all bonuses)
+        different_product_words = {'sweet', 'sour', 'bitter', 'hot', 'cold', 'frozen', 'dried', 'pickled'}
+        parsed_different_words = set(parsed_message.product_name.lower().split()) & different_product_words
+        product_different_words = set(product.name.lower().split()) & different_product_words
+        
+        if parsed_different_words != product_different_words:
+            # Strong penalty for different product types (e.g., "potatoes" vs "sweet potatoes")
+            score -= 80  # Heavy penalty to override unit bonuses
+        
+        final_score = min(max(score, 0), 100)  # Restore cap at 100
+        
+        
+        return final_score
     
     
     def _compatible_units(self, unit1: str, unit2: str) -> bool:
@@ -1198,7 +1461,7 @@ class SmartProductMatcher:
         
         return all_results
     
-    def get_suggestions(self, message: str, min_confidence: float = 5.0, max_suggestions: int = 20) -> SmartMatchSuggestions:
+    def get_suggestions(self, message: str, min_confidence: float = 5.0, max_suggestions: int = 30) -> SmartMatchSuggestions:
         """Get smart suggestions with multiple options when no good match is found"""
         parsed_messages = self.parse_message(message)
         
@@ -1266,7 +1529,7 @@ class SmartProductMatcher:
                         fuzzy_matches.append(SmartMatchResult(
                             product=product,
                             quantity=quantity,
-                            unit=unit or product.unit,
+                            unit=product.unit,  # Always use product's unit
                             confidence_score=score,
                             match_details={
                                 'strategy': 'word_match',
@@ -1339,16 +1602,16 @@ class SmartProductMatcher:
                     partial_matches = Product.objects.filter(name__icontains=partial_name)[:3]
                     for product in partial_matches:
                         score = self._calculate_fuzzy_score(product, parsed_message, 'partial_word_match')
-                    if score > 0:
-                        fuzzy_matches.append(SmartMatchResult(
-                            product=product,
-                            quantity=quantity,
-                            unit=unit or product.unit,
-                            confidence_score=score,
-                            match_details={
+                        if score > 0:
+                            fuzzy_matches.append(SmartMatchResult(
+                                product=product,
+                                quantity=quantity,
+                                unit=unit or product.unit,
+                                confidence_score=score,
+                                match_details={
                                     'strategy': 'partial_word_match',
                                     'partial_name': partial_name,
-                                'product_name': product.name
+                                    'product_name': product.name
                             }
                         ))
         
@@ -1489,6 +1752,13 @@ class SmartProductMatcher:
         if parsed_name in product_name_lower or product_name_lower in parsed_name:
             score += 15
         
+        # Product type preference - NEW
+        # Prefer exact product types over variations
+        if self._is_exact_product_type_match(parsed_name, product_name_lower):
+            score += 20
+        elif self._is_product_variation(parsed_name, product_name_lower):
+            score -= 5  # Slight penalty for variations
+        
         # Boost score for multiple word matches
         parsed_words = set(parsed_name.split())
         product_words = set(product_name_lower.split())
@@ -1496,9 +1766,28 @@ class SmartProductMatcher:
         if len(common_words) > 1:
             score += len(common_words) * 5  # Bonus for multiple word matches
         
-        # Unit matching bonus
-        if parsed_message.unit and parsed_message.unit == product.unit:
-            score += 10
+        
+        # Package size matching bonus - NEW
+        parsed_name_lower = parsed_message.product_name.lower()
+        product_name_lower = product.name.lower()
+        
+        # Extract package sizes from both names
+        import re
+        parsed_sizes = re.findall(r'(\d+(?:\.\d+)?)\s*(kg|g|ml|l)', parsed_name_lower)
+        product_sizes = re.findall(r'(\d+(?:\.\d+)?)\s*(kg|g|ml|l)', product_name_lower)
+        
+        if parsed_sizes and product_sizes:
+            # Convert to comparable format (grams)
+            parsed_weight = self._normalize_weight_to_grams(parsed_sizes[0])
+            product_weight = self._normalize_weight_to_grams(product_sizes[0])
+            
+            if parsed_weight == product_weight:
+                score += 20  # Exact package size match
+            elif abs(parsed_weight - product_weight) / max(parsed_weight, product_weight) < 0.2:
+                score += 10  # Close package size match (within 20%)
+            else:
+                # Penalty for significantly wrong package size
+                score -= 10
         
         # Description matching bonus
         for desc in parsed_message.extra_descriptions:
@@ -1509,7 +1798,23 @@ class SmartProductMatcher:
         if len(product.name) > 50:
             score -= 5
         
-        return max(score, 0)
+        # ENHANCED CONFIDENCE SCORING - Normalize to 0-100 scale
+        # Base scores are now more meaningful
+        if score >= 80:
+            confidence_level = "Excellent"  # 80-100: Very high confidence
+        elif score >= 60:
+            confidence_level = "Good"       # 60-79: Good confidence  
+        elif score >= 40:
+            confidence_level = "Fair"       # 40-59: Fair confidence
+        elif score >= 20:
+            confidence_level = "Poor"       # 20-39: Poor confidence
+        else:
+            confidence_level = "Very Poor"  # 0-19: Very poor confidence
+        
+        # Cap score at 100 for better interpretation
+        normalized_score = min(100, max(0, score))
+        
+        return normalized_score
     
     def _get_phonetic_matches(self, product_name: str, parsed_message: ParsedMessage) -> List[SmartMatchResult]:
         """Get phonetically similar product matches"""
@@ -1590,6 +1895,52 @@ class SmartProductMatcher:
     def _fuzzy_match(self, str1: str, str2: str) -> bool:
         """Check if two strings are fuzzy matches"""
         return self._calculate_string_similarity(str1, str2) > 0.4
+    
+    def _normalize_weight_to_grams(self, weight_tuple) -> float:
+        """Convert weight to grams for comparison"""
+        amount, unit = weight_tuple
+        amount = float(amount)
+        unit = unit.lower()
+        
+        if unit == 'kg':
+            return amount * 1000
+        elif unit == 'g':
+            return amount
+        elif unit == 'ml':
+            return amount  # Treat ml as grams for comparison
+        elif unit == 'l':
+            return amount * 1000  # Treat liters as kg equivalent
+        else:
+            return amount
+    
+    def _is_exact_product_type_match(self, parsed_name: str, product_name: str) -> bool:
+        """Check if this is an exact product type match (e.g., 'onions' matches 'red onions' better than 'spring onions')"""
+        parsed_words = set(parsed_name.lower().split())
+        product_words = set(product_name.lower().split())
+        
+        # Remove color words and size words for core product matching
+        color_words = {'red', 'green', 'white', 'yellow', 'purple', 'orange', 'black'}
+        size_words = {'baby', 'mini', 'large', 'small', 'medium', 'big'}
+        
+        parsed_core = parsed_words - color_words - size_words
+        product_core = product_words - color_words - size_words
+        
+        # Exact core match (e.g., 'onions' core matches 'red onions' core)
+        return len(parsed_core) > 0 and parsed_core.issubset(product_core)
+    
+    def _is_product_variation(self, parsed_name: str, product_name: str) -> bool:
+        """Check if this is a product variation (e.g., 'onions' matching 'spring onions')"""
+        parsed_words = set(parsed_name.lower().split())
+        product_words = set(product_name.lower().split())
+        
+        # Check for variation keywords
+        variation_words = {'spring', 'cocktail', 'cherry', 'deveined', 'mixed', 'crispy'}
+        
+        # If product has variation words but parsed doesn't, it's a variation
+        product_variations = product_words.intersection(variation_words)
+        parsed_variations = parsed_words.intersection(variation_words)
+        
+        return len(product_variations) > 0 and len(parsed_variations) == 0
 
 def test_smart_matcher():
     """Test the smart matcher"""

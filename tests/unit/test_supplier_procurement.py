@@ -556,8 +556,9 @@ class PurchaseOrderItemTest(TestCase):
         self.po_item = PurchaseOrderItem.objects.create(
             purchase_order=self.purchase_order,
             product=self.product,
-            quantity=Decimal('20.00'),
+            quantity_ordered=20,
             unit_price=Decimal('22.00'),
+            total_price=Decimal('440.00'),
             notes='Premium grade required'
         )
     
