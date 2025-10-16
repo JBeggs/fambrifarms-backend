@@ -8,6 +8,7 @@ class DepartmentSerializer(serializers.ModelSerializer):
 
 class ProductSerializer(serializers.ModelSerializer):
     department_name = serializers.CharField(source='department.name', read_only=True)
+    procurement_supplier_name = serializers.CharField(source='procurement_supplier.name', read_only=True)
     alert_count = serializers.SerializerMethodField()
     stock_level = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
     
@@ -16,7 +17,8 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'description', 'department', 'department_name',
             'price', 'unit', 'stock_level', 'minimum_stock', 'is_active',
-            'needs_setup', 'alert_count', 'created_at', 'updated_at'
+            'needs_setup', 'procurement_supplier', 'procurement_supplier_name',
+            'alert_count', 'created_at', 'updated_at'
         ]
         read_only_fields = ['stock_level']  # Prevent direct stock level updates
     

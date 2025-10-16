@@ -51,7 +51,7 @@ class ProductListView(generics.ListCreateAPIView):
     pagination_class = None
     
     def get_queryset(self):
-        queryset = Product.objects.select_related('department').all()
+        queryset = Product.objects.select_related('department', 'procurement_supplier').all()
         
         # Filter by needs_setup
         needs_setup = self.request.query_params.get('needs_setup')
@@ -62,6 +62,14 @@ class ProductListView(generics.ListCreateAPIView):
         department = self.request.query_params.get('department')
         if department:
             queryset = queryset.filter(department__name__icontains=department)
+        
+        # Filter by procurement supplier
+        procurement_supplier = self.request.query_params.get('procurement_supplier')
+        if procurement_supplier:
+            if procurement_supplier.lower() == 'null':
+                queryset = queryset.filter(procurement_supplier__isnull=True)
+            else:
+                queryset = queryset.filter(procurement_supplier__name__icontains=procurement_supplier)
             
         return queryset.order_by('name')
 

@@ -7,7 +7,7 @@ import django.db.models.deletion
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('products', '0001_initial'),  # Replace with actual last migration
+        ('products', '0016_alter_procurementbuffer_market_pack_unit_and_more'),
         ('suppliers', '0001_initial'),
     ]
 
