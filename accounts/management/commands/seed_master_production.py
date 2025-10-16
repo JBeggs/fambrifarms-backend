@@ -66,7 +66,7 @@ class Command(BaseCommand):
         self.seed_products(data, dry_run)
         self.seed_suppliers(data, dry_run)
         self.seed_users(data, dry_run)
-        self.seed_customers(data, dry_run)
+        self.seed_customers_complete(dry_run)
         
         self.stdout.write(self.style.SUCCESS('=' * 60))
         self.stdout.write(self.style.SUCCESS('🎉 MASTER PRODUCTION SEEDING COMPLETE!'))
@@ -440,91 +440,17 @@ class Command(BaseCommand):
         
         self.stdout.write(self.style.SUCCESS(f'    ✅ Created {created_count} users'))
 
-    def seed_customers(self, data, dry_run):
-        """Seed customers and their profiles"""
-        self.stdout.write('🍽️ Seeding Customers...')
+    def seed_customers_complete(self, dry_run):
+        """Seed complete customer list using sync_customers_complete command"""
+        self.stdout.write('🍽️ Seeding Complete Customer List...')
         
-        from accounts.models import RestaurantProfile, PrivateCustomerProfile
-        
-        customers_data = data.get('customers', {})
-        
-        # Flatten the nested customer structure
-        all_customers = []
-        for area, customers_list in customers_data.items():
-            if isinstance(customers_list, list):
-                all_customers.extend(customers_list)
+        from django.core.management import call_command
         
         if dry_run:
-            self.stdout.write(f'    Would create {len(all_customers)} customers')
-            for customer in all_customers[:5]:
-                self.stdout.write(f'    - {customer["business_name"]} ({customer.get("customer_type", "unknown")})')
-            if len(all_customers) > 5:
-                self.stdout.write(f'    ... and {len(all_customers) - 5} more')
-            return
+            self.stdout.write('    Would sync all customers (production + missing)')
+            call_command('sync_customers_complete', '--dry-run')
+        else:
+            self.stdout.write('    Syncing production customers + missing customers...')
+            call_command('sync_customers_complete')
         
-        created_count = 0
-        with transaction.atomic():
-            for customer_data in all_customers:
-                try:
-                    # Create user first
-                    user, user_created = User.objects.get_or_create(
-                        email=customer_data['email'],
-                        defaults={
-                            'first_name': customer_data.get('first_name', ''),
-                            'last_name': customer_data.get('last_name', ''),
-                            'user_type': 'restaurant',
-                            'phone': customer_data.get('phone', ''),
-                            'is_active': True,
-                            'is_staff': False,
-                            'is_superuser': False,
-                        }
-                    )
-                    
-                    if user_created:
-                        user.set_password('defaultpassword123')
-                        user.save()
-                    
-                    # Create appropriate profile
-                    if customer_data.get('customer_type') == 'private':
-                        profile, profile_created = PrivateCustomerProfile.objects.get_or_create(
-                            user=user,
-                            defaults={
-                                'customer_type': 'household',
-                                'delivery_address': customer_data.get('delivery_address', 'Private Address - Confidential'),
-                                'delivery_instructions': customer_data.get('delivery_instructions', ''),
-                                'preferred_delivery_day': 'tuesday',
-                                'whatsapp_number': customer_data.get('phone', ''),
-                                'credit_limit': Decimal('1000.00'),
-                                'order_notes': customer_data.get('order_notes', ''),
-                            }
-                        )
-                    else:
-                        # Business customer
-                        address_parts = customer_data.get('address', '').split(',')
-                        address = address_parts[0].strip() if address_parts else ''
-                        city = address_parts[1].strip() if len(address_parts) > 1 else 'Hartbeespoort'
-                        postal_code = address_parts[2].strip() if len(address_parts) > 2 else '0216'
-                        
-                        profile, profile_created = RestaurantProfile.objects.get_or_create(
-                            user=user,
-                            defaults={
-                                'business_name': customer_data['business_name'],
-                                'branch_name': customer_data.get('branch_type', ''),
-                                'business_registration': customer_data.get('business_registration', ''),
-                                'address': address,
-                                'city': city,
-                                'postal_code': postal_code,
-                                'payment_terms': 'Net 30',
-                                'is_private_customer': False,
-                                'delivery_notes': customer_data.get('delivery_instructions', ''),
-                                'order_pattern': customer_data.get('order_notes', ''),
-                            }
-                        )
-                    
-                    if user_created or profile_created:
-                        created_count += 1
-                        
-                except Exception as e:
-                    self.stdout.write(f'    ❌ Error creating customer {customer_data.get("business_name", customer_data["email"])}: {e}')
-        
-        self.stdout.write(self.style.SUCCESS(f'    ✅ Created {created_count} customer profiles'))
+        self.stdout.write(self.style.SUCCESS('    ✅ Customer sync completed'))
