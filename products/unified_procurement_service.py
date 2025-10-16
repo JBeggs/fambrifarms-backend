@@ -92,18 +92,53 @@ class UnifiedProcurementService:
     
     def get_best_supplier_for_product(self, product: Product, quantity_needed: Decimal) -> Dict:
         """
-        Get the best supplier for a product considering:
-        - EXTERNAL SUPPLIERS ONLY (Fambri Internal excluded from procurement)
-        - Supplier specialization (e.g., Reese for mushrooms) 
-        - Availability and stock levels
-        - Pricing and performance metrics
-        """
-        suppliers = self.get_supplier_priority_order()
-        # EXCLUDE Fambri Internal from procurement recommendations
-        external_suppliers = [s for s in suppliers if s != self.fambri_supplier]
-        all_options = []
+        Get the best supplier for a product using assigned procurement supplier.
+        Clean, simple logic - no more guesswork!
         
-        for supplier in external_suppliers:
+        Business Rules:
+        - If product.procurement_supplier is set → use that supplier
+        - If product.procurement_supplier is NULL → Fambri garden (no procurement)  
+        - Fallback to Tshwane Market for unassigned products
+        """
+        
+        # PRIMARY: Use assigned procurement supplier
+        if product.procurement_supplier:
+            assigned_supplier = product.procurement_supplier
+            
+            # Check if assigned supplier has this product with stock
+            supplier_product = product.supplier_products.filter(
+                supplier=assigned_supplier,
+                is_available=True
+            ).first()
+            
+            if supplier_product:
+                available_quantity = supplier_product.stock_quantity or 0
+                can_fulfill = available_quantity >= quantity_needed
+                
+                return {
+                    'supplier': assigned_supplier,
+                    'supplier_product': supplier_product,
+                    'unit_price': supplier_product.supplier_price,
+                    'available_quantity': available_quantity,
+                    'can_fulfill_full_order': can_fulfill,
+                    'fulfillable_quantity': min(available_quantity, quantity_needed),
+                    'total_cost': supplier_product.supplier_price * min(available_quantity, quantity_needed),
+                    'lead_time_days': supplier_product.get_effective_lead_time(),
+                    'quality_rating': supplier_product.quality_rating or Decimal('4.0'),
+                    'is_fambri': False,
+                    'assignment_type': 'assigned_supplier',
+                    'priority_score': 100.0
+                }
+        
+        # SECONDARY: If no assigned supplier, check if it's a Fambri garden product (NULL = no procurement)
+        if not product.procurement_supplier:
+            # Return None - this means "no procurement needed, use Fambri garden"
+            return None
+        
+        # FALLBACK: Use Tshwane Market for any unassigned external products
+        fallback_suppliers = [s for s in self.get_supplier_priority_order() if s != self.fambri_supplier]
+        
+        for supplier in fallback_suppliers:
             # Check if supplier has this product
             supplier_product = product.supplier_products.filter(
                 supplier=supplier,

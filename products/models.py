@@ -42,6 +42,17 @@ class Product(models.Model):
     minimum_stock = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('5.00'))
     is_active = models.BooleanField(default=True)
     needs_setup = models.BooleanField(default=False, help_text="Product was auto-created and needs pricing/inventory setup")
+    
+    # Procurement management
+    procurement_supplier = models.ForeignKey(
+        'suppliers.Supplier',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='procured_products',
+        help_text='Primary supplier for market procurement. NULL = use Fambri garden/no procurement needed.'
+    )
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
