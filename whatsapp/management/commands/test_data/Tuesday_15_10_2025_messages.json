@@ -1,0 +1,90 @@
+[
+  {
+    "id": "false_120363039361649759@g.us_TUE15OCT2025_DEMARCATION_180161194504280@lid",
+    "sender": "Karl",
+    "content": "Tuesday orders starts here",
+    "timestamp": "08:00, 10/15/2025",
+    "chat_name": "ORDERS Restaurants",
+    "sender_phone": "",
+    "media_url": "",
+    "media_type": "",
+    "media_info": ""
+  },
+  {
+    "id": "false_120363039361649759@g.us_TUE15OCT2025_ORDER1_151350570692860@lid",
+    "sender": "+27 76 655 4873",
+    "content": "Good morning\n\n5kg Tomatoes\n3kg Red Peppers\n2 boxes Lemons\n10kg Potatoes\n3kg Carrots\n5 punnets Strawberries\n1kg Spinach\n2 boxes Avocados\n\nThanks",
+    "timestamp": "08:15, 10/15/2025",
+    "chat_name": "ORDERS Restaurants",
+    "sender_phone": "+27 76 655 4873",
+    "media_url": "",
+    "media_type": "",
+    "media_info": ""
+  },
+  {
+    "id": "false_120363039361649759@g.us_TUE15OCT2025_CUSTOMER1_151350570692860@lid",
+    "sender": "+27 76 655 4873",
+    "content": "Casa Bella",
+    "timestamp": "08:15, 10/15/2025",
+    "chat_name": "ORDERS Restaurants",
+    "sender_phone": "+27 76 655 4873",
+    "media_url": "",
+    "media_type": "",
+    "media_info": ""
+  },
+  {
+    "id": "false_120363039361649759@g.us_TUE15OCT2025_ORDER2_83894200184984@lid",
+    "sender": "+27 61 674 9368",
+    "content": "Morning\n\n2kg Cherry Tomatoes\n3 bags Onions\n1 box Pineapple\n5kg Mushrooms\n2kg Celery\n10 punnets Cherry Tomatoes (200g)\n3kg Baby Marrow\n\nDelivery Tuesday please",
+    "timestamp": "09:30, 10/15/2025",
+    "chat_name": "ORDERS Restaurants",
+    "sender_phone": "+27 61 674 9368",
+    "media_url": "",
+    "media_type": "",
+    "media_info": ""
+  },
+  {
+    "id": "false_120363039361649759@g.us_TUE15OCT2025_CUSTOMER2_83894200184984@lid",
+    "sender": "+27 61 674 9368",
+    "content": "Maltos Restaurant",
+    "timestamp": "09:30, 10/15/2025",
+    "chat_name": "ORDERS Restaurants",
+    "sender_phone": "+27 61 674 9368",
+    "media_url": "",
+    "media_type": "",
+    "media_info": ""
+  },
+  {
+    "id": "false_120363039361649759@g.us_TUE15OCT2025_ORDER3_180161194504280@lid",
+    "sender": "Karl",
+    "content": "Order for Pemba:\n\n3kg Red Peppers\n5 heads Lettuce\n20kg Potatoes (bags)\n2kg Red Onions\n1 box Oranges\n1kg Parsley\n500g Mint\n\nDelivery today",
+    "timestamp": "10:45, 10/15/2025",
+    "chat_name": "ORDERS Restaurants",
+    "sender_phone": "",
+    "media_url": "",
+    "media_type": "",
+    "media_info": ""
+  },
+  {
+    "id": "false_120363039361649759@g.us_TUE15OCT2025_CUSTOMER3_180161194504280@lid",
+    "sender": "Karl",
+    "content": "Pemba Restaurant",
+    "timestamp": "10:45, 10/15/2025",
+    "chat_name": "ORDERS Restaurants",
+    "sender_phone": "",
+    "media_url": "",
+    "media_type": "",
+    "media_info": ""
+  },
+  {
+    "id": "false_120363039361649759@g.us_TUE15OCT2025_STOCK_83894200184984@lid",
+    "sender": "+27 61 674 9368",
+    "content": "STOCK UPDATE 15 OCT 2025\n\n1. Tomatoes 45kg\n2. Red Peppers 12kg\n3. Green Peppers 8kg\n4. Potatoes 15 bags\n5. Onions Red 20 bags\n6. Carrots 25kg\n7. Lemons 8 boxes\n8. Oranges 12 boxes\n9. Pineapple 25\n10. Avocados Hard 15 boxes\n11. Spinach 18kg\n12. Lettuce 20 heads\n13. Cherry Tomatoes 200g x 30\n14. Strawberries 22 punnets\n15. Mushrooms 8kg",
+    "timestamp": "14:30, 10/15/2025",
+    "chat_name": "ORDERS Restaurants",
+    "sender_phone": "+27 61 674 9368",
+    "media_url": "",
+    "media_type": "",
+    "media_info": ""
+  }
+]
