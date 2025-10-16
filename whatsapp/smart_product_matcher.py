@@ -434,13 +434,20 @@ class SmartProductMatcher:
         # Store the original packaging size for product matching
         individual_packaging_size = packaging_size
             
-        # Step 4: Determine quantity and extra descriptions
+        # Step 4: Determine quantity using GOLDEN RULE: First standalone number = quantity
         quantity = 1.0
         extra_descriptions = []
         words_to_remove = []
         
         if numbers_found:
-            if len(numbers_found) == 1:
+            # GOLDEN RULE: Find first standalone number and use as quantity
+            standalone_numbers = [n for n in numbers_found if n['is_standalone']]
+            if standalone_numbers:
+                # Use first standalone number as quantity (Golden Rule)
+                first_standalone = standalone_numbers[0]
+                quantity = first_standalone['value']
+                words_to_remove.append(first_standalone['word'])
+            elif len(numbers_found) == 1:
                 num_info = numbers_found[0]
                 
                 # If we already found a unit (like "packet"), and this number is standalone, use it as quantity
