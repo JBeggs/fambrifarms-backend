@@ -1641,7 +1641,7 @@ def get_database_units():
 
 def parse_single_item(line):
     """
-    Simplified parsing using database units and product names
+    Parse single item using GOLDEN RULE: First standalone number = quantity. Default to 1.
     
     Args:
         line: Single line of text containing an item
@@ -1649,6 +1649,19 @@ def parse_single_item(line):
     Returns:
         dict: Parsed item data or None if parsing failed
     """
+    # GOLDEN RULE: Try stock parsing first (has Golden Rule implemented)
+    stock_result = parse_stock_item(line)
+    if stock_result:
+        # Convert stock result to format expected by order system
+        return {
+            'product_name': stock_result['name'],
+            'quantity': stock_result['quantity'], 
+            'unit': stock_result['unit'],
+            'package_size': stock_result.get('package_size', ''),
+            'original_text': line
+        }
+    
+    # Fallback to complex parsing if Golden Rule fails
     original_line = line
     line = line.strip()
     
