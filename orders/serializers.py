@@ -127,14 +127,15 @@ class OrderItemSerializer(serializers.ModelSerializer):
                 elif movement.movement_type == 'finished_release':
                     return 'no_reserve'
             
-            # Only check for kg conversion if no actual stock movement found
-            # AND if there's evidence this was converted from a different unit
-            if (obj.unit and 'kg' in obj.unit.lower() and 
+            # If no stock movement found, check if conversion actually happened
+            # Only mark as conversion in very specific cases with clear evidence
+            if (hasattr(obj, 'manually_corrected') and obj.manually_corrected and
+                obj.unit and obj.unit.lower() == 'kg' and 
                 obj.product and obj.product.unit and 
-                obj.product.unit.lower() != obj.unit.lower()):
+                obj.product.unit.lower() in ['piece', 'each']):
                 return 'convert_to_kg'
             
-            # Default: no reserve
+            # Default: no stock available, no reserve made
             return 'no_reserve'
         except Exception as e:
             import logging

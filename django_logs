@@ -1,5 +1,0 @@
-INFO 2025-10-16 13:17:22,291 autoreload 65201 8397185216 Watching for file changes with StatReloader
-INFO 2025-10-16 13:17:50,509 autoreload 65201 8397185216 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/smart_product_matcher.py changed, reloading.
-INFO 2025-10-16 13:17:50,932 autoreload 65535 8397185216 Watching for file changes with StatReloader
-INFO 2025-10-16 13:21:33,920 autoreload 65535 8397185216 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/whatsapp/smart_product_matcher.py changed, reloading.
-INFO 2025-10-16 13:21:34,946 autoreload 68069 8397185216 Watching for file changes with StatReloader

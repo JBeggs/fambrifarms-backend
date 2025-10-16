@@ -356,25 +356,44 @@ class SmartProductMatcher:
         unit_word = None
         unit_index = -1
         
-        # First check for number+unit combinations (like "5kg", "200g")
-        # Sort units by length (longest first) to prioritize "kg" over "g"
-        sorted_units = sorted(self.valid_units, key=len, reverse=True)
+        # First check for container units in the text (highest priority)
+        container_units = ['box', 'bag', 'punnet', 'packet', 'bunch', 'head', 'tray']
         for i, word in enumerate(words):
-            for valid_unit in sorted_units:
-                # Check if word ends with unit AND starts with a number
-                if word.endswith(valid_unit) and len(word) > len(valid_unit):
-                    # Verify it actually starts with a number
-                    number_match = re.search(r'^(\d+(?:\.\d+)?)', word)
-                    if number_match:
-                        # This word contains a number + unit
-                        unit = valid_unit
-                        unit_word = word
-                        unit_index = i
-                        break
-            if unit:
+            if word in container_units:
+                unit = word
+                unit_word = word 
+                unit_index = i
                 break
         
-        # If no number+unit found, look for standalone units
+        # If no container unit found, then check for number+unit combinations (like "5kg", "200g")  
+        if not unit:
+            # Sort units by length (longest first) to prioritize "kg" over "g"
+            sorted_units = sorted(self.valid_units, key=len, reverse=True)
+            for i, word in enumerate(words):
+                for valid_unit in sorted_units:
+                    # Check if word ends with unit AND starts with a number
+                    if word.endswith(valid_unit) and len(word) > len(valid_unit):
+                        # Verify it actually starts with a number
+                        number_match = re.search(r'^(\d+(?:\.\d+)?)', word)
+                        if number_match:
+                            # This word contains a number + unit
+                            unit = valid_unit
+                            unit_word = word
+                            unit_index = i
+                            break
+                if unit:
+                    break
+        
+        # If still no unit found, check container aliases
+        if not unit:
+            for i, word in enumerate(words):
+                if word in self.aliases and self.aliases[word] in container_units:
+                    unit = self.aliases[word]
+                    unit_word = word
+                    unit_index = i
+                    break
+        
+        # If no container found, look for any standalone units
         if not unit:
             for i, word in enumerate(words):
                 # Check direct unit match
@@ -579,6 +598,15 @@ class SmartProductMatcher:
         if ambiguous_packaging:
             # Add a flag to indicate this needs suggestions due to ambiguous packaging
             extra_descriptions.append("AMBIGUOUS_PACKAGING")
+        
+        # DEBUG: Log parsing results for specific items
+        if any(item in original_item.lower() for item in ['mushroom', 'tomato']):
+            print(f"🔍 PARSING DEBUG ({original_item}):")
+            print(f"  Quantity: {quantity}")
+            print(f"  Unit: {unit}")
+            print(f"  Product: '{product_name}'")
+            print(f"  Packaging: '{individual_packaging_size}'")
+            print(f"  Extra: {extra_descriptions}")
         
         return ParsedMessage(
             quantity=quantity,
