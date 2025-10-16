@@ -137,6 +137,7 @@ class UnifiedProcurementService:
         
         # FALLBACK: Use Tshwane Market for any unassigned external products
         fallback_suppliers = [s for s in self.get_supplier_priority_order() if s != self.fambri_supplier]
+        all_options = []
         
         for supplier in fallback_suppliers:
             # Check if supplier has this product
@@ -175,7 +176,7 @@ class UnifiedProcurementService:
         
         # If no supplier can fulfill, check partial options
         if not all_options:
-            for supplier in external_suppliers:
+            for supplier in fallback_suppliers:  # Use fallback_suppliers instead of undefined external_suppliers
                 supplier_product = product.supplier_products.filter(
                     supplier=supplier,
                     is_available=True

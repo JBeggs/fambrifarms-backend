@@ -786,3 +786,169 @@ def get_procurement_by_supplier(request, recommendation_id):
             'success': False,
             'error': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def update_procurement_item_supplier(request, recommendation_id, item_id):
+    """
+    Update supplier for a specific procurement item
+    
+    PUT /api/products/procurement/recommendations/{id}/items/{item_id}/supplier/
+    Body: {"supplier_id": 123}
+    """
+    try:
+        recommendation = MarketProcurementRecommendation.objects.get(id=recommendation_id)
+        item = recommendation.items.get(id=item_id)
+        
+        supplier_id = request.data.get('supplier_id')
+        
+        if supplier_id:
+            from suppliers.models import Supplier
+            supplier = Supplier.objects.get(id=supplier_id)
+            # Update the product's procurement supplier (permanent change)
+            item.product.procurement_supplier = supplier
+            item.product.save(update_fields=['procurement_supplier'])
+        else:
+            # Set to NULL (Fambri garden)
+            item.product.procurement_supplier = None
+            item.product.save(update_fields=['procurement_supplier'])
+        
+        return Response({
+            'success': True,
+            'message': f'Supplier updated for {item.product.name}',
+            'item': {
+                'id': item.id,
+                'product_name': item.product.name,
+                'new_supplier': supplier.name if supplier_id else 'Fambri Garden'
+            }
+        })
+        
+    except (MarketProcurementRecommendation.DoesNotExist, MarketProcurementItem.DoesNotExist):
+        return Response({
+            'success': False,
+            'error': 'Recommendation or item not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+@api_view(['PUT'])
+@permission_classes([IsAuthenticated])
+def bulk_update_procurement_suppliers(request, recommendation_id):
+    """
+    Bulk update suppliers for multiple procurement items
+    
+    PUT /api/products/procurement/recommendations/{id}/bulk-supplier-update/
+    Body: {
+        "updates": [
+            {"item_id": 1, "supplier_id": 123},
+            {"item_id": 2, "supplier_id": null}
+        ]
+    }
+    """
+    try:
+        recommendation = MarketProcurementRecommendation.objects.get(id=recommendation_id)
+        updates = request.data.get('updates', [])
+        
+        if not updates:
+            return Response({
+                'success': False,
+                'error': 'No updates provided'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        from suppliers.models import Supplier
+        updated_items = []
+        errors = []
+        
+        for update in updates:
+            try:
+                item_id = update.get('item_id')
+                supplier_id = update.get('supplier_id')
+                
+                item = recommendation.items.get(id=item_id)
+                
+                if supplier_id:
+                    supplier = Supplier.objects.get(id=supplier_id)
+                    item.product.procurement_supplier = supplier
+                    supplier_name = supplier.name
+                else:
+                    item.product.procurement_supplier = None
+                    supplier_name = 'Fambri Garden'
+                
+                item.product.save(update_fields=['procurement_supplier'])
+                
+                updated_items.append({
+                    'item_id': item.id,
+                    'product_name': item.product.name,
+                    'new_supplier': supplier_name
+                })
+                
+            except Exception as e:
+                errors.append({
+                    'item_id': update.get('item_id'),
+                    'error': str(e)
+                })
+        
+        return Response({
+            'success': True,
+            'updated_count': len(updated_items),
+            'updated_items': updated_items,
+            'errors': errors
+        })
+        
+    except MarketProcurementRecommendation.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Recommendation not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
+
+
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def get_all_suppliers(request):
+    """
+    Get all available suppliers for supplier selection
+    
+    GET /api/products/suppliers/
+    """
+    try:
+        from suppliers.models import Supplier
+        
+        suppliers = Supplier.objects.filter(
+            is_active=True
+        ).values('id', 'name', 'contact_person', 'phone').order_by('name')
+        
+        # Add Fambri Garden as NULL option
+        supplier_list = [
+            {
+                'id': None,
+                'name': 'Fambri Garden (No External Procurement)',
+                'contact_person': 'Internal',
+                'phone': '-'
+            }
+        ]
+        supplier_list.extend(list(suppliers))
+        
+        return Response({
+            'success': True,
+            'suppliers': supplier_list
+        })
+        
+    except Exception as e:
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
