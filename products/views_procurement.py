@@ -705,11 +705,14 @@ def get_procurement_by_supplier(request, recommendation_id):
         supplier_groups = {}
         items_without_supplier = []
         
-        # Force fresh query - don't use cached items
-        for item in recommendation.items.select_related('product', 'preferred_supplier').all():
-            if item.preferred_supplier:
-                supplier_id = item.preferred_supplier.id
-                supplier_name = item.preferred_supplier.name
+        # Force fresh query - use product's assigned procurement supplier
+        for item in recommendation.items.select_related('product', 'product__procurement_supplier').all():
+            # Use the product's assigned procurement supplier (new system)
+            assigned_supplier = item.product.procurement_supplier
+            
+            if assigned_supplier:
+                supplier_id = assigned_supplier.id
+                supplier_name = assigned_supplier.name
                 
                 if supplier_id not in supplier_groups:
                     supplier_groups[supplier_id] = {
@@ -725,20 +728,20 @@ def get_procurement_by_supplier(request, recommendation_id):
                 item_data = MarketProcurementItemSerializer(item).data
                 
                 # Debug logging
-                print(f"[SUPPLIER VIEW] Item: {item.product.name}, Rec Qty: {item.recommended_quantity}, Unit Price: {item.estimated_unit_price}, Total: {item.estimated_total_cost}")
+                print(f"[SUPPLIER VIEW] Item: {item.product.name} → {supplier_name}, Rec Qty: {item.recommended_quantity}, Unit Price: {item.estimated_unit_price}, Total: {item.estimated_total_cost}")
                 print(f"[SUPPLIER VIEW] Serialized data: {item_data}")
                 
                 supplier_groups[supplier_id]['items'].append(item_data)
                 supplier_groups[supplier_id]['total_cost'] += float(item.estimated_total_cost)
                 supplier_groups[supplier_id]['item_count'] += 1
             else:
-                # Items without a preferred supplier (market/general procurement)
+                # Items without assigned procurement supplier (NULL = Fambri garden products)
                 from .serializers import MarketProcurementItemSerializer
                 item_data = MarketProcurementItemSerializer(item).data
                 
-                # Debug logging for market items
-                print(f"[SUPPLIER VIEW - MARKET] Item: {item.product.name}, Rec Qty: {item.recommended_quantity}, Unit Price: {item.estimated_unit_price}, Total: {item.estimated_total_cost}")
-                print(f"[SUPPLIER VIEW - MARKET] Serialized data: {item_data}")
+                # Debug logging for Fambri garden items
+                print(f"[SUPPLIER VIEW - FAMBRI GARDEN] Item: {item.product.name} (NULL procurement_supplier), Rec Qty: {item.recommended_quantity}, Unit Price: {item.estimated_unit_price}, Total: {item.estimated_total_cost}")
+                print(f"[SUPPLIER VIEW - FAMBRI GARDEN] Serialized data: {item_data}")
                 
                 items_without_supplier.append(item_data)
         
@@ -746,16 +749,16 @@ def get_procurement_by_supplier(request, recommendation_id):
         supplier_list = list(supplier_groups.values())
         supplier_list.sort(key=lambda x: x['total_cost'], reverse=True)
         
-        # Add market/general procurement group if there are items without suppliers
+        # Add Fambri garden group if there are items without assigned suppliers
         if items_without_supplier:
-            market_group = {
+            fambri_group = {
                 'supplier_id': None,
-                'supplier_name': 'Market/General Procurement',
+                'supplier_name': 'Fambri Garden (No External Procurement)',
                 'items': items_without_supplier,
                 'total_cost': sum(float(item['estimated_total_cost']) for item in items_without_supplier),
                 'item_count': len(items_without_supplier)
             }
-            supplier_list.append(market_group)
+            supplier_list.append(fambri_group)
         
         return Response({
             'success': True,
