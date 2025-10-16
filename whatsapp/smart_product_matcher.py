@@ -1512,14 +1512,14 @@ class SmartProductMatcher:
             word_match_ratio = len(common_words) / max(len(parsed_words), len(product_words))
             # Only give word matching score if we have a reasonable match ratio
             if word_match_ratio >= 0.5:  # At least 50% of words must match
-                score += word_match_ratio * 40  # Increased from 25 for better name matching
+                score += word_match_ratio * 60  # MASSIVELY INCREASED: Product name match is KING
             else:
                 # Very low word match ratio - penalize heavily
                 score -= 20
                 
             # Special bonus for multi-word products that match in any order (e.g., "lettuce mixed" vs "Mixed Lettuce")
             if len(parsed_words) > 1 and len(product_words) > 1 and len(common_words) == len(parsed_words) == len(product_words):
-                score += 50  # High bonus for multi-word products matching in any order
+                score += 80  # MASSIVELY INCREASED: Perfect name match trumps everything
             
             # Extra bonus for reversed word order (e.g., "onion red" -> "Red Onions")
             parsed_words_list = list(parsed_words)
@@ -1527,12 +1527,12 @@ class SmartProductMatcher:
             if parsed_words_list == list(reversed(product_words_list)):
                 score += 30  # Extra bonus for exact reversed word order
         
-        # Unit matching (reduced priority)
+        # Unit matching (MINIMAL priority - product name is king)
         if parsed_message.unit:
             if parsed_message.unit == product.unit:
-                score += 10  # Reduced from 20
+                score += 3  # TINY bonus - product name matters way more
             elif self._compatible_units(parsed_message.unit, product.unit):
-                score += 5   # Reduced from 10
+                score += 1   # Almost nothing - product name matters way more
         
         # Packaging size matching (high priority for specific variants)
         if parsed_message.packaging_size:
@@ -1571,13 +1571,13 @@ class SmartProductMatcher:
             product_unit = product.unit.lower()
             
             if parsed_unit == product_unit:
-                # Unit match bonus - reasonable but not overwhelming
-                score += 20  # Reasonable bonus for unit match
+                # Unit match bonus - MINIMAL (product name is king)
+                score += 3  # Tiny bonus - product name matters infinitely more
             elif self._compatible_units(parsed_message.unit, product.unit):
-                score += 15  # Compatible unit bonus
+                score += 1  # Almost nothing - product name matters infinitely more
             else:
-                # PENALTY for unit mismatch when user specified a unit
-                score -= 10  # Increased penalty for wrong unit
+                # TINY penalty for unit mismatch - don't let unit override product name
+                score -= 2  # Minimal penalty - product name is what matters
         
         # FINAL CHECK: Strong penalty for different-product words (applied after all bonuses)
         different_product_words = {'sweet', 'sour', 'bitter', 'hot', 'cold', 'frozen', 'dried', 'pickled'}
