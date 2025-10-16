@@ -2809,7 +2809,8 @@ def parse_stock_item(line):
 
     # DEBUG: Log unit detection
     if 'tomato' in line.lower() or 'mushroom' in line.lower():
-        print(f"   📦 Unit detected: '{unit}', has_box={'box' in original_lower}, has_kg={bool(re.search(r'\\b\\d+(?:\\.\\d+)?\\s*kg\\b', original_lower))}")
+        kg_pattern = r'\b\d+(?:\.\d+)?\s*kg\b'
+        print(f"   📦 Unit detected: '{unit}', has_box={'box' in original_lower}, has_kg={bool(re.search(kg_pattern, original_lower))}")
 
     # STEP 1: Find quantity - first standalone number only
     quantity = 1.0  # DEFAULT

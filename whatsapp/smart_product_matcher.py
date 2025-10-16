@@ -352,8 +352,8 @@ class SmartProductMatcher:
                 })
         
         # DEBUG: Log what we're parsing in SmartProductMatcher
-        if 'tomato' in text.lower() or 'mushroom' in text.lower():
-            print(f"🧠 SMART_MATCHER DEBUG: '{text}'")
+        if 'tomato' in original_item.lower() or 'mushroom' in original_item.lower():
+            print(f"🧠 SMART_MATCHER DEBUG: '{original_item}'")
         
         # Step 2: Find unit/container words - look for number+unit combinations first
         unit = None
@@ -382,7 +382,7 @@ class SmartProductMatcher:
                         if number_match:
                             # For weight units, only use if no containers present
                             if valid_unit in ['kg', 'g']:
-                                if not any(c in text_lower for c in ['box', 'bag', 'punnet', 'packet']):
+                                if not any(c in original_item.lower() for c in ['box', 'bag', 'punnet', 'packet']):
                                     unit = valid_unit
                                     unit_word = word
                                     unit_index = i
@@ -620,7 +620,8 @@ class SmartProductMatcher:
             print(f"  Packaging: '{individual_packaging_size}'")
             print(f"  Extra: {extra_descriptions}")
             if 'tomato' in original_item.lower():
-                print(f"  🧠 Unit Detection: has_box={'box' in text_lower}, has_kg_pattern={bool(re.search(r'\\b\\d+(?:\\.\\d+)?\\s*kg\\b', text_lower))}")
+                kg_pattern = r'\b\d+(?:\.\d+)?\s*kg\b'
+                print(f"  🧠 Unit Detection: has_box={'box' in original_item.lower()}, has_kg_pattern={bool(re.search(kg_pattern, original_item.lower()))}")
         
         return ParsedMessage(
             quantity=quantity,
