@@ -27,6 +27,23 @@ class OrderItemParser:
     def __init__(self):
         self.quantity_patterns = self._load_quantity_patterns()
         self.product_keywords = self._load_product_keywords()
+    
+    def refresh_product_keywords(self):
+        """
+        Refresh product keywords from database cache.
+        Call this when new products are added to ensure they're recognized.
+        """
+        try:
+            # Clear SmartProductMatcher cache to force fresh database load
+            from ..smart_product_matcher import SmartProductMatcher
+            SmartProductMatcher._products_cache = None
+            SmartProductMatcher._last_cache_time = None
+            
+            # Reload keywords
+            self.product_keywords = self._load_product_keywords()
+            print(f"[ORDER_PARSER] Refreshed product keywords: {len(self.product_keywords)} total")
+        except Exception as e:
+            print(f"[ORDER_PARSER] Error refreshing product keywords: {e}")
         
     def _load_quantity_patterns(self) -> List[str]:
         """
@@ -34,6 +51,7 @@ class OrderItemParser:
         These patterns were refined through real WhatsApp message analysis
         """
         return [
+            r'\b(\d+(?:\.\d+)?)\s+(?!(kg|g|ml|l|box|bag|head|bunch|piece|pcs|packet|pkt|punnet|pun)\b)',  # GOLDEN RULE: Any free-standing number (not attached to units)
             r'\d+\s*x\s*\d*\s*kg',  # 2x5kg, 10x kg
             r'\d+\s*kg',            # 10kg, 5 kg
             r'\d+\s*box',           # 3box, 5 box
@@ -54,25 +72,56 @@ class OrderItemParser:
     
     def _load_product_keywords(self) -> List[str]:
         """
-        ENHANCED: Product keywords based on real inventory data
-        Helps identify order items vs other message content
+        DYNAMIC: Load product keywords from cached database products
+        Ensures new products are automatically recognized in WhatsApp messages
         """
-        return [
-            # Vegetables (from real SHALLOME stock reports)
-            'carrot', 'carrots', 'lettuce', 'onion', 'onions', 'potato', 'potatoes',
-            'tomato', 'tomatoes', 'cabbage', 'spinach', 'beetroot', 'cucumber',
-            'pepper', 'peppers', 'broccoli', 'cauliflower', 'celery', 'leek',
-            'parsley', 'coriander', 'mint', 'basil', 'thyme', 'rosemary',
+        try:
+            # Use SmartProductMatcher's cached product list
+            from ..smart_product_matcher import SmartProductMatcher
+            matcher = SmartProductMatcher()
             
-            # Fruits
-            'apple', 'apples', 'banana', 'bananas', 'orange', 'oranges',
-            'lemon', 'lemons', 'lime', 'limes', 'avocado', 'avocados',
+            # Extract keywords from all cached products
+            keywords = set()
             
-            # Common units/containers
-            'bag', 'bags', 'box', 'boxes', 'tub', 'tubs', 'tray', 'trays',
-            'head', 'heads', 'bunch', 'bunches', 'packet', 'packets',
-            'piece', 'pieces', 'kg', 'gram', 'grams'
-        ]
+            # Add product names and their components
+            for product_data in matcher.all_products_data:
+                product_name = product_data['name'].lower()
+                
+                # Add base product name (remove size info in parentheses)
+                base_name = product_name.split('(')[0].strip()
+                if base_name:
+                    keywords.add(base_name)
+                    
+                    # Add individual words from product name
+                    for word in base_name.split():
+                        word = word.strip()
+                        if len(word) > 2:  # Skip short words like 'a', 'of'
+                            keywords.add(word)
+                
+                # Add product unit if it's a descriptive unit
+                unit = product_data.get('unit', '').lower()
+                if unit and unit not in ['piece', 'each']:
+                    keywords.add(unit)
+            
+            # Add common container/unit keywords
+            keywords.update([
+                'bag', 'bags', 'box', 'boxes', 'tub', 'tubs', 'tray', 'trays',
+                'head', 'heads', 'bunch', 'bunches', 'packet', 'packets',
+                'piece', 'pieces', 'kg', 'gram', 'grams', 'punnet', 'punnets'
+            ])
+            
+            product_list = list(keywords)
+            print(f"[ORDER_PARSER] Loaded {len(product_list)} keywords from {len(matcher.all_products_data)} cached products")
+            return product_list
+            
+        except Exception as e:
+            print(f"[ORDER_PARSER] Error loading cached products: {e}")
+            # Fallback to basic keywords if cache fails
+            return [
+                'carrot', 'lettuce', 'onion', 'potato', 'tomato', 'cabbage', 'spinach',
+                'apple', 'banana', 'orange', 'lemon', 'avocado', 
+                'bag', 'box', 'tub', 'tray', 'head', 'bunch', 'packet', 'piece', 'kg'
+            ]
     
     def extract_order_items(self, text: str) -> List[OrderItem]:
         """
@@ -191,11 +240,23 @@ class OrderItemParser:
         """Extract quantity and unit information from text"""
         text_upper = text.upper()
         
-        for pattern in self.quantity_patterns:
+        for i, pattern in enumerate(self.quantity_patterns):
             match = re.search(pattern, text_upper, re.IGNORECASE)
             if match:
                 quantity_text = match.group(0)
                 
+                # Special handling for first pattern (free-standing numbers - GOLDEN RULE)
+                if i == 0:  # First pattern is free-standing numbers
+                    # Extract decimal numbers (including floats)
+                    numbers = re.findall(r'\d+(?:\.\d+)?', quantity_text)
+                    quantity = numbers[0] if numbers else None
+                    return {
+                        'quantity': quantity,
+                        'unit': None,  # Free-standing numbers have no attached unit
+                        'raw_text': quantity_text.strip()
+                    }
+                
+                # For other patterns, parse as before (they have attached units)
                 # Parse the quantity text to extract number and unit
                 numbers = re.findall(r'\d+', quantity_text)
                 
@@ -383,4 +444,12 @@ def get_order_item_parser() -> OrderItemParser:
     if _order_item_parser_instance is None:
         _order_item_parser_instance = OrderItemParser()
     return _order_item_parser_instance
+
+def refresh_order_item_parser_cache():
+    """
+    Refresh the global OrderItemParser's product keywords cache.
+    Call this after adding new products to ensure they're recognized in WhatsApp messages.
+    """
+    parser = get_order_item_parser()
+    parser.refresh_product_keywords()
 
