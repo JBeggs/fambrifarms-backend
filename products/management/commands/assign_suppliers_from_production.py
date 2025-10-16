@@ -256,24 +256,34 @@ class Command(BaseCommand):
                     prod_data = assignment['production_data']
                     
                     try:
-                        # Find local product by name
-                        local_product = Product.objects.get(name=prod_data['name'])
+                        # Find ALL local products by name (handle duplicates)
+                        local_products = Product.objects.filter(name=prod_data['name'])
                         
-                        # Check if already assigned
-                        if local_product.procurement_supplier and not force:
-                            skipped_count += 1
+                        if not local_products.exists():
+                            self.stdout.write(f"  ⚠️  Product not found locally: {prod_data['name']}")
+                            error_count += 1
                             continue
+                        
+                        # Assign supplier to ALL matching products
+                        for local_product in local_products:
+                            # Check if already assigned
+                            if local_product.procurement_supplier and not force:
+                                skipped_count += 1
+                                continue
+                                
+                            # Assign supplier
+                            local_product.procurement_supplier = supplier_obj
+                            local_product.save(update_fields=['procurement_supplier'])
                             
-                        # Assign supplier
-                        local_product.procurement_supplier = supplier_obj
-                        local_product.save(update_fields=['procurement_supplier'])
+                            updated_count += 1
                         
-                        updated_count += 1
-                        self.stdout.write(f"  ✅ {local_product.name}")
+                        # Show count for this product name
+                        assigned_count = local_products.count()
+                        if assigned_count == 1:
+                            self.stdout.write(f"  ✅ {prod_data['name']}")
+                        else:
+                            self.stdout.write(f"  ✅ {prod_data['name']} ({assigned_count} variants)")
                         
-                    except Product.DoesNotExist:
-                        self.stdout.write(f"  ⚠️  Product not found locally: {prod_data['name']}")
-                        error_count += 1
                     except Exception as e:
                         self.stdout.write(f"  ❌ Error assigning {prod_data['name']}: {e}")
                         error_count += 1
