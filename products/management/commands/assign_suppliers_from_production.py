@@ -40,9 +40,28 @@ class Command(BaseCommand):
             
         self.stdout.write("🔄 Loading production products...")
         with open(production_file, 'r') as f:
-            production_products = json.load(f)
+            data = json.load(f)
+            
+        # Handle both export format and API format
+        if isinstance(data, list):
+            # API format - list of products
+            production_products = data
+        elif isinstance(data, dict) and 'products' in data:
+            # Export format - structured object with products list
+            production_products = data['products']
+        else:
+            self.stdout.write(
+                self.style.ERROR(f"Unknown file format. Expected list of products or export format.")
+            )
+            return
             
         self.stdout.write(f"📊 Loaded {len(production_products)} products from production")
+        
+        # Debug: Show first few products to understand format
+        if production_products and len(production_products) > 0:
+            self.stdout.write(f"🔍 First product sample: {type(production_products[0])} - {str(production_products[0])[:200]}...")
+        else:
+            self.stdout.write("⚠️  No products found in file!")
         
         # Load suppliers
         suppliers = self._load_suppliers()
@@ -93,8 +112,23 @@ class Command(BaseCommand):
         }
         
         for prod_data in production_products:
-            dept_name = prod_data.get('department_name', '').lower()
-            product_name = prod_data.get('name', '').lower()
+            # Handle different data formats
+            if isinstance(prod_data, dict):
+                dept_name = prod_data.get('department_name', '').lower()
+                product_name = prod_data.get('name', '').lower()
+            elif isinstance(prod_data, str):
+                # If it's just a string (product name), treat as unknown dept
+                dept_name = ''
+                product_name = prod_data.lower()
+                # Convert to dict format for consistency
+                prod_data = {
+                    'name': prod_data,
+                    'department_name': '',
+                    'id': None
+                }
+            else:
+                self.stdout.write(f"⚠️  Unknown product format: {type(prod_data)} - {prod_data}")
+                continue
             
             # Business Rules
             supplier_key = self._determine_supplier(dept_name, product_name)
