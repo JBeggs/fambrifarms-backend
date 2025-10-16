@@ -794,8 +794,9 @@ class SmartProductMatcher:
     def _get_strict_word_matches(self, product_name: str, base_product_name: str, search_terms: List[str]) -> set:
         """
         Implement strict word matching rules:
-        - Multi-word searches: ALL words must be present (excluding packaging in brackets)
-        - Single-word searches: Only exact word matches
+        - 2-word searches: ONLY products with exactly 2 words (excluding packaging)
+        - 1-word searches: ONLY products with exactly 1 word (excluding packaging)
+        - If no results, fall back to broader matching but still require search words
         """
         candidate_indices = set()
         
@@ -803,34 +804,39 @@ class SmartProductMatcher:
         main_search_words = self._extract_search_words(product_name)
         base_search_words = self._extract_search_words(base_product_name)
         
-        # PRIMARY SEARCH: Use main product name for strict matching
+        # PRIMARY SEARCH: Strict word count matching
         if len(main_search_words) >= 2:
-            # MULTI-WORD SEARCH: All words must be present
-            candidate_indices.update(self._find_multi_word_matches(main_search_words))
+            # MULTI-WORD SEARCH: Find products with exactly the same number of words
+            candidate_indices.update(self._find_exact_word_count_matches(main_search_words, len(main_search_words)))
         elif len(main_search_words) == 1:
-            # SINGLE-WORD SEARCH: Exact word matches only
-            candidate_indices.update(self._find_single_word_matches(main_search_words[0]))
+            # SINGLE-WORD SEARCH: Find products with exactly 1 word
+            candidate_indices.update(self._find_exact_word_count_matches(main_search_words, 1))
         
-        # FALLBACK SEARCH: Use base product name if main search yields few results
-        if len(candidate_indices) < 5 and base_search_words != main_search_words:
+        # FALLBACK 1: Try base product name if main search yields no results
+        if len(candidate_indices) == 0 and base_search_words != main_search_words:
             if len(base_search_words) >= 2:
-                candidate_indices.update(self._find_multi_word_matches(base_search_words))
+                candidate_indices.update(self._find_exact_word_count_matches(base_search_words, len(base_search_words)))
             elif len(base_search_words) == 1:
-                candidate_indices.update(self._find_single_word_matches(base_search_words[0]))
+                candidate_indices.update(self._find_exact_word_count_matches(base_search_words, 1))
         
-        # LAST RESORT: Original fuzzy matching if we have very few results
-        if len(candidate_indices) < 3:
+        # FALLBACK 2: If still no results, use broader matching but require all search words
+        if len(candidate_indices) == 0:
+            print(f"[SEARCH] No exact word count matches found for '{product_name}', using broader search")
+            if len(main_search_words) >= 2:
+                candidate_indices.update(self._find_multi_word_matches(main_search_words))
+            elif len(main_search_words) == 1:
+                candidate_indices.update(self._find_single_word_matches(main_search_words[0]))
+        
+        # LAST RESORT: Original fuzzy matching if we still have no results
+        if len(candidate_indices) == 0:
+            print(f"[SEARCH] No multi-word matches found for '{product_name}', using fuzzy search")
             for term in search_terms:
                 term_lower = term.lower()
                 # Direct word match
                 if term_lower in self.name_index:
                     candidate_indices.update(self.name_index[term_lower])
-                
-                # Limited partial matches for very specific cases
-                for indexed_word in self.name_index:
-                    if term_lower == indexed_word or (len(term_lower) > 4 and term_lower in indexed_word):
-                        candidate_indices.update(self.name_index[indexed_word])
         
+        print(f"[SEARCH] Found {len(candidate_indices)} candidates for '{product_name}' ({len(main_search_words)} words)")
         return candidate_indices
     
     def _extract_search_words(self, product_name: str) -> List[str]:
@@ -871,6 +877,38 @@ class SmartProductMatcher:
     def _find_single_word_matches(self, search_word: str) -> set:
         """Find products that contain exactly the search word"""
         return set(self.name_index.get(search_word, []))
+    
+    def _find_exact_word_count_matches(self, search_words: List[str], target_word_count: int) -> set:
+        """
+        Find products that:
+        1. Contain ALL search words
+        2. Have exactly the target number of words (excluding packaging)
+        """
+        if not search_words:
+            return set()
+        
+        # Start with products containing ALL search words
+        if len(search_words) == 1:
+            candidate_indices = set(self.name_index.get(search_words[0], []))
+        else:
+            # Multi-word: intersection of all word matches
+            candidate_indices = set(self.name_index.get(search_words[0], []))
+            for word in search_words[1:]:
+                word_indices = set(self.name_index.get(word, []))
+                candidate_indices = candidate_indices.intersection(word_indices)
+                if not candidate_indices:
+                    break
+        
+        # Filter by exact word count
+        filtered_indices = set()
+        for idx in candidate_indices:
+            product_data = self.all_products_data[idx]
+            product_words = self._extract_search_words(product_data['name'])
+            
+            if len(product_words) == target_word_count:
+                filtered_indices.add(idx)
+        
+        return filtered_indices
     
     def find_matches(self, parsed_message: ParsedMessage) -> List[SmartMatchResult]:
         """Find matching products using database"""
