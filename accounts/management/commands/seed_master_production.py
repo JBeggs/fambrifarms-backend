@@ -412,23 +412,40 @@ class Command(BaseCommand):
                         user.set_password(password)
                         user.save()
                         
-                        # Create farm profile for staff users
-                        if user_data.get('user_type') == 'staff':
-                            access_level = 'admin' if user_data.get('is_superuser') else 'manager'
-                            position = 'Administrator' if user_data.get('is_superuser') else 'Manager'
+                        # Create farm profile for staff users (staff, farm_manager, stock_taker, stock_manager, info_desk, admin)
+                        if user_data.get('user_type') in ['staff', 'farm_manager', 'stock_taker', 'stock_manager', 'info_desk', 'admin']:
+                            # Set access level and position based on user type
+                            if user_data.get('is_superuser'):
+                                access_level = 'admin'
+                                position = 'Administrator'
+                            elif user_data.get('user_type') == 'farm_manager':
+                                access_level = 'manager'
+                                position = 'Farm Manager'
+                            elif user_data.get('user_type') == 'stock_taker':
+                                access_level = 'staff'
+                                position = 'Stock Controller'
+                            elif user_data.get('user_type') == 'stock_manager':
+                                access_level = 'manager'
+                                position = 'Stock Operations Manager'
+                            elif user_data.get('user_type') == 'info_desk':
+                                access_level = 'staff'
+                                position = 'Information Desk'
+                            else:
+                                access_level = 'manager'
+                                position = 'Manager'
                             
                             FarmProfile.objects.get_or_create(
                                 user=user,
                                 defaults={
-                                    'employee_id': f'STAFF-{created_count + 1:03d}',
+                                    'employee_id': f'{user_data.get("user_type", "STAFF").upper()}-{created_count + 1:03d}',
                                     'department': 'Operations',
                                     'position': position,
                                     'whatsapp_number': user_data.get('phone', ''),
                                     'access_level': access_level,
-                                    'notes': f'Production seeded staff profile',
-                                    'can_manage_inventory': True,
-                                    'can_approve_orders': True,
-                                    'can_manage_customers': True,
+                                    'notes': f'Production seeded {user_data.get("user_type", "staff")} profile',
+                                    'can_manage_inventory': user_data.get('user_type') not in ['info_desk'],  # Info desk can't manage inventory
+                                    'can_approve_orders': user_data.get('user_type') not in ['stock_taker', 'info_desk'],  # Limited approval rights
+                                    'can_manage_customers': user_data.get('user_type') not in ['stock_taker'],  # Stock takers focus on inventory
                                     'can_view_reports': True,
                                 }
                             )

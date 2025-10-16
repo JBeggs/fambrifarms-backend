@@ -204,6 +204,24 @@ class Command(BaseCommand):
                 'payment_terms_days': 45,
                 'credit_limit': 35000.00,
             },
+            {
+                'business_name': 'The Rusty Feather',
+                'contact_person': 'Restaurant Manager',
+                'email': 'hello@rustyfeather.co.za',
+                'phone': '079 980 7743',
+                'address': 'T-Junction R512 and R104, Hartbeespoort, Broederstroom, 0216',
+                'customer_type': 'restaurant',
+                'area': 'Hartbeespoort',
+                'cuisine_type': 'Restaurant & Cocktail Bar',
+                'is_active': True,
+                'delivery_address': 'The Rusty Feather, T-Junction Hartbeespoort',
+                'delivery_instructions': 'Restaurant entrance - T-Junction location',
+                'order_notes': 'Restaurant & bar - weekend brunch specialist, cocktail garnishes needed',
+                'website': 'https://rustyfeather.co.za/',
+                'payment_terms_days': 21,
+                'credit_limit': 18000.00,
+                'whatsapp_number': '+27 76 655 4873',  # Different WhatsApp ordering number
+            },
         ]
         
         self.stdout.write(f'    ✅ Found {len(missing_customers)} missing customers:')

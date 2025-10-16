@@ -317,6 +317,30 @@
       "is_active": true,
       "is_staff": true,
       "is_superuser": false
+    },
+    {
+      "email": "stock@fambrifarms.co.za",
+      "first_name": "SHALLOME",
+      "last_name": "Stock Operations",
+      "user_type": "stock_manager",
+      "phone": "+27 61 674 9368",
+      "is_verified": true,
+      "is_active": true,
+      "is_staff": true,
+      "is_superuser": false,
+      "password": "defaultpassword123"
+    },
+    {
+      "email": "info@fambrifarms.co.za",
+      "first_name": "Fambri Farms",
+      "last_name": "General Info",
+      "user_type": "info_desk",
+      "phone": "+27 84 504 8586",
+      "is_verified": true,
+      "is_active": true,
+      "is_staff": true,
+      "is_superuser": false,
+      "password": "defaultpassword123"
     }
   ],
   "products": [
