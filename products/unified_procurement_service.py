@@ -93,15 +93,17 @@ class UnifiedProcurementService:
     def get_best_supplier_for_product(self, product: Product, quantity_needed: Decimal) -> Dict:
         """
         Get the best supplier for a product considering:
-        - Fambri-first priority
+        - EXTERNAL SUPPLIERS ONLY (Fambri Internal excluded from procurement)
+        - Supplier specialization (e.g., Reese for mushrooms) 
         - Availability and stock levels
-        - Pricing
-        - Performance metrics (future enhancement)
+        - Pricing and performance metrics
         """
         suppliers = self.get_supplier_priority_order()
-        best_option = None
+        # EXCLUDE Fambri Internal from procurement recommendations
+        external_suppliers = [s for s in suppliers if s != self.fambri_supplier]
+        all_options = []
         
-        for supplier in suppliers:
+        for supplier in external_suppliers:
             # Check if supplier has this product
             supplier_product = product.supplier_products.filter(
                 supplier=supplier,
@@ -115,6 +117,9 @@ class UnifiedProcurementService:
             available_quantity = supplier_product.stock_quantity or 0
             can_fulfill = available_quantity >= quantity_needed
             
+            # Calculate specialization bonus
+            specialization_bonus = self._calculate_supplier_specialization_bonus(supplier, product)
+            
             option = {
                 'supplier': supplier,
                 'supplier_product': supplier_product,
@@ -126,50 +131,151 @@ class UnifiedProcurementService:
                 'lead_time_days': supplier_product.get_effective_lead_time(),
                 'quality_rating': supplier_product.quality_rating or Decimal('3.0'),
                 'is_fambri': supplier == self.fambri_supplier,
-                'priority_score': self._calculate_supplier_priority_score(supplier, supplier_product, can_fulfill)
+                'specialization_bonus': specialization_bonus,
+                'priority_score': self._calculate_supplier_priority_score(supplier, supplier_product, can_fulfill, specialization_bonus)
             }
             
-            # Return first viable option (highest priority supplier that can fulfill)
             if can_fulfill:
-                return option
-            
-            # Keep track of best partial option
-            if not best_option or option['priority_score'] > best_option['priority_score']:
-                best_option = option
+                all_options.append(option)
         
-        # Return best partial option if no one can fulfill completely
-        return best_option or self._get_fallback_pricing(product, quantity_needed)
+        # If no supplier can fulfill, check partial options
+        if not all_options:
+            for supplier in external_suppliers:
+                supplier_product = product.supplier_products.filter(
+                    supplier=supplier,
+                    is_available=True
+                ).first()
+                
+                if not supplier_product:
+                    continue
+                    
+                available_quantity = supplier_product.stock_quantity or 0
+                if available_quantity > 0:
+                    specialization_bonus = self._calculate_supplier_specialization_bonus(supplier, product)
+                    
+                    option = {
+                        'supplier': supplier,
+                        'supplier_product': supplier_product,
+                        'unit_price': supplier_product.supplier_price,
+                        'available_quantity': available_quantity,
+                        'can_fulfill_full_order': False,
+                        'fulfillable_quantity': available_quantity,
+                        'total_cost': supplier_product.supplier_price * available_quantity,
+                        'lead_time_days': supplier_product.get_effective_lead_time(),
+                        'quality_rating': supplier_product.quality_rating or Decimal('3.0'),
+                        'is_fambri': supplier == self.fambri_supplier,
+                        'specialization_bonus': specialization_bonus,
+                        'priority_score': self._calculate_supplier_priority_score(supplier, supplier_product, False, specialization_bonus)
+                    }
+                    all_options.append(option)
+        
+        if not all_options:
+            return None
+            
+        # Sort by priority score (considers specialization + Fambri preference)
+        all_options.sort(key=lambda x: x['priority_score'], reverse=True)
+        return all_options[0]
     
-    def _calculate_supplier_priority_score(self, supplier: Supplier, supplier_product: SupplierProduct, can_fulfill: bool) -> float:
-        """Calculate priority score for supplier selection"""
+    def _calculate_supplier_specialization_bonus(self, supplier: 'Supplier', product: 'Product') -> int:
+        """
+        Calculate specialization bonus for supplier-product combinations
+        Returns bonus points (higher = more specialized)
+        """
+        supplier_name = supplier.name.lower()
+        product_name = product.name.lower()
+        product_dept = product.department.name.lower() if product.department else ""
+        
+        # Supplier specializations - Based on ACTUAL database analysis
+        specializations = {
+            # Pure mushroom specialist (4/4 products = 100% mushrooms)
+            'reese mushrooms': {
+                'keywords': ['mushroom', 'portabellini', 'button', 'brown', 'oyster', 'shiitake'],
+                'departments': ['mushrooms'],
+                'bonus': 100  # Perfect mushroom specialist
+            },
+            
+            # Fruit specialist (39/41 products = 95% fruits) 
+            'tshwane market': {
+                'keywords': ['avocado', 'banana', 'citrus', 'fruit', 'fresh', 'grape', 'apple', 'orange'],
+                'departments': ['fruits'], 
+                'bonus': 90  # Excellent fruit specialist
+            },
+            
+            # Vegetable specialist (6/14 products = 43% vegetables)
+            'rooted (pty) ltd': {
+                'keywords': ['beans', 'cauliflower', 'lettuce', 'tomato', 'herbs', 'cocktail'],
+                'departments': ['vegetables', 'herbs & spices'],
+                'bonus': 70  # Good vegetable specialist
+            },
+            
+            # Mixed supplier (17 products: 3 mushrooms, 1 fruit, 1 vegetable, others)
+            'prudence agribusiness': {
+                'keywords': ['baby marrow', 'marrow', 'grape', 'button mushroom', 'artichoke'],
+                'departments': ['vegetables'],
+                'bonus': 50  # Mixed portfolio - moderate specialist
+            }
+            
+            # Note: 'Tshwane Fresh Produce Market' has 0 products available - excluded
+        }
+        
+        spec = specializations.get(supplier_name, {'bonus': 0, 'keywords': [], 'departments': []})
+        
+        # Check keyword matches
+        for keyword in spec['keywords']:
+            if keyword in product_name:
+                return spec['bonus']
+        
+        # Check department matches  
+        if product_dept in spec['departments']:
+            return spec['bonus'] // 2  # Half bonus for department match
+            
+        # No specialization match - return base score for external suppliers
+        return 5  # Small base bonus for any external supplier
+    
+    def _calculate_supplier_priority_score(self, supplier, supplier_product, can_fulfill: bool, specialization_bonus: int = 0) -> float:
+        """Calculate priority score for EXTERNAL suppliers only (no Fambri Internal)"""
         score = 0.0
         
-        # Fambri gets highest priority
-        if supplier == self.fambri_supplier:
-            score += 100.0
+        # Base score for external suppliers
+        score += 50  # All external suppliers start equal
         
-        # Fulfillment capability
+        # Specialization bonus (PRIMARY factor for supplier selection)
+        score += specialization_bonus
+        
+        # Fulfillment capability bonus
         if can_fulfill:
-            score += 50.0
+            score += 20
+        else:
+            score += 5  # Partial fulfillment still gets some points
         
-        # Quality rating
-        if supplier_product.quality_rating:
-            score += float(supplier_product.quality_rating) * 10
+        # Quality rating bonus
+        quality_rating = supplier_product.quality_rating or 3.0
+        score += float(quality_rating) * 5  # Up to 25 points for 5-star rating
         
-        # Price competitiveness (lower price = higher score)
+        # Stock availability bonus (more stock = more reliable)
+        stock_quantity = supplier_product.stock_quantity or 0
+        if stock_quantity > 50:
+            score += 10
+        elif stock_quantity > 20:
+            score += 5
+        
+        # Price competitiveness bonus (lower price = higher score)
         if supplier_product.supplier_price:
-            # Normalize price score (assuming max reasonable price is 1000)
-            price_score = max(0, 100 - (float(supplier_product.supplier_price) / 10))
-            score += price_score * 0.1
+            # Assuming R100 is typical price, give bonus for prices below R100
+            price_bonus = max(0, (100 - float(supplier_product.supplier_price)) / 10)
+            score += price_bonus
         
         return score
     
     def _get_fallback_pricing(self, product: Product, quantity_needed: Decimal) -> Dict:
-        """Fallback pricing when no suppliers are available"""
+        """Fallback pricing when no external suppliers are available - use Tshwane Market as fallback"""
         estimated_price = product.price * Decimal('0.7') if product.price else Decimal('10.00')
         
+        # Use Tshwane Market as fallback external supplier
+        fallback_supplier = self.tshwane_market or self.suppliers.exclude(name__icontains='fambri').first()
+        
         return {
-            'supplier': self.tshwane_market,
+            'supplier': fallback_supplier,
             'supplier_product': None,
             'unit_price': estimated_price,
             'available_quantity': quantity_needed,  # Assume market can provide
@@ -179,7 +285,8 @@ class UnifiedProcurementService:
             'lead_time_days': 1,  # Market trip
             'quality_rating': Decimal('3.0'),
             'is_fambri': False,
-            'priority_score': 0.0,
+            'specialization_bonus': 5,
+            'priority_score': 55.0,  # Base score for fallback
             'is_fallback': True
         }
     
