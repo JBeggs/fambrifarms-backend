@@ -1094,18 +1094,81 @@ def create_order_items(order, message):
             else:
                 unit = str(unit).strip()
             
-            # Create order item with dynamic pricing
-            OrderItem.objects.create(
-                order=order,
-                product=product,
-                quantity=quantity_decimal,
-                unit=unit,
-                price=customer_price,
-                total_price=quantity_decimal * customer_price,
-                original_text=item_data['original_text'],
-                confidence_score=item_data.get('confidence', 0.8)
-            )
-            items_created += 1
+            # Check available stock for partial fulfillment splitting
+            try:
+                from inventory.models import FinishedInventory
+                inventory = FinishedInventory.objects.get(product=product)
+                available_stock = inventory.available_quantity or Decimal('0')
+                
+                # PARTIAL STOCK SPLITTING LOGIC
+                if available_stock > Decimal('0') and available_stock < quantity_decimal:
+                    # Split into two items: reserved portion + procurement portion
+                    shortfall_quantity = quantity_decimal - available_stock
+                    
+                    # Item 1: Reserved from stock
+                    OrderItem.objects.create(
+                        order=order,
+                        product=product,
+                        quantity=available_stock,
+                        unit=unit,
+                        price=customer_price,
+                        total_price=available_stock * customer_price,
+                        original_text=item_data['original_text'],
+                        confidence_score=item_data.get('confidence', 0.8),
+                        notes=f"Split item - Reserved from stock (Part 1/2)"
+                    )
+                    
+                    # Item 2: Procurement needed
+                    OrderItem.objects.create(
+                        order=order,
+                        product=product,
+                        quantity=shortfall_quantity,
+                        unit=unit,
+                        price=customer_price,
+                        total_price=shortfall_quantity * customer_price,
+                        original_text=item_data['original_text'],
+                        confidence_score=item_data.get('confidence', 0.8),
+                        notes=f"Split item - Needs procurement (Part 2/2)"
+                    )
+                    
+                    items_created += 2
+                    
+                    # Log the split
+                    log_processing_action(message, 'partial_stock_split', {
+                        'product_name': product.name,
+                        'total_requested': float(quantity_decimal),
+                        'available_stock': float(available_stock),
+                        'shortfall': float(shortfall_quantity),
+                        'customer_price': float(customer_price)
+                    })
+                    
+                else:
+                    # Normal single item creation (enough stock or no stock)
+                    OrderItem.objects.create(
+                        order=order,
+                        product=product,
+                        quantity=quantity_decimal,
+                        unit=unit,
+                        price=customer_price,
+                        total_price=quantity_decimal * customer_price,
+                        original_text=item_data['original_text'],
+                        confidence_score=item_data.get('confidence', 0.8)
+                    )
+                    items_created += 1
+                    
+            except FinishedInventory.DoesNotExist:
+                # No inventory record - create single item as normal
+                OrderItem.objects.create(
+                    order=order,
+                    product=product,
+                    quantity=quantity_decimal,
+                    unit=unit,
+                    price=customer_price,
+                    total_price=quantity_decimal * customer_price,
+                    original_text=item_data['original_text'],
+                    confidence_score=item_data.get('confidence', 0.8)
+                )
+                items_created += 1
             
             # Log pricing decision
             log_processing_action(message, 'dynamic_pricing_applied', {
