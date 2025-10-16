@@ -351,6 +351,10 @@ class SmartProductMatcher:
                     'is_standalone': word == number_match.group(1)
                 })
         
+        # DEBUG: Log what we're parsing in SmartProductMatcher
+        if 'tomato' in text.lower() or 'mushroom' in text.lower():
+            print(f"🧠 SMART_MATCHER DEBUG: '{text}'")
+        
         # Step 2: Find unit/container words - look for number+unit combinations first
         unit = None
         unit_word = None
@@ -376,11 +380,19 @@ class SmartProductMatcher:
                         # Verify it actually starts with a number
                         number_match = re.search(r'^(\d+(?:\.\d+)?)', word)
                         if number_match:
-                            # This word contains a number + unit
-                            unit = valid_unit
-                            unit_word = word
-                            unit_index = i
-                            break
+                            # For weight units, only use if no containers present
+                            if valid_unit in ['kg', 'g']:
+                                if not any(c in text_lower for c in ['box', 'bag', 'punnet', 'packet']):
+                                    unit = valid_unit
+                                    unit_word = word
+                                    unit_index = i
+                                    break
+                            else:
+                                # This word contains a number + unit
+                                unit = valid_unit
+                                unit_word = word
+                                unit_index = i
+                                break
                 if unit:
                     break
         
@@ -607,6 +619,8 @@ class SmartProductMatcher:
             print(f"  Product: '{product_name}'")
             print(f"  Packaging: '{individual_packaging_size}'")
             print(f"  Extra: {extra_descriptions}")
+            if 'tomato' in original_item.lower():
+                print(f"  🧠 Unit Detection: has_box={'box' in text_lower}, has_kg_pattern={bool(re.search(r'\\b\\d+(?:\\.\\d+)?\\s*kg\\b', text_lower))}")
         
         return ParsedMessage(
             quantity=quantity,

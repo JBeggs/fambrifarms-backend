@@ -1649,9 +1649,17 @@ def parse_single_item(line):
     Returns:
         dict: Parsed item data or None if parsing failed
     """
+    # DEBUG: Log what we're parsing
+    if 'tomato' in line.lower() or 'mushroom' in line.lower():
+        print(f"🔍 PARSE_SINGLE_ITEM DEBUG: '{line}'")
+    
     # GOLDEN RULE: Try stock parsing first (has Golden Rule implemented)
     stock_result = parse_stock_item(line)
     if stock_result:
+        # DEBUG: Log stock parsing result
+        if 'tomato' in line.lower() or 'mushroom' in line.lower():
+            print(f"   ✅ Stock result: qty={stock_result['quantity']}, unit='{stock_result['unit']}', name='{stock_result['name']}'")
+        
         # Convert stock result to format expected by order system
         return {
             'product_name': stock_result['name'],
@@ -2767,29 +2775,41 @@ def parse_stock_item(line):
     # Fix comma decimal separators: "1,3kg" -> "1.3kg"
     line = re.sub(r'(\d),(\d)', r'\1.\2', line)
     
+    # DEBUG: Log what we're parsing in parse_stock_item
+    if 'tomato' in line.lower() or 'mushroom' in line.lower():
+        print(f"📦 PARSE_STOCK_ITEM DEBUG: '{line}'")
+    
     # STEP 0: Extract unit from ORIGINAL line FIRST (before any processing)
     unit = None
     original_lower = line.lower()
     
-    # Priority order: kg > g > specific containers
-    if 'kg' in original_lower:
-        unit = 'kg'
-    elif 'g' in original_lower and 'kg' not in original_lower:
-        unit = 'g'
-    elif 'box' in original_lower:
+    # Priority order: containers > weight units (box/bag before kg/g)
+    if 'box' in original_lower:
         unit = 'box'
     elif 'bag' in original_lower:
         unit = 'bag'
+    elif 'punnet' in original_lower or 'pun' in original_lower:
+        unit = 'punnet'
+    elif 'packet' in original_lower:
+        unit = 'packet'
     elif 'bunch' in original_lower:
         unit = 'bunch'
     elif 'head' in original_lower:
         unit = 'head'
-    elif 'punnet' in original_lower or 'pun' in original_lower:
-        unit = 'punnet'
+    elif 'tray' in original_lower:
+        unit = 'tray'
+    elif re.search(r'\b\d+(?:\.\d+)?\s*kg\b', original_lower) and 'box' not in original_lower and 'bag' not in original_lower:
+        unit = 'kg'  # Only if standalone kg with number and no containers
+    elif re.search(r'\b\d+(?:\.\d+)?\s*g\b', original_lower) and 'kg' not in original_lower and 'box' not in original_lower and 'bag' not in original_lower:
+        unit = 'g'   # Only if standalone g with number and no containers
     elif 'each' in original_lower:
         unit = 'each'
     else:
         unit = 'each'  # Default
+
+    # DEBUG: Log unit detection
+    if 'tomato' in line.lower() or 'mushroom' in line.lower():
+        print(f"   📦 Unit detected: '{unit}', has_box={'box' in original_lower}, has_kg={bool(re.search(r'\\b\\d+(?:\\.\\d+)?\\s*kg\\b', original_lower))}")
 
     # STEP 1: Find quantity - first standalone number only
     quantity = 1.0  # DEFAULT
