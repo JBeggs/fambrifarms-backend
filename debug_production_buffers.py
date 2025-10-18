@@ -8,7 +8,7 @@ import os
 import django
 
 # Setup Django
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'familyfarms_api.settings')
 django.setup()
 
 from products.models import ProcurementBuffer, Product
