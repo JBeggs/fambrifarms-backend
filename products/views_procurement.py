@@ -76,6 +76,33 @@ def generate_market_recommendation(request):
         
         # Generate recommendation
         service = ProcurementIntelligenceService()
+        
+        # FORCE UPDATE: Clear all existing buffers to use current business settings
+        from .models import ProcurementBuffer
+        from .models_business_settings import BusinessSettings
+        from decimal import Decimal
+        
+        # Get current business settings
+        business_settings = BusinessSettings.get_settings()
+        print(f"🔧 Using business settings: {business_settings.default_spoilage_rate*100:.1f}% + {business_settings.default_cutting_waste_rate*100:.1f}% + {business_settings.default_quality_rejection_rate*100:.1f}% = {(business_settings.default_spoilage_rate + business_settings.default_cutting_waste_rate + business_settings.default_quality_rejection_rate)*100:.1f}% total")
+        
+        # Update ALL existing buffers to current business settings BEFORE generating
+        buffers = ProcurementBuffer.objects.all()
+        updated_count = 0
+        for buffer in buffers:
+            # Calculate new total from business settings
+            total_buffer = float(business_settings.default_spoilage_rate + business_settings.default_cutting_waste_rate + business_settings.default_quality_rejection_rate)
+            
+            # Force update to current settings
+            buffer.spoilage_rate = business_settings.default_spoilage_rate
+            buffer.cutting_waste_rate = business_settings.default_cutting_waste_rate  
+            buffer.quality_rejection_rate = business_settings.default_quality_rejection_rate
+            buffer.total_buffer_rate = Decimal(str(total_buffer))
+            buffer.save()
+            updated_count += 1
+            
+        print(f"🔄 Force-updated {updated_count} buffers to current business settings")
+        
         recommendation = service.generate_market_recommendation(for_date, use_historical_dates)
         
         # Serialize response
