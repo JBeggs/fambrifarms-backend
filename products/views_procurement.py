@@ -98,6 +98,7 @@ def generate_market_recommendation(request):
             buffer.cutting_waste_rate = business_settings.default_cutting_waste_rate  
             buffer.quality_rejection_rate = business_settings.default_quality_rejection_rate
             buffer.total_buffer_rate = Decimal(str(total_buffer))
+            buffer.market_pack_size = business_settings.default_market_pack_size  # FIX: Update pack size too!
             buffer.save()
             updated_count += 1
             
