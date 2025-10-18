@@ -105,11 +105,71 @@ def update_business_settings(request):
         if serializer.is_valid():
             with transaction.atomic():
                 # Set the user who updated the settings
-                serializer.save(updated_by=request.user)
+                updated_settings = serializer.save(updated_by=request.user)
+                
+                # Auto-update all existing procurement buffers with new settings
+                try:
+                    from .models import ProcurementBuffer
+                    from decimal import Decimal
+                    
+                    buffers = ProcurementBuffer.objects.select_related('product__department').all()
+                    updated_count = 0
+                    
+                    for buffer in buffers:
+                        product = buffer.product
+                        
+                        # Calculate new values from updated business settings
+                        spoilage_rate = float(updated_settings.default_spoilage_rate)
+                        cutting_waste_rate = float(updated_settings.default_cutting_waste_rate)
+                        quality_rejection_rate = float(updated_settings.default_quality_rejection_rate)
+                        
+                        # Use department-specific settings if available
+                        if product.department and updated_settings.department_buffer_settings:
+                            dept_settings = updated_settings.department_buffer_settings.get(product.department.name, {})
+                            spoilage_rate = dept_settings.get('spoilage_rate', spoilage_rate)
+                            cutting_waste_rate = dept_settings.get('cutting_waste_rate', cutting_waste_rate)
+                            quality_rejection_rate = dept_settings.get('quality_rejection_rate', quality_rejection_rate)
+                        
+                        # Calculate total buffer based on method
+                        if updated_settings.buffer_calculation_method == 'multiplicative':
+                            total_buffer = (1 + spoilage_rate) * (1 + cutting_waste_rate) * (1 + quality_rejection_rate) - 1
+                        else:
+                            total_buffer = spoilage_rate + cutting_waste_rate + quality_rejection_rate
+                        
+                        # Get market pack size
+                        market_pack_size = float(updated_settings.default_market_pack_size)
+                        if product.department and updated_settings.department_buffer_settings:
+                            dept_settings = updated_settings.department_buffer_settings.get(product.department.name, {})
+                            market_pack_size = dept_settings.get('market_pack_size', market_pack_size)
+                        
+                        # Update the buffer
+                        buffer.spoilage_rate = Decimal(str(spoilage_rate))
+                        buffer.cutting_waste_rate = Decimal(str(cutting_waste_rate))
+                        buffer.quality_rejection_rate = Decimal(str(quality_rejection_rate))
+                        buffer.total_buffer_rate = Decimal(str(total_buffer))
+                        buffer.market_pack_size = Decimal(str(market_pack_size))
+                        
+                        # Update seasonal settings if available
+                        if product.department and updated_settings.department_buffer_settings:
+                            dept_settings = updated_settings.department_buffer_settings.get(product.department.name, {})
+                            buffer.is_seasonal = dept_settings.get('is_seasonal', False)
+                            buffer.peak_season_months = dept_settings.get('peak_season_months', [])
+                            buffer.peak_season_buffer_multiplier = Decimal(str(dept_settings.get('peak_season_buffer_multiplier', 
+                                float(updated_settings.default_peak_season_multiplier))))
+                            buffer.market_pack_unit = dept_settings.get('market_pack_unit', 'kg')
+                        
+                        buffer.save()
+                        updated_count += 1
+                    
+                    logger.info(f"Auto-updated {updated_count} procurement buffers with new business settings")
+                    
+                except Exception as buffer_update_error:
+                    # Log the error but don't fail the settings update
+                    logger.error(f"Failed to auto-update procurement buffers: {buffer_update_error}", exc_info=True)
                 
                 return Response({
                     'success': True,
-                    'message': 'Business settings updated successfully',
+                    'message': 'Business settings updated successfully (procurement buffers auto-updated)',
                     'settings': serializer.data
                 })
         else:
