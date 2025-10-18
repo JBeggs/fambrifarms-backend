@@ -660,7 +660,7 @@ class UnifiedProcurementService:
         return stock_analysis
     
     def _get_default_buffer_settings(self, product: Product) -> Dict:
-        """Get default buffer settings for a product"""
+        """Get default buffer settings for a product using business settings"""
         # Try to get existing buffer settings
         try:
             buffer = ProcurementBuffer.objects.get(product=product)
@@ -672,18 +672,101 @@ class UnifiedProcurementService:
         except ProcurementBuffer.DoesNotExist:
             pass
         
-        # Default buffer settings based on product characteristics
+        # Get business settings to calculate buffer properly
+        from .models_business_settings import BusinessSettings
+        business_settings = BusinessSettings.get_settings()
+        
+        # Auto-create buffer if setting is enabled
+        should_auto_create = business_settings.auto_create_buffers
+        
+        # Calculate total buffer rate from business settings
+        spoilage_rate = float(business_settings.default_spoilage_rate)
+        cutting_waste_rate = float(business_settings.default_cutting_waste_rate)
+        quality_rejection_rate = float(business_settings.default_quality_rejection_rate)
+        
+        # Use department-specific settings if available
+        if product.department:
+            dept_settings = business_settings.department_buffer_settings.get(product.department.name, {})
+            spoilage_rate = dept_settings.get('spoilage_rate', spoilage_rate)
+            cutting_waste_rate = dept_settings.get('cutting_waste_rate', cutting_waste_rate)
+            quality_rejection_rate = dept_settings.get('quality_rejection_rate', quality_rejection_rate)
+        
+        # Calculate buffer based on business settings method
+        if business_settings.buffer_calculation_method == 'multiplicative':
+            # Multiplicative: (1 + spoilage) * (1 + waste) * (1 + rejection) - 1
+            total_buffer = (1 + spoilage_rate) * (1 + cutting_waste_rate) * (1 + quality_rejection_rate) - 1
+        else:
+            # Additive: spoilage + waste + rejection
+            total_buffer = spoilage_rate + cutting_waste_rate + quality_rejection_rate
+        
+        # Apply seasonal multiplier if enabled and in peak season
+        if business_settings.enable_seasonal_adjustments and product.department:
+            dept_settings = business_settings.department_buffer_settings.get(product.department.name, {})
+            if dept_settings.get('is_seasonal', False):
+                from datetime import datetime
+                current_month = datetime.now().month
+                peak_months = dept_settings.get('peak_season_months', [])
+                if current_month in peak_months:
+                    peak_multiplier = dept_settings.get('peak_season_buffer_multiplier', business_settings.default_peak_season_multiplier)
+                    total_buffer *= float(peak_multiplier)
+        
+        # Convert to percentage
+        buffer_percentage = total_buffer * 100
+        
+        # Use market pack size from business settings if available
+        market_pack_size = float(business_settings.default_market_pack_size)
+        if product.department:
+            dept_settings = business_settings.department_buffer_settings.get(product.department.name, {})
+            market_pack_size = dept_settings.get('market_pack_size', market_pack_size)
+        
         defaults = {
-            'buffer_percentage': 20.0,  # 20% buffer
-            'minimum_quantity': 5.0,
-            'maximum_quantity': 100.0
+            'buffer_percentage': buffer_percentage,
+            'minimum_quantity': market_pack_size,
+            'maximum_quantity': market_pack_size * 20  # 20 packs max
         }
         
-        # Adjust based on product unit
-        if product.unit in ['kg', 'bunch']:
-            defaults['buffer_percentage'] = 15.0  # Lower buffer for bulk items
-        elif product.unit in ['punnet', 'box']:
-            defaults['buffer_percentage'] = 25.0  # Higher buffer for packaged items
+        # Auto-create buffer if enabled in business settings
+        if should_auto_create:
+            try:
+                from .models import ProcurementBuffer
+                
+                # Get current month for seasonal settings
+                from datetime import datetime
+                current_month = datetime.now().month
+                
+                # Prepare buffer data
+                buffer_data = {
+                    'product': product,
+                    'buffer_percentage': buffer_percentage,
+                    'minimum_quantity': market_pack_size,
+                    'maximum_quantity': market_pack_size * 20,
+                    'spoilage_rate': spoilage_rate,
+                    'cutting_waste_rate': cutting_waste_rate,
+                    'quality_rejection_rate': quality_rejection_rate,
+                    'market_pack_size': market_pack_size,
+                    'market_pack_unit': 'kg',  # Default unit
+                    'is_seasonal': False,
+                    'peak_season_months': [],
+                    'peak_season_buffer_multiplier': float(business_settings.default_peak_season_multiplier)
+                }
+                
+                # Use department-specific settings if available
+                if product.department:
+                    dept_settings = business_settings.department_buffer_settings.get(product.department.name, {})
+                    buffer_data.update({
+                        'market_pack_unit': dept_settings.get('market_pack_unit', 'kg'),
+                        'is_seasonal': dept_settings.get('is_seasonal', False),
+                        'peak_season_months': dept_settings.get('peak_season_months', []),
+                        'peak_season_buffer_multiplier': dept_settings.get('peak_season_buffer_multiplier', 
+                            float(business_settings.default_peak_season_multiplier))
+                    })
+                
+                # Create the buffer
+                ProcurementBuffer.objects.create(**buffer_data)
+                print(f"✅ Auto-created procurement buffer for {product.name}")
+                
+            except Exception as e:
+                print(f"⚠️ Failed to auto-create buffer for {product.name}: {e}")
         
         return defaults
     
