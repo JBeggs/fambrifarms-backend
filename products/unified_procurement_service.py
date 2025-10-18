@@ -713,11 +713,8 @@ class UnifiedProcurementService:
         # Convert to percentage
         buffer_percentage = total_buffer * 100
         
-        # Use market pack size from business settings if available
+        # Use market pack size from business settings - ALWAYS use global setting
         market_pack_size = float(business_settings.default_market_pack_size)
-        if product.department:
-            dept_settings = business_settings.department_buffer_settings.get(product.department.name, {})
-            market_pack_size = dept_settings.get('market_pack_size', market_pack_size)
         
         defaults = {
             'buffer_percentage': buffer_percentage,
@@ -750,16 +747,17 @@ class UnifiedProcurementService:
                     'peak_season_buffer_multiplier': float(business_settings.default_peak_season_multiplier)
                 }
                 
-                # Use department-specific settings if available
+                # Use department-specific settings if available (but NOT market_pack_size)
                 if product.department:
                     dept_settings = business_settings.department_buffer_settings.get(product.department.name, {})
                     buffer_data.update({
                         'market_pack_unit': dept_settings.get('market_pack_unit', 'kg'),
                         'is_seasonal': dept_settings.get('is_seasonal', False),
                         'peak_season_months': dept_settings.get('peak_season_months', []),
-                        'peak_season_buffer_multiplier': dept_settings.get('peak_season_buffer_multiplier', 
+                        'peak_season_buffer_multiplier': dept_settings.get('peak_season_buffer_multiplier',
                             float(business_settings.default_peak_season_multiplier))
                     })
+                    # NOTE: market_pack_size always uses global setting (already set above)
                 
                 # Create the buffer
                 ProcurementBuffer.objects.create(**buffer_data)

@@ -136,11 +136,8 @@ def update_business_settings(request):
                         else:
                             total_buffer = spoilage_rate + cutting_waste_rate + quality_rejection_rate
                         
-                        # Get market pack size
+                        # Get market pack size - ALWAYS use global setting (ignore department overrides)
                         market_pack_size = float(updated_settings.default_market_pack_size)
-                        if product.department and updated_settings.department_buffer_settings:
-                            dept_settings = updated_settings.department_buffer_settings.get(product.department.name, {})
-                            market_pack_size = dept_settings.get('market_pack_size', market_pack_size)
                         
                         # Update the buffer
                         buffer.spoilage_rate = Decimal(str(spoilage_rate))
