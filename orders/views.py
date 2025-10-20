@@ -145,11 +145,33 @@ class CustomerOrdersView(generics.ListAPIView):
         logger = logging.getLogger(__name__)
         logger.info(f"Deleting order {order_number} (ID: {instance.id})")
         
+        # CRITICAL: Release reserved stock before deletion
+        try:
+            from inventory.signals import release_stock_for_order
+            from inventory.models import StockMovement
+            
+            # Check if there are reserved stock movements for this order
+            existing_reservations = StockMovement.objects.filter(
+                movement_type='finished_reserve',
+                reference_number=order_number
+            ).exists()
+            
+            if existing_reservations:
+                logger.info(f"Releasing reserved stock for order {order_number} before deletion")
+                release_stock_for_order(instance)
+                logger.info(f"Successfully released reserved stock for order {order_number}")
+            else:
+                logger.info(f"No reserved stock found for order {order_number}")
+                
+        except Exception as e:
+            logger.error(f"Error releasing stock for order {order_number}: {e}")
+            # Continue with deletion even if stock release fails to avoid orphaned orders
+        
         # Perform the deletion
         self.perform_destroy(instance)
         
         return Response(
-            {"message": f"Order {order_number} deleted successfully"}, 
+            {"message": f"Order {order_number} deleted successfully (reserved stock released)"}, 
             status=status.HTTP_200_OK
         )
 

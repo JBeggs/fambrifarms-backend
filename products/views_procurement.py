@@ -733,10 +733,26 @@ def get_procurement_by_supplier(request, recommendation_id):
         supplier_groups = {}
         items_without_supplier = []
         
-        # Force fresh query - use product's assigned procurement supplier
+        # Force fresh query - check reserved stock first, then use product's assigned procurement supplier
         for item in recommendation.items.select_related('product', 'product__procurement_supplier').all():
-            # Use the product's assigned procurement supplier (new system)
-            assigned_supplier = item.product.procurement_supplier
+            # PRIORITY 1: Check if we have reserved stock that can fulfill this item
+            has_sufficient_reserved_stock = False
+            try:
+                from inventory.models import FinishedInventory
+                inventory = FinishedInventory.objects.get(product=item.product)
+                reserved_qty = inventory.reserved_quantity or 0
+                
+                if reserved_qty >= item.recommended_quantity:
+                    has_sufficient_reserved_stock = True
+                    print(f"[SUPPLIER VIEW - RESERVED STOCK] {item.product.name}: {reserved_qty} reserved >= {item.recommended_quantity} needed → Fambri Garden")
+            except FinishedInventory.DoesNotExist:
+                pass
+            
+            # PRIORITY 2: Use assigned procurement supplier only if no sufficient reserved stock
+            if has_sufficient_reserved_stock:
+                assigned_supplier = None  # Force to Fambri Garden
+            else:
+                assigned_supplier = item.product.procurement_supplier
             
             if assigned_supplier:
                 supplier_id = assigned_supplier.id
@@ -768,7 +784,8 @@ def get_procurement_by_supplier(request, recommendation_id):
                 item_data = MarketProcurementItemSerializer(item).data
                 
                 # Debug logging for Fambri garden items
-                print(f"[SUPPLIER VIEW - FAMBRI GARDEN] Item: {item.product.name} (NULL procurement_supplier), Rec Qty: {item.recommended_quantity}, Unit Price: {item.estimated_unit_price}, Total: {item.estimated_total_cost}")
+                reason = "Reserved stock available" if has_sufficient_reserved_stock else "NULL procurement_supplier"
+                print(f"[SUPPLIER VIEW - FAMBRI GARDEN] Item: {item.product.name} ({reason}), Rec Qty: {item.recommended_quantity}, Unit Price: {item.estimated_unit_price}, Total: {item.estimated_total_cost}")
                 print(f"[SUPPLIER VIEW - FAMBRI GARDEN] Serialized data: {item_data}")
                 
                 items_without_supplier.append(item_data)
@@ -781,7 +798,7 @@ def get_procurement_by_supplier(request, recommendation_id):
         if items_without_supplier:
             fambri_group = {
                 'supplier_id': None,
-                'supplier_name': 'Fambri Garden (No External Procurement)',
+                'supplier_name': 'Fambri Garden',
                 'items': items_without_supplier,
                 'total_cost': sum(float(item['estimated_total_cost']) for item in items_without_supplier),
                 'item_count': len(items_without_supplier)
@@ -962,7 +979,7 @@ def get_all_suppliers(request):
         supplier_list = [
             {
                 'id': None,
-                'name': 'Fambri Garden (No External Procurement)',
+                'name': 'Fambri Garden',
                 'contact_person': 'Internal',
                 'phone': '-'
             }

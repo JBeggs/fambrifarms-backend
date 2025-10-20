@@ -258,7 +258,7 @@ class OrderItemParser:
                 
                 # For other patterns, parse as before (they have attached units)
                 # Parse the quantity text to extract number and unit
-                numbers = re.findall(r'\d+', quantity_text)
+                numbers = re.findall(r'\d+(?:\.\d+)?', quantity_text)
                 
                 # Determine unit
                 unit = None
