@@ -733,31 +733,50 @@ def get_procurement_by_supplier(request, recommendation_id):
         supplier_groups = {}
         items_without_supplier = []
         
-        # Force fresh query - check reserved stock first, then use product's assigned procurement supplier
+        # Force fresh query - check reserved stock first, then split between Fambri Garden and supplier (if needed)
         for item in recommendation.items.select_related('product', 'product__procurement_supplier').all():
-            # PRIORITY 1: Check if we have reserved stock that can fulfill this item
-            has_sufficient_reserved_stock = False
+            from decimal import Decimal
+            # Load inventory to determine reserved quantity
+            reserved_qty = Decimal('0')
             try:
                 from inventory.models import FinishedInventory
                 inventory = FinishedInventory.objects.get(product=item.product)
-                reserved_qty = inventory.reserved_quantity or 0
-                
-                if reserved_qty >= item.recommended_quantity:
-                    has_sufficient_reserved_stock = True
-                    print(f"[SUPPLIER VIEW - RESERVED STOCK] {item.product.name}: {reserved_qty} reserved >= {item.recommended_quantity} needed → Fambri Garden")
+                reserved_qty = Decimal(str(inventory.reserved_quantity or 0))
             except FinishedInventory.DoesNotExist:
                 pass
-            
-            # PRIORITY 2: Use assigned procurement supplier only if no sufficient reserved stock
-            if has_sufficient_reserved_stock:
-                assigned_supplier = None  # Force to Fambri Garden
-            else:
-                assigned_supplier = item.product.procurement_supplier
-            
-            if assigned_supplier:
+
+            # Determine split quantities
+            recommended_qty = Decimal(str(item.recommended_quantity or 0))
+            reserved_for_pdf = min(reserved_qty, recommended_qty)
+            supplier_qty = recommended_qty - reserved_for_pdf
+
+            # Helper to clone serialized item with adjusted qty and total
+            def _item_with_qty(base_data, new_qty_decimal):
+                data = dict(base_data)
+                # Ensure numeric types are computed correctly
+                unit_price = Decimal(str(data.get('estimated_unit_price') if data.get('estimated_unit_price') is not None else (item.estimated_unit_price or 0)))
+                new_total = unit_price * new_qty_decimal
+                data['recommended_quantity'] = float(new_qty_decimal)
+                data['estimated_total_cost'] = float(new_total)
+                return data
+
+            # Serialize once as base
+            from .serializers import MarketProcurementItemSerializer
+            base_item_data = MarketProcurementItemSerializer(item).data
+
+            # If there is a reserved portion, add it to Fambri Garden (NULL supplier)
+            if reserved_for_pdf > 0:
+                reserved_item = _item_with_qty(base_item_data, reserved_for_pdf)
+                print(f"[SUPPLIER VIEW - SPLIT] {item.product.name}: Reserved {reserved_for_pdf} → Fambri Garden")
+                items_without_supplier.append(reserved_item)
+
+            # Remaining shortfall goes to assigned supplier if present; otherwise also Fambri Garden
+            assigned_supplier = item.product.procurement_supplier if supplier_qty > 0 else None
+
+            if assigned_supplier and supplier_qty > 0:
                 supplier_id = assigned_supplier.id
                 supplier_name = assigned_supplier.name
-                
+
                 if supplier_id not in supplier_groups:
                     supplier_groups[supplier_id] = {
                         'supplier_id': supplier_id,
@@ -766,29 +785,18 @@ def get_procurement_by_supplier(request, recommendation_id):
                         'total_cost': 0,
                         'item_count': 0
                     }
-                
-                # Serialize the item
-                from .serializers import MarketProcurementItemSerializer
-                item_data = MarketProcurementItemSerializer(item).data
-                
-                # Debug logging
-                print(f"[SUPPLIER VIEW] Item: {item.product.name} → {supplier_name}, Rec Qty: {item.recommended_quantity}, Unit Price: {item.estimated_unit_price}, Total: {item.estimated_total_cost}")
-                print(f"[SUPPLIER VIEW] Serialized data: {item_data}")
-                
-                supplier_groups[supplier_id]['items'].append(item_data)
-                supplier_groups[supplier_id]['total_cost'] += float(item.estimated_total_cost)
+
+                supplier_item = _item_with_qty(base_item_data, supplier_qty)
+                print(f"[SUPPLIER VIEW - SPLIT] {item.product.name}: Supplier {supplier_name} qty {supplier_qty}")
+                supplier_groups[supplier_id]['items'].append(supplier_item)
+                supplier_groups[supplier_id]['total_cost'] += float(supplier_item['estimated_total_cost'])
                 supplier_groups[supplier_id]['item_count'] += 1
-            else:
-                # Items without assigned procurement supplier (NULL = Fambri garden products)
-                from .serializers import MarketProcurementItemSerializer
-                item_data = MarketProcurementItemSerializer(item).data
-                
-                # Debug logging for Fambri garden items
-                reason = "Reserved stock available" if has_sufficient_reserved_stock else "NULL procurement_supplier"
-                print(f"[SUPPLIER VIEW - FAMBRI GARDEN] Item: {item.product.name} ({reason}), Rec Qty: {item.recommended_quantity}, Unit Price: {item.estimated_unit_price}, Total: {item.estimated_total_cost}")
-                print(f"[SUPPLIER VIEW - FAMBRI GARDEN] Serialized data: {item_data}")
-                
-                items_without_supplier.append(item_data)
+
+            # If no assigned supplier and there is remaining qty, it remains as Fambri Garden
+            if not assigned_supplier and supplier_qty > 0:
+                remaining_item = _item_with_qty(base_item_data, supplier_qty)
+                print(f"[SUPPLIER VIEW - SPLIT] {item.product.name}: No supplier set, remaining {supplier_qty} → Fambri Garden")
+                items_without_supplier.append(remaining_item)
         
         # Convert to list and sort by total cost (highest first)
         supplier_list = list(supplier_groups.values())
