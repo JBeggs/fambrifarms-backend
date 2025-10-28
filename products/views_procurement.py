@@ -764,13 +764,18 @@ def get_procurement_by_supplier(request, recommendation_id):
             from .serializers import MarketProcurementItemSerializer
             base_item_data = MarketProcurementItemSerializer(item).data
 
-            # If there is a reserved portion, add it to Fambri Garden (NULL supplier)
+            # If there is a reserved portion, add ONLY that to Fambri Garden (NULL supplier)
             if reserved_for_pdf > 0:
                 reserved_item = _item_with_qty(base_item_data, reserved_for_pdf)
                 print(f"[SUPPLIER VIEW - SPLIT] {item.product.name}: Reserved {reserved_for_pdf} → Fambri Garden")
                 items_without_supplier.append(reserved_item)
+                
+                # CRITICAL: If we have ANY reserved stock, DO NOT add remaining to external supplier
+                # Reserved stock means we already have it - external supplier should only get non-reserved shortfall
+                # Skip the rest of this item entirely - it's already covered by reserved stock
+                continue
 
-            # Remaining shortfall goes to assigned supplier if present; otherwise also Fambri Garden
+            # No reserved stock - handle normal procurement assignment
             assigned_supplier = item.product.procurement_supplier if supplier_qty > 0 else None
 
             if assigned_supplier and supplier_qty > 0:
