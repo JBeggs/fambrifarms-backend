@@ -233,6 +233,7 @@ class StockLevelSerializer(serializers.Serializer):
     product_id = serializers.IntegerField()
     product_name = serializers.CharField()
     department = serializers.CharField()
+    unit = serializers.CharField()
     available_quantity = serializers.DecimalField(max_digits=10, decimal_places=2)
     reserved_quantity = serializers.DecimalField(max_digits=10, decimal_places=2)
     reorder_level = serializers.DecimalField(max_digits=10, decimal_places=2)
