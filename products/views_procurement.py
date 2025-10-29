@@ -171,7 +171,12 @@ def get_market_recommendations(request):
 @permission_classes([IsAuthenticated])
 def approve_market_recommendation(request, recommendation_id):
     """
-    Approve a market procurement recommendation
+    Approve a market procurement recommendation and complete order workflow
+    
+    This endpoint:
+    1. Approves the procurement recommendation
+    2. Confirms all pending orders (moves them to 'confirmed' status)
+    3. Soft-deletes all WhatsApp messages (marks is_deleted=True)
     
     POST /api/products/procurement/recommendations/{id}/approve/
     Body: {
@@ -187,21 +192,56 @@ def approve_market_recommendation(request, recommendation_id):
                 'error': f'Cannot approve recommendation with status: {recommendation.status}'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Update recommendation
-        recommendation.status = 'approved'
-        recommendation.approved_by = request.user
-        recommendation.approved_at = timezone.now()
-        recommendation.notes = request.data.get('notes', '')
-        recommendation.save()
+        # Use transaction to ensure all operations succeed or fail together
+        with transaction.atomic():
+            # Update recommendation
+            recommendation.status = 'approved'
+            recommendation.approved_by = request.user
+            recommendation.approved_at = timezone.now()
+            recommendation.notes = request.data.get('notes', '')
+            recommendation.save()
+            
+            logger.info(f"[APPROVE] Recommendation {recommendation_id} approved by {request.user}")
+            
+            # 1. Move all pending orders to 'confirmed' status
+            # This triggers stock reservation via inventory signals
+            from orders.models import Order
+            orders_to_confirm = Order.objects.filter(
+                status__in=['received', 'parsed', 'needs_review', 'pending']
+            )
+            orders_confirmed_count = 0
+            
+            logger.info(f"[APPROVE] Found {orders_to_confirm.count()} orders to confirm")
+            
+            for order in orders_to_confirm:
+                old_status = order.status
+                order.status = 'confirmed'
+                order.save()  # This triggers the signal to reserve stock
+                orders_confirmed_count += 1
+                logger.info(f"[APPROVE] Order {order.order_number} status changed: {old_status} -> confirmed")
+            
+            # 2. Soft-delete all WhatsApp messages (exclude already deleted ones)
+            from whatsapp.models import WhatsAppMessage
+            messages_before_count = WhatsAppMessage.objects.filter(is_deleted=False).count()
+            messages_deleted_count = WhatsAppMessage.objects.filter(
+                is_deleted=False
+            ).update(is_deleted=True)
+            
+            logger.info(f"[APPROVE] Deleted {messages_deleted_count} WhatsApp messages (found {messages_before_count} total non-deleted)")
+            
+            if messages_deleted_count != messages_before_count:
+                logger.warning(f"[APPROVE] Message count mismatch: found {messages_before_count}, deleted {messages_deleted_count}")
         
         # Serialize response
         serializer = MarketProcurementRecommendationSerializer(recommendation)
         
         return Response({
             'success': True,
-            'message': 'Market recommendation approved',
+            'message': f'Market recommendation approved. {orders_confirmed_count} orders confirmed. {messages_deleted_count} messages deleted.',
             'recommendation': serializer.data,
-            'print_url': f'/api/products/procurement/recommendations/{recommendation_id}/print/'
+            'print_url': f'/api/products/procurement/recommendations/{recommendation_id}/print/',
+            'orders_confirmed': orders_confirmed_count,
+            'messages_deleted': messages_deleted_count
         })
         
     except MarketProcurementRecommendation.DoesNotExist:
