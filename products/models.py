@@ -172,9 +172,23 @@ class ProcurementBuffer(models.Model):
         """Calculate how much to buy at market based on needed quantity"""
         from datetime import datetime
         from decimal import Decimal
+        from .models_business_settings import BusinessSettings
         
         # Convert to Decimal for consistent math
         needed_quantity = Decimal(str(needed_quantity))
+        
+        # Check if buffer calculations are globally disabled
+        business_settings = BusinessSettings.get_settings()
+        if not business_settings.enable_buffer_calculations:
+            # Return needed quantity without any buffers
+            return {
+                'needed_quantity': float(needed_quantity),
+                'buffer_applied': float(needed_quantity),
+                'market_quantity': float(needed_quantity),
+                'buffer_rate': 0.0,
+                'seasonal_multiplier': 1.0,
+                'market_packs': 1
+            }
         
         # Apply buffer
         buffered_quantity = needed_quantity * (1 + self.total_buffer_rate)

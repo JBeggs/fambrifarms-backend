@@ -257,6 +257,11 @@ class BusinessSettings(models.Model):
     )
     
     # Global procurement settings
+    enable_buffer_calculations = models.BooleanField(
+        default=True,
+        help_text="Enable/disable all buffer calculations globally"
+    )
+    
     enable_seasonal_adjustments = models.BooleanField(
         default=True,
         help_text="Enable seasonal buffer adjustments"
