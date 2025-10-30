@@ -428,7 +428,13 @@ def update_procurement_buffer(request, product_id):
         # Update buffer with request data
         serializer = ProcurementBufferSerializer(buffer, data=request.data, partial=True)
         if serializer.is_valid():
+            old_total = float(buffer.total_buffer_rate)
             serializer.save()
+            new_total = float(buffer.total_buffer_rate)
+            
+            print(f"🔧 Updated buffer for {product.name}: {old_total:.1%} → {new_total:.1%}")
+            print(f"   Spoilage: {float(buffer.spoilage_rate):.1%}, Cutting: {float(buffer.cutting_waste_rate):.1%}, Quality: {float(buffer.quality_rejection_rate):.1%}")
+            print(f"   Market pack: {float(buffer.market_pack_size)}, Seasonal: {buffer.is_seasonal}")
             
             return Response({
                 'success': True,
