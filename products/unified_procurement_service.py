@@ -496,10 +496,19 @@ class UnifiedProcurementService:
             if net_needed <= 0:
                 continue  # Skip if we have enough stock
             
-            # Get buffer settings
-            buffer_settings = self._get_default_buffer_settings(product)
-            buffer_quantity = net_needed * (buffer_settings['buffer_percentage'] / 100)
-            recommended_quantity = net_needed + buffer_quantity
+            # Get buffer settings and check if globally enabled
+            from .models_business_settings import BusinessSettings
+            business_settings = BusinessSettings.get_settings()
+            
+            if business_settings.enable_buffer_calculations:
+                buffer_settings = self._get_default_buffer_settings(product)
+                buffer_quantity = net_needed * (buffer_settings['buffer_percentage'] / 100)
+                recommended_quantity = net_needed + buffer_quantity
+            else:
+                # No buffers when globally disabled
+                buffer_settings = {'buffer_percentage': 0}
+                buffer_quantity = Decimal('0.00')
+                recommended_quantity = net_needed
             
             # Use supplier pricing if available, otherwise fallback
             if supplier_option and not supplier_option.get('is_fallback'):

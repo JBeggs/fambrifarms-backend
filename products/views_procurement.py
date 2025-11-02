@@ -171,7 +171,12 @@ def get_market_recommendations(request):
 @permission_classes([IsAuthenticated])
 def approve_market_recommendation(request, recommendation_id):
     """
-    Approve a market procurement recommendation
+    Approve a market procurement recommendation and complete order workflow
+    
+    This endpoint:
+    1. Approves the procurement recommendation
+    2. Confirms all pending orders (moves them to 'confirmed' status)
+    3. Soft-deletes all WhatsApp messages (marks is_deleted=True)
     
     POST /api/products/procurement/recommendations/{id}/approve/
     Body: {
@@ -190,79 +195,59 @@ def approve_market_recommendation(request, recommendation_id):
                 'error': f'Cannot approve recommendation with status: {recommendation.status}'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # CRITICAL: Release reserved stock for items being procured
-        # This ensures on-hand inventory reflects what's actually available
-        from inventory.models import FinishedInventory, StockMovement
-        from decimal import Decimal
-        
-        stock_releases = []
-        stock_errors = []
-        
-        for item in recommendation.items.select_related('product').all():
-            try:
-                inventory = FinishedInventory.objects.get(product=item.product)
-                
-                # Check if we have reserved stock to release
-                reserved_qty = inventory.reserved_quantity or Decimal('0.00')
-                
-                if reserved_qty > 0:
-                    # Release up to the recommended quantity (or all reserved if less)
-                    qty_to_release = min(reserved_qty, item.recommended_quantity)
-                    
-                    if inventory.release_stock(qty_to_release):
-                        # Create stock movement record for audit trail
-                        StockMovement.objects.create(
-                            movement_type='finished_release',
-                            reference_number=f"PROC-{recommendation_id}",
-                            product=item.product,
-                            quantity=qty_to_release,
-                            unit_cost=item.estimated_unit_price,
-                            total_value=qty_to_release * item.estimated_unit_price,
-                            user=request.user,
-                            notes=f"Released for procurement approval - will be purchased at market on {recommendation.for_date}"
-                        )
-                        
-                        stock_releases.append({
-                            'product': item.product.name,
-                            'quantity': float(qty_to_release),
-                            'unit': item.product.unit
-                        })
-                        
-                        logger.info(f"Released {qty_to_release} {item.product.unit} of {item.product.name} for procurement {recommendation_id}")
-                    else:
-                        stock_errors.append(f"Failed to release stock for {item.product.name}")
-                        
-            except FinishedInventory.DoesNotExist:
-                # No inventory record - nothing to release
-                logger.info(f"No inventory record for {item.product.name} - skipping stock release")
-                continue
-            except Exception as e:
-                error_msg = f"Error releasing stock for {item.product.name}: {str(e)}"
-                stock_errors.append(error_msg)
-                logger.error(error_msg, exc_info=True)
-        
-        # Update recommendation status
+        # Step 1: Update recommendation
         recommendation.status = 'approved'
         recommendation.approved_by = request.user
         recommendation.approved_at = timezone.now()
         recommendation.notes = request.data.get('notes', '')
         recommendation.save()
         
+        # Step 2: Confirm all pending orders for the recommendation date
+        orders_confirmed_count = 0
+        try:
+            from orders.models import Order
+            pending_orders = Order.objects.filter(
+                delivery_date=recommendation.for_date,
+                status='pending'
+            )
+            for order in pending_orders:
+                order.status = 'confirmed'
+                order.save()
+                orders_confirmed_count += 1
+            logger.info(f"Confirmed {orders_confirmed_count} orders for {recommendation.for_date}")
+        except Exception as e:
+            logger.warning(f"Error confirming orders: {e}")
+            # Don't fail approval if order confirmation fails
+        
+        # Step 3: Soft-delete WhatsApp messages for the date
+        messages_deleted_count = 0
+        try:
+            from whatsapp.models import WhatsAppMessage
+            messages = WhatsAppMessage.objects.filter(
+                processed=True,
+                is_deleted=False,
+                order_day=recommendation.for_date.strftime('%A')
+            )
+            for message in messages:
+                message.is_deleted = True
+                message.save()
+                messages_deleted_count += 1
+            logger.info(f"Soft-deleted {messages_deleted_count} WhatsApp messages")
+        except Exception as e:
+            logger.warning(f"Error deleting messages: {e}")
+            # Don't fail approval if message deletion fails
+        
         # Serialize response
         serializer = MarketProcurementRecommendationSerializer(recommendation)
         
-        response_data = {
+        return Response({
             'success': True,
-            'message': 'Market recommendation approved',
+            'message': f'Market recommendation approved. {orders_confirmed_count} orders confirmed. {messages_deleted_count} messages deleted.',
             'recommendation': serializer.data,
             'print_url': f'/api/products/procurement/recommendations/{recommendation_id}/print/',
-            'stock_released': stock_releases
-        }
-        
-        if stock_errors:
-            response_data['stock_warnings'] = stock_errors
-        
-        return Response(response_data)
+            'orders_confirmed': orders_confirmed_count,
+            'messages_deleted': messages_deleted_count
+        })
         
     except MarketProcurementRecommendation.DoesNotExist:
         return Response({
@@ -448,7 +433,13 @@ def update_procurement_buffer(request, product_id):
         # Update buffer with request data
         serializer = ProcurementBufferSerializer(buffer, data=request.data, partial=True)
         if serializer.is_valid():
+            old_total = float(buffer.total_buffer_rate)
             serializer.save()
+            new_total = float(buffer.total_buffer_rate)
+            
+            print(f"🔧 Updated buffer for {product.name}: {old_total:.1%} → {new_total:.1%}")
+            print(f"   Spoilage: {float(buffer.spoilage_rate):.1%}, Cutting: {float(buffer.cutting_waste_rate):.1%}, Quality: {float(buffer.quality_rejection_rate):.1%}")
+            print(f"   Market pack: {float(buffer.market_pack_size)}, Seasonal: {buffer.is_seasonal}")
             
             return Response({
                 'success': True,
@@ -793,31 +784,55 @@ def get_procurement_by_supplier(request, recommendation_id):
         supplier_groups = {}
         items_without_supplier = []
         
-        # Force fresh query - check reserved stock first, then use product's assigned procurement supplier
+        # Force fresh query - check reserved stock first, then split between Fambri Garden and supplier (if needed)
         for item in recommendation.items.select_related('product', 'product__procurement_supplier').all():
-            # PRIORITY 1: Check if we have reserved stock that can fulfill this item
-            has_sufficient_reserved_stock = False
+            from decimal import Decimal
+            # Load inventory to determine reserved quantity
+            reserved_qty = Decimal('0')
             try:
                 from inventory.models import FinishedInventory
                 inventory = FinishedInventory.objects.get(product=item.product)
-                reserved_qty = inventory.reserved_quantity or 0
-                
-                if reserved_qty >= item.recommended_quantity:
-                    has_sufficient_reserved_stock = True
-                    print(f"[SUPPLIER VIEW - RESERVED STOCK] {item.product.name}: {reserved_qty} reserved >= {item.recommended_quantity} needed → Fambri Garden")
+                reserved_qty = Decimal(str(inventory.reserved_quantity or 0))
             except FinishedInventory.DoesNotExist:
                 pass
-            
-            # PRIORITY 2: Use assigned procurement supplier only if no sufficient reserved stock
-            if has_sufficient_reserved_stock:
-                assigned_supplier = None  # Force to Fambri Garden
-            else:
-                assigned_supplier = item.product.procurement_supplier
-            
-            if assigned_supplier:
+
+            # Determine split quantities
+            recommended_qty = Decimal(str(item.recommended_quantity or 0))
+            reserved_for_pdf = min(reserved_qty, recommended_qty)
+            supplier_qty = recommended_qty - reserved_for_pdf
+
+            # Helper to clone serialized item with adjusted qty and total
+            def _item_with_qty(base_data, new_qty_decimal):
+                data = dict(base_data)
+                # Ensure numeric types are computed correctly
+                unit_price = Decimal(str(data.get('estimated_unit_price') if data.get('estimated_unit_price') is not None else (item.estimated_unit_price or 0)))
+                new_total = unit_price * new_qty_decimal
+                data['recommended_quantity'] = float(new_qty_decimal)
+                data['estimated_total_cost'] = float(new_total)
+                return data
+
+            # Serialize once as base
+            from .serializers import MarketProcurementItemSerializer
+            base_item_data = MarketProcurementItemSerializer(item).data
+
+            # If there is a reserved portion, add ONLY that to Fambri Garden (NULL supplier)
+            if reserved_for_pdf > 0:
+                reserved_item = _item_with_qty(base_item_data, reserved_for_pdf)
+                print(f"[SUPPLIER VIEW - SPLIT] {item.product.name}: Reserved {reserved_for_pdf} → Fambri Garden")
+                items_without_supplier.append(reserved_item)
+                
+                # CRITICAL: If we have ANY reserved stock, DO NOT add remaining to external supplier
+                # Reserved stock means we already have it - external supplier should only get non-reserved shortfall
+                # Skip the rest of this item entirely - it's already covered by reserved stock
+                continue
+
+            # No reserved stock - handle normal procurement assignment
+            assigned_supplier = item.product.procurement_supplier if supplier_qty > 0 else None
+
+            if assigned_supplier and supplier_qty > 0:
                 supplier_id = assigned_supplier.id
                 supplier_name = assigned_supplier.name
-                
+
                 if supplier_id not in supplier_groups:
                     supplier_groups[supplier_id] = {
                         'supplier_id': supplier_id,
@@ -826,29 +841,18 @@ def get_procurement_by_supplier(request, recommendation_id):
                         'total_cost': 0,
                         'item_count': 0
                     }
-                
-                # Serialize the item
-                from .serializers import MarketProcurementItemSerializer
-                item_data = MarketProcurementItemSerializer(item).data
-                
-                # Debug logging
-                print(f"[SUPPLIER VIEW] Item: {item.product.name} → {supplier_name}, Rec Qty: {item.recommended_quantity}, Unit Price: {item.estimated_unit_price}, Total: {item.estimated_total_cost}")
-                print(f"[SUPPLIER VIEW] Serialized data: {item_data}")
-                
-                supplier_groups[supplier_id]['items'].append(item_data)
-                supplier_groups[supplier_id]['total_cost'] += float(item.estimated_total_cost)
+
+                supplier_item = _item_with_qty(base_item_data, supplier_qty)
+                print(f"[SUPPLIER VIEW - SPLIT] {item.product.name}: Supplier {supplier_name} qty {supplier_qty}")
+                supplier_groups[supplier_id]['items'].append(supplier_item)
+                supplier_groups[supplier_id]['total_cost'] += float(supplier_item['estimated_total_cost'])
                 supplier_groups[supplier_id]['item_count'] += 1
-            else:
-                # Items without assigned procurement supplier (NULL = Fambri garden products)
-                from .serializers import MarketProcurementItemSerializer
-                item_data = MarketProcurementItemSerializer(item).data
-                
-                # Debug logging for Fambri garden items
-                reason = "Reserved stock available" if has_sufficient_reserved_stock else "NULL procurement_supplier"
-                print(f"[SUPPLIER VIEW - FAMBRI GARDEN] Item: {item.product.name} ({reason}), Rec Qty: {item.recommended_quantity}, Unit Price: {item.estimated_unit_price}, Total: {item.estimated_total_cost}")
-                print(f"[SUPPLIER VIEW - FAMBRI GARDEN] Serialized data: {item_data}")
-                
-                items_without_supplier.append(item_data)
+
+            # If no assigned supplier and there is remaining qty, it remains as Fambri Garden
+            if not assigned_supplier and supplier_qty > 0:
+                remaining_item = _item_with_qty(base_item_data, supplier_qty)
+                print(f"[SUPPLIER VIEW - SPLIT] {item.product.name}: No supplier set, remaining {supplier_qty} → Fambri Garden")
+                items_without_supplier.append(remaining_item)
         
         # Convert to list and sort by total cost (highest first)
         supplier_list = list(supplier_groups.values())

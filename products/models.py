@@ -172,9 +172,24 @@ class ProcurementBuffer(models.Model):
         """Calculate how much to buy at market based on needed quantity"""
         from datetime import datetime
         from decimal import Decimal
+        from .models_business_settings import BusinessSettings
         
         # Convert to Decimal for consistent math
         needed_quantity = Decimal(str(needed_quantity))
+        
+        # Check if buffer calculations are globally disabled
+        business_settings = BusinessSettings.get_settings()
+        if not business_settings.enable_buffer_calculations:
+            print(f"🚫 Buffer calculations DISABLED globally for {self.product.name}")
+            # Return needed quantity without any buffers
+            return {
+                'needed_quantity': float(needed_quantity),
+                'buffer_applied': float(needed_quantity),
+                'market_quantity': float(needed_quantity),
+                'buffer_rate': 0.0,
+                'seasonal_multiplier': 1.0,
+                'market_packs': 1
+            }
         
         # Apply buffer
         buffered_quantity = needed_quantity * (1 + self.total_buffer_rate)
@@ -191,7 +206,7 @@ class ProcurementBuffer(models.Model):
         else:
             market_quantity = buffered_quantity
         
-        return {
+        result = {
             'needed_quantity': float(needed_quantity),
             'buffer_applied': float(buffered_quantity),
             'market_quantity': float(market_quantity),
@@ -199,6 +214,10 @@ class ProcurementBuffer(models.Model):
             'seasonal_multiplier': float(self.peak_season_buffer_multiplier) if current_month in self.peak_season_months else 1.0,
             'market_packs': int(market_quantity / self.market_pack_size) if self.market_pack_size > 1 else 1
         }
+        
+        print(f"📊 Buffer calc for {self.product.name}: {float(needed_quantity):.1f} → {float(market_quantity):.1f} (rate: {float(self.total_buffer_rate):.1%}, pack: {float(self.market_pack_size)})")
+        
+        return result
     
     def __str__(self):
         return f"Buffer for {self.product.name} ({self.total_buffer_rate:.1%})"
