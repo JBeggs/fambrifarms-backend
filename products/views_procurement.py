@@ -177,6 +177,9 @@ def approve_market_recommendation(request, recommendation_id):
     Body: {
         "notes": "Optional approval notes"
     }
+    
+    When approved, this releases reserved stock for items that will be procured,
+    making the on-hand inventory accurate for what's actually available.
     """
     try:
         recommendation = MarketProcurementRecommendation.objects.get(id=recommendation_id)
@@ -187,7 +190,58 @@ def approve_market_recommendation(request, recommendation_id):
                 'error': f'Cannot approve recommendation with status: {recommendation.status}'
             }, status=status.HTTP_400_BAD_REQUEST)
         
-        # Update recommendation
+        # CRITICAL: Release reserved stock for items being procured
+        # This ensures on-hand inventory reflects what's actually available
+        from inventory.models import FinishedInventory, StockMovement
+        from decimal import Decimal
+        
+        stock_releases = []
+        stock_errors = []
+        
+        for item in recommendation.items.select_related('product').all():
+            try:
+                inventory = FinishedInventory.objects.get(product=item.product)
+                
+                # Check if we have reserved stock to release
+                reserved_qty = inventory.reserved_quantity or Decimal('0.00')
+                
+                if reserved_qty > 0:
+                    # Release up to the recommended quantity (or all reserved if less)
+                    qty_to_release = min(reserved_qty, item.recommended_quantity)
+                    
+                    if inventory.release_stock(qty_to_release):
+                        # Create stock movement record for audit trail
+                        StockMovement.objects.create(
+                            movement_type='finished_release',
+                            reference_number=f"PROC-{recommendation_id}",
+                            product=item.product,
+                            quantity=qty_to_release,
+                            unit_cost=item.estimated_unit_price,
+                            total_value=qty_to_release * item.estimated_unit_price,
+                            user=request.user,
+                            notes=f"Released for procurement approval - will be purchased at market on {recommendation.for_date}"
+                        )
+                        
+                        stock_releases.append({
+                            'product': item.product.name,
+                            'quantity': float(qty_to_release),
+                            'unit': item.product.unit
+                        })
+                        
+                        logger.info(f"Released {qty_to_release} {item.product.unit} of {item.product.name} for procurement {recommendation_id}")
+                    else:
+                        stock_errors.append(f"Failed to release stock for {item.product.name}")
+                        
+            except FinishedInventory.DoesNotExist:
+                # No inventory record - nothing to release
+                logger.info(f"No inventory record for {item.product.name} - skipping stock release")
+                continue
+            except Exception as e:
+                error_msg = f"Error releasing stock for {item.product.name}: {str(e)}"
+                stock_errors.append(error_msg)
+                logger.error(error_msg, exc_info=True)
+        
+        # Update recommendation status
         recommendation.status = 'approved'
         recommendation.approved_by = request.user
         recommendation.approved_at = timezone.now()
@@ -197,12 +251,18 @@ def approve_market_recommendation(request, recommendation_id):
         # Serialize response
         serializer = MarketProcurementRecommendationSerializer(recommendation)
         
-        return Response({
+        response_data = {
             'success': True,
             'message': 'Market recommendation approved',
             'recommendation': serializer.data,
-            'print_url': f'/api/products/procurement/recommendations/{recommendation_id}/print/'
-        })
+            'print_url': f'/api/products/procurement/recommendations/{recommendation_id}/print/',
+            'stock_released': stock_releases
+        }
+        
+        if stock_errors:
+            response_data['stock_warnings'] = stock_errors
+        
+        return Response(response_data)
         
     except MarketProcurementRecommendation.DoesNotExist:
         return Response({

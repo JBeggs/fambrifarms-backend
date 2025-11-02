@@ -37,6 +37,7 @@ urlpatterns = [
     # Invoice processing endpoints
     path('invoice-upload-status/', views.get_invoice_upload_status, name='invoice-upload-status'),
     path('upload-invoice/', views.upload_invoice_photo, name='upload-invoice'),
+    path('upload-invoice-with-extracted-data/', views.upload_invoice_with_extracted_data, name='upload-invoice-with-extracted-data'),
     path('pending-invoices/', views.get_pending_invoices, name='pending-invoices'),
     path('process-stock-received/', views.process_stock_received, name='process-stock-received'),
     

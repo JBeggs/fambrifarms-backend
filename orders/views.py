@@ -55,125 +55,130 @@ class CustomerOrdersView(generics.ListAPIView):
             ).order_by('-created_at')
         return Order.objects.none()
     
-    def update(self, request, *args, **kwargs):
-        """Handle order updates including items"""
-        partial = kwargs.pop('partial', False)
-        instance = self.get_object()
-        
-        # Handle order items if provided
-        items_data = request.data.get('items', [])
-        
-        # Update basic order fields
-        serializer = self.get_serializer(instance, data=request.data, partial=partial)
-        serializer.is_valid(raise_exception=True)
-        
-        # Save the order first
-        order = serializer.save()
-        
-        # Handle items update if provided
-        if items_data:
-            # Clear existing items
-            order.items.all().delete()
-            
-            # Create new items
-            for item_data in items_data:
-                product_id = item_data.get('product')
-                
-                # Validate required fields
-                if not product_id:
-                    return Response(
-                        {'error': 'product field is required for each item'},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-                
-                quantity = item_data.get('quantity')
-                if quantity is None:
-                    return Response(
-                        {'error': 'quantity field is required for each item'},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-                
-                try:
-                    quantity = float(quantity)
-                    if quantity <= 0:
-                        return Response(
-                            {'error': 'quantity must be greater than 0'},
-                            status=status.HTTP_400_BAD_REQUEST
-                        )
-                except (ValueError, TypeError):
-                    return Response(
-                        {'error': 'quantity must be a valid number'},
-                        status=status.HTTP_400_BAD_REQUEST
-                    )
-                
-                price = item_data.get('price', 0)  # Price can default to 0, will be calculated if needed
-                
-                if product_id:
-                    try:
-                        product = Product.objects.get(id=product_id)
-                        # Use provided price if specified, otherwise get customer-specific price
-                        if price <= 0:
-                            price = product.get_customer_price(order.restaurant)
-                        
-                        OrderItem.objects.create(
-                            order=order,
-                            product=product,
-                            quantity=quantity,
-                            price=price,
-                            unit=item_data.get('unit', ''),
-                            original_text=item_data.get('original_text', ''),
-                            manually_corrected=True  # Mark as manually edited
-                        )
-                    except Product.DoesNotExist:
-                        continue
-        
-        # Recalculate totals
-        order.subtotal = sum(item.total_price for item in order.items.all())
-        order.total_amount = order.subtotal
-        order.save()
-        
-        # Return updated order
-        return Response(OrderSerializer(order).data)
+    # COMMENTED OUT 2025-10-23: These methods are never called because ListAPIView only handles GET requests.
+    # Frontend uses OrderDetailView endpoints (PUT/DELETE /orders/{id}/) for updates/deletes instead.
+    # If needed in future, move to OrderDetailView where they would actually be routed.
+    # Keeping for reference in case the logic is needed elsewhere.
     
-    def destroy(self, request, *args, **kwargs):
-        """Handle order deletion"""
-        instance = self.get_object()
-        order_number = instance.order_number
-        
-        # Log the deletion for audit purposes
-        import logging
-        logger = logging.getLogger(__name__)
-        logger.info(f"Deleting order {order_number} (ID: {instance.id})")
-        
-        # CRITICAL: Release reserved stock before deletion
-        try:
-            from inventory.signals import release_stock_for_order
-            from inventory.models import StockMovement
-            
-            # Check if there are reserved stock movements for this order
-            existing_reservations = StockMovement.objects.filter(
-                movement_type='finished_reserve',
-                reference_number=order_number
-            ).exists()
-            
-            if existing_reservations:
-                logger.info(f"Releasing reserved stock for order {order_number} before deletion")
-                release_stock_for_order(instance)
-                logger.info(f"Successfully released reserved stock for order {order_number}")
-            else:
-                logger.info(f"No reserved stock found for order {order_number}")
-                
-        except Exception as e:
-            logger.error(f"Error releasing stock for order {order_number}: {e}")
-            # Continue with deletion even if stock release fails to avoid orphaned orders
-        
-        # Perform the deletion
-        self.perform_destroy(instance)
-        
-        return Response(
-            {"message": f"Order {order_number} deleted successfully (reserved stock released)"}, 
-            status=status.HTTP_200_OK
-        )
+    # def update(self, request, *args, **kwargs):
+    #     """Handle order updates including items"""
+    #     partial = kwargs.pop('partial', False)
+    #     instance = self.get_object()
+    #     
+    #     # Handle order items if provided
+    #     items_data = request.data.get('items', [])
+    #     
+    #     # Update basic order fields
+    #     serializer = self.get_serializer(instance, data=request.data, partial=partial)
+    #     serializer.is_valid(raise_exception=True)
+    #     
+    #     # Save the order first
+    #     order = serializer.save()
+    #     
+    #     # Handle items update if provided
+    #     if items_data:
+    #         # Clear existing items
+    #         order.items.all().delete()
+    #         
+    #         # Create new items
+    #         for item_data in items_data:
+    #             product_id = item_data.get('product')
+    #             
+    #             # Validate required fields
+    #             if not product_id:
+    #                 return Response(
+    #                     {'error': 'product field is required for each item'},
+    #                     status=status.HTTP_400_BAD_REQUEST
+    #                 )
+    #             
+    #             quantity = item_data.get('quantity')
+    #             if quantity is None:
+    #                 return Response(
+    #                     {'error': 'quantity field is required for each item'},
+    #                     status=status.HTTP_400_BAD_REQUEST
+    #                 )
+    #             
+    #             try:
+    #                 quantity = float(quantity)
+    #                 if quantity <= 0:
+    #                     return Response(
+    #                         {'error': 'quantity must be greater than 0'},
+    #                         status=status.HTTP_400_BAD_REQUEST
+    #                     )
+    #             except (ValueError, TypeError):
+    #                 return Response(
+    #                     {'error': 'quantity must be a valid number'},
+    #                     status=status.HTTP_400_BAD_REQUEST
+    #                 )
+    #             
+    #             price = item_data.get('price', 0)  # Price can default to 0, will be calculated if needed
+    #             
+    #             if product_id:
+    #                 try:
+    #                     product = Product.objects.get(id=product_id)
+    #                     # Use provided price if specified, otherwise get customer-specific price
+    #                     if price <= 0:
+    #                         price = product.get_customer_price(order.restaurant)
+    #                     
+    #                     OrderItem.objects.create(
+    #                         order=order,
+    #                         product=product,
+    #                         quantity=quantity,
+    #                         price=price,
+    #                         unit=item_data.get('unit', ''),
+    #                         original_text=item_data.get('original_text', ''),
+    #                         manually_corrected=True  # Mark as manually edited
+    #                     )
+    #                 except Product.DoesNotExist:
+    #                     continue
+    #     
+    #     # Recalculate totals
+    #     order.subtotal = sum(item.total_price for item in order.items.all())
+    #     order.total_amount = order.subtotal
+    #     order.save()
+    #     
+    #     # Return updated order
+    #     return Response(OrderSerializer(order).data)
+    
+    # def destroy(self, request, *args, **kwargs):
+    #     """Handle order deletion"""
+    #     instance = self.get_object()
+    #     order_number = instance.order_number
+    #     
+    #     # Log the deletion for audit purposes
+    #     import logging
+    #     logger = logging.getLogger(__name__)
+    #     logger.info(f"Deleting order {order_number} (ID: {instance.id})")
+    #     
+    #     # CRITICAL: Release reserved stock before deletion
+    #     try:
+    #         from inventory.signals import release_stock_for_order
+    #         from inventory.models import StockMovement
+    #         
+    #         # Check if there are reserved stock movements for this order
+    #         existing_reservations = StockMovement.objects.filter(
+    #             movement_type='finished_reserve',
+    #             reference_number=order_number
+    #         ).exists()
+    #         
+    #         if existing_reservations:
+    #             logger.info(f"Releasing reserved stock for order {order_number} before deletion")
+    #             release_stock_for_order(instance)
+    #             logger.info(f"Successfully released reserved stock for order {order_number}")
+    #         else:
+    #             logger.info(f"No reserved stock found for order {order_number}")
+    #             
+    #     except Exception as e:
+    #         logger.error(f"Error releasing stock for order {order_number}: {e}")
+    #         # Continue with deletion even if stock release fails to avoid orphaned orders
+    #     
+    #     # Perform the deletion
+    #     self.perform_destroy(instance)
+    #     
+    #     return Response(
+    #         {"message": f"Order {order_number} deleted successfully (reserved stock released)"}, 
+    #         status=status.HTTP_200_OK
+    #     )
 
 @api_view(['PATCH'])
 @permission_classes([IsAuthenticated])

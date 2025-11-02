@@ -2163,6 +2163,111 @@ def upload_invoice_photo(request):
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def upload_invoice_with_extracted_data(request):
+    """
+    Upload invoice with pre-extracted data (for API-based processing)
+    Allows uploading complete invoice data in one call
+    """
+    try:
+        # Get form data
+        supplier_id = request.data.get('supplier_id')
+        invoice_date = request.data.get('invoice_date', timezone.now().date())
+        receipt_number = request.data.get('receipt_number', '')
+        purchase_order_id = request.data.get('purchase_order_id')
+        notes = request.data.get('notes', '')
+        extracted_items = request.data.get('extracted_items', [])
+        
+        if not supplier_id:
+            return Response({
+                'error': 'supplier_id is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if not extracted_items:
+            return Response({
+                'error': 'extracted_items array is required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Get supplier
+        from suppliers.models import Supplier
+        try:
+            supplier = Supplier.objects.get(id=supplier_id)
+        except Supplier.DoesNotExist:
+            return Response({
+                'error': 'Supplier not found'
+            }, status=status.HTTP_404_NOT_FOUND)
+        
+        # Get purchase order if provided
+        purchase_order = None
+        if purchase_order_id:
+            from procurement.models import PurchaseOrder
+            try:
+                purchase_order = PurchaseOrder.objects.get(id=purchase_order_id)
+            except PurchaseOrder.DoesNotExist:
+                return Response({
+                    'error': 'Purchase order not found'
+                }, status=status.HTTP_404_NOT_FOUND)
+        
+        # Create invoice photo record (without actual photo)
+        invoice_photo = InvoicePhoto.objects.create(
+            supplier=supplier,
+            invoice_date=invoice_date,
+            uploaded_by=request.user,
+            photo=None,  # No physical photo in API upload
+            original_filename=f"api_upload_{receipt_number}.json",
+            file_size=len(str(request.data)),
+            notes=notes,
+            receipt_number=receipt_number,
+            purchase_order=purchase_order,
+            status='extracted'  # Skip OCR, go straight to extracted
+        )
+        
+        # Create extracted data items
+        created_items = []
+        for item_data in extracted_items:
+            extracted_item = ExtractedInvoiceData.objects.create(
+                invoice_photo=invoice_photo,
+                line_number=item_data.get('line_number'),
+                product_code=item_data.get('product_code', ''),
+                product_description=item_data.get('product_description'),
+                quantity=item_data.get('quantity'),
+                unit=item_data.get('unit'),
+                unit_price=item_data.get('unit_price'),
+                line_total=item_data.get('line_total'),
+                actual_weight_kg=item_data.get('actual_weight_kg'),
+            )
+            
+            # Calculate cost per kg if weight provided
+            if extracted_item.actual_weight_kg and extracted_item.line_total:
+                extracted_item.calculated_cost_per_kg = (
+                    extracted_item.line_total / extracted_item.actual_weight_kg
+                )
+                extracted_item.save()
+            
+            created_items.append({
+                'id': extracted_item.id,
+                'line_number': extracted_item.line_number,
+                'description': extracted_item.product_description,
+            })
+        
+        return Response({
+            'status': 'success',
+            'invoice_id': invoice_photo.id,
+            'items_created': len(created_items),
+            'invoice_status': invoice_photo.status,
+            'next_step': 'Product matching required via Flutter app',
+            'items': created_items
+        }, status=status.HTTP_201_CREATED)
+        
+    except Exception as e:
+        import traceback
+        traceback.print_exc()
+        return Response({
+            'error': f'Upload failed: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def get_pending_invoices(request):
