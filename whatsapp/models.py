@@ -194,7 +194,7 @@ class StockUpdate(models.Model):
     stock_date = models.DateField()
     order_day = models.CharField(max_length=10)  # Monday/Thursday
     
-    # Stock items: {product_name: {quantity: X, unit: 'kg'}}
+    # Stock items: {product_id: {quantity: X, unit: 'kg', product_name: 'Name'}}
     items = models.JSONField(default=dict)
     
     # Processing
@@ -215,32 +215,21 @@ class StockUpdate(models.Model):
     def __str__(self):
         return f"Stock Update {self.stock_date} ({self.order_day}) - {len(self.items)} items"
     
-    def get_available_quantity(self, product_name):
-        """Get available quantity for a product"""
-        product_key = product_name.lower().strip()
-        for key, data in self.items.items():
-            if key.lower().strip() == product_key:
-                return data.get('quantity', 0)
-        return 0
+    def get_available_quantity(self, product_id):
+        """Get available quantity for a product by ID"""
+        product_id_str = str(product_id)
+        return self.items.get(product_id_str, {}).get('quantity', 0)
     
-    def get_product_unit(self, product_name):
-        """Get unit for a product"""
-        product_key = product_name.lower().strip()
-        for key, data in self.items.items():
-            if key.lower().strip() == product_key:
-                return data.get('unit', '')
-        return ''
+    def get_product_unit(self, product_id):
+        """Get unit for a product by ID"""
+        product_id_str = str(product_id)
+        return self.items.get(product_id_str, {}).get('unit', '')
     
-    def deduct_stock(self, product_name, quantity):
-        """Deduct quantity from available stock"""
-        product_key = None
-        for key in self.items.keys():
-            if key.lower().strip() == product_name.lower().strip():
-                product_key = key
-                break
-        
-        if product_key and self.items[product_key]['quantity'] >= quantity:
-            self.items[product_key]['quantity'] -= quantity
+    def deduct_stock(self, product_id, quantity):
+        """Deduct quantity from available stock by product ID"""
+        product_id_str = str(product_id)
+        if product_id_str in self.items and self.items[product_id_str]['quantity'] >= quantity:
+            self.items[product_id_str]['quantity'] -= quantity
             self.save()
             return True
         return False

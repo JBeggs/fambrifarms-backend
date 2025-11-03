@@ -2758,9 +2758,10 @@ def create_stock_update_from_confirmed_suggestions(message_id, confirmed_items, 
                 # Get product from cached dict
                 product = products_dict.get(product_id)
                 if product:
-                    items[product.name] = {
+                    items[str(product_id)] = {
                         'quantity': quantity,
                         'unit': unit,
+                        'product_name': product.name,
                         'original_line': item.get('original_text', product.name)
                     }
                 else:
@@ -3259,12 +3260,12 @@ def validate_order_against_stock(order):
         total_allocated = Decimal('0')
         
         for item in order.items.all():
-            product_name = item.product.name
+            product_id = item.product.id
             requested_qty = item.quantity
             total_requested += requested_qty
             
             # Check available stock
-            available_qty = stock_update.get_available_quantity(product_name)
+            available_qty = stock_update.get_available_quantity(product_id)
             
             if available_qty >= requested_qty:
                 status = 'available'
@@ -3280,7 +3281,7 @@ def validate_order_against_stock(order):
             
             validated_items.append({
                 'item_id': item.id,
-                'product': product_name,
+                'product': item.product.name,
                 'requested': float(requested_qty),
                 'allocated': allocated_qty,
                 'unit': item.unit,
@@ -3430,30 +3431,9 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
     except:
         system_user = None
     
-    # 🚀 OPTIMIZATION: Pre-cache ALL products to avoid repeated database hits
+    # 🚀 OPTIMIZATION: Pre-cache ALL products for ID-based lookups
     all_products = list(Product.objects.all())
-    products_by_name_exact = {}
-    products_by_name_lower = {}
-    products_by_name_contains = {}
-    
-    # Build lookup indexes for fast matching
-    for product in all_products:
-        name_lower = product.name.lower()
-        
-        # Exact match index
-        if name_lower not in products_by_name_exact:
-            products_by_name_exact[name_lower] = []
-        products_by_name_exact[name_lower].append(product)
-        
-        # Contains match index (for partial matching)
-        for i in range(len(name_lower)):
-            for j in range(i+3, len(name_lower)+1):  # Min 3 chars
-                substring = name_lower[i:j]
-                if substring not in products_by_name_contains:
-                    products_by_name_contains[substring] = []
-                products_by_name_contains[substring].append(product)
-    
-    print(f"[STOCK] Cached {len(all_products)} products for fast lookup")
+    print(f"[STOCK] Cached {len(all_products)} products for ID-based lookup")
 
     # 🚀 OPTIMIZATION: Collect all inventory updates for bulk operations
     inventory_updates = []  # For bulk_update
@@ -3467,106 +3447,47 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
                 stock_update_items = []
                 stock_update_failed = []
                 
-                for product_name, stock_data in stock_update.items.items():
+                for product_id_str, stock_data in stock_update.items.items():
                     quantity = stock_data.get('quantity', 0)
                     unit = stock_data.get('unit', '')
+                    product_name = stock_data.get('product_name', f'Product ID {product_id_str}')
                     
                     # Create item tracking record
                     item_record = {
                         'original_name': product_name,
+                        'product_id': product_id_str,
                         'quantity': quantity,
                         'unit': unit,
                         'stock_date': stock_update.stock_date.isoformat(),
                         'message_id': stock_update.message.message_id if stock_update.message else None
                     }
                     
-                    # 🚀 OPTIMIZED: Use cached lookups instead of database queries
+                    # 🚀 DIRECT PRODUCT ID LOOKUP - No more name matching issues!
                     product = None
                     matching_info = []
-                    matching_method = None
+                    matching_method = 'product_id_lookup'
                     
-                    product_name_lower = product_name.lower()
-                    
-                    # Step 1: Try exact match using cache
-                    if product_name_lower in products_by_name_exact:
-                        products = products_by_name_exact[product_name_lower]
-                        if len(products) == 1:
-                            product = products[0]
-                            matching_method = 'exact_match'
-                        elif len(products) > 1:
-                            # Multiple matches - prefer kg unit as default
-                            kg_product = next((p for p in products if p.unit == 'kg'), None)
-                            if kg_product:
-                                product = kg_product
-                                matching_method = 'exact_match_kg_preferred'
-                            else:
-                                product = products[0]
-                                matching_method = 'exact_match_first'
-                    
-                    # Step 2: Try with aliases using cache
-                    if not product:
-                        aliased_name = get_product_alias(product_name)
-                        if aliased_name != product_name:
-                            aliased_name_lower = aliased_name.lower()
-                            if aliased_name_lower in products_by_name_exact:
-                                alias_products = products_by_name_exact[aliased_name_lower]
-                                if len(alias_products) == 1:
-                                    product = alias_products[0]
-                                elif len(alias_products) > 1:
-                                    # Multiple matches - prefer kg unit as default
-                                    kg_product = next((p for p in alias_products if p.unit == 'kg'), None)
-                                    if kg_product:
-                                        product = kg_product
-                                    else:
-                                        product = alias_products[0]
-                                matching_method = 'alias_match'
-                                matching_info.append(f"Used alias: '{product_name}' -> '{aliased_name}'")
-                        
-                    # Step 3: Try partial match using cache
-                        if not product:
-                        # Find products containing the product name
-                            matching_products = []
-                            for cached_product in all_products:
-                                if product_name_lower in cached_product.name.lower():
-                                    matching_products.append(cached_product)
-                            
-                            if len(matching_products) == 1:
-                                product = matching_products[0]
-                                matching_method = 'partial_match'
-                            elif len(matching_products) > 1:
-                                    # Multiple matches - use smart selection
-                                product = select_best_product_match(product_name, matching_products)
-                                matching_method = 'smart_selection'
-                                matching_info.append(f"Multiple matches found: {[p.name for p in matching_products]}")
-                                matching_info.append(f"Smart selection chose: '{product.name}'")
-                                processing_warnings.append(f"Multiple matches for '{product_name}': {[p.name for p in matching_products]}. Selected: '{product.name}'")
-                        
-                    if not product:
-                        # Enhanced error reporting for failed items using cache
-                        similar_products = []
-                        if len(product_name) >= 3:
-                            prefix = product_name_lower[:3]
-                            for cached_product in all_products:
-                                if prefix in cached_product.name.lower():
-                                    similar_products.append(cached_product)
-                                    if len(similar_products) >= 3:  # Limit to 3
-                                        break
-                        
-                        failure_reason = "Product not found"
-                        suggestions = []
-                        
-                        if similar_products:
-                            suggestions = [p.name for p in similar_products]
-                            failure_reason += f". Similar products: {suggestions}"
+                    try:
+                        product_id = int(product_id_str)
+                        # Direct lookup by ID from cached products
+                        product = next((p for p in all_products if p.id == product_id), None)
+                        if product:
+                            matching_info.append(f"Direct ID lookup: {product_id} -> '{product.name}'")
                         else:
-                            failure_reason += ". No similar products found."
+                            matching_info.append(f"Product ID {product_id} not found in database")
+                    except (ValueError, TypeError):
+                        matching_info.append(f"Invalid product ID: '{product_id_str}'")
+                    
+                    if not product:
+                        # Product ID not found in database
+                        failure_reason = f"Product ID {product_id_str} not found in database"
                         
                         # Add to failed items
                         failed_item = {
                             **item_record,
                             'failure_reason': failure_reason,
-                            'suggestions': suggestions,
-                            'error_type': 'product_not_found'
+                            'suggestions': [],
+                            'error_type': 'product_id_not_found'
                         }
                         failed_items.append(failed_item)
                         stock_update_failed.append(failed_item)
