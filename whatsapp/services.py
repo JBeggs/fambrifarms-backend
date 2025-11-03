@@ -3360,6 +3360,7 @@ def reset_all_stock_levels():
     from inventory.models import FinishedInventory
     from products.models import Product
     from django.db import transaction
+    from django.db import models
     
     reset_count = 0
     
@@ -3367,8 +3368,10 @@ def reset_all_stock_levels():
         # Reset all product stock levels
         products_updated = Product.objects.filter(stock_level__gt=0).update(stock_level=0)
         
-        # Reset all finished inventory quantities
-        inventory_updated = FinishedInventory.objects.filter(available_quantity__gt=0).update(available_quantity=0)
+        # Reset all finished inventory quantities (both available AND reserved)
+        inventory_updated = FinishedInventory.objects.filter(
+            models.Q(available_quantity__gt=0) | models.Q(reserved_quantity__gt=0)
+        ).update(available_quantity=0, reserved_quantity=0)
         
         reset_count = products_updated + inventory_updated
     
@@ -3376,7 +3379,7 @@ def reset_all_stock_levels():
         'products_reset': products_updated,
         'inventory_reset': inventory_updated,
         'total_reset': reset_count,
-        'message': f'Reset {products_updated} products and {inventory_updated} inventory records to 0'
+        'message': f'Reset {products_updated} products and {inventory_updated} inventory records (available + reserved) to 0'
     }
 
 def apply_stock_updates_to_inventory(reset_before_processing=True):
