@@ -53,6 +53,39 @@ class Product(models.Model):
         help_text='Primary supplier for market procurement. NULL = use Fambri garden/no procurement needed.'
     )
     
+    # Supplier cost tracking
+    supplier_cost = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        null=True,
+        blank=True,
+        help_text='Current cost from supplier'
+    )
+    
+    cost_unit = models.CharField(
+        max_length=20,
+        choices=[
+            ('per_kg', 'Per kilogram'),
+            ('per_unit', 'Per unit/each'),
+            ('per_package', 'Per package'),
+        ],
+        default='per_kg'
+    )
+    
+    last_supplier = models.ForeignKey(
+        'suppliers.Supplier',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
+        related_name='products_supplied'
+    )
+    
+    last_cost_update = models.DateField(
+        null=True,
+        blank=True,
+        help_text='Date of last supplier cost update'
+    )
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     
