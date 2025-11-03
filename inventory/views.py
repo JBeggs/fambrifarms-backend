@@ -531,52 +531,26 @@ def inventory_dashboard(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def stock_levels(request):
-    """Get current stock levels for all products"""
-    from products.models import Product
+    """Get current stock levels for products with inventory records"""
     
-    # Get all products with their inventory data (if it exists)
-    products = Product.objects.select_related('department').all()
+    # Only get products that have FinishedInventory records
+    inventories = FinishedInventory.objects.select_related('product__department').all()
     
     stock_data = []
-    for product in products:
-        # Get the FinishedInventory record if it exists
-        try:
-            inventory = getattr(product, 'inventory', None)
-            if inventory:
-                available_quantity = inventory.available_quantity
-                reserved_quantity = inventory.reserved_quantity
-                minimum_level = inventory.minimum_level
-                reorder_level = inventory.reorder_level
-                needs_production = inventory.needs_production
-                average_cost = inventory.average_cost
-            else:
-                # Use product stock_level if no FinishedInventory record exists
-                available_quantity = product.stock_level or 0
-                reserved_quantity = 0
-                minimum_level = 5
-                reorder_level = 10
-                needs_production = False
-                average_cost = product.price
-        except Exception:
-            # Fallback to product stock_level
-            available_quantity = product.stock_level or 0
-            reserved_quantity = 0
-            minimum_level = 5
-            reorder_level = 10
-            needs_production = False
-            average_cost = product.price
+    for inventory in inventories:
+        product = inventory.product
         
         stock_data.append({
             'product_id': product.id,
             'product_name': product.name,
             'department': product.department.name,
-            'unit': product.unit,  # Use the correct unit field from Product model
-            'available_quantity': available_quantity,
-            'reserved_quantity': reserved_quantity,
-            'minimum_level': minimum_level,
-            'reorder_level': reorder_level,
-            'needs_production': needs_production,
-            'average_cost': average_cost
+            'unit': product.unit,
+            'available_quantity': inventory.available_quantity,
+            'reserved_quantity': inventory.reserved_quantity,
+            'minimum_level': inventory.minimum_level,
+            'reorder_level': inventory.reorder_level,
+            'needs_production': inventory.needs_production,
+            'average_cost': inventory.average_cost
         })
     
     serializer = StockLevelSerializer(stock_data, many=True)

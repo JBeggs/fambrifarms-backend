@@ -3520,6 +3520,14 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
                             
                             products_updated += 1
                     except FinishedInventory.DoesNotExist:
+                        # Skip products that shouldn't have inventory records
+                        product_name_lower = product.name.lower()
+                        skip_patterns = ['flat parsely', 'flatparsely']
+                        
+                        if any(pattern in product_name_lower for pattern in skip_patterns):
+                            print(f"[STOCK UPDATE] ⚠️ Skipping inventory creation for: {product.name}")
+                            continue
+                        
                         # Collect for bulk create
                         inventory = FinishedInventory(
                             product=product,
