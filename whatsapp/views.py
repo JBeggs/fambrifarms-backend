@@ -570,7 +570,13 @@ def receive_html_messages(request):
                 
                 if existing_message:
                     # Update existing message with new HTML data
-                    existing_message.content = parsed_content['content']
+                    # CRITICAL FIX: Don't overwrite content if message has been manually edited
+                    if not existing_message.edited:
+                        existing_message.content = parsed_content['content']
+                        print(f"[DJANGO][HTML][CONTENT_UPDATE] id={message_id} - Updated content (not edited)")
+                    else:
+                        print(f"[DJANGO][HTML][CONTENT_PROTECTED] id={message_id} - Preserving edited content")
+                    
                     existing_message.content_hash = content_hash
                     existing_message.message_type = message_type
                     existing_message.media_url = ', '.join(parsed_content['image_urls']) if parsed_content['image_urls'] else ''
