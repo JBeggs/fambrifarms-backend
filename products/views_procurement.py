@@ -236,26 +236,23 @@ def approve_market_recommendation(request, recommendation_id):
             logger.error(f"Traceback: {traceback.format_exc()}")
             # Don't fail approval if order confirmation fails
         
-        # Step 3: Soft-delete all processed WhatsApp messages (complete cycle cleanup)
-        # This clears all processed messages to prepare for the next order cycle
+        # Step 3: Soft-delete ALL non-deleted WhatsApp messages (complete cycle cleanup)
+        # This clears all messages to prepare for the next order cycle
         messages_deleted_count = 0
         try:
             from whatsapp.models import WhatsAppMessage
             
             # First, check how many messages exist and their status
             total_messages = WhatsAppMessage.objects.count()
-            processed_messages = WhatsAppMessage.objects.filter(processed=True).count()
             already_deleted = WhatsAppMessage.objects.filter(is_deleted=True).count()
+            not_deleted = WhatsAppMessage.objects.filter(is_deleted=False).count()
             
-            logger.info(f"Message stats: {total_messages} total, {processed_messages} processed, {already_deleted} already deleted")
+            logger.info(f"Message stats: {total_messages} total, {already_deleted} already deleted, {not_deleted} not deleted")
             
-            # Get messages to soft-delete
-            messages = WhatsAppMessage.objects.filter(
-                processed=True,
-                is_deleted=False
-            )
+            # Get ALL messages that aren't already soft-deleted
+            messages = WhatsAppMessage.objects.filter(is_deleted=False)
             
-            logger.info(f"Found {messages.count()} processed messages to soft-delete")
+            logger.info(f"Found {messages.count()} messages to soft-delete (ALL non-deleted)")
             
             for message in messages:
                 message.is_deleted = True
@@ -263,7 +260,7 @@ def approve_market_recommendation(request, recommendation_id):
                 messages_deleted_count += 1
                 logger.debug(f"Soft-deleted message {message.id} from {message.sender_name}")
                 
-            logger.info(f"Soft-deleted {messages_deleted_count} processed WhatsApp messages")
+            logger.info(f"Soft-deleted {messages_deleted_count} WhatsApp messages (ALL non-deleted)")
         except Exception as e:
             logger.error(f"Error deleting messages: {e}")
             import traceback
