@@ -55,20 +55,21 @@ class ProcurementIntelligenceService:
         5. Wastage/spoilage buffers
         
         Args:
-            for_date: Target date for recommendation (defaults to today or earliest order date)
-            use_historical_dates: If True, use order dates for historical analysis
+            for_date: Target date for recommendation (defaults to today or latest order date)
+            use_historical_dates: If True, use latest order date for historical analysis
         """
         if not for_date:
             if use_historical_dates:
-                # Use earliest order date from recent orders for historical analysis
+                # Use LATEST order date from recent orders for historical analysis
+                # This prevents getting stuck on old dates
                 from orders.models import Order
                 recent_orders = Order.objects.filter(
                     status__in=['confirmed', 'processing', 'received']
-                ).order_by('order_date')[:10]
+                ).order_by('-order_date')[:10]  # Changed to -order_date for LATEST first
                 
                 if recent_orders.exists():
                     for_date = recent_orders.first().order_date
-                    logger.info(f"Using historical date from earliest order: {for_date}")
+                    logger.info(f"Using latest historical date from recent order: {for_date}")
                 else:
                     for_date = timezone.now().date()
                     logger.info(f"No orders found, using current date: {for_date}")
