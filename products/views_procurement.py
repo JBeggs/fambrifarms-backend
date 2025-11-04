@@ -208,15 +208,32 @@ def approve_market_recommendation(request, recommendation_id):
         orders_confirmed_count = 0
         try:
             from orders.models import Order
+            
+            # First, check how many orders exist and their status
+            total_orders = Order.objects.count()
+            pending_orders = Order.objects.filter(status='pending').count()
+            received_orders = Order.objects.filter(status='received').count()
+            confirmed_orders = Order.objects.filter(status='confirmed').count()
+            
+            logger.info(f"Order stats: {total_orders} total, {pending_orders} pending, {received_orders} received, {confirmed_orders} confirmed")
+            
             # Look for orders that need confirmation (both 'pending' and 'received')
             unconfirmed_orders = Order.objects.filter(status__in=['pending', 'received'])
+            
+            logger.info(f"Found {unconfirmed_orders.count()} unconfirmed orders to confirm")
+            
             for order in unconfirmed_orders:
+                old_status = order.status
                 order.status = 'confirmed'
                 order.save()
                 orders_confirmed_count += 1
+                logger.debug(f"Confirmed order {order.id} ({old_status} → confirmed)")
+                
             logger.info(f"Confirmed {orders_confirmed_count} unconfirmed orders (pending/received)")
         except Exception as e:
-            logger.warning(f"Error confirming orders: {e}")
+            logger.error(f"Error confirming orders: {e}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
             # Don't fail approval if order confirmation fails
         
         # Step 3: Soft-delete all processed WhatsApp messages (complete cycle cleanup)
@@ -224,17 +241,33 @@ def approve_market_recommendation(request, recommendation_id):
         messages_deleted_count = 0
         try:
             from whatsapp.models import WhatsAppMessage
+            
+            # First, check how many messages exist and their status
+            total_messages = WhatsAppMessage.objects.count()
+            processed_messages = WhatsAppMessage.objects.filter(processed=True).count()
+            already_deleted = WhatsAppMessage.objects.filter(is_deleted=True).count()
+            
+            logger.info(f"Message stats: {total_messages} total, {processed_messages} processed, {already_deleted} already deleted")
+            
+            # Get messages to soft-delete
             messages = WhatsAppMessage.objects.filter(
                 processed=True,
                 is_deleted=False
             )
+            
+            logger.info(f"Found {messages.count()} processed messages to soft-delete")
+            
             for message in messages:
                 message.is_deleted = True
                 message.save()
                 messages_deleted_count += 1
+                logger.debug(f"Soft-deleted message {message.id} from {message.sender_name}")
+                
             logger.info(f"Soft-deleted {messages_deleted_count} processed WhatsApp messages")
         except Exception as e:
-            logger.warning(f"Error deleting messages: {e}")
+            logger.error(f"Error deleting messages: {e}")
+            import traceback
+            logger.error(f"Traceback: {traceback.format_exc()}")
             # Don't fail approval if message deletion fails
         
         # Step 4: Reset all stock levels to 0 (prepare for next stock take)

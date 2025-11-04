@@ -2340,7 +2340,7 @@ def create_order_from_suggestions(request):
         updated_content = f"CONFIRMED ORDER:\n" + "\n".join(confirmed_items_text) + f"\n\nOriginal message:\n{original_content}"
         
         # Mark message as processed
-        message.is_processed = True
+        message.processed = True
         message.processing_notes = f"✅ Order #{order.order_number} created successfully with {len(created_items)} items for {customer.first_name or customer.email}"
         message.content = updated_content
         message.save()
