@@ -175,7 +175,7 @@ def approve_market_recommendation(request, recommendation_id):
     
     This endpoint:
     1. Approves the procurement recommendation
-    2. Confirms ALL pending orders (moves them to 'confirmed' status)
+    2. Confirms ALL unconfirmed orders (pending/received → confirmed status)
     3. Soft-deletes ALL processed WhatsApp messages (marks is_deleted=True)
     4. Resets all stock levels to 0 (prevents carryover to next procurement cycle)
     
@@ -203,17 +203,18 @@ def approve_market_recommendation(request, recommendation_id):
         recommendation.notes = request.data.get('notes', '')
         recommendation.save()
         
-        # Step 2: Confirm all pending orders (all pending orders, not date-specific)
-        # The procurement recommendation covers all current pending orders
+        # Step 2: Confirm all unconfirmed orders (handles both 'pending' and 'received' statuses)
+        # The procurement recommendation covers all current unconfirmed orders
         orders_confirmed_count = 0
         try:
             from orders.models import Order
-            pending_orders = Order.objects.filter(status='pending')
-            for order in pending_orders:
+            # Look for orders that need confirmation (both 'pending' and 'received')
+            unconfirmed_orders = Order.objects.filter(status__in=['pending', 'received'])
+            for order in unconfirmed_orders:
                 order.status = 'confirmed'
                 order.save()
                 orders_confirmed_count += 1
-            logger.info(f"Confirmed {orders_confirmed_count} pending orders")
+            logger.info(f"Confirmed {orders_confirmed_count} unconfirmed orders (pending/received)")
         except Exception as e:
             logger.warning(f"Error confirming orders: {e}")
             # Don't fail approval if order confirmation fails
