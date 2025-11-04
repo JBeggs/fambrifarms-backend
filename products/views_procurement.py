@@ -175,8 +175,8 @@ def approve_market_recommendation(request, recommendation_id):
     
     This endpoint:
     1. Approves the procurement recommendation
-    2. Confirms all pending orders (moves them to 'confirmed' status)
-    3. Soft-deletes all WhatsApp messages (marks is_deleted=True)
+    2. Confirms ALL pending orders (moves them to 'confirmed' status)
+    3. Soft-deletes ALL processed WhatsApp messages (marks is_deleted=True)
     4. Resets all stock levels to 0 (prevents carryover to next procurement cycle)
     
     POST /api/products/procurement/recommendations/{id}/approve/
@@ -185,7 +185,7 @@ def approve_market_recommendation(request, recommendation_id):
     }
     
     When approved, this completes the current order cycle and prepares the system
-    for the next stock take and procurement cycle by resetting all inventory levels.
+    for the next stock take and procurement cycle by clearing all processed data.
     """
     try:
         recommendation = MarketProcurementRecommendation.objects.get(id=recommendation_id)
@@ -203,37 +203,35 @@ def approve_market_recommendation(request, recommendation_id):
         recommendation.notes = request.data.get('notes', '')
         recommendation.save()
         
-        # Step 2: Confirm all pending orders for the recommendation date
+        # Step 2: Confirm all pending orders (all pending orders, not date-specific)
+        # The procurement recommendation covers all current pending orders
         orders_confirmed_count = 0
         try:
             from orders.models import Order
-            pending_orders = Order.objects.filter(
-                delivery_date=recommendation.for_date,
-                status='pending'
-            )
+            pending_orders = Order.objects.filter(status='pending')
             for order in pending_orders:
                 order.status = 'confirmed'
                 order.save()
                 orders_confirmed_count += 1
-            logger.info(f"Confirmed {orders_confirmed_count} orders for {recommendation.for_date}")
+            logger.info(f"Confirmed {orders_confirmed_count} pending orders")
         except Exception as e:
             logger.warning(f"Error confirming orders: {e}")
             # Don't fail approval if order confirmation fails
         
-        # Step 3: Soft-delete WhatsApp messages for the date
+        # Step 3: Soft-delete all processed WhatsApp messages (complete cycle cleanup)
+        # This clears all processed messages to prepare for the next order cycle
         messages_deleted_count = 0
         try:
             from whatsapp.models import WhatsAppMessage
             messages = WhatsAppMessage.objects.filter(
                 processed=True,
-                is_deleted=False,
-                order_day=recommendation.for_date.strftime('%A')
+                is_deleted=False
             )
             for message in messages:
                 message.is_deleted = True
                 message.save()
                 messages_deleted_count += 1
-            logger.info(f"Soft-deleted {messages_deleted_count} WhatsApp messages")
+            logger.info(f"Soft-deleted {messages_deleted_count} processed WhatsApp messages")
         except Exception as e:
             logger.warning(f"Error deleting messages: {e}")
             # Don't fail approval if message deletion fails
