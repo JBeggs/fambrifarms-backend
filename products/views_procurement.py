@@ -177,14 +177,15 @@ def approve_market_recommendation(request, recommendation_id):
     1. Approves the procurement recommendation
     2. Confirms all pending orders (moves them to 'confirmed' status)
     3. Soft-deletes all WhatsApp messages (marks is_deleted=True)
+    4. Resets all stock levels to 0 (prevents carryover to next procurement cycle)
     
     POST /api/products/procurement/recommendations/{id}/approve/
     Body: {
         "notes": "Optional approval notes"
     }
     
-    When approved, this releases reserved stock for items that will be procured,
-    making the on-hand inventory accurate for what's actually available.
+    When approved, this completes the current order cycle and prepares the system
+    for the next stock take and procurement cycle by resetting all inventory levels.
     """
     try:
         recommendation = MarketProcurementRecommendation.objects.get(id=recommendation_id)
@@ -237,16 +238,29 @@ def approve_market_recommendation(request, recommendation_id):
             logger.warning(f"Error deleting messages: {e}")
             # Don't fail approval if message deletion fails
         
+        # Step 4: Reset all stock levels to 0 (prepare for next stock take)
+        # This prevents stock carryover between procurement cycles
+        stock_reset_count = 0
+        try:
+            from whatsapp.services import reset_all_stock_levels
+            reset_summary = reset_all_stock_levels()
+            stock_reset_count = reset_summary.get('total_reset', 0)
+            logger.info(f"Reset {stock_reset_count} stock items to 0 for next cycle")
+        except Exception as e:
+            logger.warning(f"Error resetting stock levels: {e}")
+            # Don't fail approval if stock reset fails
+        
         # Serialize response
         serializer = MarketProcurementRecommendationSerializer(recommendation)
         
         return Response({
             'success': True,
-            'message': f'Market recommendation approved. {orders_confirmed_count} orders confirmed. {messages_deleted_count} messages deleted.',
+            'message': f'Market recommendation approved. {orders_confirmed_count} orders confirmed. {messages_deleted_count} messages deleted. {stock_reset_count} stock items reset.',
             'recommendation': serializer.data,
             'print_url': f'/api/products/procurement/recommendations/{recommendation_id}/print/',
             'orders_confirmed': orders_confirmed_count,
-            'messages_deleted': messages_deleted_count
+            'messages_deleted': messages_deleted_count,
+            'stock_reset': stock_reset_count
         })
         
     except MarketProcurementRecommendation.DoesNotExist:
