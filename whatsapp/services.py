@@ -2094,7 +2094,7 @@ def get_or_create_product_enhanced(product_name, quantity, unit, customer=None, 
             is_active=True
         ).first()
         
-        confidence_threshold = 25.0  # Default fallback
+        confidence_threshold = 15.0  # Lowered threshold for better case-insensitive matching
         if confidence_threshold_config:
             confidence_threshold = float(confidence_threshold_config.get_value())
         
@@ -2155,11 +2155,13 @@ def get_or_create_product_enhanced(product_name, quantity, unit, customer=None, 
                 return None, None, None
         
         # No good match found - log suggestions but return standard format
-        logger.warning(f"No match found for '{product_name}'")
+        logger.warning(f"No match found for '{product_name}' (threshold: {confidence_threshold})")
         if suggestions.suggestions:
             logger.info(f"Available suggestions for '{product_name}':")
             for i, suggestion in enumerate(suggestions.suggestions[:5]):
                 logger.info(f"  {i+1}. {suggestion.product.name} ({suggestion.confidence_score:.1f}% match)")
+        else:
+            logger.warning(f"No suggestions found for '{product_name}' - this might indicate a case sensitivity issue")
         
         return None, None, None
         
@@ -3520,14 +3522,6 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
                             
                             products_updated += 1
                     except FinishedInventory.DoesNotExist:
-                        # Skip products that shouldn't have inventory records
-                        product_name_lower = product.name.lower()
-                        skip_patterns = ['flat parsely', 'flatparsely']
-                        
-                        if any(pattern in product_name_lower for pattern in skip_patterns):
-                            print(f"[STOCK UPDATE] ⚠️ Skipping inventory creation for: {product.name}")
-                            continue
-                        
                         # Collect for bulk create
                         inventory = FinishedInventory(
                             product=product,

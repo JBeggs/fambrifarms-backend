@@ -1247,12 +1247,12 @@ class SmartProductMatcher:
         parsed_name = parsed_message.product_name.lower()
         base_product_name = self._extract_base_product_name(parsed_message.product_name).lower()
         
-        # Exact name match
+        # Exact name match (already case-insensitive since both are lowercased)
         if parsed_name == product_name_lower:
             score += 50
         
-        # Check for alias matches first
-        elif parsed_name in self.aliases and self.aliases[parsed_name] in product_name_lower:
+        # Check for alias matches first (ensure case-insensitive)
+        elif parsed_name.lower() in self.aliases and self.aliases[parsed_name.lower()] in product_name_lower:
             score += 45
         
         # Check for exact word matches using word boundaries (prevents "potatoes" matching "sweet potatoes")
