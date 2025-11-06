@@ -1,3 +1,4 @@
 INFO 2025-10-20 12:28:53,627 autoreload 17917 8793678016 Watching for file changes with StatReloader
 INFO 2025-10-20 12:29:10,540 autoreload 17917 8793678016 /Users/jodybeggs/Documents/fambrifarms_after_meeting/backend/orders/admin.py changed, reloading.
 INFO 2025-10-20 12:29:11,110 autoreload 18139 8793678016 Watching for file changes with StatReloader
+INFO 2025-11-06 16:47:35,898 autoreload 99328 8625266880 Watching for file changes with StatReloader

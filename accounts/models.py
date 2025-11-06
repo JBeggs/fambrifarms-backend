@@ -71,6 +71,10 @@ class RestaurantProfile(models.Model):
         help_text="Override automatic pricing rule selection with a specific rule"
     )
     
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
+    
     def __str__(self):
         if self.branch_name:
             return f"{self.business_name} - {self.branch_name}"
@@ -93,6 +97,10 @@ class FarmProfile(models.Model):
     can_manage_customers = models.BooleanField(default=False)
     can_view_reports = models.BooleanField(default=True)
     notes = models.TextField(blank=True, help_text="Additional notes about role and responsibilities")
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     
     def __str__(self):
         return f"{self.user.get_full_name()} - {self.position}"
@@ -118,6 +126,10 @@ class PrivateCustomerProfile(models.Model):
     whatsapp_number = models.CharField(max_length=20, blank=True)
     credit_limit = models.DecimalField(max_digits=10, decimal_places=2, default=1000.00)
     order_notes = models.TextField(blank=True, help_text="Typical order patterns and preferences")
+    
+    # Timestamps
+    created_at = models.DateTimeField(auto_now_add=True, null=True, blank=True)
+    updated_at = models.DateTimeField(auto_now=True, null=True, blank=True)
     
     def __str__(self):
         return f"{self.user.get_full_name()} - {self.get_customer_type_display()}"
