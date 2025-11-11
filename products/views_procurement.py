@@ -556,6 +556,111 @@ def create_veggie_box_recipes(request):
             'error': str(e)
         }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
+@api_view(['GET', 'POST', 'PUT'])
+@permission_classes([IsAuthenticated])
+def manage_product_recipe(request, product_id):
+    """
+    Get, create, or update recipe for a specific product
+    
+    GET /api/products/procurement/recipes/product/{product_id}/
+    POST /api/products/procurement/recipes/product/{product_id}/
+    PUT /api/products/procurement/recipes/product/{product_id}/
+    
+    Body (POST/PUT):
+    {
+        "ingredients": [
+            {"product_id": 123, "quantity": 10.0},
+            {"product_id": 456, "quantity": 2.5}
+        ],
+        "instructions": "Recipe instructions",
+        "prep_time_minutes": 30,
+        "yield_quantity": 1,
+        "yield_unit": "box"
+    }
+    """
+    try:
+        product = Product.objects.get(id=product_id)
+        
+        if request.method == 'GET':
+            # Get recipe for product
+            try:
+                recipe = Recipe.objects.get(product=product)
+                serializer = RecipeSerializer(recipe)
+                return Response({
+                    'success': True,
+                    'recipe': serializer.data
+                })
+            except Recipe.DoesNotExist:
+                return Response({
+                    'success': False,
+                    'error': 'No recipe found for this product'
+                }, status=status.HTTP_404_NOT_FOUND)
+        
+        elif request.method == 'POST' or request.method == 'PUT':
+            # Create or update recipe
+            ingredients = request.data.get('ingredients', [])
+            instructions = request.data.get('instructions', '')
+            prep_time_minutes = request.data.get('prep_time_minutes', 30)
+            yield_quantity = request.data.get('yield_quantity', 1)
+            yield_unit = request.data.get('yield_unit', 'piece')
+            
+            # Validate ingredients structure (minimal: product_id + quantity)
+            validated_ingredients = []
+            for ingredient in ingredients:
+                if 'product_id' not in ingredient or 'quantity' not in ingredient:
+                    return Response({
+                        'success': False,
+                        'error': 'Each ingredient must have product_id and quantity'
+                    }, status=status.HTTP_400_BAD_REQUEST)
+                
+                # Verify product exists
+                try:
+                    ingredient_product = Product.objects.get(id=ingredient['product_id'])
+                    validated_ingredient = {
+                        'product_id': ingredient_product.id,
+                        'quantity': float(ingredient['quantity'])
+                    }
+                    # Optional: Add product_name and unit for convenience
+                    validated_ingredient['product_name'] = ingredient_product.name
+                    validated_ingredient['unit'] = ingredient_product.unit
+                    validated_ingredients.append(validated_ingredient)
+                except Product.DoesNotExist:
+                    return Response({
+                        'success': False,
+                        'error': f"Product {ingredient['product_id']} not found"
+                    }, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Create or update recipe
+            recipe, created = Recipe.objects.update_or_create(
+                product=product,
+                defaults={
+                    'ingredients': validated_ingredients,
+                    'instructions': instructions,
+                    'prep_time_minutes': prep_time_minutes,
+                    'yield_quantity': yield_quantity,
+                    'yield_unit': yield_unit
+                }
+            )
+            
+            serializer = RecipeSerializer(recipe)
+            return Response({
+                'success': True,
+                'message': f'Recipe {"created" if created else "updated"} successfully',
+                'recipe': serializer.data
+            }, status=status.HTTP_201_CREATED if created else status.HTTP_200_OK)
+        
+    except Product.DoesNotExist:
+        return Response({
+            'success': False,
+            'error': 'Product not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error(f"Error managing product recipe: {e}", exc_info=True)
+        return Response({
+            'success': False,
+            'error': str(e)
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def procurement_dashboard_data(request):

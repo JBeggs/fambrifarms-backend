@@ -29,6 +29,7 @@ urlpatterns = [
     path('procurement/buffers/<int:product_id>/', views_procurement.update_procurement_buffer, name='update_procurement_buffer'),
     path('procurement/recipes/', views_procurement.get_product_recipes, name='get_product_recipes'),
     path('procurement/recipes/create-veggie-boxes/', views_procurement.create_veggie_box_recipes, name='create_veggie_box_recipes'),
+    path('procurement/recipes/product/<int:product_id>/', views_procurement.manage_product_recipe, name='manage_product_recipe'),
     path('procurement/dashboard/', views_procurement.procurement_dashboard_data, name='procurement_dashboard_data'),
     
     # Supplier Optimization APIs
