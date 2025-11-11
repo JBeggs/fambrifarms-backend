@@ -213,7 +213,48 @@ class ProcurementIntelligenceService:
                     # Break down recipe into component ingredients
                     for ingredient_data in recipe.ingredients:
                         ingredient_id = ingredient_data.get('product_id')
-                        ingredient_qty = Decimal(str(ingredient_data.get('quantity', 0)))
+                        quantity = Decimal(str(ingredient_data.get('quantity', 0)))
+                        
+                        # Fetch product to get unit and extract packet size
+                        try:
+                            ingredient_product = Product.objects.get(id=ingredient_id)
+                            unit = ingredient_product.unit
+                            
+                            # Extract packet size from product name if available
+                            try:
+                                from whatsapp.services import extract_package_size
+                                packet_size_info = extract_package_size(ingredient_product.name)
+                                
+                                # Calculate ingredient quantity
+                                if packet_size_info and unit in ['packet', 'bag', 'box', 'punnet']:
+                                    # Product has packet size in name (e.g., "Carrots (250g packet)")
+                                    packet_size_value = packet_size_info['size']
+                                    packet_size_unit = packet_size_info['original_unit']
+                                    
+                                    # Convert packet size to kg for calculations
+                                    if packet_size_unit == 'g':
+                                        packet_size_kg = packet_size_value / 1000
+                                    elif packet_size_unit == 'kg':
+                                        packet_size_kg = packet_size_value
+                                    else:
+                                        # For ml/l, assume 1:1 with kg for simplicity
+                                        packet_size_kg = packet_size_value
+                                    
+                                    # Calculate: (packet_count × packet_size) × order_qty
+                                    ingredient_qty = quantity * packet_size_kg
+                                else:
+                                    # No packet size in product name, use quantity as-is
+                                    ingredient_qty = quantity
+                                    
+                            except Exception as e:
+                                # If extraction fails, use quantity as-is
+                                logger.debug(f"Could not extract packet size for product {ingredient_id}: {e}")
+                                ingredient_qty = quantity
+                                
+                        except Product.DoesNotExist:
+                            # Fallback: use quantity as-is if product not found
+                            logger.warning(f"Product {ingredient_id} not found, using quantity as-is")
+                            ingredient_qty = quantity
                         
                         # Calculate total ingredient needed (recipe qty * order qty)
                         total_ingredient_needed = ingredient_qty * quantity_needed
@@ -787,19 +828,48 @@ class RecipeService:
                 # Find the main product
                 product = Product.objects.get(name=recipe_data['product_name'])
                 
-                # Convert ingredients to include product IDs
+                # Convert ingredients to minimal structure (only product_id + quantity)
+                # Everything else (product_name, unit, packet_size) is derived from product_id
                 ingredients_with_ids = []
                 for ingredient in recipe_data['ingredients']:
                     try:
-                        ingredient_product = Product.objects.get(name=ingredient['product_name'])
-                        ingredients_with_ids.append({
-                            'product_id': ingredient_product.id,
-                            'product_name': ingredient_product.name,
-                            'quantity': ingredient['quantity'],
-                            'unit': ingredient['unit']
-                        })
+                        # Accept product_id directly (preferred) or look up by name (backward compatibility)
+                        if 'product_id' in ingredient:
+                            ingredient_product = Product.objects.get(id=ingredient['product_id'])
+                        else:
+                            # Backward compatibility: look up by name
+                            ingredient_product = Product.objects.get(name=ingredient['product_name'])
+                        
+                        # Minimal structure: only product_id and quantity required
+                        ingredient_dict = {
+                            'product_id': ingredient_product.id,  # REQUIRED
+                            'quantity': ingredient['quantity']     # REQUIRED
+                        }
+                        
+                        # Optional: Store derived fields for convenience (can be recalculated anytime)
+                        # These are not required but stored for backward compatibility and display
+                        ingredient_dict['product_name'] = ingredient_product.name
+                        ingredient_dict['unit'] = ingredient_product.unit
+                        
+                        # Extract packet size from product name if available
+                        try:
+                            from whatsapp.services import extract_package_size
+                            packet_size_info = extract_package_size(ingredient_product.name)
+                            if packet_size_info:
+                                # Store packet size info for calculations
+                                if packet_size_info['original_unit'] == 'g':
+                                    ingredient_dict['packet_size_value'] = float(packet_size_info['size'] * 1000)
+                                else:
+                                    ingredient_dict['packet_size_value'] = float(packet_size_info['size'])
+                                ingredient_dict['packet_size_unit'] = packet_size_info['original_unit']
+                        except Exception as e:
+                            # If extraction fails, continue without packet size
+                            logger.debug(f"Could not extract packet size from '{ingredient_product.name}': {e}")
+                        
+                        ingredients_with_ids.append(ingredient_dict)
                     except Product.DoesNotExist:
-                        logger.warning(f"Ingredient product '{ingredient['product_name']}' not found")
+                        product_identifier = ingredient.get('product_id') or ingredient.get('product_name', 'Unknown')
+                        logger.warning(f"Ingredient product '{product_identifier}' not found")
                         continue
                 
                 # Create or update recipe
