@@ -1043,12 +1043,13 @@ class SmartProductMatcher:
                     candidates = unit_candidates + [c for c in all_candidates if c not in unit_candidates]
         
         # Filter by extra descriptions (like "200g", "large", etc.)
-        if extra_descriptions:
-            for desc in extra_descriptions:
-                desc_candidates = [c for c in candidates if desc.lower() in c['name'].lower()]
-                if desc_candidates:
-                    candidates = desc_candidates
-                    break  # Use first matching description
+        # COMMENTED OUT: Removed fallback filtering to focus on strict name matching only
+        # if extra_descriptions:
+        #     for desc in extra_descriptions:
+        #         desc_candidates = [c for c in candidates if desc.lower() in c['name'].lower()]
+        #         if desc_candidates:
+        #             candidates = desc_candidates
+        #             break  # Use first matching description
         
         # Score and rank candidates
         results = []
@@ -1067,8 +1068,11 @@ class SmartProductMatcher:
                         'base_name': base_product_name,
                         'matched_name': product_data['name'],
                         'unit_match': unit == product_data['unit'] if unit else False,
-                        'description_matches': [d for d in extra_descriptions if d in product_data['name'].lower()],
-                        'name_word_matches': [w for w in base_product_name.split() if w in product_data['name'].lower()]
+                        # COMMENTED OUT: Removed substring matching in match_details
+                        # 'description_matches': [d for d in extra_descriptions if d in product_data['name'].lower()],
+                        # 'name_word_matches': [w for w in base_product_name.split() if w in product_data['name'].lower()]
+                        'description_matches': [],
+                        'name_word_matches': []
                     }
                 ))
         
@@ -1314,8 +1318,9 @@ class SmartProductMatcher:
             score += 50
         
         # Check for alias matches first (ensure case-insensitive)
-        elif parsed_name.lower() in self.aliases and self.aliases[parsed_name.lower()] in product_name_lower:
-            score += 45
+        # COMMENTED OUT: Removed hardcoded alias matching to focus on strict name matching
+        # elif parsed_name.lower() in self.aliases and self.aliases[parsed_name.lower()] in product_name_lower:
+        #     score += 45
         
         # Check for exact word matches using word boundaries (prevents "potatoes" matching "sweet potatoes")
         else:
@@ -1431,9 +1436,12 @@ class SmartProductMatcher:
                 score -= 15  # Small penalty for unexpected color on non-variants
         
         # Enhanced product type matching with exact product prioritization
-        product_type_words = self._get_product_type_words()
-        parsed_types = [word for word in parsed_name.split() if word in product_type_words]
-        product_types = [word for word in product_name_lower.split() if word in product_type_words]
+        # COMMENTED OUT: Removed hardcoded product type matching to focus on strict name matching
+        # product_type_words = self._get_product_type_words()
+        # parsed_types = [word for word in parsed_name.split() if word in product_type_words]
+        # product_types = [word for word in product_name_lower.split() if word in product_type_words]
+        parsed_types = []
+        product_types = []
         
         # Check for product variations (spring onions vs regular onions)
         variation_words = {'spring', 'cocktail', 'cherry', 'baby', 'mini', 'wild', 'crispy'}
@@ -1477,29 +1485,31 @@ class SmartProductMatcher:
                 score -= 30  # Penalty for completely different products
                 
         # Specific product type prioritization to fix common mismatches
-        parsed_lower = parsed_name.lower()
-        product_lower = product_name_lower
+        # COMMENTED OUT: Removed hardcoded specific product matches to focus on strict name matching
+        # parsed_lower = parsed_name.lower()
+        # product_lower = product_name_lower
+        # 
+        # # Prioritize exact product matches over similar-sounding ones
+        # specific_matches = {
+        #     'onions': ['onions', 'onion'],
+        #     'apples': ['apples', 'apple'], 
+        #     'peppers': ['peppers', 'pepper'],
+        #     'grapes': ['grapes', 'grape'],
+        #     'chillies': ['chillies', 'chilli', 'chili']
+        # }
+        # 
+        # for product_key, product_terms in specific_matches.items():
+        #     if any(term in parsed_lower for term in product_terms):
+        #         if any(term in product_lower for term in product_terms):
+        #             score += 30  # Strong bonus for matching the right product category
+        #         else:
+        #             # Check if this is a different product category
+        #             other_categories = [cat for cat in specific_matches.keys() if cat != product_key]
+        #             if any(any(term in product_lower for term in specific_matches[other_cat]) for other_cat in other_categories):
+        #                 score -= 25  # Penalty for wrong product category
         
-        # Prioritize exact product matches over similar-sounding ones
-        specific_matches = {
-            'onions': ['onions', 'onion'],
-            'apples': ['apples', 'apple'], 
-            'peppers': ['peppers', 'pepper'],
-            'grapes': ['grapes', 'grape'],
-            'chillies': ['chillies', 'chilli', 'chili']
-        }
-        
-        for product_key, product_terms in specific_matches.items():
-            if any(term in parsed_lower for term in product_terms):
-                if any(term in product_lower for term in product_terms):
-                    score += 30  # Strong bonus for matching the right product category
-                else:
-                    # Check if this is a different product category
-                    other_categories = [cat for cat in specific_matches.keys() if cat != product_key]
-                    if any(any(term in product_lower for term in specific_matches[other_cat]) for other_cat in other_categories):
-                        score -= 25  # Penalty for wrong product category
-        
-        if parsed_types and product_types:
+        # COMMENTED OUT: Product type matching removed
+        if False and parsed_types and product_types:
             if set(parsed_types) == set(product_types):
                 # Same base product type - now check variations
                 if parsed_variations and product_variations:
@@ -1544,9 +1554,9 @@ class SmartProductMatcher:
         elif 'mixed' in parsed_name and 'mix' in product_name_lower:
             score += 10  # Bonus for mixed vs mix match
         
-        # Partial name match
-        elif parsed_name in product_name_lower or product_name_lower in parsed_name:
-            score += 30
+        # Partial name match - COMMENTED OUT: Removed substring fallback to focus on strict name matching
+        # elif parsed_name in product_name_lower or product_name_lower in parsed_name:
+        #     score += 30
         
         # Word-by-word matching with priority for exact product name
         parsed_words = set(parsed_name.split())
@@ -1708,14 +1718,15 @@ class SmartProductMatcher:
         suggestions = valid_matches[:max_suggestions]
         
         # If we don't have enough suggestions, try fuzzy matching
-        if len(suggestions) < max_suggestions:
-            fuzzy_matches = self._get_fuzzy_suggestions(parsed, max_suggestions - len(suggestions))
-            
-            # Add fuzzy matches that aren't already in suggestions
-            existing_ids = {s.product.id for s in suggestions}
-            for fuzzy_match in fuzzy_matches:
-                if fuzzy_match.product.id not in existing_ids:
-                    suggestions.append(fuzzy_match)
+        # COMMENTED OUT: Removed fuzzy matching fallback to focus on strict name matching only
+        # if len(suggestions) < max_suggestions:
+        #     fuzzy_matches = self._get_fuzzy_suggestions(parsed, max_suggestions - len(suggestions))
+        #     
+        #     # Add fuzzy matches that aren't already in suggestions
+        #     existing_ids = {s.product.id for s in suggestions}
+        #     for fuzzy_match in fuzzy_matches:
+        #         if fuzzy_match.product.id not in existing_ids:
+        #             suggestions.append(fuzzy_match)
         
         return SmartMatchSuggestions(
             best_match=best_match,
@@ -1929,31 +1940,34 @@ class SmartProductMatcher:
             fuzzy_matches.extend(similar_matches)
         
         # Strategy 6: Match by product type/category (broader matching)
-        product_types = self._get_product_types(product_name)
-        for product_type in product_types:
-            type_matches = Product.objects.filter(name__icontains=product_type)[:10]
-            for product in type_matches:
-                score = self._calculate_fuzzy_score(product, parsed_message, 'type_match')
-                if score > 0:
-                    fuzzy_matches.append(SmartMatchResult(
-                        product=product,
-                        quantity=quantity,
-                        unit=unit or product.unit,
-                        confidence_score=score,
-                        match_details={
-                            'strategy': 'type_match',
-                            'matched_type': product_type,
-                            'product_name': product.name
-                        }
-                    ))
+        # COMMENTED OUT: Removed hardcoded product type mappings to focus on strict name matching
+        # product_types = self._get_product_types(product_name)
+        # for product_type in product_types:
+        #     type_matches = Product.objects.filter(name__icontains=product_type)[:10]
+        #     for product in type_matches:
+        #         score = self._calculate_fuzzy_score(product, parsed_message, 'type_match')
+        #         if score > 0:
+        #             fuzzy_matches.append(SmartMatchResult(
+        #                 product=product,
+        #                 quantity=quantity,
+        #                 unit=unit or product.unit,
+        #                 confidence_score=score,
+        #                 match_details={
+        #                     'strategy': 'type_match',
+        #                     'matched_type': product_type,
+        #                     'product_name': product.name
+        #                 }
+        #             ))
         
         # Strategy 7: Match by aliases and common names
-        alias_matches = self._get_alias_matches(product_name, parsed_message)
-        fuzzy_matches.extend(alias_matches)
+        # COMMENTED OUT: Removed hardcoded alias mappings to focus on strict name matching
+        # alias_matches = self._get_alias_matches(product_name, parsed_message)
+        # fuzzy_matches.extend(alias_matches)
         
         # Strategy 8: Common spelling corrections
-        spelling_corrections = self._get_spelling_corrections(product_name, parsed_message)
-        fuzzy_matches.extend(spelling_corrections)
+        # COMMENTED OUT: Removed hardcoded spelling corrections to focus on strict name matching
+        # spelling_corrections = self._get_spelling_corrections(product_name, parsed_message)
+        # fuzzy_matches.extend(spelling_corrections)
         
         # Strategy 8: Match by partial word combinations
         if len(words) > 1:
