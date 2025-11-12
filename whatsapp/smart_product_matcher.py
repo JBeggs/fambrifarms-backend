@@ -828,13 +828,23 @@ class SmartProductMatcher:
                 candidate_indices.update(self._find_single_word_matches(main_search_words[0]))
         
         # LAST RESORT: Original fuzzy matching if we still have no results
+        # BUT STILL REQUIRE WORD BOUNDARIES to prevent false matches
         if len(candidate_indices) == 0:
-            print(f"[SEARCH] No multi-word matches found for '{product_name}', using fuzzy search")
+            print(f"[SEARCH] No multi-word matches found for '{product_name}', using fuzzy search with word boundaries")
+            import re
             for term in search_terms:
-                term_lower = term.lower()
-                # Direct word match
-                if term_lower in self.name_index:
-                    candidate_indices.update(self.name_index[term_lower])
+                term_lower = term.lower().strip()
+                # Only use single words from search terms, not full phrases
+                if ' ' not in term_lower and len(term_lower) > 3:
+                    # Direct word match - but verify with word boundaries
+                    if term_lower in self.name_index:
+                        word_pattern = r'\b' + re.escape(term_lower) + r'\b'
+                        for idx in self.name_index[term_lower]:
+                            product_data = self.all_products_data[idx]
+                            product_name_lower = product_data['name'].lower()
+                            # Only add if it's a complete word match
+                            if re.search(word_pattern, product_name_lower):
+                                candidate_indices.add(idx)
         
         print(f"[SEARCH] Found {len(candidate_indices)} candidates for '{product_name}' ({len(main_search_words)} words)")
         return candidate_indices
@@ -1345,19 +1355,17 @@ class SmartProductMatcher:
                     # Invalid relationship (e.g., "sweet potatoes" for "potatoes")
                     score += 5  # Very low score
             
-            # Base product name matching (high priority for container/weight products)
-            elif base_product_name and base_product_name in product_name_lower:
-                score += 35
-            
-            # Check for base product word matches (ALL words must match)
+            # Base product name matching (high priority for container/weight products) - STRICT WORD BOUNDARIES
             elif base_product_name:
-                base_words_match = True
-                for word in base_product_name.split():
-                    if not re.search(r'\b' + re.escape(word) + r'\b', product_name_lower):
-                        base_words_match = False
+                # Check if base_product_name appears as complete words (not substring)
+                base_words = base_product_name.split()
+                base_all_words_match = True
+                for word in base_words:
+                    if not re.search(r'\b' + re.escape(word.lower()) + r'\b', product_name_lower):
+                        base_all_words_match = False
                         break
-                if base_words_match:
-                    score += 30
+                if base_all_words_match:
+                    score += 35
                 else:
                     score += 5  # Low score for no match
             else:
@@ -1730,12 +1738,17 @@ class SmartProductMatcher:
         # Try comprehensive matching strategies
         fuzzy_matches = []
         
-        # Strategy 1: Match individual words (broader search)
+        # Strategy 1: Match individual words (broader search) - STRICT WORD BOUNDARIES
+        import re
         words = product_name.split()
         for word in words:
             if len(word) > 2:  # Skip short words
-                word_matches = Product.objects.filter(name__icontains=word)[:20]  # Increased from 10
-                for product in word_matches:
+                # Use regex to match complete words only (word boundaries)
+                word_pattern = r'\b' + re.escape(word.lower()) + r'\b'
+                # Get all products and filter by regex (more efficient than DB regex)
+                all_products = Product.objects.all()[:1000]  # Limit for performance
+                word_matches = [p for p in all_products if re.search(word_pattern, p.name.lower(), re.IGNORECASE)]
+                for product in word_matches[:20]:  # Limit results
                     score = self._calculate_fuzzy_score(product, parsed_message, 'word_match')
                     if score > 0:
                         fuzzy_matches.append(SmartMatchResult(
@@ -1750,12 +1763,57 @@ class SmartProductMatcher:
                             }
                         ))
         
-        # Strategy 1.5: Match base product name (remove containers/weights)
+        # Strategy 1.5: Match base product name (remove containers/weights) - STRICT WORD BOUNDARIES
         base_name = self._extract_base_product_name(product_name)
         if base_name and base_name != product_name:
-            base_matches = Product.objects.filter(name__icontains=base_name)[:15]
-            for product in base_matches:
-                score = self._calculate_fuzzy_score(product, parsed_message, 'base_name_match')
+            # Use word boundaries for each word in base_name
+            base_words = base_name.split()
+            if base_words:
+                # Match products that contain ALL base words as complete words
+                base_word_patterns = [r'\b' + re.escape(w.lower()) + r'\b' for w in base_words]
+                all_products = Product.objects.all()[:1000]  # Limit for performance
+                base_matches = []
+                for product in all_products:
+                    product_name_lower = product.name.lower()
+                    all_words_match = all(re.search(pattern, product_name_lower, re.IGNORECASE) for pattern in base_word_patterns)
+                    if all_words_match:
+                        base_matches.append(product)
+                        if len(base_matches) >= 15:
+                            break
+                
+                for product in base_matches:
+                    score = self._calculate_fuzzy_score(product, parsed_message, 'base_name_match')
+                    if score > 0:
+                        fuzzy_matches.append(SmartMatchResult(
+                            product=product,
+                            quantity=quantity,
+                            unit=unit or product.unit,
+                            confidence_score=score,
+                            match_details={
+                                'strategy': 'base_name_match',
+                                'matched_base_name': base_name,
+                                'product_name': product.name
+                            }
+                        ))
+        
+        # Strategy 1.5: Match exact phrase - STRICT WORD BOUNDARIES
+        # Match products that contain the phrase as complete words
+        phrase_words = product_name.split()
+        if phrase_words:
+            phrase_patterns = [r'\b' + re.escape(w.lower()) + r'\b' for w in phrase_words]
+            all_products = Product.objects.all()[:500]  # Limit for performance
+            phrase_matches = []
+            for product in all_products:
+                product_name_lower = product.name.lower()
+                all_words_match = all(re.search(pattern, product_name_lower, re.IGNORECASE) for pattern in phrase_patterns)
+                if all_words_match:
+                    phrase_matches.append(product)
+                    if len(phrase_matches) >= 5:
+                        break
+            
+            for product in phrase_matches:
+                score = self._calculate_fuzzy_score(product, parsed_message, 'phrase_match')
+                
                 if score > 0:
                     fuzzy_matches.append(SmartMatchResult(
                         product=product,
@@ -1763,35 +1821,27 @@ class SmartProductMatcher:
                         unit=unit or product.unit,
                         confidence_score=score,
                         match_details={
-                            'strategy': 'base_name_match',
-                            'matched_base_name': base_name,
+                            'strategy': 'phrase_match',
+                            'matched_phrase': product_name,
                             'product_name': product.name
                         }
                     ))
         
-        # Strategy 1.5: Match exact phrase
-        phrase_matches = Product.objects.filter(name__icontains=product_name)[:5]
-        for product in phrase_matches:
-            score = self._calculate_fuzzy_score(product, parsed_message, 'phrase_match')
-            
-            if score > 0:
-                fuzzy_matches.append(SmartMatchResult(
-                    product=product,
-                    quantity=quantity,
-                    unit=unit or product.unit,
-                    confidence_score=score,
-                    match_details={
-                        'strategy': 'phrase_match',
-                        'matched_phrase': product_name,
-                        'product_name': product.name
-                    }
-                ))
-        
-        # Strategy 2: Match with word order variations (e.g., "onion red" -> "Red Onions")
+        # Strategy 2: Match with word order variations (e.g., "onion red" -> "Red Onions") - STRICT WORD BOUNDARIES
         if len(words) >= 2:
-            # Try reversed word order
-            reversed_name = ' '.join(reversed(words))
-            reversed_matches = Product.objects.filter(name__icontains=reversed_name)[:5]
+            # Try reversed word order - require ALL words as complete words
+            reversed_words = list(reversed(words))
+            reversed_patterns = [r'\b' + re.escape(w.lower()) + r'\b' for w in reversed_words]
+            all_products = Product.objects.all()[:500]  # Limit for performance
+            reversed_matches = []
+            for product in all_products:
+                product_name_lower = product.name.lower()
+                all_words_match = all(re.search(pattern, product_name_lower, re.IGNORECASE) for pattern in reversed_patterns)
+                if all_words_match:
+                    reversed_matches.append(product)
+                    if len(reversed_matches) >= 5:
+                        break
+            
             for product in reversed_matches:
                 score = self._calculate_fuzzy_score(product, parsed_message, 'reversed_word_match')
                 if score > 0:
@@ -1802,16 +1852,26 @@ class SmartProductMatcher:
                         confidence_score=score,
                         match_details={
                             'strategy': 'reversed_word_match',
-                            'reversed_name': reversed_name,
+                            'reversed_name': ' '.join(reversed_words),
                             'product_name': product.name
                         }
                     ))
             
-            # Try partial word order matches
+            # Try partial word order matches - require ALL words as complete words
             for i in range(len(words)):
-                partial_name = ' '.join(words[i:])
-                if len(partial_name) > 3:
-                    partial_matches = Product.objects.filter(name__icontains=partial_name)[:3]
+                partial_words = words[i:]
+                if len(partial_words) > 0 and len(' '.join(partial_words)) > 3:
+                    partial_patterns = [r'\b' + re.escape(w.lower()) + r'\b' for w in partial_words]
+                    all_products = Product.objects.all()[:300]  # Limit for performance
+                    partial_matches = []
+                    for product in all_products:
+                        product_name_lower = product.name.lower()
+                        all_words_match = all(re.search(pattern, product_name_lower, re.IGNORECASE) for pattern in partial_patterns)
+                        if all_words_match:
+                            partial_matches.append(product)
+                            if len(partial_matches) >= 3:
+                                break
+                    
                     for product in partial_matches:
                         score = self._calculate_fuzzy_score(product, parsed_message, 'partial_word_match')
                         if score > 0:
@@ -1822,10 +1882,10 @@ class SmartProductMatcher:
                                 confidence_score=score,
                                 match_details={
                                     'strategy': 'partial_word_match',
-                                    'partial_name': partial_name,
+                                    'partial_name': ' '.join(partial_words),
                                     'product_name': product.name
-                            }
-                        ))
+                                }
+                            ))
         
         # Strategy 3: Match by unit if specified
         if unit:
