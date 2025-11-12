@@ -123,6 +123,9 @@ class Command(BaseCommand):
                 wastage_str = row['wastage'].strip()
                 reason = row['reason'].strip()
                 
+                # Check if there's wastage to record (even if stock is empty)
+                has_wastage = wastage_str and wastage_str != '-' and wastage_str.strip()
+                
                 # Determine stock value: if unit is NOT kg, use comment field; otherwise use stock_kg
                 if unit != 'kg':
                     # When unit is not kg, comment field IS the stock count (kg) value
@@ -134,9 +137,13 @@ class Command(BaseCommand):
                     # Use stock_kg column when unit IS kg
                     stock_value_str = stock_kg_str
                 
-                # Skip if stock value is empty or '-'
-                if not stock_value_str or stock_value_str == '-':
+                # Skip if stock value is empty AND there's no wastage to record
+                if (not stock_value_str or stock_value_str == '-') and not has_wastage:
                     continue
+                
+                # If stock is empty but there's wastage, set stock to 0
+                if not stock_value_str or stock_value_str == '-':
+                    stock_value_str = '0'
                 
                 # Parse stock value
                 try:
@@ -144,19 +151,44 @@ class Command(BaseCommand):
                     stock_value_str = stock_value_str.replace(',', '.')
                     stock_value = Decimal(stock_value_str)
                 except (InvalidOperation, ValueError) as e:
-                    errors.append(f"{product_name}: Invalid stock value '{stock_value_str}' - {e}")
-                    continue
+                    # If there's wastage, still try to process it with stock = 0
+                    if has_wastage:
+                        stock_value = Decimal('0.00')
+                        self.stdout.write(
+                            self.style.WARNING(
+                                f"⚠️  Invalid stock value '{stock_value_str}' for {product_name}, "
+                                f"but wastage found. Setting stock to 0 and recording wastage."
+                            )
+                        )
+                    else:
+                        errors.append(f"{product_name}: Invalid stock value '{stock_value_str}' - {e}")
+                        continue
                 
-                # Find product by name (case-insensitive, flexible matching)
+                # Find product by name AND unit (case-insensitive, flexible matching)
                 product = None
-                # Try exact match first
-                product = Product.objects.filter(name__iexact=product_name).first()
                 
-                # Try partial match if exact fails
+                # First try: exact name match with unit match
+                product = Product.objects.filter(
+                    name__iexact=product_name,
+                    unit__iexact=unit
+                ).first()
+                
+                # Second try: exact name match (ignore unit)
+                if not product:
+                    product = Product.objects.filter(name__iexact=product_name).first()
+                
+                # Third try: partial name match with unit match
+                if not product:
+                    product = Product.objects.filter(
+                        name__icontains=product_name,
+                        unit__iexact=unit
+                    ).first()
+                
+                # Fourth try: partial name match (ignore unit)
                 if not product:
                     product = Product.objects.filter(name__icontains=product_name).first()
                 
-                # Try reverse partial match (product name contains search term)
+                # Last try: reverse partial match (product name contains search term)
                 if not product:
                     # Split product name and try matching parts
                     name_parts = product_name.lower().split()
@@ -167,8 +199,21 @@ class Command(BaseCommand):
                                 break
                 
                 if not product:
-                    not_found.append(product_name)
+                    not_found.append(f"{product_name} ({unit})")
                     continue
+                
+                # Check if product unit matches - if not, log warning
+                if product.unit.lower() != unit.lower():
+                    self.stdout.write(
+                        self.style.WARNING(
+                            f"⚠️  Unit mismatch for {product.name}: "
+                            f"Database has '{product.unit}', stock take has '{unit}'. "
+                            f"Updating product unit to '{unit}'."
+                        )
+                    )
+                    if not dry_run:
+                        product.unit = unit
+                        product.save()
                 
                 # Get or create FinishedInventory
                 inventory, created = FinishedInventory.objects.get_or_create(
