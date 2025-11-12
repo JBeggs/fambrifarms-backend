@@ -170,9 +170,6 @@ class Command(BaseCommand):
                     not_found.append(product_name)
                     continue
                 
-                # Track this product as processed
-                processed_product_ids.add(product.id)
-                
                 # Get or create FinishedInventory
                 inventory, created = FinishedInventory.objects.get_or_create(
                     product=product,
@@ -195,6 +192,9 @@ class Command(BaseCommand):
                         wastage_value = Decimal(wastage_str_clean)
                     except (InvalidOperation, ValueError) as e:
                         errors.append(f"{product_name}: Invalid wastage value '{wastage_str}' - {e}")
+                
+                # Track this product as processed (so it won't be set to 0 later)
+                processed_product_ids.add(product.id)
                 
                 # Set stock to counted value (this is the final usable stock after wastage)
                 # Note: This sets available_quantity directly - reserved_quantity is preserved
@@ -243,6 +243,7 @@ class Command(BaseCommand):
             
             # Set all other products (not in stock take) to 0
             self.stdout.write(self.style.WARNING('\n=== Setting other products to 0 ==='))
+            self.stdout.write(f'Products in stock take (will NOT be zeroed): {len(processed_product_ids)}')
             all_products = Product.objects.filter(is_active=True)
             
             for product in all_products:
