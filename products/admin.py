@@ -82,11 +82,11 @@ class DepartmentAdmin(admin.ModelAdmin):
 class ProductAdmin(admin.ModelAdmin):
     list_display = (
         'name_link', 'department_link', 'price', 'unit',
-        'stock_status', 'needs_setup', 'is_active', 'supplier_info',
+        'stock_status', 'unlimited_stock', 'needs_setup', 'is_active', 'supplier_info',
         'created_at_formatted', 'updated_at_formatted'
     )
     list_filter = (
-        'department', 'unit', 'is_active', 'needs_setup',
+        'department', 'unit', 'is_active', 'needs_setup', 'unlimited_stock',
         'procurement_supplier', 'cost_unit',
         ('created_at', admin.DateFieldListFilter),
         ('updated_at', admin.DateFieldListFilter),
@@ -101,7 +101,7 @@ class ProductAdmin(admin.ModelAdmin):
         'average_order_quantity', 'last_ordered_date'
     )
     date_hierarchy = 'created_at'
-    list_editable = ('price', 'needs_setup', 'is_active')
+    list_editable = ('price', 'needs_setup', 'is_active', 'unlimited_stock')
     
     fieldsets = (
         ('Product Information', {
