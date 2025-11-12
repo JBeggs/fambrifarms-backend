@@ -856,7 +856,7 @@ class SmartProductMatcher:
         return search_words
     
     def _find_multi_word_matches(self, search_words: List[str]) -> set:
-        """Find products that contain ALL search words"""
+        """Find products that contain ALL search words as complete words (not substrings)"""
         if not search_words:
             return set()
         
@@ -872,11 +872,48 @@ class SmartProductMatcher:
             if not result_indices:
                 break
         
-        return result_indices
+        # STRICT FILTERING: Require that search words appear as complete words, not substrings
+        # This prevents "tomatoes" from matching "avocados" or "potatoes"
+        filtered_indices = set()
+        for idx in result_indices:
+            product_data = self.all_products_data[idx]
+            product_name_lower = product_data['name'].lower()
+            product_words = self._extract_search_words(product_data['name'])
+            
+            # Check if ALL search words appear as complete words in the product name
+            all_words_match = True
+            for search_word in search_words:
+                # Check if search word appears as a complete word (word boundary)
+                import re
+                word_pattern = r'\b' + re.escape(search_word.lower()) + r'\b'
+                if not re.search(word_pattern, product_name_lower):
+                    all_words_match = False
+                    break
+            
+            if all_words_match:
+                filtered_indices.add(idx)
+        
+        return filtered_indices
     
     def _find_single_word_matches(self, search_word: str) -> set:
-        """Find products that contain exactly the search word"""
-        return set(self.name_index.get(search_word, []))
+        """Find products that contain the search word as a complete word (not substring)"""
+        candidate_indices = set(self.name_index.get(search_word, []))
+        
+        # STRICT FILTERING: Require that search word appears as a complete word
+        # This prevents "tomato" from matching "potato" or "avocado"
+        filtered_indices = set()
+        import re
+        word_pattern = r'\b' + re.escape(search_word.lower()) + r'\b'
+        
+        for idx in candidate_indices:
+            product_data = self.all_products_data[idx]
+            product_name_lower = product_data['name'].lower()
+            
+            # Check if search word appears as a complete word (word boundary)
+            if re.search(word_pattern, product_name_lower):
+                filtered_indices.add(idx)
+        
+        return filtered_indices
     
     def _find_exact_word_count_matches(self, search_words: List[str], target_word_count: int) -> set:
         """
@@ -899,13 +936,28 @@ class SmartProductMatcher:
                 if not candidate_indices:
                     break
         
-        # Filter by exact word count
+        # Filter by exact word count AND require complete word matches
         filtered_indices = set()
+        import re
+        
         for idx in candidate_indices:
             product_data = self.all_products_data[idx]
+            product_name_lower = product_data['name'].lower()
             product_words = self._extract_search_words(product_data['name'])
             
-            if len(product_words) == target_word_count:
+            # Check word count matches
+            if len(product_words) != target_word_count:
+                continue
+            
+            # STRICT: Require that ALL search words appear as complete words (word boundaries)
+            all_words_match = True
+            for search_word in search_words:
+                word_pattern = r'\b' + re.escape(search_word.lower()) + r'\b'
+                if not re.search(word_pattern, product_name_lower):
+                    all_words_match = False
+                    break
+            
+            if all_words_match:
                 filtered_indices.add(idx)
         
         return filtered_indices
