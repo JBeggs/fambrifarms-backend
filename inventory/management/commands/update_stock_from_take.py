@@ -111,6 +111,8 @@ class Command(BaseCommand):
         processed = []
         not_found = []
         errors = []
+        processed_product_ids = set()  # Track which products were in stock take
+        zeroed_count = 0  # Count of products set to 0
         
         with transaction.atomic():
             for row in stock_take_data:
@@ -168,6 +170,9 @@ class Command(BaseCommand):
                     not_found.append(product_name)
                     continue
                 
+                # Track this product as processed
+                processed_product_ids.add(product.id)
+                
                 # Get or create FinishedInventory
                 inventory, created = FinishedInventory.objects.get_or_create(
                     product=product,
@@ -192,6 +197,7 @@ class Command(BaseCommand):
                         errors.append(f"{product_name}: Invalid wastage value '{wastage_str}' - {e}")
                 
                 # Set stock to counted value (this is the final usable stock after wastage)
+                # Note: This sets available_quantity directly - reserved_quantity is preserved
                 if not dry_run:
                     inventory.available_quantity = stock_value
                     inventory.save()
@@ -234,10 +240,59 @@ class Command(BaseCommand):
                     f"✓ {product.name} (ID: {product.id}): "
                     f"{old_stock} kg → {stock_value} kg{wastage_info}"
                 )
+            
+            # Set all other products (not in stock take) to 0
+            self.stdout.write(self.style.WARNING('\n=== Setting other products to 0 ==='))
+            all_products = Product.objects.filter(is_active=True)
+            
+            for product in all_products:
+                if product.id not in processed_product_ids:
+                    # Get or create FinishedInventory
+                    inventory, created = FinishedInventory.objects.get_or_create(
+                        product=product,
+                        defaults={
+                            'available_quantity': Decimal('0.00'),
+                            'reserved_quantity': Decimal('0.00'),
+                            'minimum_level': Decimal('10.00'),
+                            'reorder_level': Decimal('20.00'),
+                            'average_cost': product.price or Decimal('0.00'),
+                        }
+                    )
+                    
+                    old_stock = inventory.available_quantity or Decimal('0.00')
+                    
+                    # Only update if stock is not already 0
+                    if old_stock > 0:
+                        if not dry_run:
+                            inventory.available_quantity = Decimal('0.00')
+                            inventory.save()
+                            
+                            # Sync Product stock_level
+                            product.stock_level = Decimal('0.00')
+                            product.save()
+                            
+                            # Create stock movement
+                            StockMovement.objects.create(
+                                movement_type='finished_set',
+                                reference_number=f"STOCK-TAKE-{timezone.now().strftime('%Y%m%d')}",
+                                product=product,
+                                quantity=Decimal('0.00'),
+                                user=system_user,
+                                notes=f"Stock take: Set to 0 kg (not in stock take list)"
+                            )
+                        
+                        self.stdout.write(
+                            f"  → {product.name} (ID: {product.id}): {old_stock} kg → 0 kg"
+                        )
+                        zeroed_count += 1
+            
+            if zeroed_count == 0:
+                self.stdout.write("  (No products needed to be zeroed)")
         
         # Summary
         self.stdout.write(self.style.SUCCESS(f'\n=== SUMMARY ==='))
-        self.stdout.write(f"Processed: {len(processed)} products")
+        self.stdout.write(f"Stock take items processed: {len(processed)} products")
+        self.stdout.write(f"Other products set to 0: {zeroed_count} products")
         self.stdout.write(f"Not found: {len(not_found)} products")
         self.stdout.write(f"Errors: {len(errors)}")
         
