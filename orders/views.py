@@ -36,6 +36,44 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
         ).prefetch_related(
             'items__product__department'
         )
+    
+    def perform_destroy(self, instance):
+        """
+        Override deletion to properly release reserved stock before deleting order
+        """
+        import logging
+        logger = logging.getLogger(__name__)
+        
+        order = instance
+        order_number = order.order_number
+        
+        logger.info(f"[API] Deleting order {order_number} (ID: {order.id})")
+        
+        # CRITICAL: Release reserved stock before deletion
+        try:
+            from inventory.signals import release_stock_for_order
+            from inventory.models import StockMovement
+            
+            # Check if there are reserved stock movements for this order
+            existing_reservations = StockMovement.objects.filter(
+                movement_type='finished_reserve',
+                reference_number=order_number
+            ).exists()
+            
+            if existing_reservations:
+                logger.info(f"[API] Releasing reserved stock for order {order_number} before deletion")
+                release_stock_for_order(order)
+                logger.info(f"[API] Successfully released reserved stock for order {order_number}")
+            else:
+                logger.info(f"[API] No reserved stock found for order {order_number}")
+                
+        except Exception as e:
+            logger.error(f"[API] Error releasing stock for order {order_number}: {e}")
+            # Continue with deletion even if stock release fails to avoid orphaned orders
+        
+        # Perform the actual deletion
+        instance.delete()
+        logger.info(f"[API] Order {order_number} deleted successfully")
 
 class CustomerOrdersView(generics.ListAPIView):
     """Get orders for a specific customer"""
