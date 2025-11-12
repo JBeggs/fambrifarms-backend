@@ -42,6 +42,10 @@ class Product(models.Model):
     minimum_stock = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('5.00'))
     is_active = models.BooleanField(default=True)
     needs_setup = models.BooleanField(default=False, help_text="Product was auto-created and needs pricing/inventory setup")
+    unlimited_stock = models.BooleanField(
+        default=False,
+        help_text="Product is always available (e.g., garden-grown). Orders will not reserve stock."
+    )
     
     # Procurement management
     procurement_supplier = models.ForeignKey(

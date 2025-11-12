@@ -17,7 +17,7 @@ class ProductSerializer(serializers.ModelSerializer):
         fields = [
             'id', 'name', 'description', 'department', 'department_name',
             'price', 'unit', 'stock_level', 'minimum_stock', 'is_active',
-            'needs_setup', 'procurement_supplier', 'procurement_supplier_name',
+            'needs_setup', 'unlimited_stock', 'procurement_supplier', 'procurement_supplier_name',
             'alert_count', 'created_at', 'updated_at'
         ]
         read_only_fields = ['stock_level']  # Prevent direct stock level updates

@@ -108,7 +108,7 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('name', 'description', 'department')
         }),
         ('Pricing & Inventory', {
-            'fields': ('price', 'unit', 'stock_level', 'minimum_stock', 'is_active')
+            'fields': ('price', 'unit', 'stock_level', 'minimum_stock', 'is_active', 'unlimited_stock')
         }),
         ('Procurement Management', {
             'fields': (
