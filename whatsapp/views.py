@@ -2166,6 +2166,112 @@ def process_message_with_suggestions(request):
 
 @api_view(['POST'])
 @permission_classes([AllowAny])
+def get_product_suggestions_for_search(request):
+    """
+    Get product suggestions for a search term (used for editing search in confirm order items)
+    
+    Request body:
+    {
+        'product_name': 'tomatoes'  # The search term
+    }
+    
+    Returns:
+    {
+        'suggestions': [
+            {
+                'product_id': 123,
+                'product_name': 'Tomatoes',
+                'unit': 'kg',
+                'price': 25.0,
+                'confidence_score': 85.5,
+                'packaging_size': None,
+                'stock': {
+                    'available_quantity': 10.0,
+                    'reserved_quantity': 2.0,
+                    'total_quantity': 12.0
+                },
+                'in_stock': True,
+                'unlimited_stock': False
+            },
+            ...
+        ]
+    }
+    """
+    product_name = request.data.get('product_name')
+    
+    if not product_name:
+        return Response({
+            'error': 'product_name is required'
+        }, status=status.HTTP_400_BAD_REQUEST)
+    
+    try:
+        from .services import get_inventory_aware_suggestions
+        from .smart_product_matcher import SmartProductMatcher
+        from inventory.models import FinishedInventory
+        
+        # Use the smart matcher to get suggestions
+        matcher = SmartProductMatcher()
+        suggestions_result = matcher.get_suggestions(
+            product_name,
+            min_confidence=5.0,
+            max_suggestions=30
+        )
+        
+        # Format suggestions with stock information (same format as process_message_with_suggestions)
+        suggestions = []
+        if suggestions_result.suggestions:
+            # Get stock information for all suggested products in one query
+            product_ids = [s.product.id for s in suggestions_result.suggestions]
+            stock_info = {}
+            for inventory in FinishedInventory.objects.filter(product_id__in=product_ids).select_related('product'):
+                stock_info[inventory.product_id] = {
+                    'available_quantity': float(inventory.available_quantity or 0),
+                    'reserved_quantity': float(inventory.reserved_quantity or 0),
+                    'total_quantity': float((inventory.available_quantity or 0) + (inventory.reserved_quantity or 0))
+                }
+            
+            for suggestion in suggestions_result.suggestions:
+                stock = stock_info.get(suggestion.product.id, {
+                    'available_quantity': 0.0,
+                    'reserved_quantity': 0.0,
+                    'total_quantity': 0.0
+                })
+                
+                # Extract packaging size if present in product name
+                packaging_size = None
+                if '(' in suggestion.product.name and ')' in suggestion.product.name:
+                    try:
+                        packaging_size = suggestion.product.name.split('(')[1].split(')')[0]
+                    except:
+                        pass
+                
+                suggestions.append({
+                    'product_id': suggestion.product.id,
+                    'product_name': suggestion.product.name,
+                    'unit': suggestion.product.unit,
+                    'price': float(suggestion.product.price) if suggestion.product.price else 0.0,
+                    'confidence_score': suggestion.confidence_score,
+                    'packaging_size': packaging_size,
+                    'stock': stock,
+                    'in_stock': stock['available_quantity'] > 0,
+                    'unlimited_stock': getattr(suggestion.product, 'unlimited_stock', False)
+                })
+        
+        return Response({
+            'status': 'success',
+            'suggestions': suggestions,
+            'search_term': product_name
+        })
+        
+    except Exception as e:
+        logger.error(f"Failed to get product suggestions for '{product_name}': {str(e)}")
+        return Response({
+            'error': 'Failed to get product suggestions',
+            'details': str(e) if settings.DEBUG else None
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
 def create_order_from_suggestions(request):
     """
     Create an order from confirmed suggestions

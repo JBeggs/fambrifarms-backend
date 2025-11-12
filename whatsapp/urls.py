@@ -40,6 +40,7 @@ urlpatterns = [
     # Always-suggestions processing
     path('messages/process-with-suggestions/', views.process_message_with_suggestions, name='process-message-with-suggestions'),
     path('orders/create-from-suggestions/', views.create_order_from_suggestions, name='create-order-from-suggestions'),
+    path('products/get-suggestions/', views.get_product_suggestions_for_search, name='get-product-suggestions'),
     
     # Stock suggestions processing
     path('stock/process-with-suggestions/', views.process_stock_message_with_suggestions, name='process-stock-message-with-suggestions'),
