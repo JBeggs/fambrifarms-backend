@@ -283,7 +283,8 @@ class StockMovement(models.Model):
         ('production_waste', 'Production Waste'),
         
         # Finished Inventory
-        ('finished_adjust', 'Finished Inventory Adjustment'),
+        ('finished_adjust', 'Finished Inventory Adjustment (Add)'),
+        ('finished_set', 'Finished Inventory Set (Replace)'),
         ('finished_reserve', 'Stock Reserved for Order'),
         ('finished_release', 'Stock Released (Order Cancelled)'),
         ('finished_sell', 'Stock Sold (Order Delivered)'),

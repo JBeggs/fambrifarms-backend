@@ -271,7 +271,8 @@ class ProductionCompleteSerializer(serializers.Serializer):
 class StockAdjustmentSerializer(serializers.Serializer):
     """For manual stock adjustments"""
     adjustment_type = serializers.ChoiceField(choices=[
-        ('finished_adjust', 'Finished Inventory Adjustment'),
+        ('finished_adjust', 'Finished Inventory Adjustment (Add)'),
+        ('finished_set', 'Finished Inventory Set (Replace)'),
         ('finished_waste', 'Finished Product Waste'),
         ('raw_adjust', 'Raw Material Adjustment'),
         ('raw_waste', 'Raw Material Waste'),
@@ -286,7 +287,7 @@ class StockAdjustmentSerializer(serializers.Serializer):
     def validate(self, data):
         adjustment_type = data.get('adjustment_type')
         
-        if adjustment_type in ['finished_adjust', 'finished_waste']:
+        if adjustment_type in ['finished_adjust', 'finished_set', 'finished_waste']:
             if not data.get('product_id'):
                 raise serializers.ValidationError("product_id is required for finished inventory adjustments")
         

@@ -620,7 +620,7 @@ def stock_adjustment(request):
         logger.debug(f"Validated data: movement_type={movement_type}, quantity={quantity}, reason={reason}")
         
         try:
-            if movement_type in ['finished_adjust', 'finished_waste']:
+            if movement_type in ['finished_adjust', 'finished_set', 'finished_waste']:
                 # Finished inventory adjustment
                 product = Product.objects.get(id=data['product_id'])
                 
@@ -645,6 +645,9 @@ def stock_adjustment(request):
                 # Update FinishedInventory first, then sync Product
                 if movement_type == 'finished_adjust':
                     inventory.available_quantity += quantity
+                elif movement_type == 'finished_set':
+                    # Set to exact quantity (replace current stock)
+                    inventory.available_quantity = quantity
                 else:  # waste
                     inventory.available_quantity -= quantity
                 
