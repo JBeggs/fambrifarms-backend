@@ -490,6 +490,10 @@ def add_order_item(request, order_id):
         unit = request.data.get('unit', 'piece').strip()
         price = request.data.get('price')
         
+        # Optional: source product for stock deduction
+        source_product_id = request.data.get('source_product_id')
+        source_quantity = request.data.get('source_quantity')
+        
         # Validate required fields
         if not product_name:
             return Response({'error': 'product_name is required'}, status=status.HTTP_400_BAD_REQUEST)
@@ -504,8 +508,14 @@ def add_order_item(request, order_id):
             from decimal import Decimal
             quantity = Decimal(str(quantity))
             price = Decimal(str(price))
+            
+            # Parse source_quantity if provided
+            if source_quantity is not None:
+                source_quantity = Decimal(str(source_quantity))
+                if source_quantity <= 0:
+                    return Response({'error': 'source_quantity must be greater than 0'}, status=status.HTTP_400_BAD_REQUEST)
         except (ValueError, TypeError):
-            return Response({'error': 'quantity and price must be valid numbers'}, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'error': 'quantity, price, and source_quantity must be valid numbers'}, status=status.HTTP_400_BAD_REQUEST)
         
         if quantity <= 0:
             return Response({'error': 'quantity must be greater than 0'}, status=status.HTTP_400_BAD_REQUEST)
@@ -525,6 +535,32 @@ def add_order_item(request, order_id):
                 is_active=True
             )
         
+        # Validate source product if provided
+        source_product = None
+        if source_product_id:
+            try:
+                source_product = Product.objects.get(id=source_product_id)
+                
+                # Validate that source_quantity is provided with source_product
+                if not source_quantity:
+                    return Response({'error': 'source_quantity is required when source_product_id is provided'}, status=status.HTTP_400_BAD_REQUEST)
+                
+                # Validate stock availability for source product
+                from inventory.models import FinishedInventory
+                try:
+                    source_inventory = FinishedInventory.objects.get(product=source_product)
+                    if source_inventory.available_quantity < source_quantity:
+                        return Response({
+                            'error': f'Insufficient stock in {source_product.name}. Available: {source_inventory.available_quantity}, Required: {source_quantity}'
+                        }, status=status.HTTP_400_BAD_REQUEST)
+                except FinishedInventory.DoesNotExist:
+                    return Response({
+                        'error': f'No inventory record for {source_product.name}'
+                    }, status=status.HTTP_400_BAD_REQUEST)
+                    
+            except Product.DoesNotExist:
+                return Response({'error': f'Source product with ID {source_product_id} not found'}, status=status.HTTP_400_BAD_REQUEST)
+        
         # Create order item
         order_item = OrderItem.objects.create(
             order=order,
@@ -532,6 +568,8 @@ def add_order_item(request, order_id):
             quantity=quantity,
             unit=unit,
             price=price,
+            source_product=source_product,
+            source_quantity=source_quantity,
             manually_corrected=True,
             original_text=f"Manual: {quantity} {unit} {product_name}"
         )

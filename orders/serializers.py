@@ -9,6 +9,11 @@ class OrderItemSerializer(serializers.ModelSerializer):
     product_stock_level = serializers.CharField(source='product.stock_level', read_only=True)
     product_default_unit = serializers.CharField(source='product.unit', read_only=True)
     
+    # Source product information (for stock deduction from different product)
+    source_product_name = serializers.CharField(source='source_product.name', read_only=True)
+    source_product_stock_level = serializers.CharField(source='source_product.stock_level', read_only=True)
+    source_product_unit = serializers.CharField(source='source_product.unit', read_only=True)
+    
     # Pricing breakdown information
     product_base_price = serializers.CharField(source='product.price', read_only=True)
     pricing_breakdown = serializers.SerializerMethodField()
@@ -22,7 +27,9 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ['id', 'product', 'product_name', 'product_description', 'product_department', 
                  'product_stock_level', 'product_default_unit', 'quantity', 'unit', 'price', 
                  'total_price', 'original_text', 'confidence_score', 'manually_corrected', 'notes',
-                 'product_base_price', 'pricing_breakdown', 'stock_action', 'stock_result']
+                 'source_product', 'source_quantity', 'source_product_name', 'source_product_stock_level', 
+                 'source_product_unit', 'product_base_price', 'pricing_breakdown', 'stock_action', 
+                 'stock_result']
     
     def get_pricing_breakdown(self, obj):
         """Get detailed pricing breakdown for this order item"""

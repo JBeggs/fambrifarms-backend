@@ -134,11 +134,29 @@ class Order(models.Model):
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
-    product = models.ForeignKey('products.Product', on_delete=models.CASCADE)
+    product = models.ForeignKey('products.Product', on_delete=models.CASCADE, related_name='order_items')
     quantity = models.DecimalField(max_digits=8, decimal_places=2, validators=[MinValueValidator(Decimal('0.01'))])
     unit = models.CharField(max_length=20, default='piece')  # kg, bunch, piece, etc.
     price = models.DecimalField(max_digits=10, decimal_places=2)
     total_price = models.DecimalField(max_digits=10, decimal_places=2)
+    
+    # Source product for stock (optional - if stock should come from a different product)
+    source_product = models.ForeignKey(
+        'products.Product', 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='source_order_items',
+        help_text='Product from which stock will be deducted (if different from the ordered product)'
+    )
+    source_quantity = models.DecimalField(
+        max_digits=8, 
+        decimal_places=2, 
+        null=True, 
+        blank=True,
+        validators=[MinValueValidator(Decimal('0.01'))],
+        help_text='Quantity to deduct from source product (e.g., kg from bulk product)'
+    )
     
     original_text = models.CharField(max_length=200, blank=True)  # "1 x onions"
     confidence_score = models.FloatField(default=1.0)  # AI parsing confidence

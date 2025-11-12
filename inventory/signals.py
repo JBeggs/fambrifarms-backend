@@ -64,29 +64,40 @@ def handle_order_status_change(sender, instance, created, **kwargs):
 def reserve_stock_for_order(order):
     """
     Reserve stock when order is confirmed
+    Uses source_product if specified, otherwise uses the ordered product
     """
     for item in order.items.all():
+        # Determine which product to reserve stock from
+        stock_product = item.source_product if item.source_product else item.product
+        stock_quantity = item.source_quantity if item.source_quantity else item.quantity
+        
+        # Build descriptive notes
+        if item.source_product:
+            notes = f"Reserved for order {order.order_number} - {item.product.name} (stock from {item.source_product.name}: {item.source_quantity}{item.source_product.unit})"
+        else:
+            notes = f"Reserved for order {order.order_number}"
+        
         try:
-            inventory = FinishedInventory.objects.get(product=item.product)
+            inventory = FinishedInventory.objects.get(product=stock_product)
             
-            if inventory.reserve_stock(item.quantity):
+            if inventory.reserve_stock(stock_quantity):
                 # Create stock movement record
                 StockMovement.objects.create(
                     movement_type='finished_reserve',
                     reference_number=order.order_number,
-                    product=item.product,
-                    quantity=item.quantity,
+                    product=stock_product,
+                    quantity=stock_quantity,
                     unit_cost=item.price,
                     total_value=item.total_price,
                     user=order.restaurant,  # Customer who placed the order
-                    notes=f"Reserved for order {order.order_number}"
+                    notes=notes
                 )
             else:
                 # Create alert for insufficient stock
                 StockAlert.objects.create(
                     alert_type='out_of_stock',
-                    product=item.product,
-                    message=f"Insufficient stock for order {order.order_number}. Required: {item.quantity}, Available: {inventory.available_quantity}",
+                    product=stock_product,
+                    message=f"Insufficient stock for order {order.order_number}. Required: {stock_quantity}, Available: {inventory.available_quantity}",
                     severity='critical'
                 )
                 
@@ -94,8 +105,8 @@ def reserve_stock_for_order(order):
             # Create alert for missing inventory record
             StockAlert.objects.create(
                 alert_type='out_of_stock',
-                product=item.product,
-                message=f"No inventory record exists for {item.product.name}",
+                product=stock_product,
+                message=f"No inventory record exists for {stock_product.name}",
                 severity='critical'
             )
 
@@ -103,30 +114,41 @@ def reserve_stock_for_order(order):
 def sell_stock_for_order(order):
     """
     Mark reserved stock as sold when order is delivered
+    Uses source_product if specified, otherwise uses the ordered product
     """
     for item in order.items.all():
+        # Determine which product to sell stock from
+        stock_product = item.source_product if item.source_product else item.product
+        stock_quantity = item.source_quantity if item.source_quantity else item.quantity
+        
+        # Build descriptive notes
+        if item.source_product:
+            notes = f"Sold via order {order.order_number} - {item.product.name} (stock from {item.source_product.name}: {item.source_quantity}{item.source_product.unit})"
+        else:
+            notes = f"Sold via order {order.order_number}"
+        
         try:
-            inventory = FinishedInventory.objects.get(product=item.product)
+            inventory = FinishedInventory.objects.get(product=stock_product)
             
-            if inventory.sell_stock(item.quantity):
+            if inventory.sell_stock(stock_quantity):
                 # Create stock movement record
                 StockMovement.objects.create(
                     movement_type='finished_sell',
                     reference_number=order.order_number,
-                    product=item.product,
-                    quantity=item.quantity,
+                    product=stock_product,
+                    quantity=stock_quantity,
                     unit_cost=item.price,
                     total_value=item.total_price,
                     user=order.restaurant,
-                    notes=f"Sold via order {order.order_number}"
+                    notes=notes
                 )
                 
                 # Check if production is needed
                 if inventory.needs_production:
                     StockAlert.objects.create(
                         alert_type='production_needed',
-                        product=item.product,
-                        message=f"{item.product.name} inventory below reorder level ({inventory.available_quantity} remaining, reorder at {inventory.reorder_level})",
+                        product=stock_product,
+                        message=f"{stock_product.name} inventory below reorder level ({inventory.available_quantity} remaining, reorder at {inventory.reorder_level})",
                         severity='medium'
                     )
                     
@@ -137,22 +159,33 @@ def sell_stock_for_order(order):
 def release_stock_for_order(order):
     """
     Release reserved stock when order is cancelled
+    Uses source_product if specified, otherwise uses the ordered product
     """
     for item in order.items.all():
+        # Determine which product to release stock from
+        stock_product = item.source_product if item.source_product else item.product
+        stock_quantity = item.source_quantity if item.source_quantity else item.quantity
+        
+        # Build descriptive notes
+        if item.source_product:
+            notes = f"Released due to order cancellation {order.order_number} - {item.product.name} (stock from {item.source_product.name}: {item.source_quantity}{item.source_product.unit})"
+        else:
+            notes = f"Released due to order cancellation {order.order_number}"
+        
         try:
-            inventory = FinishedInventory.objects.get(product=item.product)
-            inventory.release_stock(item.quantity)
+            inventory = FinishedInventory.objects.get(product=stock_product)
+            inventory.release_stock(stock_quantity)
             
             # Create stock movement record
             StockMovement.objects.create(
                 movement_type='finished_release',
                 reference_number=order.order_number,
-                product=item.product,
-                quantity=item.quantity,
+                product=stock_product,
+                quantity=stock_quantity,
                 unit_cost=item.price,
                 total_value=item.total_price,
                 user=order.restaurant,
-                notes=f"Released due to order cancellation {order.order_number}"
+                notes=notes
             )
             
         except FinishedInventory.DoesNotExist:
