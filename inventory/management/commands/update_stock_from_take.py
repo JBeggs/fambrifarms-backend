@@ -231,12 +231,16 @@ class Command(BaseCommand):
                 
                 # Parse wastage (for audit trail only - stock_value is already the final usable count)
                 wastage_value = Decimal('0.00')
-                if wastage_str and wastage_str != '-':
+                if wastage_str and wastage_str != '-' and wastage_str.strip():
                     try:
                         wastage_str_clean = wastage_str.replace(',', '.')
                         wastage_value = Decimal(wastage_str_clean)
+                        # Only record wastage if it's greater than 0
+                        if wastage_value <= 0:
+                            wastage_value = Decimal('0.00')
                     except (InvalidOperation, ValueError) as e:
                         errors.append(f"{product_name}: Invalid wastage value '{wastage_str}' - {e}")
+                        wastage_value = Decimal('0.00')  # Reset to 0 on error
                 
                 # Track this product as processed (so it won't be set to 0 later)
                 processed_product_ids.add(product.id)
