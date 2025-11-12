@@ -2293,6 +2293,26 @@ def create_order_from_suggestions(request):
                 
                 # stock_action == 'no_reserve' requires no special handling - just create the order item
                 
+                # Handle source product if specified
+                source_product = None
+                source_quantity = None
+                if 'source_product_id' in item_data and item_data['source_product_id'] is not None:
+                    try:
+                        source_product = Product.objects.get(id=item_data['source_product_id'])
+                        source_quantity = Decimal(str(item_data.get('source_quantity', 0)))
+                        
+                        # Validate source product stock
+                        from inventory.models import FinishedInventory
+                        try:
+                            source_inventory = FinishedInventory.objects.get(product=source_product)
+                            if source_quantity > source_inventory.available_quantity:
+                                logger.warning(f"Insufficient stock in source product {source_product.name}. Available: {source_inventory.available_quantity}, Required: {source_quantity}")
+                                # Continue anyway - stock validation happens in signals
+                        except FinishedInventory.DoesNotExist:
+                            logger.warning(f"No inventory record for source product {source_product.name}")
+                    except Product.DoesNotExist:
+                        logger.warning(f"Source product with ID {item_data['source_product_id']} not found")
+                
                 from orders.models import OrderItem
                 order_item = OrderItem.objects.create(
                     order=order,
@@ -2303,6 +2323,8 @@ def create_order_from_suggestions(request):
                     total_price=total_price,
                     original_text=item_data.get('original_text', ''),
                     confidence_score=100.0,  # User confirmed selection
+                    source_product=source_product,
+                    source_quantity=source_quantity,
                 )
                 
                 created_items.append({

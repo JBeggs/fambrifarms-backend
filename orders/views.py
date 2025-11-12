@@ -697,6 +697,52 @@ def order_item_detail(request, order_id, item_id):
             if 'notes' in request.data:
                 order_item.notes = request.data['notes']
             
+            # Handle source product update
+            if 'source_product_id' in request.data:
+                source_product_id = request.data.get('source_product_id')
+                source_quantity = request.data.get('source_quantity')
+                
+                if source_product_id is None:
+                    # Clear source product
+                    order_item.source_product = None
+                    order_item.source_quantity = None
+                else:
+                    # Set source product
+                    try:
+                        from products.models import Product
+                        source_product = Product.objects.get(id=source_product_id)
+                        
+                        # Validate source_quantity is provided
+                        if source_quantity is None:
+                            return Response({'error': 'source_quantity is required when source_product_id is provided'}, status=status.HTTP_400_BAD_REQUEST)
+                        
+                        try:
+                            from decimal import Decimal
+                            source_quantity = Decimal(str(source_quantity))
+                            if source_quantity <= 0:
+                                return Response({'error': 'source_quantity must be greater than 0'}, status=status.HTTP_400_BAD_REQUEST)
+                        except (ValueError, TypeError):
+                            return Response({'error': 'source_quantity must be a valid number'}, status=status.HTTP_400_BAD_REQUEST)
+                        
+                        # Validate stock availability for source product
+                        from inventory.models import FinishedInventory
+                        try:
+                            source_inventory = FinishedInventory.objects.get(product=source_product)
+                            if source_inventory.available_quantity < source_quantity:
+                                return Response({
+                                    'error': f'Insufficient stock in {source_product.name}. Available: {source_inventory.available_quantity}, Required: {source_quantity}'
+                                }, status=status.HTTP_400_BAD_REQUEST)
+                        except FinishedInventory.DoesNotExist:
+                            return Response({
+                                'error': f'No inventory record for {source_product.name}'
+                            }, status=status.HTTP_400_BAD_REQUEST)
+                        
+                        order_item.source_product = source_product
+                        order_item.source_quantity = source_quantity
+                        print(f"[ORDER ITEM UPDATE] Source product set to: {source_product.name} (ID: {source_product.id}), quantity: {source_quantity}")
+                    except Product.DoesNotExist:
+                        return Response({'error': f'Source product with ID {source_product_id} not found'}, status=status.HTTP_400_BAD_REQUEST)
+            
             # Recalculate total_price based on updated quantity and price
             order_item.total_price = order_item.quantity * order_item.price
             
