@@ -129,10 +129,11 @@ class ProductionRecipeAdmin(admin.ModelAdmin):
 @admin.register(FinishedInventory)
 class FinishedInventoryAdmin(admin.ModelAdmin):
     list_display = ('product', 'available_quantity', 'reserved_quantity', 'total_quantity', 
-                   'minimum_level', 'needs_production_display', 'average_cost')
+                   'minimum_level', 'needs_production_display', 'average_cost', 'updated_at')
     list_filter = ('updated_at',)
     search_fields = ('product__name',)
     readonly_fields = ('total_quantity', 'needs_production', 'updated_at')
+    date_hierarchy = 'updated_at'
     
     def needs_production_display(self, obj):
         if obj.needs_production:
