@@ -531,26 +531,36 @@ def inventory_dashboard(request):
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
 def stock_levels(request):
-    """Get current stock levels for products with inventory records"""
+    """Get current stock levels for all products"""
     
-    # Only get products that have FinishedInventory records
-    inventories = FinishedInventory.objects.select_related('product__department').all()
+    from products.models import Product
+    
+    # Get all active products
+    products = Product.objects.filter(is_active=True).select_related('department', 'inventory').all()
     
     stock_data = []
-    for inventory in inventories:
-        product = inventory.product
+    for product in products:
+        inventory = getattr(product, 'inventory', None)
+        
+        # Use FinishedInventory data if available, otherwise use Product.stock_level
+        available_quantity = inventory.available_quantity if inventory else (product.stock_level or 0)
+        reserved_quantity = inventory.reserved_quantity if inventory else 0
+        minimum_level = inventory.minimum_level if inventory else (product.minimum_stock or 0)
+        reorder_level = inventory.reorder_level if inventory else (product.minimum_stock or 0)
+        needs_production = inventory.needs_production if inventory else False
+        average_cost = inventory.average_cost if inventory else (product.price or 0)
         
         stock_data.append({
             'product_id': product.id,
             'product_name': product.name,
-            'department': product.department.name,
+            'department': product.department.name if product.department else '',
             'unit': product.unit,
-            'available_quantity': inventory.available_quantity,
-            'reserved_quantity': inventory.reserved_quantity,
-            'minimum_level': inventory.minimum_level,
-            'reorder_level': inventory.reorder_level,
-            'needs_production': inventory.needs_production,
-            'average_cost': inventory.average_cost
+            'available_quantity': available_quantity,
+            'reserved_quantity': reserved_quantity,
+            'minimum_level': minimum_level,
+            'reorder_level': reorder_level,
+            'needs_production': needs_production,
+            'average_cost': average_cost
         })
     
     serializer = StockLevelSerializer(stock_data, many=True)
