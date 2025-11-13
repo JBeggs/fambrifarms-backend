@@ -71,6 +71,17 @@ class Order(models.Model):
     subtotal = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     total_amount = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     
+    # Order locking for concurrent editing prevention
+    locked_by = models.ForeignKey(
+        User, 
+        on_delete=models.SET_NULL, 
+        null=True, 
+        blank=True,
+        related_name='locked_orders',
+        help_text='User currently editing this order'
+    )
+    locked_at = models.DateTimeField(null=True, blank=True, help_text='When the order was locked')
+    
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     

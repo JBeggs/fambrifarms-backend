@@ -214,15 +214,24 @@ class OrderSerializer(serializers.ModelSerializer):
     restaurant_email = serializers.CharField(source='restaurant.email', read_only=True)
     purchase_orders = serializers.SerializerMethodField()
     
+    locked_by_email = serializers.CharField(source='locked_by.email', read_only=True)
+    locked_by_name = serializers.SerializerMethodField()
+    
     class Meta:
         model = Order
         fields = ['id', 'order_number', 'restaurant', 'restaurant_name', 'restaurant_business_name', 
                  'restaurant_address', 'restaurant_phone', 'restaurant_email', 'status', 'order_date',
                  'delivery_date', 'whatsapp_message_id', 'original_message', 'parsed_by_ai', 'subtotal', 
-                 'total_amount', 'items', 'purchase_orders', 'created_at', 'updated_at']
+                 'total_amount', 'items', 'purchase_orders', 'locked_by', 'locked_by_email', 'locked_by_name',
+                 'locked_at', 'created_at', 'updated_at']
         read_only_fields = ['id', 'order_number', 'restaurant_name', 'restaurant_business_name', 
                            'restaurant_address', 'restaurant_phone', 'restaurant_email', 'purchase_orders', 
-                           'created_at', 'updated_at']
+                           'locked_by_email', 'locked_by_name', 'created_at', 'updated_at']
+    
+    def get_locked_by_name(self, obj):
+        if obj.locked_by:
+            return f"{obj.locked_by.first_name} {obj.locked_by.last_name}".strip() or obj.locked_by.email
+        return None
     
     def get_restaurant_name(self, obj):
         return f"{obj.restaurant.first_name} {obj.restaurant.last_name}"

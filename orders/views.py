@@ -238,6 +238,54 @@ def update_order_status(request, order_id):
     return Response(serializer.data)
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def lock_order(request, order_id):
+    """Lock an order for editing"""
+    order = get_object_or_404(Order, id=order_id)
+    
+    # Check if order is already locked by another user
+    if order.locked_by is not None and order.locked_by != request.user:
+        # Check if lock is stale (older than 30 minutes)
+        from django.utils import timezone
+        from datetime import timedelta
+        if order.locked_at and (timezone.now() - order.locked_at) > timedelta(minutes=30):
+            # Lock is stale, allow new lock
+            order.locked_by = request.user
+            order.locked_at = timezone.now()
+            order.save()
+        else:
+            return Response({
+                'error': 'Order is currently being edited by another user',
+                'locked_by': order.locked_by.email if order.locked_by else None,
+                'locked_at': order.locked_at.isoformat() if order.locked_at else None,
+            }, status=status.HTTP_409_CONFLICT)
+    else:
+        # Lock the order
+        order.locked_by = request.user
+        order.locked_at = timezone.now()
+        order.save()
+    
+    serializer = OrderSerializer(order)
+    return Response(serializer.data)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def unlock_order(request, order_id):
+    """Unlock an order"""
+    order = get_object_or_404(Order, id=order_id)
+    
+    # Only unlock if locked by current user or admin
+    if order.locked_by == request.user or request.user.user_type == 'admin':
+        order.locked_by = None
+        order.locked_at = None
+        order.save()
+        return Response({'success': True, 'message': 'Order unlocked'})
+    else:
+        return Response({
+            'error': 'You can only unlock orders that you locked'
+        }, status=status.HTTP_403_FORBIDDEN)
+
+@api_view(['POST'])
 @permission_classes([AllowAny])
 def create_order_from_whatsapp(request):
     """

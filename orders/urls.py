@@ -7,6 +7,9 @@ urlpatterns = [
     path('<int:order_id>/update-status/', views.update_order_status, name='update_order_status'),
     # Alias to match API overview
     path('<int:order_id>/status/', views.update_order_status, name='order_status'),
+    # Order locking endpoints
+    path('<int:order_id>/lock/', views.lock_order, name='lock_order'),
+    path('<int:order_id>/unlock/', views.unlock_order, name='unlock_order'),
     # WhatsApp integration endpoint
     path('from-whatsapp/', views.create_order_from_whatsapp, name='create_order_from_whatsapp'),
     # Customer orders endpoint
