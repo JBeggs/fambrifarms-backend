@@ -50,6 +50,30 @@ class ProductListView(generics.ListCreateAPIView):
     permission_classes = [AllowAny]
     pagination_class = None
     
+    def create(self, request, *args, **kwargs):
+        """Override create to add better error logging"""
+        try:
+            print(f"[PRODUCT_CREATE] Request data: {request.data}")
+            serializer = self.get_serializer(data=request.data)
+            if not serializer.is_valid():
+                print(f"[PRODUCT_CREATE] Validation errors: {serializer.errors}")
+                return Response({
+                    'error': 'Validation failed',
+                    'details': serializer.errors
+                }, status=status.HTTP_400_BAD_REQUEST)
+            
+            self.perform_create(serializer)
+            headers = self.get_success_headers(serializer.data)
+            return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+        except Exception as e:
+            print(f"[PRODUCT_CREATE] Unexpected error: {str(e)}")
+            import traceback
+            traceback.print_exc()
+            return Response({
+                'error': 'Internal server error',
+                'details': str(e)
+            }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     def get_queryset(self):
         queryset = Product.objects.select_related('department', 'procurement_supplier').all()
         
