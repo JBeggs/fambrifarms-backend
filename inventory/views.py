@@ -626,6 +626,7 @@ def stock_adjustment(request):
         quantity = data['quantity']
         reason = data['reason']
         notes = data.get('notes') or ''
+        reference_number = data.get('reference_number')
         
         logger.debug(f"Validated data: movement_type={movement_type}, quantity={quantity}, reason={reason}")
         
@@ -670,14 +671,25 @@ def stock_adjustment(request):
                 
                 logger.info(f"Stock adjustment completed. New levels - Product: {product.stock_level}, Inventory: {inventory.available_quantity}")
                 
+                # Determine reference_number: use provided one, or generate default
+                if not reference_number:
+                    reference_number = f"ADJ-{timezone.now().strftime('%Y%m%d%H%M%S')}"
+                
+                # For stock take wastage, store notes as-is (no "Reason:" prefix)
+                # For other adjustments, combine reason and notes
+                if reference_number.startswith('STOCK-TAKE-') and movement_type == 'finished_waste':
+                    final_notes = notes  # Store notes as-is for stock take wastage
+                else:
+                    final_notes = f"Reason: {reason}. {notes}".strip()
+                
                 # Create movement record
                 StockMovement.objects.create(
                     movement_type=movement_type,
-                    reference_number=f"ADJ-{timezone.now().strftime('%Y%m%d%H%M%S')}",
+                    reference_number=reference_number,
                     product=product,
                     quantity=quantity,
                     user=request.user,
-                    notes=f"Reason: {reason}. {notes}".strip()
+                    notes=final_notes
                 )
                 
                 return Response(

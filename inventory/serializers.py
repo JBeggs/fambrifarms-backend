@@ -283,6 +283,7 @@ class StockAdjustmentSerializer(serializers.Serializer):
     quantity = serializers.DecimalField(max_digits=10, decimal_places=2)
     reason = serializers.CharField(max_length=200)
     notes = serializers.CharField(max_length=500, required=False)
+    reference_number = serializers.CharField(max_length=50, required=False)
     
     def validate(self, data):
         adjustment_type = data.get('adjustment_type')

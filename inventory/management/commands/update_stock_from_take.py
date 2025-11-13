@@ -273,7 +273,7 @@ class Command(BaseCommand):
                             product=product,
                             quantity=wastage_value,
                             user=system_user,
-                            notes=f"Stock take wastage: {reason or 'No reason provided'}"
+                            notes=reason or ''
                         )
                 
                 processed.append({
