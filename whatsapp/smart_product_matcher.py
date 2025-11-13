@@ -108,6 +108,23 @@ class SmartProductMatcher:
                 if word not in name_index:
                     name_index[word] = []
                 name_index[word].append(i)
+                
+                # Add plural/singular variants to index for better matching
+                # This allows "lemon" to find "Lemons" and vice versa
+                singular_form = self._get_singular(word)
+                plural_form = self._get_plural(word)
+                
+                if singular_form != word:
+                    if singular_form not in name_index:
+                        name_index[singular_form] = []
+                    if i not in name_index[singular_form]:  # Avoid duplicates
+                        name_index[singular_form].append(i)
+                
+                if plural_form != word:
+                    if plural_form not in name_index:
+                        name_index[plural_form] = []
+                    if i not in name_index[plural_form]:  # Avoid duplicates
+                        name_index[plural_form].append(i)
         
         # Cache the data
         self._products_cache = all_products_data
@@ -849,6 +866,39 @@ class SmartProductMatcher:
         print(f"[SEARCH] Found {len(candidate_indices)} candidates for '{product_name}' ({len(main_search_words)} words)")
         return candidate_indices
     
+    def _get_singular(self, word: str) -> str:
+        """Convert plural word to singular form"""
+        if len(word) <= 3:
+            return word
+        
+        # Common plural patterns
+        if word.endswith('ies'):
+            return word[:-3] + 'y'  # cherries -> cherry
+        elif word.endswith('es') and len(word) > 4:
+            # Check if it's a plural (e.g., tomatoes, potatoes)
+            if word[-3] in 'aeiou':
+                return word[:-2]  # tomatoes -> tomato
+            return word[:-1]  # boxes -> box
+        elif word.endswith('s') and not word.endswith('ss'):
+            return word[:-1]  # lemons -> lemon, apples -> apple
+        
+        return word
+    
+    def _get_plural(self, word: str) -> str:
+        """Convert singular word to plural form"""
+        if len(word) <= 3:
+            return word
+        
+        # Common pluralization rules
+        if word.endswith('y') and len(word) > 3:
+            return word[:-1] + 'ies'  # cherry -> cherries
+        elif word.endswith('s') or word.endswith('x') or word.endswith('z'):
+            return word + 'es'  # box -> boxes, fox -> foxes
+        elif word.endswith('o'):
+            return word + 'es'  # tomato -> tomatoes
+        else:
+            return word + 's'  # lemon -> lemons, apple -> apples
+    
     def _extract_search_words(self, product_name: str) -> List[str]:
         """Extract meaningful search words from product name, excluding packaging info"""
         import re
@@ -870,10 +920,10 @@ class SmartProductMatcher:
         if not search_words:
             return set()
         
-        # Start with products containing the first word
+        # Start with products containing the first word (including variants from index)
         result_indices = set(self.name_index.get(search_words[0], []))
         
-        # Intersect with products containing each subsequent word
+        # Intersect with products containing each subsequent word (including variants from index)
         for word in search_words[1:]:
             word_indices = set(self.name_index.get(word, []))
             result_indices = result_indices.intersection(word_indices)
@@ -882,21 +932,35 @@ class SmartProductMatcher:
             if not result_indices:
                 break
         
-        # STRICT FILTERING: Require that search words appear as complete words, not substrings
+        # STRICT FILTERING: Require that search words (or their variants) appear as complete words
         # This prevents "tomatoes" from matching "avocados" or "potatoes"
+        # But allows "lemon" to match "Lemons" via the index variants we added
         filtered_indices = set()
+        import re
         for idx in result_indices:
             product_data = self.all_products_data[idx]
             product_name_lower = product_data['name'].lower()
             product_words = self._extract_search_words(product_data['name'])
             
-            # Check if ALL search words appear as complete words in the product name
+            # Check if ALL search words (or their variants) appear as complete words in the product name
             all_words_match = True
             for search_word in search_words:
-                # Check if search word appears as a complete word (word boundary)
-                import re
-                word_pattern = r'\b' + re.escape(search_word.lower()) + r'\b'
-                if not re.search(word_pattern, product_name_lower):
+                # Check for original word and its variants
+                search_variants = {
+                    search_word.lower(),
+                    self._get_singular(search_word).lower(),
+                    self._get_plural(search_word).lower()
+                }
+                
+                # Check if any variant appears as a complete word
+                word_found = False
+                for variant in search_variants:
+                    word_pattern = r'\b' + re.escape(variant) + r'\b'
+                    if re.search(word_pattern, product_name_lower):
+                        word_found = True
+                        break
+                
+                if not word_found:
                     all_words_match = False
                     break
             
@@ -907,21 +971,32 @@ class SmartProductMatcher:
     
     def _find_single_word_matches(self, search_word: str) -> set:
         """Find products that contain the search word as a complete word (not substring)"""
+        # Get candidates from index (which now includes plural/singular variants)
         candidate_indices = set(self.name_index.get(search_word, []))
         
-        # STRICT FILTERING: Require that search word appears as a complete word
+        # STRICT FILTERING: Require that search word (or its variant) appears as a complete word
         # This prevents "tomato" from matching "potato" or "avocado"
+        # But allows "lemon" to match "Lemons" via the index variants we added
         filtered_indices = set()
         import re
-        word_pattern = r'\b' + re.escape(search_word.lower()) + r'\b'
+        
+        # Check for both the original word and its variants
+        search_variants = {
+            search_word.lower(),
+            self._get_singular(search_word).lower(),
+            self._get_plural(search_word).lower()
+        }
         
         for idx in candidate_indices:
             product_data = self.all_products_data[idx]
             product_name_lower = product_data['name'].lower()
             
-            # Check if search word appears as a complete word (word boundary)
-            if re.search(word_pattern, product_name_lower):
-                filtered_indices.add(idx)
+            # Check if any variant appears as a complete word (word boundary)
+            for variant in search_variants:
+                word_pattern = r'\b' + re.escape(variant) + r'\b'
+                if re.search(word_pattern, product_name_lower):
+                    filtered_indices.add(idx)
+                    break
         
         return filtered_indices
     
