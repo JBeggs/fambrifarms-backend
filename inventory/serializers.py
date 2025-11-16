@@ -284,6 +284,7 @@ class StockAdjustmentSerializer(serializers.Serializer):
     reason = serializers.CharField(max_length=200)
     notes = serializers.CharField(max_length=500, required=False)
     reference_number = serializers.CharField(max_length=50, required=False)
+    weight = serializers.DecimalField(max_digits=10, decimal_places=2, required=False, allow_null=True, help_text="Weight in kg (for stock take entries)")
     
     def validate(self, data):
         adjustment_type = data.get('adjustment_type')

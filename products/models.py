@@ -401,3 +401,32 @@ class Recipe(models.Model):
     
     class Meta:
         ordering = ['product__name']
+
+class RestaurantPackageRestriction(models.Model):
+    """Restricts which package sizes a restaurant can order for specific departments"""
+    restaurant = models.ForeignKey(
+        'accounts.RestaurantProfile', 
+        on_delete=models.CASCADE,
+        related_name='package_restrictions'
+    )
+    department = models.ForeignKey(
+        Department, 
+        on_delete=models.CASCADE,
+        related_name='restaurant_restrictions'
+    )
+    allowed_package_sizes = models.JSONField(
+        default=list,
+        help_text="List of allowed package sizes in grams (e.g., [100, 150]). Empty list means all sizes allowed."
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    
+    def __str__(self):
+        sizes_str = ', '.join([f"{s}g" for s in self.allowed_package_sizes]) if self.allowed_package_sizes else "All sizes"
+        return f"{self.restaurant.business_name} - {self.department.name}: {sizes_str}"
+    
+    class Meta:
+        unique_together = ['restaurant', 'department']
+        ordering = ['restaurant__business_name', 'department__name']
+        verbose_name = 'Restaurant Package Restriction'
+        verbose_name_plural = 'Restaurant Package Restrictions'

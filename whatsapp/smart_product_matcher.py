@@ -1047,9 +1047,24 @@ class SmartProductMatcher:
         
         return filtered_indices
     
-    def find_matches(self, parsed_message: ParsedMessage) -> List[SmartMatchResult]:
-        """Find matching products using database"""
-        return self._find_matches_from_database(parsed_message)
+    def find_matches(self, parsed_message: ParsedMessage, restaurant=None) -> List[SmartMatchResult]:
+        """Find matching products using database
+        
+        Args:
+            parsed_message: ParsedMessage instance
+            restaurant: Optional RestaurantProfile to filter by package restrictions
+        """
+        results = self._find_matches_from_database(parsed_message)
+        
+        # Filter by restaurant package restrictions if restaurant provided
+        if restaurant:
+            from products.package_restrictions import is_product_allowed_for_restaurant
+            results = [
+                r for r in results 
+                if is_product_allowed_for_restaurant(r.product, restaurant)
+            ]
+        
+        return results
     
     
     def _find_matches_from_database(self, parsed_message: ParsedMessage) -> List[SmartMatchResult]:
@@ -1766,8 +1781,15 @@ class SmartProductMatcher:
         
         return all_results
     
-    def get_suggestions(self, message: str, min_confidence: float = 5.0, max_suggestions: int = 30) -> SmartMatchSuggestions:
-        """Get smart suggestions with multiple options when no good match is found"""
+    def get_suggestions(self, message: str, min_confidence: float = 5.0, max_suggestions: int = 30, restaurant=None) -> SmartMatchSuggestions:
+        """Get smart suggestions with multiple options when no good match is found
+        
+        Args:
+            message: Product name or message string
+            min_confidence: Minimum confidence score threshold
+            max_suggestions: Maximum number of suggestions to return
+            restaurant: Optional RestaurantProfile to filter by package restrictions
+        """
         parsed_messages = self.parse_message(message)
         
         if not parsed_messages:
@@ -1779,7 +1801,7 @@ class SmartProductMatcher:
             )
         
         parsed = parsed_messages[0]  # Take first parsed result
-        all_matches = self.find_matches(parsed)
+        all_matches = self.find_matches(parsed, restaurant=restaurant)
         
         # Filter matches above minimum confidence
         valid_matches = [m for m in all_matches if m.confidence_score >= min_confidence]

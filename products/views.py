@@ -6,12 +6,14 @@ from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
 from decimal import Decimal
 from django.db import transaction
-from .models import Product, Department, ProductAlert, Recipe
+from .models import Product, Department, ProductAlert, Recipe, RestaurantPackageRestriction
 from .models_business_settings import BusinessSettings
-from .serializers import ProductSerializer, DepartmentSerializer
+from .serializers import ProductSerializer, DepartmentSerializer, RestaurantPackageRestrictionSerializer
 from .serializers_business_settings import AppConfigSerializer
 from .services import ProcurementIntelligenceService
 from .unified_procurement_service import UnifiedProcurementService
+from .package_restrictions import get_allowed_products_for_restaurant
+from accounts.models import RestaurantProfile
 
 User = get_user_model()
 
@@ -84,8 +86,13 @@ class ProductListView(generics.ListCreateAPIView):
             
         # Filter by department
         department = self.request.query_params.get('department')
+        department_obj = None
         if department:
-            queryset = queryset.filter(department__name__icontains=department)
+            try:
+                department_obj = Department.objects.get(name__icontains=department)
+                queryset = queryset.filter(department=department_obj)
+            except Department.DoesNotExist:
+                pass
         
         # Filter by procurement supplier
         procurement_supplier = self.request.query_params.get('procurement_supplier')
@@ -94,7 +101,22 @@ class ProductListView(generics.ListCreateAPIView):
                 queryset = queryset.filter(procurement_supplier__isnull=True)
             else:
                 queryset = queryset.filter(procurement_supplier__name__icontains=procurement_supplier)
-            
+        
+        # Filter by restaurant package restrictions (NEW)
+        restaurant_id = self.request.query_params.get('restaurant_id')
+        if restaurant_id:
+            try:
+                restaurant = RestaurantProfile.objects.get(id=restaurant_id)
+                # Apply package size restrictions
+                queryset = get_allowed_products_for_restaurant(
+                    restaurant=restaurant,
+                    department=department_obj,
+                    queryset=queryset
+                )
+            except RestaurantProfile.DoesNotExist:
+                # Restaurant not found, return all products (fallback)
+                pass
+        
         return queryset.order_by('name')
 
 class ProductDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -140,6 +162,27 @@ class DepartmentListView(generics.ListCreateAPIView):
     queryset = Department.objects.all()
     serializer_class = DepartmentSerializer
     permission_classes = [AllowAny]
+
+class RestaurantPackageRestrictionViewSet(viewsets.ModelViewSet):
+    """CRUD operations for restaurant package restrictions"""
+    queryset = RestaurantPackageRestriction.objects.select_related('restaurant', 'department').all()
+    serializer_class = RestaurantPackageRestrictionSerializer
+    permission_classes = [AllowAny]
+    
+    def get_queryset(self):
+        queryset = RestaurantPackageRestriction.objects.select_related('restaurant', 'department').all()
+        
+        # Filter by restaurant
+        restaurant_id = self.request.query_params.get('restaurant_id')
+        if restaurant_id:
+            queryset = queryset.filter(restaurant_id=restaurant_id)
+        
+        # Filter by department
+        department_id = self.request.query_params.get('department_id')
+        if department_id:
+            queryset = queryset.filter(department_id=department_id)
+        
+        return queryset.order_by('restaurant__business_name', 'department__name')
 
 @api_view(['GET'])
 def product_alerts(request):

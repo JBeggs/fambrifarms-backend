@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Product, Department, ProductAlert, Recipe, MarketProcurementRecommendation, MarketProcurementItem
+from .models import Product, Department, ProductAlert, Recipe, MarketProcurementRecommendation, MarketProcurementItem, RestaurantPackageRestriction
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -78,3 +78,15 @@ class MarketProcurementRecommendationSerializer(serializers.ModelSerializer):
             'id', 'for_date', 'status', 'total_estimated_cost',
             'created_at', 'approved_at', 'approved_by', 'items'
         ]
+
+class RestaurantPackageRestrictionSerializer(serializers.ModelSerializer):
+    restaurant_name = serializers.CharField(source='restaurant.business_name', read_only=True)
+    department_name = serializers.CharField(source='department.name', read_only=True)
+    
+    class Meta:
+        model = RestaurantPackageRestriction
+        fields = [
+            'id', 'restaurant', 'restaurant_name', 'department', 'department_name',
+            'allowed_package_sizes', 'created_at', 'updated_at'
+        ]
+        read_only_fields = ['created_at', 'updated_at']

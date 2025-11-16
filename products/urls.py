@@ -1,6 +1,11 @@
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
 from . import unified_procurement_views, views_procurement, views_business_settings
+
+# Router for ViewSets
+router = DefaultRouter()
+router.register(r'restrictions', views.RestaurantPackageRestrictionViewSet, basename='restriction')
 
 urlpatterns = [
     path('', views.api_overview, name='products_api_overview'),
@@ -48,4 +53,7 @@ urlpatterns = [
     path('business-settings/departments/', views_business_settings.get_department_buffer_settings, name='get_department_buffer_settings'),
     path('business-settings/departments/<str:department_name>/', views_business_settings.update_department_buffer_settings, name='update_department_buffer_settings'),
     path('business-settings/reset/', views_business_settings.reset_to_defaults, name='reset_business_settings'),
+    
+    # Restaurant Package Restrictions
+    path('', include(router.urls)),
 ]

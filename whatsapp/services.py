@@ -1001,6 +1001,14 @@ def create_order_items(order, message):
     matched_products = {}
     customer_prices = {}
     
+    # Get restaurant profile for package restrictions
+    restaurant_profile = None
+    if hasattr(order, 'restaurant') and order.restaurant:
+        try:
+            restaurant_profile = order.restaurant.restaurantprofile
+        except:
+            pass
+    
     for item_data in parsed_items:
         try:
             # Do product matching outside transaction
@@ -1008,7 +1016,9 @@ def create_order_items(order, message):
                 item_data['product_name'], 
                 item_data.get('quantity'),
                 item_data.get('unit'),
-                original_message=item_data.get('original_text')
+                customer=order.restaurant,
+                original_message=item_data.get('original_text'),
+                restaurant=restaurant_profile
             )
             matched_products[item_data['product_name']] = match_result
             
@@ -1048,6 +1058,33 @@ def create_order_items(order, message):
                     item_data['unit'] = matched_unit
             else:
                 product = match_result
+            
+            # Check restaurant package restrictions if product found
+            if product and hasattr(order, 'restaurant') and order.restaurant:
+                try:
+                    restaurant_profile = order.restaurant.restaurantprofile
+                    from products.package_restrictions import is_product_allowed_for_restaurant
+                    if not is_product_allowed_for_restaurant(product, restaurant_profile):
+                        # Product is restricted, mark as failed
+                        failed_products.append({
+                            'original_name': item_data['product_name'],
+                            'normalized_name': normalize_product_name_for_matching(item_data['product_name']),
+                            'failure_reason': f'Product "{product.name}" is not available for this restaurant due to package size restrictions',
+                            'original_text': item_data['original_text'],
+                            'quantity': item_data['quantity'],
+                            'unit': item_data['unit'],
+                            'product_id': product.id,
+                            'product_name': product.name
+                        })
+                        log_processing_action(message, 'restriction_violation', {
+                            'product': product.name,
+                            'restaurant': restaurant_profile.business_name,
+                            'item_data': item_data
+                        })
+                        continue  # Skip this product
+                except Exception as restriction_e:
+                    # If restriction check fails, log but allow product (fallback)
+                    print(f"[RESTRICTION_CHECK] Error checking restrictions: {restriction_e}")
             
             if not product:
                 # Check if this is a parsing error with suggestions
@@ -2076,18 +2113,34 @@ def match_size_specific_product(product_name, quantity, unit):
 
 
 
-def get_or_create_product_enhanced(product_name, quantity, unit, customer=None, original_message=None):
+def get_or_create_product_enhanced(product_name, quantity, unit, customer=None, original_message=None, restaurant=None):
     """
     Enhanced product matching using SmartProductMatcher with production data
+    
+    Args:
+        product_name: Product name to match
+        quantity: Quantity requested
+        unit: Unit requested
+        customer: Customer user object (optional)
+        original_message: Original message text (optional)
+        restaurant: RestaurantProfile instance for package restrictions (optional)
     """
     from .smart_product_matcher import SmartProductMatcher
     from products.models import Product
     from settings.models import BusinessConfiguration
+    from accounts.models import RestaurantProfile
     import logging
     
     logger = logging.getLogger(__name__)
     
     try:
+        # Get restaurant from customer if not provided
+        if not restaurant and customer:
+            try:
+                restaurant = customer.restaurantprofile
+            except RestaurantProfile.DoesNotExist:
+                restaurant = None
+        
         # Get configuration from database
         confidence_threshold_config = BusinessConfiguration.objects.filter(
             name='product_matching_confidence_threshold',
@@ -2127,7 +2180,8 @@ def get_or_create_product_enhanced(product_name, quantity, unit, customer=None, 
             )
         
         # Use find_matches directly for better quantity-specific matching
-        matches = matcher.find_matches(parsed_message)
+        # Pass restaurant to filter by package restrictions
+        matches = matcher.find_matches(parsed_message, restaurant=restaurant)
         
         # Create suggestions object manually
         from .smart_product_matcher import SmartMatchSuggestions

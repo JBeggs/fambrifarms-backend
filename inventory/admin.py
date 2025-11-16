@@ -145,7 +145,7 @@ class FinishedInventoryAdmin(admin.ModelAdmin):
 @admin.register(StockMovement)
 class StockMovementAdmin(admin.ModelAdmin):
     list_display = ('timestamp', 'movement_type', 'reference_number', 'item_display', 
-                   'quantity', 'unit_cost', 'total_value', 'user')
+                   'quantity', 'weight', 'unit_cost', 'total_value', 'user')
     list_filter = ('movement_type', 'timestamp')
     search_fields = ('reference_number', 'raw_material__name', 'product__name')
     readonly_fields = ('timestamp',)

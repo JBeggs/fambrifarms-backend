@@ -3,7 +3,7 @@ from django.utils.html import format_html
 from django.urls import reverse
 from django.utils.safestring import mark_safe
 from django.db.models import Sum, Count
-from .models import Department, Product, ProductAlert, Recipe, MarketProcurementRecommendation, MarketProcurementItem
+from .models import Department, Product, ProductAlert, Recipe, MarketProcurementRecommendation, MarketProcurementItem, RestaurantPackageRestriction
 
 @admin.register(Department)
 class DepartmentAdmin(admin.ModelAdmin):
@@ -675,3 +675,75 @@ class MarketProcurementItemAdmin(admin.ModelAdmin):
         )
     procurement_method_colored.short_description = 'Method'
     procurement_method_colored.admin_order_field = 'procurement_method'
+
+
+@admin.register(RestaurantPackageRestriction)
+class RestaurantPackageRestrictionAdmin(admin.ModelAdmin):
+    list_display = (
+        'restaurant_link', 'department_link', 'allowed_sizes_display',
+        'created_at_formatted', 'updated_at_formatted'
+    )
+    list_filter = (
+        'restaurant', 'department',
+        ('created_at', admin.DateFieldListFilter),
+        ('updated_at', admin.DateFieldListFilter),
+    )
+    search_fields = (
+        'restaurant__business_name', 'restaurant__branch_name',
+        'department__name'
+    )
+    readonly_fields = ('created_at', 'updated_at')
+    
+    fieldsets = (
+        ('Restriction Information', {
+            'fields': ('restaurant', 'department', 'allowed_package_sizes'),
+            'description': 'Restrict which package sizes a restaurant can order for specific departments. Empty list means all sizes allowed.'
+        }),
+        ('Timestamps', {
+            'fields': ('created_at', 'updated_at'),
+            'classes': ('collapse',)
+        }),
+    )
+    
+    def restaurant_link(self, obj):
+        """Display restaurant as link"""
+        return format_html(
+            '<a href="{}">{}</a>',
+            reverse('admin:accounts_restaurantprofile_change', args=[obj.restaurant.pk]),
+            obj.restaurant.business_name
+        )
+    restaurant_link.short_description = 'Restaurant'
+    restaurant_link.admin_order_field = 'restaurant__business_name'
+    
+    def department_link(self, obj):
+        """Display department as link"""
+        return format_html(
+            '<a href="{}">{}</a>',
+            reverse('admin:products_department_change', args=[obj.department.pk]),
+            obj.department.name
+        )
+    department_link.short_description = 'Department'
+    department_link.admin_order_field = 'department__name'
+    
+    def allowed_sizes_display(self, obj):
+        """Display allowed package sizes"""
+        if not obj.allowed_package_sizes:
+            return format_html('<span style="color: green;">All sizes allowed</span>')
+        sizes_str = ', '.join([f"{s}g" for s in sorted(obj.allowed_package_sizes)])
+        return format_html('<span style="color: #0066cc; font-weight: bold;">{}</span>', sizes_str)
+    allowed_sizes_display.short_description = 'Allowed Package Sizes'
+    
+    def created_at_formatted(self, obj):
+        """Format creation date"""
+        return obj.created_at.strftime('%Y-%m-%d %H:%M')
+    created_at_formatted.short_description = 'Created'
+    created_at_formatted.admin_order_field = 'created_at'
+    
+    def updated_at_formatted(self, obj):
+        """Format update date"""
+        return obj.updated_at.strftime('%Y-%m-%d %H:%M')
+    updated_at_formatted.short_description = 'Updated'
+    updated_at_formatted.admin_order_field = 'updated_at'
+    
+    def get_queryset(self, request):
+        return super().get_queryset(request).select_related('restaurant', 'department')

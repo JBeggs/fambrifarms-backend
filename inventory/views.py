@@ -627,6 +627,7 @@ def stock_adjustment(request):
         reason = data['reason']
         notes = data.get('notes') or ''
         reference_number = data.get('reference_number')
+        weight = data.get('weight')
         
         logger.debug(f"Validated data: movement_type={movement_type}, quantity={quantity}, reason={reason}")
         
@@ -688,6 +689,7 @@ def stock_adjustment(request):
                     reference_number=reference_number,
                     product=product,
                     quantity=quantity,
+                    weight=weight,
                     user=request.user,
                     notes=final_notes
                 )
@@ -721,6 +723,7 @@ def stock_adjustment(request):
                         raw_material=raw_material,
                         raw_material_batch=batch,
                         quantity=quantity,
+                        weight=weight,
                         user=request.user,
                         notes=f"Reason: {reason}. {notes}".strip()
                     )

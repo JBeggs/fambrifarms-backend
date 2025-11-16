@@ -304,6 +304,7 @@ class StockMovement(models.Model):
     quantity = models.DecimalField(max_digits=10, decimal_places=2)
     unit_cost = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
     total_value = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True)
+    weight = models.DecimalField(max_digits=10, decimal_places=2, null=True, blank=True, help_text="Weight in kg (for stock take entries)")
     
     # Context
     user = models.ForeignKey(User, on_delete=models.CASCADE)
