@@ -636,6 +636,26 @@ def stock_adjustment(request):
                 # Finished inventory adjustment
                 product = Product.objects.get(id=data['product_id'])
                 
+                # Determine which value to use for stock calculation based on product unit
+                # For kg products: use weight (required), weight replaces quantity
+                # For other units (boxes, bags, etc.): use quantity (count of packages)
+                product_unit = (product.unit or '').lower().strip()
+                is_kg_product = product_unit == 'kg'
+                
+                # For kg products, use weight instead of quantity for stock calculations
+                if is_kg_product:
+                    if weight is None or weight == 0:
+                        # Weight is required for kg products - this should be validated earlier
+                        logger.warning(f"Kg product {product.name} has no weight provided, using quantity ({quantity}) as fallback")
+                        stock_value = quantity
+                    else:
+                        stock_value = weight
+                        logger.info(f"Using weight ({weight} kg) for stock calculation for kg product {product.name}")
+                else:
+                    # For non-kg products (boxes, bags, etc.), use quantity (count of packages)
+                    stock_value = quantity
+                    logger.debug(f"Using quantity ({quantity}) for stock calculation for {product.unit} product {product.name}")
+                
                 # Get or create FinishedInventory record
                 inventory, created = FinishedInventory.objects.get_or_create(
                     product=product,
@@ -653,15 +673,16 @@ def stock_adjustment(request):
                 
                 logger.info(f"Adjusting stock for product {product.name} (ID: {product.id})")
                 logger.debug(f"Before adjustment - Product stock: {product.stock_level}, Inventory available: {inventory.available_quantity}")
+                logger.debug(f"Product unit: {product.unit}, Using {'weight' if (is_kg_product and weight and weight > 0) else 'quantity'}: {stock_value}")
                 
                 # Update FinishedInventory first, then sync Product
                 if movement_type == 'finished_adjust':
-                    inventory.available_quantity += quantity
+                    inventory.available_quantity += stock_value
                 elif movement_type == 'finished_set':
-                    # Set to exact quantity (replace current stock)
-                    inventory.available_quantity = quantity
+                    # Set to exact value (replace current stock)
+                    inventory.available_quantity = stock_value
                 else:  # waste
-                    inventory.available_quantity -= quantity
+                    inventory.available_quantity -= stock_value
                 
                 # Sync Product stock_level to match FinishedInventory
                 product.stock_level = inventory.available_quantity
@@ -683,13 +704,15 @@ def stock_adjustment(request):
                 else:
                     final_notes = f"Reason: {reason}. {notes}".strip()
                 
-                # Create movement record
+                # Create movement record - store both quantity and weight for audit trail
+                # For kg products: weight is used for calculation, quantity stored for reference
+                # For other products: quantity is used for calculation, weight stored if provided
                 StockMovement.objects.create(
                     movement_type=movement_type,
                     reference_number=reference_number,
                     product=product,
-                    quantity=quantity,
-                    weight=weight,
+                    quantity=quantity,  # Always store quantity (for non-kg products or reference)
+                    weight=weight,  # Always store weight (for kg products)
                     user=request.user,
                     notes=final_notes
                 )
