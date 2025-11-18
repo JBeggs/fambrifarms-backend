@@ -2362,6 +2362,7 @@ def create_order_from_suggestions(request):
                 
                 # Handle stock actions
                 stock_result = None
+                stock_movement = None  # Store movement to update reference after order creation
                 if stock_action == 'reserve':
                     # Reserve stock for this item
                     from .services import reserve_stock_for_customer
@@ -2372,7 +2373,26 @@ def create_order_from_suggestions(request):
                         fulfillment_method='user_confirmed'
                     )
                     
-                    if not stock_result.get('success', False):
+                    if stock_result.get('success', False):
+                        # Get the StockMovement that was just created so we can update its reference_number
+                        from inventory.models import StockMovement
+                        from django.utils import timezone
+                        from datetime import timedelta
+                        # Find the movement created in the last few seconds for this product and customer
+                        time_window = timedelta(seconds=5)
+                        recent_movements = StockMovement.objects.filter(
+                            product=product,
+                            user=customer,
+                            movement_type='finished_reserve',
+                            timestamp__gte=timezone.now() - time_window
+                        ).order_by('-timestamp')
+                        
+                        # Match by quantity and recent timestamp
+                        for movement in recent_movements:
+                            if movement.quantity == quantity:
+                                stock_movement = movement
+                                break
+                    else:
                         logger.warning(f"Failed to reserve stock for {product.name}: {stock_result.get('message', 'Unknown error')}")
                 
                 elif stock_action == 'convert_to_kg':
@@ -2432,6 +2452,14 @@ def create_order_from_suggestions(request):
                     source_product=source_product,
                     source_quantity=source_quantity,
                 )
+                
+                # CRITICAL: Update StockMovement reference_number to use order number
+                # This links the reservation to the order so it can be found later
+                if stock_movement and stock_action == 'reserve':
+                    stock_movement.reference_number = order.order_number
+                    stock_movement.notes = f'Reserved for order {order.order_number} - {product.name}'
+                    stock_movement.save()
+                    logger.info(f"Updated StockMovement {stock_movement.id} reference_number to order {order.order_number} for {product.name}")
                 
                 created_items.append({
                     'id': order_item.id,

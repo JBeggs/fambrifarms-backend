@@ -638,7 +638,7 @@ def stock_adjustment(request):
                 
                 # Determine which value to use for stock calculation based on product unit
                 # For kg products: use weight (required), weight replaces quantity
-                # For other units (boxes, bags, etc.): use quantity (count of packages)
+                # For other units: prefer weight if provided, otherwise use quantity (count of packages)
                 product_unit = (product.unit or '').lower().strip()
                 is_kg_product = product_unit == 'kg'
                 
@@ -652,9 +652,13 @@ def stock_adjustment(request):
                         stock_value = weight
                         logger.info(f"Using weight ({weight} kg) for stock calculation for kg product {product.name}")
                 else:
-                    # For non-kg products (boxes, bags, etc.), use quantity (count of packages)
-                    stock_value = quantity
-                    logger.debug(f"Using quantity ({quantity}) for stock calculation for {product.unit} product {product.name}")
+                    # For non-kg products: prefer weight if provided, otherwise use quantity
+                    if weight is not None and weight > 0:
+                        stock_value = weight
+                        logger.info(f"Using weight ({weight}) for stock calculation for {product.unit} product {product.name}")
+                    else:
+                        stock_value = quantity
+                        logger.debug(f"Using quantity ({quantity}) for stock calculation for {product.unit} product {product.name}")
                 
                 # Get or create FinishedInventory record
                 inventory, created = FinishedInventory.objects.get_or_create(
@@ -673,16 +677,26 @@ def stock_adjustment(request):
                 
                 logger.info(f"Adjusting stock for product {product.name} (ID: {product.id})")
                 logger.debug(f"Before adjustment - Product stock: {product.stock_level}, Inventory available: {inventory.available_quantity}")
-                logger.debug(f"Product unit: {product.unit}, Using {'weight' if (is_kg_product and weight and weight > 0) else 'quantity'}: {stock_value}")
+                using_weight = (is_kg_product and weight and weight > 0) or (not is_kg_product and weight and weight > 0)
+                logger.debug(f"Product unit: {product.unit}, Using {'weight' if using_weight else 'quantity'}: {stock_value}")
                 
                 # Update FinishedInventory first, then sync Product
                 if movement_type == 'finished_adjust':
-                    inventory.available_quantity += stock_value
+                    # Add to stock (can be positive or negative adjustment)
+                    new_quantity = inventory.available_quantity + stock_value
+                    if new_quantity < 0:
+                        logger.warning(f"Adjustment ({stock_value}) would result in negative stock ({new_quantity}) for {product.name}. Clamping to 0.")
+                    inventory.available_quantity = max(Decimal('0.00'), new_quantity)
                 elif movement_type == 'finished_set':
                     # Set to exact value (replace current stock)
-                    inventory.available_quantity = stock_value
+                    # Ensure stock doesn't go negative
+                    inventory.available_quantity = max(Decimal('0.00'), stock_value)
                 else:  # waste
-                    inventory.available_quantity -= stock_value
+                    # Prevent negative stock - clamp to 0
+                    new_quantity = inventory.available_quantity - stock_value
+                    if new_quantity < 0:
+                        logger.warning(f"Wastage ({stock_value}) exceeds available stock ({inventory.available_quantity}) for {product.name}. Clamping to 0.")
+                    inventory.available_quantity = max(Decimal('0.00'), new_quantity)
                 
                 # Sync Product stock_level to match FinishedInventory
                 product.stock_level = inventory.available_quantity

@@ -113,8 +113,17 @@ class OrderItemSerializer(serializers.ModelSerializer):
         try:
             from inventory.models import StockMovement
             
-            # Look for stock movement for this order item
-            # Check by customer, product, and timing since reference doesn't contain order number
+            # FIRST: Check by reference_number (most reliable - links directly to order)
+            movement_by_ref = StockMovement.objects.filter(
+                product=obj.product,
+                reference_number=obj.order.order_number,
+                movement_type='finished_reserve'
+            ).order_by('-timestamp').first()
+            
+            if movement_by_ref:
+                return 'reserve'
+            
+            # SECOND: Check by customer, product, and timing (fallback for older orders)
             from datetime import timedelta
             time_window = timedelta(minutes=5)
             start_time = obj.order.created_at - time_window
@@ -155,8 +164,21 @@ class OrderItemSerializer(serializers.ModelSerializer):
         try:
             from inventory.models import StockMovement, FinishedInventory
             
-            # Look for stock movement for this order item
-            # Check by customer, product, and timing since reference doesn't contain order number
+            # FIRST: Check by reference_number (most reliable - links directly to order)
+            movement_by_ref = StockMovement.objects.filter(
+                product=obj.product,
+                reference_number=obj.order.order_number,
+                movement_type='finished_reserve'
+            ).order_by('-timestamp').first()
+            
+            if movement_by_ref:
+                return {
+                    'success': True,
+                    'message': f'Reserved {movement_by_ref.quantity} {obj.unit}',
+                    'reserved_quantity': float(movement_by_ref.quantity)
+                }
+            
+            # SECOND: Look for stock movement by customer, product, and timing (fallback)
             from datetime import timedelta
             time_window = timedelta(minutes=5)
             start_time = obj.order.created_at - time_window
