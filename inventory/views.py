@@ -2151,6 +2151,34 @@ def get_invoice_upload_status(request):
         })
 
 
+@api_view(['GET'])
+@permission_classes([IsAuthenticated])
+def check_stock_take_status(request):
+    """
+    Check if stock take was completed today or yesterday
+    Returns whether stock take has been completed for today's or yesterday's date
+    """
+    today = timezone.now().date()
+    yesterday = today - timedelta(days=1)
+    today_str = today.strftime('%Y%m%d')
+    yesterday_str = yesterday.strftime('%Y%m%d')
+    today_prefix = f'STOCK-TAKE-{today_str}'
+    yesterday_prefix = f'STOCK-TAKE-{yesterday_str}'
+    
+    # Check if there are any stock movements with today's or yesterday's stock take reference
+    stock_take_exists = StockMovement.objects.filter(
+        reference_number__startswith=today_prefix
+    ).exists() or StockMovement.objects.filter(
+        reference_number__startswith=yesterday_prefix
+    ).exists()
+    
+    return Response({
+        'completed': stock_take_exists,
+        'date': today.isoformat(),
+        'reference_prefix': today_prefix,
+    })
+
+
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 def upload_invoice_photo(request):

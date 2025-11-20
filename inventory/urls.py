@@ -41,6 +41,9 @@ urlpatterns = [
     path('pending-invoices/', views.get_pending_invoices, name='pending-invoices'),
     path('process-stock-received/', views.process_stock_received, name='process-stock-received'),
     
+    # Stock take status endpoint
+    path('stock-take-status/', views.check_stock_take_status, name='stock-take-status'),
+    
     # Weight input endpoints
     path('invoice/<int:invoice_id>/extracted-data/', views.get_extracted_invoice_data, name='get-extracted-invoice-data'),
     path('invoice/<int:invoice_id>/update-weights/', views.update_invoice_weights, name='update-invoice-weights'),
