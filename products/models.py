@@ -38,6 +38,12 @@ class Product(models.Model):
     department = models.ForeignKey(Department, on_delete=models.CASCADE, related_name='products')
     price = models.DecimalField(max_digits=10, decimal_places=2, validators=[MinValueValidator(Decimal('0.00'))])
     unit = models.CharField(max_length=20, choices=get_unit_choices, default='piece')
+    packaging_size = models.CharField(
+        max_length=50,
+        blank=True,
+        null=True,
+        help_text='Packaging size (e.g., "100g", "1kg", "500g"). Used for stock calculations when unit is discrete (packet, bag, box, etc.).'
+    )
     stock_level = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('0.00'))
     minimum_stock = models.DecimalField(max_digits=10, decimal_places=2, default=Decimal('5.00'))
     is_active = models.BooleanField(default=True)

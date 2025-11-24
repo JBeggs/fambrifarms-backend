@@ -81,19 +81,19 @@ class DepartmentAdmin(admin.ModelAdmin):
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = (
-        'name_link', 'department_link', 'price', 'unit',
+        'name_link', 'department_link', 'price', 'unit', 'packaging_size',
         'stock_status', 'unlimited_stock', 'needs_setup', 'is_active', 'supplier_info',
         'created_at_formatted', 'updated_at_formatted'
     )
     list_filter = (
-        'department', 'unit', 'is_active', 'needs_setup', 'unlimited_stock',
+        'department', 'unit', 'packaging_size', 'is_active', 'needs_setup', 'unlimited_stock',
         'procurement_supplier', 'cost_unit',
         ('created_at', admin.DateFieldListFilter),
         ('updated_at', admin.DateFieldListFilter),
         ('last_cost_update', admin.DateFieldListFilter),
     )
     search_fields = (
-        'name', 'description', 'department__name',
+        'name', 'description', 'department__name', 'packaging_size',
         'procurement_supplier__name', 'last_supplier__name'
     )
     readonly_fields = (
@@ -108,7 +108,8 @@ class ProductAdmin(admin.ModelAdmin):
             'fields': ('name', 'description', 'department')
         }),
         ('Pricing & Inventory', {
-            'fields': ('price', 'unit', 'stock_level', 'minimum_stock', 'is_active', 'unlimited_stock')
+            'fields': ('price', 'unit', 'packaging_size', 'stock_level', 'minimum_stock', 'is_active', 'unlimited_stock'),
+            'description': 'Packaging size (e.g., "100g", "1kg") is used for stock calculations when unit is discrete (packet, bag, box, etc.)'
         }),
         ('Procurement Management', {
             'fields': (
