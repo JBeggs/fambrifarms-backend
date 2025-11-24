@@ -478,6 +478,14 @@ def create_order_from_message_with_suggestions(message):
                 'suggestions': []
             }
         
+        # Get restaurant profile for package restrictions
+        restaurant_profile = None
+        try:
+            if hasattr(customer, 'restaurantprofile'):
+                restaurant_profile = customer.restaurantprofile
+        except:
+            pass
+        
         # Clean the message content first (remove stray x characters, etc.)
         from .message_parser import MessageParser
         parser = MessageParser()
@@ -513,11 +521,12 @@ def create_order_from_message_with_suggestions(message):
                 original_message=item_data['original_text']
             )
             
-            # Get suggestions for this item
+            # Get suggestions for this item WITH restaurant package restrictions
             suggestions_result = matcher.get_suggestions(
                 parsed_message.product_name, 
                 min_confidence=5.0, 
-                max_suggestions=30
+                max_suggestions=30,
+                restaurant=restaurant_profile  # Filter by package restrictions
             )
             
             # Format suggestions for frontend WITH STOCK INFORMATION
@@ -541,13 +550,42 @@ def create_order_from_message_with_suggestions(message):
                         'total_quantity': 0.0
                     })
                     
+                    # Extract packaging size if present in product name
+                    packaging_size = None
+                    if '(' in suggestion.product.name and ')' in suggestion.product.name:
+                        try:
+                            packaging_size = suggestion.product.name.split('(')[1].split(')')[0]
+                        except:
+                            pass
+                    
+                    # Calculate both count and weight for available quantity
+                    available_calc = calculate_stock_count_and_weight(
+                        stock['available_quantity'],
+                        suggestion.product.unit,
+                        packaging_size
+                    )
+                    
+                    # Calculate both count and weight for reserved quantity
+                    reserved_calc = calculate_stock_count_and_weight(
+                        stock['reserved_quantity'],
+                        suggestion.product.unit,
+                        packaging_size
+                    )
+                    
+                    # Add calculated values to stock info
+                    stock['available_quantity_kg'] = available_calc['available_quantity_kg']
+                    stock['available_quantity_count'] = available_calc['available_quantity_count']
+                    stock['reserved_quantity_kg'] = reserved_calc['available_quantity_kg']
+                    stock['reserved_quantity_count'] = reserved_calc['available_quantity_count']
+                    stock['stock_stored_in_kg'] = available_calc['stock_stored_in_kg']
+                    
                     suggestions.append({
                         'product_id': suggestion.product.id,
                         'product_name': suggestion.product.name,
                         'unit': suggestion.product.unit,
                         'price': float(suggestion.product.price),
                         'confidence_score': suggestion.confidence_score,
-                        'packaging_size': suggestion.product.name.split('(')[1].split(')')[0] if '(' in suggestion.product.name and ')' in suggestion.product.name else None,
+                        'packaging_size': packaging_size,
                         'stock': stock,
                         'in_stock': stock['available_quantity'] > 0
                     })
@@ -576,7 +614,8 @@ def create_order_from_message_with_suggestions(message):
             suggestions_result = matcher.get_suggestions(
                 original_text, 
                 min_confidence=5.0, 
-                max_suggestions=30
+                max_suggestions=30,
+                restaurant=restaurant_profile  # Filter by package restrictions
             )
             
             suggestions = []
@@ -4074,6 +4113,95 @@ def extract_package_size(product_name):
         }
     
     return None
+
+
+def calculate_stock_count_and_weight(available_quantity, product_unit, packaging_size_str=None):
+    """
+    Calculate both count and weight from available_quantity.
+    
+    For products with discrete units (punnet, each, box, etc.), we need to determine
+    if available_quantity is stored in kg or count, then calculate both values.
+    
+    Args:
+        available_quantity: Decimal or float - the stock value from FinishedInventory
+        product_unit: String - the product unit (e.g., 'punnet', 'kg', 'each')
+        packaging_size_str: String - packaging size from product name (e.g., "200g" or "0.1kg")
+        
+    Returns:
+        Dict with:
+            - available_quantity_kg: float - always in kg (0.0 if not applicable)
+            - available_quantity_count: int - always whole number count (0 if not applicable)
+            - stock_stored_in_kg: bool - indicates if original available_quantity was in kg
+    """
+    from decimal import Decimal
+    
+    unit_lower = (product_unit or '').lower().strip()
+    available_qty = float(available_quantity or 0)
+    
+    # For continuous units (kg, g, ml, l), stock is always in that unit
+    if unit_lower in ['kg', 'g', 'ml', 'l']:
+        # Convert to kg for consistency
+        if unit_lower == 'g':
+            kg_value = available_qty / 1000.0
+        elif unit_lower == 'ml':
+            kg_value = available_qty / 1000.0  # Assume 1ml = 1g = 0.001kg
+        elif unit_lower == 'l':
+            kg_value = available_qty  # Assume 1L = 1kg
+        else:  # kg
+            kg_value = available_qty
+        
+        return {
+            'available_quantity_kg': kg_value,
+            'available_quantity_count': 0,  # Not applicable for continuous units
+            'stock_stored_in_kg': True,
+        }
+    
+    # For discrete units (punnet, each, box, etc.), we need to determine if stock is in kg or count
+    # Strategy: If packaging_size is available, try to convert. Otherwise, assume it's count if it's a whole number.
+    
+    # Try to parse packaging_size to get weight per unit
+    packaging_size_kg = None
+    if packaging_size_str:
+        try:
+            size_lower = packaging_size_str.lower().strip()
+            if size_lower.endswith('kg'):
+                packaging_size_kg = float(size_lower.replace('kg', '').strip())
+            elif size_lower.endswith('g'):
+                packaging_size_kg = float(size_lower.replace('g', '').strip()) / 1000.0
+        except (ValueError, AttributeError):
+            packaging_size_kg = None
+    
+    # If we have packaging_size, we can convert between kg and count
+    if packaging_size_kg and packaging_size_kg > 0:
+        # Determine if available_quantity is likely in kg or count
+        # If available_quantity < packaging_size_kg, it's probably in kg
+        # If available_quantity is a whole number and >= 1, it's probably count
+        is_likely_kg = available_qty < packaging_size_kg or (available_qty > 0 and available_qty < 1)
+        
+        if is_likely_kg:
+            # available_quantity is in kg, convert to count
+            kg_value = available_qty
+            count_value = int(round(available_qty / packaging_size_kg))
+        else:
+            # available_quantity is likely in count, convert to kg
+            count_value = int(available_qty)
+            kg_value = count_value * packaging_size_kg
+        
+        return {
+            'available_quantity_kg': kg_value,
+            'available_quantity_count': count_value,
+            'stock_stored_in_kg': is_likely_kg,
+        }
+    
+    # No packaging_size available - assume available_quantity is in count (whole number)
+    # This is the safest assumption for discrete units when packaging_size is missing
+    count_value = int(available_qty) if available_qty >= 0 else 0
+    
+    return {
+        'available_quantity_kg': 0.0,  # Unknown without packaging_size
+        'available_quantity_count': count_value,
+        'stock_stored_in_kg': False,  # Assume count when packaging_size unavailable
+    }
 
 
 def get_stock_status(available_quantity, requested_quantity):

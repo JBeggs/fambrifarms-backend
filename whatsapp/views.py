@@ -2172,7 +2172,10 @@ def get_product_suggestions_for_search(request):
     
     Request body:
     {
-        'product_name': 'tomatoes'  # The search term
+        'product_name': 'tomatoes',  # The search term
+        'customer_id': 123,  # Optional: Customer ID to filter by restaurant restrictions
+        'restaurant_id': 456,  # Optional: Restaurant ID to filter by restrictions
+        'message_id': 'msg_123'  # Optional: Message ID to get restaurant from message context
     }
     
     Returns:
@@ -2205,16 +2208,57 @@ def get_product_suggestions_for_search(request):
         }, status=status.HTTP_400_BAD_REQUEST)
     
     try:
-        from .services import get_inventory_aware_suggestions
+        from .services import get_inventory_aware_suggestions, get_or_create_customer
         from .smart_product_matcher import SmartProductMatcher
         from inventory.models import FinishedInventory
+        from accounts.models import RestaurantProfile
+        from django.contrib.auth import get_user_model
         
-        # Use the smart matcher to get suggestions
+        User = get_user_model()
+        
+        # Get restaurant profile for package restrictions
+        restaurant_profile = None
+        
+        # Option 1: Get from customer_id
+        customer_id = request.data.get('customer_id')
+        if customer_id:
+            try:
+                customer = User.objects.get(id=customer_id)
+                if hasattr(customer, 'restaurantprofile'):
+                    restaurant_profile = customer.restaurantprofile
+            except (User.DoesNotExist, AttributeError):
+                pass
+        
+        # Option 2: Get from restaurant_id
+        if not restaurant_profile:
+            restaurant_id = request.data.get('restaurant_id')
+            if restaurant_id:
+                try:
+                    restaurant_profile = RestaurantProfile.objects.get(id=restaurant_id)
+                except RestaurantProfile.DoesNotExist:
+                    pass
+        
+        # Option 3: Get from message context
+        if not restaurant_profile:
+            message_id = request.data.get('message_id')
+            if message_id:
+                try:
+                    message = WhatsAppMessage.objects.get(message_id=message_id)
+                    company_name = message.extract_company_name()
+                    if company_name:
+                        customer = get_or_create_customer(company_name, message.sender_name)
+                        if customer and hasattr(customer, 'restaurantprofile'):
+                            restaurant_profile = customer.restaurantprofile
+                except (WhatsAppMessage.DoesNotExist, AttributeError):
+                    pass
+        
+        # Use the smart matcher to get suggestions WITH restaurant package restrictions
         matcher = SmartProductMatcher()
         suggestions_result = matcher.get_suggestions(
             product_name,
             min_confidence=5.0,
-            max_suggestions=30
+            max_suggestions=30,
+            restaurant=restaurant_profile  # Filter by package restrictions
         )
         
         # Format suggestions with stock information (same format as process_message_with_suggestions)
@@ -2230,6 +2274,9 @@ def get_product_suggestions_for_search(request):
                     'total_quantity': float((inventory.available_quantity or 0) + (inventory.reserved_quantity or 0))
                 }
             
+            # Import helper function for calculating count and weight
+            from .services import calculate_stock_count_and_weight
+            
             for suggestion in suggestions_result.suggestions:
                 stock = stock_info.get(suggestion.product.id, {
                     'available_quantity': 0.0,
@@ -2244,6 +2291,27 @@ def get_product_suggestions_for_search(request):
                         packaging_size = suggestion.product.name.split('(')[1].split(')')[0]
                     except:
                         pass
+                
+                # Calculate both count and weight for available quantity
+                available_calc = calculate_stock_count_and_weight(
+                    stock['available_quantity'],
+                    suggestion.product.unit,
+                    packaging_size
+                )
+                
+                # Calculate both count and weight for reserved quantity
+                reserved_calc = calculate_stock_count_and_weight(
+                    stock['reserved_quantity'],
+                    suggestion.product.unit,
+                    packaging_size
+                )
+                
+                # Add calculated values to stock info
+                stock['available_quantity_kg'] = available_calc['available_quantity_kg']
+                stock['available_quantity_count'] = available_calc['available_quantity_count']
+                stock['reserved_quantity_kg'] = reserved_calc['available_quantity_kg']
+                stock['reserved_quantity_count'] = reserved_calc['available_quantity_count']
+                stock['stock_stored_in_kg'] = available_calc['stock_stored_in_kg']
                 
                 suggestions.append({
                     'product_id': suggestion.product.id,
