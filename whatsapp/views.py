@@ -2313,6 +2313,13 @@ def get_product_suggestions_for_search(request):
                 stock['reserved_quantity_count'] = reserved_calc['available_quantity_count']
                 stock['stock_stored_in_kg'] = available_calc['stock_stored_in_kg']
                 
+                # Check if product is in stock using all available stock fields
+                # For discrete units (head, bag, etc.), stock might be in count or kg
+                available_count = stock.get('available_quantity_count', 0) or 0
+                available_kg = stock.get('available_quantity_kg', 0) or 0
+                available_qty = stock.get('available_quantity', 0) or 0
+                is_in_stock = available_count > 0 or available_kg > 0 or available_qty > 0
+                
                 suggestions.append({
                     'product_id': suggestion.product.id,
                     'product_name': suggestion.product.name,
@@ -2321,7 +2328,7 @@ def get_product_suggestions_for_search(request):
                     'confidence_score': suggestion.confidence_score,
                     'packaging_size': packaging_size,
                     'stock': stock,
-                    'in_stock': stock['available_quantity'] > 0,
+                    'in_stock': is_in_stock,
                     'unlimited_stock': getattr(suggestion.product, 'unlimited_stock', False)
                 })
         

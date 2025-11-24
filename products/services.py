@@ -292,16 +292,34 @@ class ProcurementIntelligenceService:
     
     def _analyze_current_stock(self, requirements: Dict) -> Dict:
         """Analyze current stock levels for required products"""
+        from whatsapp.services import calculate_stock_count_and_weight
+        
         stock_analysis = {}
         
         for product_id in requirements.keys():
             try:
                 inventory = FinishedInventory.objects.get(product_id=product_id)
+                
+                # Calculate stock count and weight to get accurate stock level
+                stock_calc = calculate_stock_count_and_weight(
+                    inventory.available_quantity,
+                    inventory.product.unit,
+                    None  # packaging_size not available here
+                )
+                
+                # Use count for discrete units, kg for weight units, fallback to available_quantity
+                current_stock = (
+                    stock_calc.get('available_quantity_count', 0) if not stock_calc.get('stock_stored_in_kg', False)
+                    else stock_calc.get('available_quantity_kg', 0)
+                ) or float(inventory.available_quantity or 0)
+                
+                minimum_stock = float(inventory.minimum_level or 0)
+                
                 stock_analysis[str(product_id)] = {
-                    'current_stock': float(inventory.available_quantity or 0),
-                    'minimum_stock': float(inventory.minimum_level or 0),
-                    'is_low_stock': (inventory.available_quantity or 0) <= (inventory.minimum_level or 0),
-                    'is_out_of_stock': (inventory.available_quantity or 0) <= 0
+                    'current_stock': current_stock,
+                    'minimum_stock': minimum_stock,
+                    'is_low_stock': current_stock <= minimum_stock,
+                    'is_out_of_stock': current_stock <= 0
                 }
             except FinishedInventory.DoesNotExist:
                 stock_analysis[str(product_id)] = {

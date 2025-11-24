@@ -587,7 +587,11 @@ def create_order_from_message_with_suggestions(message):
                         'confidence_score': suggestion.confidence_score,
                         'packaging_size': packaging_size,
                         'stock': stock,
-                        'in_stock': stock['available_quantity'] > 0
+                        # Check if product is in stock using all available stock fields
+                        # For discrete units (head, bag, etc.), stock might be in count or kg
+                        'in_stock': (stock.get('available_quantity_count', 0) or 0) > 0 or 
+                                   (stock.get('available_quantity_kg', 0) or 0) > 0 or 
+                                   (stock.get('available_quantity', 0) or 0) > 0
                     })
             
             items_with_suggestions.append({
@@ -3776,6 +3780,20 @@ def sync_shallome_to_procurement_intelligence():
         # Sync all products with inventory to supplier products
         for inventory in FinishedInventory.objects.select_related('product'):
             try:
+                # Calculate stock count and weight to determine availability
+                stock_calc = calculate_stock_count_and_weight(
+                    inventory.available_quantity,
+                    inventory.product.unit,
+                    None  # packaging_size not available here
+                )
+                
+                # Check if product is available using all stock fields
+                is_available = (
+                    (stock_calc.get('available_quantity_count', 0) or 0) > 0 or
+                    (stock_calc.get('available_quantity_kg', 0) or 0) > 0 or
+                    (inventory.available_quantity or 0) > 0
+                )
+                
                 # Get or create supplier product for Fambri Internal
                 supplier_product, sp_created = SupplierProduct.objects.get_or_create(
                     supplier=fambri_supplier,
@@ -3784,7 +3802,7 @@ def sync_shallome_to_procurement_intelligence():
                         'supplier_product_name': inventory.product.name,
                         'supplier_product_code': f'SHAL-{inventory.product.id}',
                         'stock_quantity': inventory.available_quantity,
-                        'is_available': inventory.available_quantity > 0,
+                        'is_available': is_available,
                         'supplier_price': inventory.product.price or Decimal('0.00'),  # Use product's current cost basis
                         'unit_of_measure': inventory.product.unit,
                         'minimum_order_quantity': 1,
@@ -3800,7 +3818,7 @@ def sync_shallome_to_procurement_intelligence():
                     # Update existing supplier product with current stock levels
                     old_quantity = supplier_product.stock_quantity
                     supplier_product.stock_quantity = inventory.available_quantity
-                    supplier_product.is_available = inventory.available_quantity > 0
+                    supplier_product.is_available = is_available
                     supplier_product.last_updated = timezone.now()
                     supplier_product.save()
                     
