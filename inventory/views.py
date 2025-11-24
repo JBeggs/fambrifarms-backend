@@ -703,6 +703,19 @@ def stock_adjustment(request):
                 # Sync Product stock_level to match FinishedInventory
                 product.stock_level = inventory.available_quantity
                 
+                # For variable-weight units (head, bunch), update packaging_size with average weight per unit
+                # This allows the system to calculate weight from count for future stock takes
+                variable_weight_units = ['head', 'bunch']
+                if movement_type == 'finished_set' and weight and weight > 0 and quantity > 0:
+                    if product.unit.lower() in variable_weight_units:
+                        try:
+                            average_weight_per_unit = float(weight) / float(quantity)
+                            # Update packaging_size with average weight (in kg, formatted to 3 decimal places)
+                            product.packaging_size = f"{average_weight_per_unit:.3f}kg"
+                            logger.info(f"Updated packaging_size for {product.name} ({product.unit}): {product.packaging_size} (from {quantity} units @ {weight} kg)")
+                        except (ValueError, ZeroDivisionError) as e:
+                            logger.warning(f"Failed to calculate average weight for {product.name}: {e}")
+                
                 # Save both models
                 inventory.save()
                 product.save()
