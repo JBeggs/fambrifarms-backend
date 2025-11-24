@@ -33,6 +33,7 @@ urlpatterns = [
     # Action endpoints
     path('actions/reserve-stock/', views.reserve_stock, name='reserve-stock'),
     path('actions/stock-adjustment/', views.stock_adjustment, name='stock-adjustment'),
+    path('actions/break-down-package/', views.break_down_package_to_kg, name='break-down-package'),
     
     # Invoice processing endpoints
     path('invoice-upload-status/', views.get_invoice_upload_status, name='invoice-upload-status'),

@@ -2772,3 +2772,172 @@ def process_stock_received(request):
         'errors': errors,
         'message': f'Processed {len(processed_items)} items from {len(completed_invoices)} invoices'
     })
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def break_down_package_to_kg(request):
+    """
+    Break down a bag/packet product into kg stock.
+    
+    Example: Break 1 bag (10kg) into:
+    - Reduce bag stock by 1
+    - Add 10kg to kg product stock
+    
+    Request body:
+    {
+        "package_product_id": 123,  # Product with unit 'bag' or 'packet'
+        "kg_product_id": 456,        # Product with unit 'kg'
+        "quantity": 1                # Number of bags/packets to break down (default: 1)
+    }
+    """
+    import logging
+    import re
+    logger = logging.getLogger('inventory')
+    
+    try:
+        package_product_id = request.data.get('package_product_id')
+        kg_product_id = request.data.get('kg_product_id')
+        quantity = int(request.data.get('quantity', 1))
+        
+        if not package_product_id or not kg_product_id:
+            return Response({
+                'error': 'package_product_id and kg_product_id are required'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        if quantity <= 0:
+            return Response({
+                'error': 'quantity must be greater than 0'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Get products
+        package_product = Product.objects.get(id=package_product_id)
+        kg_product = Product.objects.get(id=kg_product_id)
+        
+        # Verify units
+        package_unit = (package_product.unit or '').lower().strip()
+        kg_unit = (kg_product.unit or '').lower().strip()
+        
+        if kg_unit != 'kg':
+            return Response({
+                'error': f'kg_product must have unit "kg", got "{kg_product.unit}"'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Check if package_product has packaging_size
+        if not package_product.packaging_size:
+            return Response({
+                'error': f'package_product "{package_product.name}" does not have packaging_size set. Cannot determine weight per package.'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Parse packaging_size to get weight per package in kg
+        packaging_size_str = package_product.packaging_size.strip().lower()
+        weight_per_package_kg = None
+        
+        # Parse formats like "10kg", "100g", "0.5kg", etc.
+        kg_match = re.search(r'(\d+(?:\.\d+)?)\s*kg', packaging_size_str)
+        if kg_match:
+            weight_per_package_kg = Decimal(kg_match.group(1))
+        else:
+            g_match = re.search(r'(\d+(?:\.\d+)?)\s*g', packaging_size_str)
+            if g_match:
+                weight_per_package_kg = Decimal(g_match.group(1)) / Decimal('1000')
+        
+        if weight_per_package_kg is None or weight_per_package_kg <= 0:
+            return Response({
+                'error': f'Could not parse packaging_size "{package_product.packaging_size}" for package_product "{package_product.name}"'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Calculate total weight to add to kg product
+        total_weight_kg = weight_per_package_kg * quantity
+        
+        # Get inventories
+        package_inventory, _ = FinishedInventory.objects.get_or_create(
+            product=package_product,
+            defaults={'available_quantity': 0, 'reserved_quantity': 0}
+        )
+        
+        kg_inventory, _ = FinishedInventory.objects.get_or_create(
+            product=kg_product,
+            defaults={'available_quantity': 0, 'reserved_quantity': 0}
+        )
+        
+        # Check if package_product has enough stock
+        available_packages = package_inventory.available_quantity or Decimal('0')
+        if available_packages < quantity:
+            return Response({
+                'error': f'Insufficient stock. Available: {available_packages} {package_product.unit}, Required: {quantity}'
+            }, status=status.HTTP_400_BAD_REQUEST)
+        
+        # Perform the breakdown in a transaction
+        from django.db import transaction
+        with transaction.atomic():
+            # Reduce package stock
+            package_inventory.available_quantity = available_packages - quantity
+            package_inventory.save()
+            package_product.stock_level = package_inventory.available_quantity
+            package_product.save()
+            
+            # Add weight to kg product stock
+            current_kg_stock = kg_inventory.available_quantity or Decimal('0')
+            kg_inventory.available_quantity = current_kg_stock + total_weight_kg
+            kg_inventory.save()
+            kg_product.stock_level = kg_inventory.available_quantity
+            kg_product.save()
+            
+            # Create stock movement records for audit trail
+            reference_number = f'BREAKDOWN-{timezone.now().strftime("%Y%m%d-%H%M%S")}'
+            
+            # Movement: Reduce package stock
+            StockMovement.objects.create(
+                movement_type='finished_adjust',
+                reference_number=reference_number,
+                product=package_product,
+                quantity=-quantity,  # Negative for reduction
+                user=request.user,
+                notes=f'Broken down {quantity} {package_product.unit} to add {total_weight_kg} kg to {kg_product.name}'
+            )
+            
+            # Movement: Add kg stock
+            StockMovement.objects.create(
+                movement_type='finished_adjust',
+                reference_number=reference_number,
+                product=kg_product,
+                quantity=total_weight_kg,
+                user=request.user,
+                notes=f'Added {total_weight_kg} kg from breakdown of {quantity} {package_product.unit} of {package_product.name}'
+            )
+        
+        logger.info(f'Breakdown completed: {quantity} {package_product.unit} of {package_product.name} → {total_weight_kg} kg of {kg_product.name}')
+        
+        return Response({
+            'status': 'success',
+            'message': f'Successfully broke down {quantity} {package_product.unit} into {total_weight_kg} kg',
+            'package_product': {
+                'id': package_product.id,
+                'name': package_product.name,
+                'unit': package_product.unit,
+                'remaining_stock': float(package_inventory.available_quantity)
+            },
+            'kg_product': {
+                'id': kg_product.id,
+                'name': kg_product.name,
+                'unit': kg_product.unit,
+                'new_stock': float(kg_inventory.available_quantity)
+            },
+            'breakdown_details': {
+                'packages_broken': quantity,
+                'weight_added_kg': float(total_weight_kg),
+                'weight_per_package_kg': float(weight_per_package_kg)
+            }
+        }, status=status.HTTP_200_OK)
+        
+    except Product.DoesNotExist as e:
+        logger.error(f'Product not found: {e}')
+        return Response({
+            'error': 'Product not found'
+        }, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        logger.error(f'Error breaking down package: {e}', exc_info=True)
+        return Response({
+            'error': f'Failed to break down package: {str(e)}'
+        }, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

@@ -1172,11 +1172,19 @@ class SmartProductMatcher:
             
             # Add name match bonus for sorting (prioritize exact matches over partial matches)
             name_match_bonus = 0
-            parsed_name_words = set(parsed_message.product_name.lower().split())
-            product_name_words = set(match.product.name.lower().split())
+            parsed_name = parsed_message.product_name.lower()
+            product_name_lower = match.product.name.lower()
+            parsed_name_words = set(parsed_name.split())
+            product_name_words = set(product_name_lower.split())
             
+            # HIGHEST PRIORITY: Check if search term matches the START of product name
+            # This ensures "cherry" matches "Cherry Tomatoes" before "Tomatoes (Cherry)"
+            if product_name_lower.startswith(parsed_name):
+                name_match_bonus = 0.5  # Highest bonus for prefix match
+            elif parsed_name.startswith(product_name_lower):
+                name_match_bonus = 0.4  # High bonus for reverse prefix match
             # Check if all parsed words are in the product name (exact match priority)
-            if parsed_name_words.issubset(product_name_words):
+            elif parsed_name_words.issubset(product_name_words):
                 # Prioritize products that contain all parsed words
                 name_match_bonus = 0.3  # Base bonus for containing all words
                 
@@ -1406,6 +1414,15 @@ class SmartProductMatcher:
         # Exact name match (already case-insensitive since both are lowercased)
         if parsed_name == product_name_lower:
             score += 50
+        
+        # PRIORITY: Check if search term matches the START of product name
+        # This ensures "cherry" matches "Cherry Tomatoes" before "Tomatoes (Cherry)"
+        elif product_name_lower.startswith(parsed_name):
+            # Search term matches the beginning of product name - HIGH PRIORITY
+            score += 45  # Very high score for prefix match
+        elif parsed_name.startswith(product_name_lower):
+            # Product name matches the beginning of search term - also good
+            score += 40  # High score for reverse prefix match
         
         # Check for alias matches first (ensure case-insensitive)
         # COMMENTED OUT: Removed hardcoded alias matching to focus on strict name matching
