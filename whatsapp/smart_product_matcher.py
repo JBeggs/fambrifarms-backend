@@ -1141,6 +1141,33 @@ class SmartProductMatcher:
         #             candidates = desc_candidates
         #             break  # Use first matching description
         
+        # STRICT FILTERING: Only include products where the product name STARTS with the search term
+        # This ensures "tomato" only matches "Tomato" products, not "Cherry Tomatoes" or "Cocktail Tomatoes"
+        parsed_name_lower = product_name.lower().strip()
+        base_name_lower = base_product_name.lower().strip()
+        
+        # Filter candidates to only those that start with the search term
+        filtered_candidates = []
+        for product_data in candidates:
+            product_name_lower = product_data['name'].lower().strip()
+            product_words = product_name_lower.split()
+            
+            # For single-word searches (e.g., "tomato"), only match if first word starts with search term
+            # This excludes "Cherry Tomatoes" and "Cocktail Tomatoes" but includes "Tomato" and "Tomatoes"
+            if len(parsed_name_lower.split()) == 1:
+                # Single word search: first word of product name must start with search term
+                if not product_words or not product_words[0].startswith(parsed_name_lower):
+                    continue  # Skip products that don't start with the search term
+            else:
+                # Multi-word search: product name must start with the search term
+                if not product_name_lower.startswith(parsed_name_lower) and not product_name_lower.startswith(base_name_lower):
+                    continue  # Skip products that don't start with the search term
+            
+            filtered_candidates.append(product_data)
+        
+        # Use filtered candidates instead of all candidates
+        candidates = filtered_candidates
+        
         # Score and rank candidates
         results = []
         for product_data in candidates:
