@@ -4115,16 +4115,53 @@ def extract_package_size(product_name):
     return None
 
 
+def is_weight_based_unit(unit_name):
+    """
+    Check if a unit is weight-based using UnitOfMeasure service
+    
+    Args:
+        unit_name: String - unit name (e.g., 'kg', 'head', 'bag')
+        
+    Returns:
+        bool - True if weight-based, False if count-based
+    """
+    from inventory.models import UnitOfMeasure
+    from django.db import models
+    
+    if not unit_name:
+        return False
+    
+    unit_lower = unit_name.lower().strip()
+    
+    # Try to find in UnitOfMeasure
+    try:
+        unit_obj = UnitOfMeasure.objects.filter(
+            models.Q(name__iexact=unit_lower) | 
+            models.Q(abbreviation__iexact=unit_lower)
+        ).first()
+        
+        if unit_obj:
+            return unit_obj.is_weight
+    except Exception:
+        pass
+    
+    # Fallback to hardcoded list (for backward compatibility)
+    weight_units = ['kg', 'g', 'ml', 'l', 'gram', 'kilogram', 'liter', 'litre']
+    return unit_lower in weight_units
+
+
 def calculate_stock_count_and_weight(available_quantity, product_unit, packaging_size_str=None):
     """
     Calculate both count and weight from available_quantity.
     
-    For products with discrete units (punnet, each, box, etc.), we need to determine
+    For products with discrete units (punnet, each, box, head, etc.), we need to determine
     if available_quantity is stored in kg or count, then calculate both values.
+    
+    Uses UnitOfMeasure service to determine if unit is weight-based or count-based.
     
     Args:
         available_quantity: Decimal or float - the stock value from FinishedInventory
-        product_unit: String - the product unit (e.g., 'punnet', 'kg', 'each')
+        product_unit: String - the product unit (e.g., 'punnet', 'kg', 'each', 'head')
         packaging_size_str: String - packaging size from product name (e.g., "200g" or "0.1kg")
         
     Returns:
@@ -4138,8 +4175,11 @@ def calculate_stock_count_and_weight(available_quantity, product_unit, packaging
     unit_lower = (product_unit or '').lower().strip()
     available_qty = float(available_quantity or 0)
     
-    # For continuous units (kg, g, ml, l), stock is always in that unit
-    if unit_lower in ['kg', 'g', 'ml', 'l']:
+    # Use UnitOfMeasure service to determine if unit is weight-based
+    is_weight_unit = is_weight_based_unit(product_unit)
+    
+    # For weight-based units (kg, g, ml, l), stock is always in that unit
+    if is_weight_unit:
         # Convert to kg for consistency
         if unit_lower == 'g':
             kg_value = available_qty / 1000.0
@@ -4200,14 +4240,27 @@ def calculate_stock_count_and_weight(available_quantity, product_unit, packaging
             'stock_stored_in_kg': is_likely_kg,
         }
     
-    # No packaging_size available - assume available_quantity is in count (whole number)
-    # This is the safest assumption for discrete units when packaging_size is missing
-    count_value = int(available_qty) if available_qty >= 0 else 0
+    # No packaging_size available - try to determine storage unit
+    # Heuristic: If it's a whole number and reasonable count (< 1000), assume count
+    # Otherwise (decimal or large number), assume kg (especially if decimal)
+    is_whole_number = available_qty == int(available_qty)
+    
+    if is_whole_number and available_qty < 1000 and available_qty >= 0:
+        # Likely stored as count (e.g., 10 heads, 5 bags)
+        count_value = int(available_qty)
+        kg_value = 0.0  # Unknown without packaging_size
+        stock_stored_in_kg = False
+    else:
+        # Likely stored as kg (decimal like 21.5, or very large number)
+        # This handles cases where stock take entered weight directly
+        kg_value = available_qty
+        count_value = 0  # Unknown without packaging_size
+        stock_stored_in_kg = True
     
     return {
-        'available_quantity_kg': 0.0,  # Unknown without packaging_size
+        'available_quantity_kg': kg_value,
         'available_quantity_count': count_value,
-        'stock_stored_in_kg': False,  # Assume count when packaging_size unavailable
+        'stock_stored_in_kg': stock_stored_in_kg,
     }
 
 
