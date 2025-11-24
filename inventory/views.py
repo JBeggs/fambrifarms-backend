@@ -652,12 +652,14 @@ def stock_adjustment(request):
                         stock_value = weight
                         logger.info(f"Using weight ({weight} kg) for stock calculation for kg product {product.name}")
                 else:
-                    # For non-kg products: prefer weight if provided, otherwise use quantity
+                    # For discrete units (head, bag, punnet, etc.): ALWAYS use quantity (count)
+                    # Weight is stored in StockMovement for audit trail but doesn't replace count
+                    # This ensures count is preserved (what users actually count)
+                    # Weight can be calculated from count using packaging_size when needed
+                    stock_value = quantity
                     if weight is not None and weight > 0:
-                        stock_value = weight
-                        logger.info(f"Using weight ({weight}) for stock calculation for {product.unit} product {product.name}")
+                        logger.info(f"Using quantity ({quantity}) for stock calculation for {product.unit} product {product.name}. Weight ({weight} kg) stored in movement for audit trail.")
                     else:
-                        stock_value = quantity
                         logger.debug(f"Using quantity ({quantity}) for stock calculation for {product.unit} product {product.name}")
                 
                 # Get or create FinishedInventory record
