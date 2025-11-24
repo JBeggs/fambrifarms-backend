@@ -4174,9 +4174,16 @@ def calculate_stock_count_and_weight(available_quantity, product_unit, packaging
     # If we have packaging_size, we can convert between kg and count
     if packaging_size_kg and packaging_size_kg > 0:
         # Determine if available_quantity is likely in kg or count
-        # If available_quantity < packaging_size_kg, it's probably in kg
-        # If available_quantity is a whole number and >= 1, it's probably count
-        is_likely_kg = available_qty < packaging_size_kg or (available_qty > 0 and available_qty < 1)
+        # If available_quantity >= packaging_size_kg, it's definitely stored in kg (can't have 21.5 bags if packaging is 10kg)
+        # If available_quantity is not a whole number, it's stored in kg
+        # If available_quantity < 1, it's stored in kg (fractional)
+        # Otherwise, if it's a whole number >= 1 and < packaging_size_kg, it might be count
+        is_whole_number = available_qty == int(available_qty)
+        is_likely_kg = (
+            available_qty >= packaging_size_kg or  # Can't have 21.5 bags if packaging is 10kg
+            not is_whole_number or  # Not a whole number = kg (e.g., 21.5)
+            available_qty < 1  # Less than 1 = kg (fractional)
+        )
         
         if is_likely_kg:
             # available_quantity is in kg, convert to count
