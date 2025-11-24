@@ -1075,6 +1075,9 @@ class SmartProductMatcher:
         extra_descriptions = parsed_message.extra_descriptions
         packaging_size = parsed_message.packaging_size
         
+        # Store original product name BEFORE aliases (for filtering)
+        original_product_name = product_name
+        
         # Extract base product name by removing common container/weight words
         base_product_name = self._extract_base_product_name(product_name)
         
@@ -1143,8 +1146,13 @@ class SmartProductMatcher:
         
         # STRICT FILTERING: Only include products where the product name STARTS with the search term
         # This ensures "tomato" only matches "Tomato" products, not "Cherry Tomatoes" or "Cocktail Tomatoes"
-        parsed_name_lower = product_name.lower().strip()
+        # Use ORIGINAL product name (before aliases) for filtering to handle cases like "mixed lettuce"
+        original_name_lower = original_product_name.lower().strip()
+        parsed_name_lower = product_name.lower().strip()  # After aliases
         base_name_lower = base_product_name.lower().strip()
+        original_words = original_name_lower.split()
+        parsed_words = parsed_name_lower.split()
+        base_words = base_name_lower.split()
         
         # Filter candidates to only those that start with the search term
         filtered_candidates = []
@@ -1154,14 +1162,40 @@ class SmartProductMatcher:
             
             # For single-word searches (e.g., "tomato"), only match if first word starts with search term
             # This excludes "Cherry Tomatoes" and "Cocktail Tomatoes" but includes "Tomato" and "Tomatoes"
-            if len(parsed_name_lower.split()) == 1:
+            if len(original_words) == 1:
                 # Single word search: first word of product name must start with search term
-                if not product_words or not product_words[0].startswith(parsed_name_lower):
+                if not product_words or not product_words[0].startswith(original_name_lower):
                     continue  # Skip products that don't start with the search term
             else:
-                # Multi-word search: product name must start with the search term
-                if not product_name_lower.startswith(parsed_name_lower) and not product_name_lower.startswith(base_name_lower):
-                    continue  # Skip products that don't start with the search term
+                # Multi-word search: check if product name starts with ORIGINAL search term (before aliases)
+                # This handles cases like "mixed lettuce" matching "Mixed Lettuce" even if alias converts it to "lettuce"
+                starts_with_original = product_name_lower.startswith(original_name_lower)
+                starts_with_parsed = product_name_lower.startswith(parsed_name_lower)
+                starts_with_base = product_name_lower.startswith(base_name_lower)
+                
+                if not (starts_with_original or starts_with_parsed or starts_with_base):
+                    # Check if first words match in order (for exact matches)
+                    if len(product_words) >= len(original_words):
+                        # Check if first words match in order from original search
+                        first_words_match = all(
+                            product_words[i].startswith(original_words[i]) if i < len(product_words) else False
+                            for i in range(len(original_words))
+                        )
+                        # Also check parsed words (after alias)
+                        first_parsed_words_match = len(parsed_words) > 0 and len(product_words) >= len(parsed_words) and all(
+                            product_words[i].startswith(parsed_words[i]) if i < len(product_words) else False
+                            for i in range(len(parsed_words))
+                        )
+                        # Also check base words
+                        first_base_words_match = len(base_words) > 0 and len(product_words) >= len(base_words) and all(
+                            product_words[i].startswith(base_words[i]) if i < len(product_words) else False
+                            for i in range(len(base_words))
+                        )
+                        
+                        if not (first_words_match or first_parsed_words_match or first_base_words_match):
+                            continue  # Skip products that don't start with the search term
+                    else:
+                        continue  # Product has fewer words than search term
             
             filtered_candidates.append(product_data)
         
