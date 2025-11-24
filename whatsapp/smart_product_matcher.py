@@ -56,7 +56,9 @@ class SmartProductMatcher:
         }
         
         self._load_database_info_cached()
-        self._build_aliases()
+        # COMMENTED OUT FOR TESTING: self._build_aliases()
+        # Initialize empty aliases dict to prevent errors
+        self.aliases = {}
     
     def _load_database_info_cached(self):
         """Load database info with caching for performance"""
@@ -413,14 +415,14 @@ class SmartProductMatcher:
                 if unit:
                     break
         
-        # If still no unit found, check container aliases
-        if not unit:
-            for i, word in enumerate(words):
-                if word in self.aliases and self.aliases[word] in container_units:
-                    unit = self.aliases[word]
-                    unit_word = word
-                    unit_index = i
-                    break
+        # COMMENTED OUT FOR TESTING: If still no unit found, check container aliases
+        # if not unit:
+        #     for i, word in enumerate(words):
+        #         if word in self.aliases and self.aliases[word] in container_units:
+        #             unit = self.aliases[word]
+        #             unit_word = word
+        #             unit_index = i
+        #             break
         
         # If no container found, look for any standalone units
         if not unit:
@@ -432,12 +434,12 @@ class SmartProductMatcher:
                     unit_index = i
                     break
                 
-                # Check unit aliases
-                if word in self.aliases and self.aliases[word] in self.valid_units:
-                    unit = self.aliases[word]
-                    unit_word = word
-                    unit_index = i
-                    break
+                # COMMENTED OUT FOR TESTING: Check unit aliases
+                # if word in self.aliases and self.aliases[word] in self.valid_units:
+                #     unit = self.aliases[word]
+                #     unit_word = word
+                #     unit_index = i
+                #     break
             
         # Step 3: Extract packaging size (e.g., "5kg", "2kg", "10kg", "(10kg)")
         packaging_size = None
@@ -615,7 +617,7 @@ class SmartProductMatcher:
     
         # Step 6: Build product name
         product_name = ' '.join(remaining_words)
-        product_name = self._apply_aliases(product_name)
+        # COMMENTED OUT FOR TESTING: product_name = self._apply_aliases(product_name)
         
         # Clean up product name - remove extra 's' and fix common issues
         product_name = self._clean_product_name(product_name)
@@ -1345,26 +1347,26 @@ class SmartProductMatcher:
         quantity = parsed_message.quantity
         unit = parsed_message.unit
         
-        # Check if the product name matches any aliases
-        for alias, replacement in self.aliases.items():
-            if alias in product_name_lower:
-                # Search for products containing the replacement
-                replacement_matches = Product.objects.filter(name__icontains=replacement)[:10]
-                for product in replacement_matches:
-                    score = self._calculate_fuzzy_score(product, parsed_message, 'alias_match')
-                    if score > 0:
-                        alias_matches.append(SmartMatchResult(
-                            product=product,
-                            quantity=quantity,
-                            unit=product.unit,  # Always use product's unit
-                            confidence_score=score,
-                            match_details={
-                                'strategy': 'alias_match',
-                                'matched_alias': alias,
-                                'replacement': replacement,
-                                'product_name': product.name
-                            }
-                        ))
+        # COMMENTED OUT FOR TESTING: Check if the product name matches any aliases
+        # for alias, replacement in self.aliases.items():
+        #     if alias in product_name_lower:
+        #         # Search for products containing the replacement
+        #         replacement_matches = Product.objects.filter(name__icontains=replacement)[:10]
+        #         for product in replacement_matches:
+        #             score = self._calculate_fuzzy_score(product, parsed_message, 'alias_match')
+        #             if score > 0:
+        #                 alias_matches.append(SmartMatchResult(
+        #                     product=product,
+        #                     quantity=quantity,
+        #                     unit=product.unit,  # Always use product's unit
+        #                     confidence_score=score,
+        #                     match_details={
+        #                         'strategy': 'alias_match',
+        #                         'matched_alias': alias,
+        #                         'replacement': replacement,
+        #                         'product_name': product.name
+        #                     }
+        #                 ))
         
         return alias_matches
     
