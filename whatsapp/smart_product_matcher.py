@@ -933,12 +933,24 @@ class SmartProductMatcher:
         if not search_words:
             return set()
         
+        # Helper to get indices for a word including its singular/plural variants
+        def get_word_indices_with_variants(word):
+            indices = set(self.name_index.get(word, []))
+            # Also check singular and plural variants
+            singular = self._get_singular(word)
+            plural = self._get_plural(word)
+            if singular != word:
+                indices.update(self.name_index.get(singular, []))
+            if plural != word:
+                indices.update(self.name_index.get(plural, []))
+            return indices
+        
         # Start with products containing the first word (including variants from index)
-        result_indices = set(self.name_index.get(search_words[0], []))
+        result_indices = get_word_indices_with_variants(search_words[0])
         
         # Intersect with products containing each subsequent word (including variants from index)
         for word in search_words[1:]:
-            word_indices = set(self.name_index.get(word, []))
+            word_indices = get_word_indices_with_variants(word)
             result_indices = result_indices.intersection(word_indices)
             
             # Early exit if no matches remain
@@ -984,8 +996,15 @@ class SmartProductMatcher:
     
     def _find_single_word_matches(self, search_word: str) -> set:
         """Find products that contain the search word as a complete word (not substring)"""
-        # Get candidates from index (which now includes plural/singular variants)
+        # Get candidates from index including singular/plural variants
         candidate_indices = set(self.name_index.get(search_word, []))
+        # Also check singular and plural variants
+        singular = self._get_singular(search_word)
+        plural = self._get_plural(search_word)
+        if singular != search_word:
+            candidate_indices.update(self.name_index.get(singular, []))
+        if plural != search_word:
+            candidate_indices.update(self.name_index.get(plural, []))
         
         # STRICT FILTERING: Require that search word (or its variant) appears as a complete word
         # This prevents "tomato" from matching "potato" or "avocado"
@@ -1022,14 +1041,26 @@ class SmartProductMatcher:
         if not search_words:
             return set()
         
-        # Start with products containing ALL search words
+        # Helper to get indices for a word including its singular/plural variants
+        def get_word_indices_with_variants(word):
+            indices = set(self.name_index.get(word, []))
+            # Also check singular and plural variants
+            singular = self._get_singular(word)
+            plural = self._get_plural(word)
+            if singular != word:
+                indices.update(self.name_index.get(singular, []))
+            if plural != word:
+                indices.update(self.name_index.get(plural, []))
+            return indices
+        
+        # Start with products containing ALL search words (including variants)
         if len(search_words) == 1:
-            candidate_indices = set(self.name_index.get(search_words[0], []))
+            candidate_indices = get_word_indices_with_variants(search_words[0])
         else:
-            # Multi-word: intersection of all word matches
-            candidate_indices = set(self.name_index.get(search_words[0], []))
+            # Multi-word: intersection of all word matches (including variants)
+            candidate_indices = get_word_indices_with_variants(search_words[0])
             for word in search_words[1:]:
-                word_indices = set(self.name_index.get(word, []))
+                word_indices = get_word_indices_with_variants(word)
                 candidate_indices = candidate_indices.intersection(word_indices)
                 if not candidate_indices:
                     break
