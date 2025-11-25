@@ -1157,58 +1157,54 @@ class SmartProductMatcher:
         #             candidates = desc_candidates
         #             break  # Use first matching description
         
-        # STRICT FILTERING: Only include products where the product name STARTS with the search term
-        # This ensures "tomato" only matches "Tomato" products, not "Cherry Tomatoes" or "Cocktail Tomatoes"
-        # Use ORIGINAL product name (before aliases) for filtering to handle cases like "mixed lettuce"
+        # STRICT FILTERING: Use extracted search words (without quantities/units) for matching
+        # This ensures "3 box avocado hard" matches "Avocado Hard Box" by using ["avocado", "hard"]
         original_name_lower = original_product_name.lower().strip()
         parsed_name_lower = product_name.lower().strip()  # After aliases
         base_name_lower = base_product_name.lower().strip()
-        original_words = original_name_lower.split()
-        parsed_words = parsed_name_lower.split()
-        base_words = base_name_lower.split()
         
-        # Filter candidates to only those that start with the search term
+        # Extract search words (without quantities/units) for proper matching
+        # This is critical: "3 box avocado hard" -> ["avocado", "hard"]
+        original_search_words = self._extract_search_words(original_product_name)
+        parsed_search_words = self._extract_search_words(product_name)
+        base_search_words = self._extract_search_words(base_product_name)
+        
+        # Filter candidates to only those that contain the extracted search words
         filtered_candidates = []
         for product_data in candidates:
             product_name_lower = product_data['name'].lower().strip()
-            product_words = product_name_lower.split()
+            product_search_words = self._extract_search_words(product_data['name'])
             
-            # For single-word searches (e.g., "tomato"), only match if first word starts with search term
-            # This excludes "Cherry Tomatoes" and "Cocktail Tomatoes" but includes "Tomato" and "Tomatoes"
-            if len(original_words) == 1:
-                # Single word search: first word of product name must start with search term
-                if not product_words or not product_words[0].startswith(original_name_lower):
-                    continue  # Skip products that don't start with the search term
+            # For single-word searches (e.g., "tomato"), check if product contains the word
+            if len(original_search_words) == 1:
+                # Single word search: product must contain the search word
+                search_word = original_search_words[0].lower()
+                if search_word not in product_search_words:
+                    # Also check if it appears as a complete word in the product name
+                    import re
+                    word_pattern = r'\b' + re.escape(search_word) + r'\b'
+                    if not re.search(word_pattern, product_name_lower):
+                        continue  # Skip products that don't contain the search word
             else:
-                # Multi-word search: check if product name starts with ORIGINAL search term (before aliases)
-                # This handles cases like "mixed lettuce" matching "Mixed Lettuce" even if alias converts it to "lettuce"
-                starts_with_original = product_name_lower.startswith(original_name_lower)
-                starts_with_parsed = product_name_lower.startswith(parsed_name_lower)
-                starts_with_base = product_name_lower.startswith(base_name_lower)
+                # Multi-word search: check if product contains ALL extracted search words
+                # This allows "3 box avocado hard" to match "Avocado Hard Box" because both contain ["avocado", "hard"]
+                all_words_found = True
+                for search_word in original_search_words:
+                    search_word_lower = search_word.lower()
+                    # Check if word appears in extracted product words or as complete word in name
+                    word_found = search_word_lower in [w.lower() for w in product_search_words]
+                    if not word_found:
+                        # Also check if it appears as a complete word in the product name
+                        import re
+                        word_pattern = r'\b' + re.escape(search_word_lower) + r'\b'
+                        word_found = re.search(word_pattern, product_name_lower) is not None
+                    
+                    if not word_found:
+                        all_words_found = False
+                        break
                 
-                if not (starts_with_original or starts_with_parsed or starts_with_base):
-                    # Check if first words match in order (for exact matches)
-                    if len(product_words) >= len(original_words):
-                        # Check if first words match in order from original search
-                        first_words_match = all(
-                            product_words[i].startswith(original_words[i]) if i < len(product_words) else False
-                            for i in range(len(original_words))
-                        )
-                        # Also check parsed words (after alias)
-                        first_parsed_words_match = len(parsed_words) > 0 and len(product_words) >= len(parsed_words) and all(
-                            product_words[i].startswith(parsed_words[i]) if i < len(product_words) else False
-                            for i in range(len(parsed_words))
-                        )
-                        # Also check base words
-                        first_base_words_match = len(base_words) > 0 and len(product_words) >= len(base_words) and all(
-                            product_words[i].startswith(base_words[i]) if i < len(product_words) else False
-                            for i in range(len(base_words))
-                        )
-                        
-                        if not (first_words_match or first_parsed_words_match or first_base_words_match):
-                            continue  # Skip products that don't start with the search term
-                    else:
-                        continue  # Product has fewer words than search term
+                if not all_words_found:
+                    continue  # Skip products that don't contain all search words
             
             filtered_candidates.append(product_data)
         
