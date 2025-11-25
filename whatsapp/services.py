@@ -529,6 +529,78 @@ def create_order_from_message_with_suggestions(message):
                 restaurant=restaurant_profile  # Filter by package restrictions
             )
             
+            # CRITICAL: Ensure kg products are ALWAYS included if they exist
+            # This ensures that for any search, if a kg product exists, it will show in suggestions
+            from products.models import Product
+            from inventory.models import FinishedInventory
+            
+            # Check if we already have a kg product
+            has_kg_product = any(
+                s.product.unit.lower() == 'kg'
+                for s in suggestions_result.suggestions
+            )
+            
+            # ALWAYS try to find and include kg products if they exist (not just when packaged products found)
+            if not has_kg_product and suggestions_result.suggestions:
+                # Try multiple strategies to find kg products
+                kg_products_found = []
+                
+                # Strategy 1: Extract base name from existing suggestions
+                for s in suggestions_result.suggestions:
+                    product_name_lower = s.product.name.lower()
+                    # Remove packaging info from product name (e.g., "Lemons (5kg)" -> "Lemons")
+                    product_name_clean = re.sub(r'\s*\([^)]*\)', '', product_name_lower)
+                    # Remove packaging words
+                    for word in ['box', 'bag', 'packet', 'punnet', 'bunch', 'head', 'each']:
+                        product_name_clean = re.sub(r'\b' + word + r'\b', '', product_name_clean).strip()
+                    product_name_clean = product_name_clean.strip()
+                    
+                    if product_name_clean:
+                        # Search for kg products matching this base name
+                        kg_products_qs = Product.objects.filter(
+                            unit__iexact='kg',
+                            name__icontains=product_name_clean
+                        ).exclude(
+                            id__in=[s.product.id for s in suggestions_result.suggestions]
+                        )[:1]  # Limit to 1 kg product per base name
+                        
+                        for kg_product in kg_products_qs:
+                            if kg_product.id not in [p.id for p in kg_products_found]:
+                                kg_products_found.append(kg_product)
+                
+                # Strategy 2: If no kg products found, try from search term
+                if not kg_products_found:
+                    base_product_name = parsed_message.product_name.lower()
+                    # Remove quantities
+                    base_product_name = re.sub(r'\d+', '', base_product_name).strip()
+                    # Remove packaging words
+                    for word in ['box', 'bag', 'packet', 'punnet', 'bunch', 'head', 'each', 'kg', 'g', 'ml', 'l']:
+                        base_product_name = re.sub(r'\b' + word + r'\b', '', base_product_name).strip()
+                    base_product_name = base_product_name.strip()
+                    
+                    if base_product_name:
+                        kg_products_qs = Product.objects.filter(
+                            unit__iexact='kg',
+                            name__icontains=base_product_name
+                        ).exclude(
+                            id__in=[s.product.id for s in suggestions_result.suggestions]
+                        )[:1]
+                        
+                        for kg_product in kg_products_qs:
+                            kg_products_found.append(kg_product)
+                
+                # Add found kg products to suggestions
+                for kg_product in kg_products_found:
+                    from .smart_product_matcher import SmartMatchResult
+                    kg_match = SmartMatchResult(
+                        product=kg_product,
+                        quantity=parsed_message.quantity,
+                        unit='kg',
+                        confidence_score=40.0,  # Lower confidence since it's a variant
+                        match_details={'is_kg_variant': True}
+                    )
+                    suggestions_result.suggestions.append(kg_match)
+            
             # Format suggestions for frontend WITH STOCK INFORMATION
             suggestions = []
             if suggestions_result.suggestions:
