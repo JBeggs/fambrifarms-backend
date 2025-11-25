@@ -1181,6 +1181,19 @@ class SmartProductMatcher:
                 indices.update(self.name_index.get(singular, []))
             if plural != word:
                 indices.update(self.name_index.get(plural, []))
+            
+            # CRITICAL: Handle misspellings - if word ends with 'oes' (like "avocadoes"),
+            # also check the correct 'os' form (like "avocados")
+            if word.endswith('oes') and len(word) > 4:
+                correct_plural = word[:-1]  # "avocadoes" -> "avocados"
+                indices.update(self.name_index.get(correct_plural, []))
+            
+            # Also handle reverse: if word ends with 'os' (like "avocados"),
+            # also check the misspelling 'oes' form (like "avocadoes")
+            if word.endswith('os') and len(word) > 4 and word[-3] in 'aeiou':
+                misspelling_plural = word[:-1] + 'es'  # "avocados" -> "avocadoes"
+                indices.update(self.name_index.get(misspelling_plural, []))
+            
             return indices
         
         # Start with products containing ALL search words (including variants)
@@ -1208,11 +1221,47 @@ class SmartProductMatcher:
             if len(product_words) != target_word_count:
                 continue
             
-            # STRICT: Require that ALL search words appear as complete words (word boundaries)
+            # STRICT: Require that ALL search words (or their variants) appear as complete words
             all_words_match = True
+            product_words_lower = [w.lower() for w in product_words]
+            
+            # Get product word variants
+            product_word_variants = set()
+            for pw in product_words:
+                product_word_variants.add(pw.lower())
+                product_word_variants.add(self._get_singular(pw).lower())
+                product_word_variants.add(self._get_plural(pw).lower())
+                if pw.lower().endswith('o') and len(pw) > 4:
+                    product_word_variants.add((pw.lower() + 's'))
+            
             for search_word in search_words:
-                word_pattern = r'\b' + re.escape(search_word.lower()) + r'\b'
-                if not re.search(word_pattern, product_name_lower):
+                # Get search word variants
+                search_variants = {
+                    search_word.lower(),
+                    self._get_singular(search_word).lower(),
+                    self._get_plural(search_word).lower()
+                }
+                
+                # Handle misspellings
+                if search_word.endswith('oes') and len(search_word) > 4:
+                    correct_plural = search_word[:-1].lower()
+                    search_variants.add(correct_plural)
+                if search_word.endswith('os') and len(search_word) > 4 and search_word[-3] in 'aeiou':
+                    misspelling_plural = (search_word[:-1] + 'es').lower()
+                    search_variants.add(misspelling_plural)
+                
+                # Check if any variant matches product words or variants
+                word_found = any(v in product_words_lower or v in product_word_variants for v in search_variants)
+                
+                # If not found, check with regex word boundaries
+                if not word_found:
+                    for variant in search_variants:
+                        word_pattern = r'\b' + re.escape(variant) + r'\b'
+                        if re.search(word_pattern, product_name_lower):
+                            word_found = True
+                            break
+                
+                if not word_found:
                     all_words_match = False
                     break
             
