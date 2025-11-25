@@ -1033,6 +1033,11 @@ class SmartProductMatcher:
                     product_word_variants.add(pw.lower())
                     product_word_variants.add(self._get_singular(pw).lower())
                     product_word_variants.add(self._get_plural(pw).lower())
+                    # CRITICAL: Also add 'os' form for words ending in 'o' (e.g., "avocado" -> "avocados")
+                    # This ensures "avocados" matches products named "Avocado"
+                    if pw.lower().endswith('o') and len(pw) > 4:
+                        os_plural = pw.lower() + 's'
+                        product_word_variants.add(os_plural)
                 
                 # Check if any search variant matches any product word or its variant
                 for variant in search_variants:
@@ -1098,6 +1103,11 @@ class SmartProductMatcher:
                 product_word_variants.add(pw.lower())
                 product_word_variants.add(self._get_singular(pw).lower())
                 product_word_variants.add(self._get_plural(pw).lower())
+                # CRITICAL: Also add 'os' form for words ending in 'o' (e.g., "avocado" -> "avocados")
+                # This ensures "avocados" matches products named "Avocado"
+                if pw.lower().endswith('o') and len(pw) > 4:
+                    os_plural = pw.lower() + 's'
+                    product_word_variants.add(os_plural)
             
             word_found = False
             # Check if any search variant matches any product word or its variant
@@ -1303,8 +1313,19 @@ class SmartProductMatcher:
                 }
                 product_words_lower = [w.lower() for w in product_search_words]
                 
-                # Check if any variant appears in extracted product words
-                word_found = any(variant in product_words_lower for variant in search_variants)
+                # Also get product word variants (singular/plural) for better matching
+                product_word_variants = set()
+                for pw in product_search_words:
+                    product_word_variants.add(pw.lower())
+                    product_word_variants.add(self._get_singular(pw).lower())
+                    product_word_variants.add(self._get_plural(pw).lower())
+                    # CRITICAL: Also add 'os' form for words ending in 'o' (e.g., "avocado" -> "avocados")
+                    if pw.lower().endswith('o') and len(pw) > 4:
+                        os_plural = pw.lower() + 's'
+                        product_word_variants.add(os_plural)
+                
+                # Check if any variant appears in extracted product words or their variants
+                word_found = any(variant in product_words_lower or variant in product_word_variants for variant in search_variants)
                 
                 # If not found in extracted words, check full product name with word boundaries
                 if not word_found:
@@ -1323,6 +1344,17 @@ class SmartProductMatcher:
                 all_words_found = True
                 product_words_lower = [w.lower() for w in product_search_words]
                 
+                # Also get product word variants (singular/plural) for better matching
+                product_word_variants = set()
+                for pw in product_search_words:
+                    product_word_variants.add(pw.lower())
+                    product_word_variants.add(self._get_singular(pw).lower())
+                    product_word_variants.add(self._get_plural(pw).lower())
+                    # CRITICAL: Also add 'os' form for words ending in 'o' (e.g., "avocado" -> "avocados")
+                    if pw.lower().endswith('o') and len(pw) > 4:
+                        os_plural = pw.lower() + 's'
+                        product_word_variants.add(os_plural)
+                
                 for search_word in original_search_words:
                     search_word_lower = search_word.lower()
                     # Get variants (singular/plural) for the search word
@@ -1332,8 +1364,8 @@ class SmartProductMatcher:
                         self._get_plural(search_word).lower()
                     }
                     
-                    # Check if any variant appears in extracted product words
-                    word_found = any(variant in product_words_lower for variant in search_variants)
+                    # Check if any variant appears in extracted product words or their variants
+                    word_found = any(variant in product_words_lower or variant in product_word_variants for variant in search_variants)
                     
                     # If not found in extracted words, check full product name with word boundaries
                     if not word_found:
