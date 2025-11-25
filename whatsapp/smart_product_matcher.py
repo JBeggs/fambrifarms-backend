@@ -908,12 +908,22 @@ class SmartProductMatcher:
         # Remove packaging info in brackets (e.g., "Cherry Tomatoes (200g)" -> "Cherry Tomatoes")
         clean_name = re.sub(r'\s*\([^)]*\)\s*', ' ', product_name).strip()
         
-        # Split into words and filter out common non-product terms
-        words = clean_name.lower().split()
-        exclude_words = {'kg', 'g', 'ml', 'l', 'box', 'bag', 'punnet', 'packet', 'bunch', 'head', 'each', 'piece', 'large', 'small', 'medium', 'the', 'and', 'or'}
+        # Remove quantity/unit words that aren't part of product names
+        # Remove standalone numbers and common quantity/unit words
+        quantity_words = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '10',
+                         '11', '12', '13', '14', '15', '16', '17', '18', '19', '20',
+                         'kg', 'g', 'ml', 'l', 'box', 'bag', 'punnet', 'packet', 
+                         'bunch', 'head', 'each', 'piece', 'pcs', 'pieces', 'x', '×', '*'}
         
-        # Keep only meaningful product words
-        search_words = [word for word in words if len(word) > 2 and word not in exclude_words]
+        # Split into words and filter out quantity/unit words
+        words = clean_name.lower().split()
+        
+        # Filter out quantity/unit words and very short words, but KEEP descriptors like "hard", "soft", "ripe", etc.
+        exclude_words = {'the', 'and', 'or', 'for', 'with', 'from', 'that', 'this'}
+        exclude_words.update(quantity_words)
+        
+        # Keep meaningful product words (including descriptors like "hard", "soft", "ripe", etc.)
+        search_words = [word for word in words if len(word) > 1 and word not in exclude_words]
         
         return search_words
     
