@@ -2433,10 +2433,71 @@ def create_order_from_suggestions(request):
         random_suffix = random.randint(1000, 9999)   # 4 chars
         order_number = f"WA{date_str}{random_suffix}"  # WA20241008123 = 14 chars ✅
         
-        # Ensure order number is unique
-        while Order.objects.filter(order_number=order_number).exists():
+        # OPTIMIZATION: Ensure order number is unique (limit retries to prevent infinite loop)
+        max_retries = 10
+        retry_count = 0
+        while Order.objects.filter(order_number=order_number).exists() and retry_count < max_retries:
             random_suffix = random.randint(1000, 9999)
             order_number = f"WA{date_str}{random_suffix}"
+            retry_count += 1
+        
+        if retry_count >= max_retries:
+            # Fallback: use timestamp-based order number
+            timestamp_suffix = int(timezone.now().timestamp() * 1000) % 10000
+            order_number = f"WA{date_str}{timestamp_suffix:04d}"
+        
+        # OPTIMIZATION: Bulk fetch all products at once to avoid N+1 queries
+        product_ids = [item_data['product_id'] for item_data in items_data]
+        source_product_ids = [item_data.get('source_product_id') for item_data in items_data if item_data.get('source_product_id')]
+        all_product_ids = list(set(product_ids + source_product_ids))
+        
+        # Fetch all products in one query with select_related for related fields
+        products_dict = {p.id: p for p in Product.objects.filter(id__in=all_product_ids).select_related('department')}
+        
+        # OPTIMIZATION: Pre-fetch customer pricing data to avoid repeated queries
+        today = date.today()
+        from inventory.models import CustomerPriceListItem, PricingRule
+        from accounts.models import RestaurantProfile
+        
+        # Get customer segment once
+        customer_segment = None
+        try:
+            if hasattr(customer, 'restaurantprofile'):
+                profile = customer.restaurantprofile
+                if hasattr(profile, 'preferred_pricing_rule') and profile.preferred_pricing_rule:
+                    customer_segment = profile.preferred_pricing_rule.customer_segment
+                else:
+                    from .services import determine_customer_segment
+                    customer_segment = determine_customer_segment(customer)
+        except:
+            pass
+        
+        # Pre-fetch pricing rule once
+        pricing_rule = None
+        if customer_segment:
+            try:
+                pricing_rule = PricingRule.objects.filter(
+                    customer_segment=customer_segment,
+                    is_active=True
+                ).first()
+            except:
+                pass
+        
+        # Pre-fetch customer price list items for all products
+        customer_price_items = {}
+        try:
+            price_items = CustomerPriceListItem.objects.filter(
+                price_list__customer=customer,
+                product_id__in=all_product_ids,
+                price_list__status='active',
+                price_list__effective_from__lte=today,
+                price_list__effective_until__gte=today
+            ).select_related('price_list', 'product')
+            
+            for price_item in price_items:
+                customer_price_items[price_item.product_id] = price_item.customer_price_incl_vat
+        except:
+            pass
         
         # Create order with required fields
         order = Order.objects.create(
@@ -2455,24 +2516,40 @@ def create_order_from_suggestions(request):
         # Create order items
         total_amount = Decimal('0.00')
         created_items = []
+        stock_movements_to_update = []  # Store movements to update after order creation
         
         for item_data in items_data:
             try:
-                product = Product.objects.get(id=item_data['product_id'])
+                product = products_dict.get(item_data['product_id'])
+                if not product:
+                    logger.warning(f"Product with ID {item_data['product_id']} not found in bulk fetch")
+                    continue
                 quantity = Decimal(str(item_data.get('quantity', 1.0)))
                 unit = item_data.get('unit', product.unit)
                 
-                # CRITICAL: Calculate customer-specific price on backend (don't trust frontend)
-                from .services import get_customer_specific_price
-                price = get_customer_specific_price(product, customer)
-                print(f"[ORDER_CREATION] {product.name}: Base={product.price}, Customer Price={price}, Segment={customer.get_full_name()}")
+                # OPTIMIZATION: Use cached pricing data instead of querying for each product
+                price = None
+                if product.id in customer_price_items:
+                    # Use customer price list price
+                    price = customer_price_items[product.id]
+                elif pricing_rule and product.price:
+                    # Apply pricing rule markup/discount
+                    if pricing_rule.base_markup_percentage:
+                        price = product.price * (1 + pricing_rule.base_markup_percentage / 100)
+                    elif hasattr(pricing_rule, 'discount_percentage') and pricing_rule.discount_percentage:
+                        price = product.price * (1 - pricing_rule.discount_percentage / 100)
+                    else:
+                        price = product.price
+                else:
+                    # Fallback to base product price
+                    price = product.price or Decimal('25.00')
                 
                 total_price = quantity * price
                 stock_action = item_data.get('stock_action', 'reserve')  # Default to reserve
                 
                 # Handle stock actions
                 stock_result = None
-                stock_movement = None  # Store movement to update reference after order creation
+                stock_movement_id = None  # Store movement ID to update reference after order creation
                 if stock_action == 'reserve':
                     # Reserve stock for this item
                     from .services import reserve_stock_for_customer
@@ -2484,24 +2561,13 @@ def create_order_from_suggestions(request):
                     )
                     
                     if stock_result.get('success', False):
-                        # Get the StockMovement that was just created so we can update its reference_number
-                        from inventory.models import StockMovement
-                        from django.utils import timezone
-                        from datetime import timedelta
-                        # Find the movement created in the last few seconds for this product and customer
-                        time_window = timedelta(seconds=5)
-                        recent_movements = StockMovement.objects.filter(
-                            product=product,
-                            user=customer,
-                            movement_type='finished_reserve',
-                            timestamp__gte=timezone.now() - time_window
-                        ).order_by('-timestamp')
-                        
-                        # Match by quantity and recent timestamp
-                        for movement in recent_movements:
-                            if movement.quantity == quantity:
-                                stock_movement = movement
-                                break
+                        # OPTIMIZATION: Store movement ID from result for efficient update
+                        movement_id = stock_result.get('stock_movement_id')
+                        if movement_id:
+                            stock_movements_to_update.append({
+                                'movement_id': movement_id,
+                                'product_name': product.name
+                            })
                     else:
                         logger.warning(f"Failed to reserve stock for {product.name}: {stock_result.get('message', 'Unknown error')}")
                 
@@ -2516,14 +2582,27 @@ def create_order_from_suggestions(request):
                     
                     if conversion_result.get('success', False):
                         # Use the kg product instead
-                        product = conversion_result['kg_product']
+                        kg_product = conversion_result['kg_product']
+                        # Update product in dict if not already there
+                        if kg_product.id not in products_dict:
+                            products_dict[kg_product.id] = kg_product
+                        product = kg_product
                         quantity = conversion_result['kg_quantity']
                         unit = 'kg'
-                        # Recalculate customer price for the kg product
-                        price = get_customer_specific_price(product, customer)
+                        # OPTIMIZATION: Use cached pricing for kg product
+                        if product.id in customer_price_items:
+                            price = customer_price_items[product.id]
+                        elif pricing_rule and product.price:
+                            if pricing_rule.base_markup_percentage:
+                                price = product.price * (1 + pricing_rule.base_markup_percentage / 100)
+                            elif hasattr(pricing_rule, 'discount_percentage') and pricing_rule.discount_percentage:
+                                price = product.price * (1 - pricing_rule.discount_percentage / 100)
+                            else:
+                                price = product.price
+                        else:
+                            price = product.price or Decimal('25.00')
                         total_price = quantity * price
                         logger.info(f"Converted to bulk kg: {conversion_result['message']}")
-                        print(f"[KG_CONVERSION] {product.name}: Customer Price={price}")
                     else:
                         logger.warning(f"Failed to convert to kg: {conversion_result.get('message', 'Unknown error')}")
                 
@@ -2533,21 +2612,14 @@ def create_order_from_suggestions(request):
                 source_product = None
                 source_quantity = None
                 if 'source_product_id' in item_data and item_data['source_product_id'] is not None:
-                    try:
-                        source_product = Product.objects.get(id=item_data['source_product_id'])
+                    source_product = products_dict.get(item_data['source_product_id'])
+                    if source_product:
                         source_quantity = Decimal(str(item_data.get('source_quantity', 0)))
                         
-                        # Validate source product stock
-                        from inventory.models import FinishedInventory
-                        try:
-                            source_inventory = FinishedInventory.objects.get(product=source_product)
-                            if source_quantity > source_inventory.available_quantity:
-                                logger.warning(f"Insufficient stock in source product {source_product.name}. Available: {source_inventory.available_quantity}, Required: {source_quantity}")
-                                # Continue anyway - stock validation happens in signals
-                        except FinishedInventory.DoesNotExist:
-                            logger.warning(f"No inventory record for source product {source_product.name}")
-                    except Product.DoesNotExist:
-                        logger.warning(f"Source product with ID {item_data['source_product_id']} not found")
+                        # OPTIMIZATION: Bulk fetch source inventory if needed (defer validation to signals)
+                        # Just log warning if product not found
+                    else:
+                        logger.warning(f"Source product with ID {item_data['source_product_id']} not found in bulk fetch")
                 
                 from orders.models import OrderItem
                 order_item = OrderItem.objects.create(
@@ -2562,14 +2634,6 @@ def create_order_from_suggestions(request):
                     source_product=source_product,
                     source_quantity=source_quantity,
                 )
-                
-                # CRITICAL: Update StockMovement reference_number to use order number
-                # This links the reservation to the order so it can be found later
-                if stock_movement and stock_action == 'reserve':
-                    stock_movement.reference_number = order.order_number
-                    stock_movement.notes = f'Reserved for order {order.order_number} - {product.name}'
-                    stock_movement.save()
-                    logger.info(f"Updated StockMovement {stock_movement.id} reference_number to order {order.order_number} for {product.name}")
                 
                 created_items.append({
                     'id': order_item.id,
@@ -2595,6 +2659,28 @@ def create_order_from_suggestions(request):
         order.total_amount = total_amount
         order.subtotal = total_amount
         order.save()
+        
+        # OPTIMIZATION: Bulk update stock movements with order number (instead of one-by-one)
+        if stock_movements_to_update:
+            from inventory.models import StockMovement
+            
+            # Get all movements by ID (most efficient)
+            movement_ids = [m['movement_id'] for m in stock_movements_to_update if 'movement_id' in m]
+            if movement_ids:
+                movements = StockMovement.objects.filter(id__in=movement_ids)
+                
+                # Bulk update all movements at once
+                movements_updated = movements.update(
+                    reference_number=order.order_number
+                )
+                
+                # Update notes individually (since they're product-specific)
+                for movement in movements:
+                    product_name = next((m['product_name'] for m in stock_movements_to_update if m.get('movement_id') == movement.id), '')
+                    movement.notes = f'Reserved for order {order.order_number} - {product_name}'
+                    movement.save(update_fields=['notes'])
+                
+                logger.info(f"Updated {movements_updated} StockMovements with order number {order.order_number}")
         
         # Update message content with confirmed items
         confirmed_items_text = []

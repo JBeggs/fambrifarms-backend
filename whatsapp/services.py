@@ -4454,9 +4454,11 @@ def reserve_stock_for_customer(product, quantity, customer, fulfillment_method='
             
             # Create stock movement record
             # customer is already a User object, use it directly
-            StockMovement.objects.create(
+            timestamp_str = timezone.now().strftime("%Y%m%d%H%M%S")
+            reservation_ref = f'RESERVE-{customer.id}-{timestamp_str}'
+            stock_movement = StockMovement.objects.create(
                 movement_type='finished_reserve',
-                reference_number=f'RESERVE-{customer.id}-{timezone.now().strftime("%Y%m%d%H%M%S")}',
+                reference_number=reservation_ref,
                 product=product,
                 quantity=reserve_qty,
                 user=customer,
@@ -4468,7 +4470,8 @@ def reserve_stock_for_customer(product, quantity, customer, fulfillment_method='
                 'message': f'Reserved {reserve_qty}{product.unit} for {customer}',
                 'reserved_quantity': float(reserve_qty),
                 'remaining_available': float(inventory.available_quantity),
-                'reservation_reference': f'RESERVE-{customer.id}-{timezone.now().strftime("%Y%m%d%H%M%S")}'
+                'reservation_reference': reservation_ref,
+                'stock_movement_id': stock_movement.id  # Return ID for efficient lookup
             }
             
     except FinishedInventory.DoesNotExist:
