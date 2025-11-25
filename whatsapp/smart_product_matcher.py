@@ -1015,9 +1015,18 @@ class SmartProductMatcher:
                 # First check in extracted product words (simpler, no regex needed)
                 word_found = False
                 product_words_lower = [w.lower() for w in product_words]
+                
+                # Also get product word variants (singular/plural) for better matching
+                product_word_variants = set()
+                for pw in product_words:
+                    product_word_variants.add(pw.lower())
+                    product_word_variants.add(self._get_singular(pw).lower())
+                    product_word_variants.add(self._get_plural(pw).lower())
+                
+                # Check if any search variant matches any product word or its variant
                 for variant in search_variants:
                     variant_lower = variant.lower()
-                    if variant_lower in product_words_lower:
+                    if variant_lower in product_words_lower or variant_lower in product_word_variants:
                         word_found = True
                         break
                 
@@ -1071,10 +1080,19 @@ class SmartProductMatcher:
             # First check in extracted product words (simpler, no regex needed)
             product_words = self._extract_search_words(product_data['name'])
             product_words_lower = [w.lower() for w in product_words]
+            
+            # Also get product word variants (singular/plural) for better matching
+            product_word_variants = set()
+            for pw in product_words:
+                product_word_variants.add(pw.lower())
+                product_word_variants.add(self._get_singular(pw).lower())
+                product_word_variants.add(self._get_plural(pw).lower())
+            
             word_found = False
+            # Check if any search variant matches any product word or its variant
             for variant in search_variants:
                 variant_lower = variant.lower()
-                if variant_lower in product_words_lower:
+                if variant_lower in product_words_lower or variant_lower in product_word_variants:
                     filtered_indices.add(idx)
                     word_found = True
                     break
