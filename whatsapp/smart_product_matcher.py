@@ -127,6 +127,28 @@ class SmartProductMatcher:
                         name_index[plural_form] = []
                     if i not in name_index[plural_form]:  # Avoid duplicates
                         name_index[plural_form].append(i)
+                
+                # Handle common misspellings: if word ends with 'oes' (like "avocadoes"),
+                # also add the correct plural form (like "avocados") to the index
+                # This allows "avocadoes" to match products named "Avocados"
+                if word.endswith('oes') and len(word) > 4:
+                    # Convert "avocadoes" -> "avocados"
+                    correct_plural = word[:-1]  # Remove 'e' before 's'
+                    if correct_plural not in name_index:
+                        name_index[correct_plural] = []
+                    if i not in name_index[correct_plural]:
+                        name_index[correct_plural].append(i)
+                
+                # Also handle reverse: if word is correct plural (ends with 'os' like "avocados"),
+                # add the misspelling variant (like "avocadoes") to the index
+                # This allows "avocados" to match products named "Avocadoes" (if such exist)
+                if word.endswith('os') and len(word) > 4 and word[-3] in 'aeiou':
+                    # Convert "avocados" -> "avocadoes"
+                    misspelling_plural = word[:-1] + 'es'  # Replace 's' with 'es'
+                    if misspelling_plural not in name_index:
+                        name_index[misspelling_plural] = []
+                    if i not in name_index[misspelling_plural]:
+                        name_index[misspelling_plural].append(i)
         
         # Cache the data
         self._products_cache = all_products_data
@@ -874,13 +896,21 @@ class SmartProductMatcher:
         if len(word) <= 3:
             return word
         
+        # Handle common misspellings first (e.g., "avocadoes" -> "avocado")
+        # "avocadoes" should be treated the same as "avocados"
+        if word.endswith('oes') and len(word) > 4:
+            # Check if removing 'es' gives a valid singular (e.g., "avocadoes" -> "avocado")
+            base = word[:-2]  # Remove 'es'
+            if base.endswith('o'):
+                return base  # avocadoes -> avocado
+        
         # Common plural patterns
         if word.endswith('ies'):
             return word[:-3] + 'y'  # cherries -> cherry
         elif word.endswith('es') and len(word) > 4:
-            # Check if it's a plural (e.g., tomatoes, potatoes)
+            # Check if it's a plural (e.g., tomatoes, potatoes, avocados)
             if word[-3] in 'aeiou':
-                return word[:-2]  # tomatoes -> tomato
+                return word[:-2]  # tomatoes -> tomato, avocados -> avocado
             return word[:-1]  # boxes -> box
         elif word.endswith('s') and not word.endswith('ss'):
             return word[:-1]  # lemons -> lemon, apples -> apple
@@ -892,10 +922,14 @@ class SmartProductMatcher:
         if len(word) <= 3:
             return word
         
+        # If word already ends with 's', don't pluralize it (it's already plural)
+        if word.endswith('s'):
+            return word
+        
         # Common pluralization rules
         if word.endswith('y') and len(word) > 3:
             return word[:-1] + 'ies'  # cherry -> cherries
-        elif word.endswith('s') or word.endswith('x') or word.endswith('z'):
+        elif word.endswith('x') or word.endswith('z'):
             return word + 'es'  # box -> boxes, fox -> foxes
         elif word.endswith('o'):
             return word + 'es'  # tomato -> tomatoes
