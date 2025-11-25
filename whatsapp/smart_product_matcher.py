@@ -1229,29 +1229,57 @@ class SmartProductMatcher:
             product_name_lower = product_data['name'].lower().strip()
             product_search_words = self._extract_search_words(product_data['name'])
             
-            # For single-word searches (e.g., "tomato"), check if product contains the word
+            # For single-word searches (e.g., "tomato"), check if product contains the word or its variants
             if len(original_search_words) == 1:
-                # Single word search: product must contain the search word
+                # Single word search: product must contain the search word or its singular/plural variant
                 search_word = original_search_words[0].lower()
-                if search_word not in product_search_words:
-                    # Also check if it appears as a complete word in the product name
+                search_variants = {
+                    search_word,
+                    self._get_singular(search_word).lower(),
+                    self._get_plural(search_word).lower()
+                }
+                product_words_lower = [w.lower() for w in product_search_words]
+                
+                # Check if any variant appears in extracted product words
+                word_found = any(variant in product_words_lower for variant in search_variants)
+                
+                # If not found in extracted words, check full product name with word boundaries
+                if not word_found:
                     import re
-                    word_pattern = r'\b' + re.escape(search_word) + r'\b'
-                    if not re.search(word_pattern, product_name_lower):
-                        continue  # Skip products that don't contain the search word
+                    for variant in search_variants:
+                        word_pattern = r'\b' + re.escape(variant) + r'\b'
+                        if re.search(word_pattern, product_name_lower):
+                            word_found = True
+                            break
+                
+                if not word_found:
+                    continue  # Skip products that don't contain the search word or its variants
             else:
-                # Multi-word search: check if product contains ALL extracted search words
+                # Multi-word search: check if product contains ALL extracted search words (or their variants)
                 # This allows "3 box avocado hard" to match "Avocado Hard Box" because both contain ["avocado", "hard"]
                 all_words_found = True
+                product_words_lower = [w.lower() for w in product_search_words]
+                
                 for search_word in original_search_words:
                     search_word_lower = search_word.lower()
-                    # Check if word appears in extracted product words or as complete word in name
-                    word_found = search_word_lower in [w.lower() for w in product_search_words]
+                    # Get variants (singular/plural) for the search word
+                    search_variants = {
+                        search_word_lower,
+                        self._get_singular(search_word).lower(),
+                        self._get_plural(search_word).lower()
+                    }
+                    
+                    # Check if any variant appears in extracted product words
+                    word_found = any(variant in product_words_lower for variant in search_variants)
+                    
+                    # If not found in extracted words, check full product name with word boundaries
                     if not word_found:
-                        # Also check if it appears as a complete word in the product name
                         import re
-                        word_pattern = r'\b' + re.escape(search_word_lower) + r'\b'
-                        word_found = re.search(word_pattern, product_name_lower) is not None
+                        for variant in search_variants:
+                            word_pattern = r'\b' + re.escape(variant) + r'\b'
+                            if re.search(word_pattern, product_name_lower):
+                                word_found = True
+                                break
                     
                     if not word_found:
                         all_words_found = False
