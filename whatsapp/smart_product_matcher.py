@@ -1014,14 +1014,27 @@ class SmartProductMatcher:
         # Start with products containing the first word (including variants from index)
         result_indices = get_word_indices_with_variants(search_words[0])
         
-        # Intersect with products containing each subsequent word (including variants from index)
-        for word in search_words[1:]:
-            word_indices = get_word_indices_with_variants(word)
-            result_indices = result_indices.intersection(word_indices)
+        # For multi-word searches, try to intersect, but if intersection is empty,
+        # use union instead - the filtering phase will do strict matching
+        if len(search_words) > 1:
+            all_word_indices = [result_indices]
+            for word in search_words[1:]:
+                word_indices = get_word_indices_with_variants(word)
+                all_word_indices.append(word_indices)
             
-            # Early exit if no matches remain
-            if not result_indices:
-                break
+            # Try intersection first (more precise)
+            intersection_result = result_indices
+            for word_indices in all_word_indices[1:]:
+                intersection_result = intersection_result.intersection(word_indices)
+            
+            # If intersection has results, use it; otherwise use union (filtering will be strict)
+            if intersection_result:
+                result_indices = intersection_result
+            else:
+                # Use union - filtering phase will ensure all words match
+                result_indices = set()
+                for word_indices in all_word_indices:
+                    result_indices.update(word_indices)
         
         # STRICT FILTERING: Require that search words (or their variants) appear as complete words
         # This prevents "tomatoes" from matching "avocados" or "potatoes"
