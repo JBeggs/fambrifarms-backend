@@ -978,12 +978,22 @@ class SmartProductMatcher:
                 }
                 
                 # Check if any variant appears as a complete word
+                # First check in extracted product words (simpler, no regex needed)
                 word_found = False
+                product_words_lower = [w.lower() for w in product_words]
                 for variant in search_variants:
-                    word_pattern = r'\b' + re.escape(variant) + r'\b'
-                    if re.search(word_pattern, product_name_lower):
+                    variant_lower = variant.lower()
+                    if variant_lower in product_words_lower:
                         word_found = True
                         break
+                
+                # If not found in extracted words, check full product name with word boundaries
+                if not word_found:
+                    for variant in search_variants:
+                        word_pattern = r'\b' + re.escape(variant.lower()) + r'\b'
+                        if re.search(word_pattern, product_name_lower):
+                            word_found = True
+                            break
                 
                 if not word_found:
                     all_words_match = False
@@ -1023,12 +1033,25 @@ class SmartProductMatcher:
             product_data = self.all_products_data[idx]
             product_name_lower = product_data['name'].lower()
             
-            # Check if any variant appears as a complete word (word boundary)
+            # Check if any variant appears as a complete word
+            # First check in extracted product words (simpler, no regex needed)
+            product_words = self._extract_search_words(product_data['name'])
+            product_words_lower = [w.lower() for w in product_words]
+            word_found = False
             for variant in search_variants:
-                word_pattern = r'\b' + re.escape(variant) + r'\b'
-                if re.search(word_pattern, product_name_lower):
+                variant_lower = variant.lower()
+                if variant_lower in product_words_lower:
                     filtered_indices.add(idx)
+                    word_found = True
                     break
+            
+            # If not found in extracted words, check full product name with word boundaries
+            if not word_found:
+                for variant in search_variants:
+                    word_pattern = r'\b' + re.escape(variant.lower()) + r'\b'
+                    if re.search(word_pattern, product_name_lower):
+                        filtered_indices.add(idx)
+                        break
         
         return filtered_indices
     
