@@ -2320,7 +2320,6 @@ def get_product_suggestions_for_search(request):
                 # CRITICAL FIX: If available_quantity_kg is 0 but we have count and packaging_size,
                 # calculate kg from count × packaging_size (for box products like "1 lemon box")
                 if stock['available_quantity_kg'] == 0.0 and stock['available_quantity_count'] > 0 and packaging_size:
-                    import re
                     packaging_size_lower = str(packaging_size).lower().strip().replace(' ', '')
                     # Try to match kg pattern (e.g., "5kg", "2.5kg")
                     kg_match = re.match(r'^(\d+(?:\.\d+)?)\s*kg$', packaging_size_lower)
@@ -2337,7 +2336,6 @@ def get_product_suggestions_for_search(request):
                 
                 # Same fix for reserved quantity
                 if stock['reserved_quantity_kg'] == 0.0 and stock['reserved_quantity_count'] > 0 and packaging_size:
-                    import re
                     packaging_size_lower = str(packaging_size).lower().strip().replace(' ', '')
                     kg_match = re.match(r'^(\d+(?:\.\d+)?)\s*kg$', packaging_size_lower)
                     if kg_match:
