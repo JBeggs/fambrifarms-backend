@@ -1008,6 +1008,11 @@ class SmartProductMatcher:
             if word.endswith('os') and len(word) > 4 and word[-3] in 'aeiou':
                 misspelling_plural = word[:-1] + 'es'  # "avocados" -> "avocadoes"
                 indices.update(self.name_index.get(misspelling_plural, []))
+                # CRITICAL: Also explicitly check the singular form (remove 's' from 'os' ending)
+                # This ensures "avocados" finds products named "Avocado" (singular)
+                # The _get_singular above should handle this, but add explicit check for safety
+                singular_os = word[:-1]  # "avocados" -> "avocado"
+                indices.update(self.name_index.get(singular_os, []))
             
             return indices
         
@@ -1131,6 +1136,9 @@ class SmartProductMatcher:
         if search_word.endswith('os') and len(search_word) > 4 and search_word[-3] in 'aeiou':
             misspelling_plural = search_word[:-1] + 'es'  # "avocados" -> "avocadoes"
             candidate_indices.update(self.name_index.get(misspelling_plural, []))
+            # CRITICAL: Also explicitly check the singular form (remove 's' from 'os' ending)
+            singular_os = search_word[:-1]  # "avocados" -> "avocado"
+            candidate_indices.update(self.name_index.get(singular_os, []))
         
         # STRICT FILTERING: Require that search word (or its variant) appears as a complete word
         # This prevents "tomato" from matching "potato" or "avocado"
@@ -1227,6 +1235,9 @@ class SmartProductMatcher:
             if word.endswith('os') and len(word) > 4 and word[-3] in 'aeiou':
                 misspelling_plural = word[:-1] + 'es'  # "avocados" -> "avocadoes"
                 indices.update(self.name_index.get(misspelling_plural, []))
+                # CRITICAL: Also explicitly check the singular form (remove 's' from 'os' ending)
+                singular_os = word[:-1]  # "avocados" -> "avocado"
+                indices.update(self.name_index.get(singular_os, []))
             
             return indices
         
