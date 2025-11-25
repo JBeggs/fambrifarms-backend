@@ -4549,6 +4549,9 @@ def reserve_stock_for_customer(product, quantity, customer, fulfillment_method='
     """
     Immediately reserve stock for a customer when they make a selection
     
+    Uses the same patterns and validation as the standardized stock adjustment endpoint
+    to ensure consistency across the system.
+    
     Args:
         product: Product instance
         quantity: Decimal - amount to reserve
@@ -4562,40 +4565,75 @@ def reserve_stock_for_customer(product, quantity, customer, fulfillment_method='
     from decimal import Decimal
     from django.db import transaction
     from django.utils import timezone
+    import logging
+    
+    logger = logging.getLogger(__name__)
     
     reserve_qty = Decimal(str(quantity))
     
     try:
         with transaction.atomic():
-            # Get inventory record
+            # Get or create inventory record (consistent with stock adjustment endpoint)
+            inventory, created = FinishedInventory.objects.get_or_create(
+                product=product,
+                defaults={
+                    'available_quantity': product.stock_level or Decimal('0'),
+                    'reserved_quantity': Decimal('0'),
+                    'minimum_level': 10,  # Default minimum level
+                    'reorder_level': 20,  # Default reorder level
+                    'average_cost': product.price or Decimal('0'),
+                }
+            )
+            
+            if created:
+                logger.info(f"Created new FinishedInventory record for product {product.name} (ID: {product.id})")
+            
+            # Use select_for_update to prevent race conditions (consistent with stock adjustment)
             inventory = FinishedInventory.objects.select_for_update().get(product=product)
             
             # Check if we have enough stock
             available = inventory.available_quantity or Decimal('0')
             if available < reserve_qty:
+                logger.warning(f"Insufficient stock for reservation: Available: {available}, Requested: {reserve_qty} for {product.name}")
                 return {
                     'success': False,
                     'message': f'Insufficient stock. Available: {available}, Requested: {reserve_qty}',
                     'available_quantity': float(available)
                 }
             
-            # Reserve the stock
+            # Reserve the stock (move from available to reserved)
+            # This is different from adjustments which change total stock
             inventory.available_quantity = available - reserve_qty
             inventory.reserved_quantity = (inventory.reserved_quantity or Decimal('0')) + reserve_qty
+            
+            # Sync Product stock_level to match FinishedInventory (consistent with stock adjustment)
+            product.stock_level = inventory.available_quantity
+            product.save(update_fields=['stock_level'])
+            
+            # Save inventory
             inventory.save()
             
-            # Create stock movement record
-            # customer is already a User object, use it directly
+            logger.info(f"Reserved {reserve_qty}{product.unit} for {customer} (Product: {product.name}). "
+                       f"Available: {inventory.available_quantity}, Reserved: {inventory.reserved_quantity}")
+            
+            # Create stock movement record with standardized format
+            # Generate reference number in consistent format
             timestamp_str = timezone.now().strftime("%Y%m%d%H%M%S")
             reservation_ref = f'RESERVE-{customer.id}-{timestamp_str}'
+            
+            # Create notes in consistent format (similar to stock adjustment endpoint)
+            notes = f'Reserved for customer {customer} using {fulfillment_method} method'
+            
             stock_movement = StockMovement.objects.create(
                 movement_type='finished_reserve',
                 reference_number=reservation_ref,
                 product=product,
                 quantity=reserve_qty,
                 user=customer,
-                notes=f'Reserved for customer {customer} using {fulfillment_method} method'
+                notes=notes
             )
+            
+            logger.info(f"Created StockMovement record (ID: {stock_movement.id}) for reservation {reservation_ref}")
             
             return {
                 'success': True,
@@ -4607,12 +4645,16 @@ def reserve_stock_for_customer(product, quantity, customer, fulfillment_method='
             }
             
     except FinishedInventory.DoesNotExist:
+        logger.error(f"No inventory record found for {product.name} (ID: {product.id})")
         return {
             'success': False,
             'message': f'No inventory record found for {product.name}',
             'available_quantity': 0
         }
     except Exception as e:
+        logger.error(f"Reservation failed for {product.name}: {str(e)}")
+        import traceback
+        logger.error(f"Traceback: {traceback.format_exc()}")
         return {
             'success': False,
             'message': f'Reservation failed: {str(e)}',
