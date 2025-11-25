@@ -2284,9 +2284,13 @@ def get_product_suggestions_for_search(request):
                     'total_quantity': 0.0
                 })
                 
-                # Extract packaging size if present in product name
+                # Extract packaging size - prioritize product model field, then extract from name
                 packaging_size = None
-                if '(' in suggestion.product.name and ')' in suggestion.product.name:
+                # First try to get from product model field
+                if hasattr(suggestion.product, 'packaging_size') and suggestion.product.packaging_size:
+                    packaging_size = str(suggestion.product.packaging_size)
+                # Fallback: extract from product name if present
+                elif '(' in suggestion.product.name and ')' in suggestion.product.name:
                     try:
                         packaging_size = suggestion.product.name.split('(')[1].split(')')[0]
                     except:
@@ -2312,6 +2316,39 @@ def get_product_suggestions_for_search(request):
                 stock['reserved_quantity_kg'] = reserved_calc['available_quantity_kg']
                 stock['reserved_quantity_count'] = reserved_calc['available_quantity_count']
                 stock['stock_stored_in_kg'] = available_calc['stock_stored_in_kg']
+                
+                # CRITICAL FIX: If available_quantity_kg is 0 but we have count and packaging_size,
+                # calculate kg from count × packaging_size (for box products like "1 lemon box")
+                if stock['available_quantity_kg'] == 0.0 and stock['available_quantity_count'] > 0 and packaging_size:
+                    import re
+                    packaging_size_lower = str(packaging_size).lower().strip().replace(' ', '')
+                    # Try to match kg pattern (e.g., "5kg", "2.5kg")
+                    kg_match = re.match(r'^(\d+(?:\.\d+)?)\s*kg$', packaging_size_lower)
+                    if kg_match:
+                        weight_per_unit = float(kg_match.group(1))
+                        stock['available_quantity_kg'] = stock['available_quantity_count'] * weight_per_unit
+                    else:
+                        # Try to match gram pattern (e.g., "500g", "100g")
+                        g_match = re.match(r'^(\d+(?:\.\d+)?)\s*g$', packaging_size_lower)
+                        if g_match:
+                            weight_per_unit_grams = float(g_match.group(1))
+                            weight_per_unit_kg = weight_per_unit_grams / 1000.0
+                            stock['available_quantity_kg'] = stock['available_quantity_count'] * weight_per_unit_kg
+                
+                # Same fix for reserved quantity
+                if stock['reserved_quantity_kg'] == 0.0 and stock['reserved_quantity_count'] > 0 and packaging_size:
+                    import re
+                    packaging_size_lower = str(packaging_size).lower().strip().replace(' ', '')
+                    kg_match = re.match(r'^(\d+(?:\.\d+)?)\s*kg$', packaging_size_lower)
+                    if kg_match:
+                        weight_per_unit = float(kg_match.group(1))
+                        stock['reserved_quantity_kg'] = stock['reserved_quantity_count'] * weight_per_unit
+                    else:
+                        g_match = re.match(r'^(\d+(?:\.\d+)?)\s*g$', packaging_size_lower)
+                        if g_match:
+                            weight_per_unit_grams = float(g_match.group(1))
+                            weight_per_unit_kg = weight_per_unit_grams / 1000.0
+                            stock['reserved_quantity_kg'] = stock['reserved_quantity_count'] * weight_per_unit_kg
                 
                 # Check if product is in stock using all available stock fields
                 # For discrete units (head, bag, etc.), stock might be in count or kg
