@@ -149,6 +149,17 @@ class SmartProductMatcher:
                         name_index[misspelling_plural] = []
                     if i not in name_index[misspelling_plural]:
                         name_index[misspelling_plural].append(i)
+                
+                # CRITICAL: If word ends with 'o' (singular like "avocado"), also add the 'os' plural form
+                # This allows "avocados" to match products named "Avocado"
+                # The plural function adds 'es' (avocado -> avocadoes), but we also need 'os' form (avocados)
+                if word.endswith('o') and len(word) > 4:
+                    # Add 'os' plural form (e.g., "avocado" -> "avocados")
+                    os_plural = word + 's'  # avocado -> avocados
+                    if os_plural not in name_index:
+                        name_index[os_plural] = []
+                    if i not in name_index[os_plural]:
+                        name_index[os_plural].append(i)
         
         # Cache the data
         self._products_cache = all_products_data
