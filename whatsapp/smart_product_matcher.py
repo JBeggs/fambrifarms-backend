@@ -1022,6 +1022,17 @@ class SmartProductMatcher:
                     self._get_plural(search_word).lower()
                 }
                 
+                # CRITICAL: Handle misspellings - add correct spelling variants
+                # If search word ends with 'oes' (like "avocadoes"), also add 'os' form (like "avocados")
+                if search_word.endswith('oes') and len(search_word) > 4:
+                    correct_plural = search_word[:-1].lower()  # "avocadoes" -> "avocados"
+                    search_variants.add(correct_plural)
+                
+                # If search word ends with 'os' (like "avocados"), also add 'oes' form (like "avocadoes")
+                if search_word.endswith('os') and len(search_word) > 4 and search_word[-3] in 'aeiou':
+                    misspelling_plural = (search_word[:-1] + 'es').lower()  # "avocados" -> "avocadoes"
+                    search_variants.add(misspelling_plural)
+                
                 # Check if any variant appears as a complete word
                 # First check in extracted product words (simpler, no regex needed)
                 word_found = False
@@ -1075,6 +1086,18 @@ class SmartProductMatcher:
         if plural != search_word:
             candidate_indices.update(self.name_index.get(plural, []))
         
+        # CRITICAL: Handle misspellings - if word ends with 'oes' (like "avocadoes"),
+        # also check the correct 'os' form (like "avocados")
+        if search_word.endswith('oes') and len(search_word) > 4:
+            correct_plural = search_word[:-1]  # "avocadoes" -> "avocados"
+            candidate_indices.update(self.name_index.get(correct_plural, []))
+        
+        # Also handle reverse: if word ends with 'os' (like "avocados"),
+        # also check the misspelling 'oes' form (like "avocadoes")
+        if search_word.endswith('os') and len(search_word) > 4 and search_word[-3] in 'aeiou':
+            misspelling_plural = search_word[:-1] + 'es'  # "avocados" -> "avocadoes"
+            candidate_indices.update(self.name_index.get(misspelling_plural, []))
+        
         # STRICT FILTERING: Require that search word (or its variant) appears as a complete word
         # This prevents "tomato" from matching "potato" or "avocado"
         # But allows "lemon" to match "Lemons" via the index variants we added
@@ -1087,6 +1110,17 @@ class SmartProductMatcher:
             self._get_singular(search_word).lower(),
             self._get_plural(search_word).lower()
         }
+        
+        # CRITICAL: Handle misspellings - add correct spelling variants
+        # If search word ends with 'oes' (like "avocadoes"), also add 'os' form (like "avocados")
+        if search_word.endswith('oes') and len(search_word) > 4:
+            correct_plural = search_word[:-1].lower()  # "avocadoes" -> "avocados"
+            search_variants.add(correct_plural)
+        
+        # If search word ends with 'os' (like "avocados"), also add 'oes' form (like "avocadoes")
+        if search_word.endswith('os') and len(search_word) > 4 and search_word[-3] in 'aeiou':
+            misspelling_plural = (search_word[:-1] + 'es').lower()  # "avocados" -> "avocadoes"
+            search_variants.add(misspelling_plural)
         
         for idx in candidate_indices:
             product_data = self.all_products_data[idx]
@@ -1311,6 +1345,18 @@ class SmartProductMatcher:
                     self._get_singular(search_word).lower(),
                     self._get_plural(search_word).lower()
                 }
+                
+                # CRITICAL: Handle misspellings - add correct spelling variants
+                # If search word ends with 'oes' (like "avocadoes"), also add 'os' form (like "avocados")
+                if search_word.endswith('oes') and len(search_word) > 4:
+                    correct_plural = search_word[:-1].lower()  # "avocadoes" -> "avocados"
+                    search_variants.add(correct_plural)
+                
+                # If search word ends with 'os' (like "avocados"), also add 'oes' form (like "avocadoes")
+                if search_word.endswith('os') and len(search_word) > 4 and search_word[-3] in 'aeiou':
+                    misspelling_plural = (search_word[:-1] + 'es').lower()  # "avocados" -> "avocadoes"
+                    search_variants.add(misspelling_plural)
+                
                 product_words_lower = [w.lower() for w in product_search_words]
                 
                 # Also get product word variants (singular/plural) for better matching
@@ -1363,6 +1409,17 @@ class SmartProductMatcher:
                         self._get_singular(search_word).lower(),
                         self._get_plural(search_word).lower()
                     }
+                    
+                    # CRITICAL: Handle misspellings - add correct spelling variants
+                    # If search word ends with 'oes' (like "avocadoes"), also add 'os' form (like "avocados")
+                    if search_word.endswith('oes') and len(search_word) > 4:
+                        correct_plural = search_word[:-1].lower()  # "avocadoes" -> "avocados"
+                        search_variants.add(correct_plural)
+                    
+                    # If search word ends with 'os' (like "avocados"), also add 'oes' form (like "avocadoes")
+                    if search_word.endswith('os') and len(search_word) > 4 and search_word[-3] in 'aeiou':
+                        misspelling_plural = (search_word[:-1] + 'es').lower()  # "avocados" -> "avocadoes"
+                        search_variants.add(misspelling_plural)
                     
                     # Check if any variant appears in extracted product words or their variants
                     word_found = any(variant in product_words_lower or variant in product_word_variants for variant in search_variants)
