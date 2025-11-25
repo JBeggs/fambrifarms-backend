@@ -40,7 +40,14 @@ class SmartProductMatcher:
     _products_cache = None
     _name_index = None
     _last_cache_time = None
-    _cache_timeout = 3600  # 1 hour cache timeout
+    _cache_timeout = 300  # 5 minutes cache timeout (reduced for testing, can increase later)
+    
+    @classmethod
+    def clear_cache(cls):
+        """Clear the class-level cache to force a fresh reload"""
+        cls._products_cache = None
+        cls._name_index = None
+        cls._last_cache_time = None
     
     def __init__(self):
         """Initialize with dynamic database analysis and caching"""
@@ -67,6 +74,7 @@ class SmartProductMatcher:
         # Check if cache is valid
         current_time = time.time()
         if (self._products_cache is not None and 
+            self._name_index is not None and
             self._last_cache_time is not None and 
             current_time - self._last_cache_time < self._cache_timeout):
             # Use cached data
@@ -988,6 +996,19 @@ class SmartProductMatcher:
                 indices.update(self.name_index.get(singular, []))
             if plural != word:
                 indices.update(self.name_index.get(plural, []))
+            
+            # CRITICAL: Handle misspellings - if word ends with 'oes' (like "avocadoes"),
+            # also check the correct 'os' form (like "avocados")
+            if word.endswith('oes') and len(word) > 4:
+                correct_plural = word[:-1]  # "avocadoes" -> "avocados"
+                indices.update(self.name_index.get(correct_plural, []))
+            
+            # Also handle reverse: if word ends with 'os' (like "avocados"),
+            # also check the misspelling 'oes' form (like "avocadoes")
+            if word.endswith('os') and len(word) > 4 and word[-3] in 'aeiou':
+                misspelling_plural = word[:-1] + 'es'  # "avocados" -> "avocadoes"
+                indices.update(self.name_index.get(misspelling_plural, []))
+            
             return indices
         
         # Start with products containing the first word (including variants from index)
