@@ -2366,6 +2366,137 @@ def get_product_suggestions_for_search(request):
                     'in_stock': is_in_stock,
                     'unlimited_stock': getattr(suggestion.product, 'unlimited_stock', False)
                 })
+            
+            # CRITICAL: Ensure products with stock that match the search term are ALWAYS included
+            # This ensures that even if a product has low confidence, if it has stock and matches, it shows up
+            if suggestions:
+                # Get all product IDs already in suggestions
+                existing_product_ids = {s['product_id'] for s in suggestions}
+                
+                # Extract base product name from search term
+                base_product_name = product_name.lower()
+                # Remove quantities
+                base_product_name = re.sub(r'\d+', '', base_product_name).strip()
+                # Remove packaging words
+                for word in ['box', 'bag', 'packet', 'punnet', 'bunch', 'head', 'each', 'kg', 'g', 'ml', 'l']:
+                    base_product_name = re.sub(r'\b' + word + r'\b', '', base_product_name).strip()
+                base_product_name = base_product_name.strip()
+                
+                # Also extract search words (like the matcher does)
+                from .smart_product_matcher import SmartProductMatcher
+                temp_matcher = SmartProductMatcher()
+                search_words = temp_matcher._extract_search_words(product_name)
+                
+                if base_product_name or search_words:
+                    # Find products that match the search term and have stock but aren't in suggestions
+                    from products.models import Product
+                    from django.db.models import Q
+                    product_query = Q()
+                    
+                    if base_product_name:
+                        product_query |= Q(name__icontains=base_product_name)
+                    
+                    for word in search_words:
+                        if len(word) > 2:  # Only meaningful words
+                            product_query |= Q(name__icontains=word)
+                    
+                    if product_query:
+                        # Find matching products not already in suggestions
+                        matching_products = Product.objects.filter(product_query).exclude(
+                            id__in=existing_product_ids
+                        ).select_related('department')[:20]  # Limit to prevent too many queries
+                        
+                        # Check stock for these products
+                        matching_product_ids = [p.id for p in matching_products]
+                        if matching_product_ids:
+                            matching_stock_info = {}
+                            for inventory in FinishedInventory.objects.filter(
+                                product_id__in=matching_product_ids
+                            ).select_related('product'):
+                                available = float(inventory.available_quantity or 0)
+                                reserved = float(inventory.reserved_quantity or 0)
+                                total = available + reserved
+                                
+                                # Check if product has stock (available, reserved, or total > 0)
+                                if available > 0 or reserved > 0 or total > 0:
+                                    matching_stock_info[inventory.product_id] = {
+                                        'available_quantity': available,
+                                        'reserved_quantity': reserved,
+                                        'total_quantity': total,
+                                        'product': inventory.product
+                                    }
+                            
+                            # Add products with stock to suggestions
+                            for product in matching_products:
+                                if product.id in matching_stock_info:
+                                    stock_data = matching_stock_info[product.id]
+                                    
+                                    # Extract packaging size
+                                    packaging_size = None
+                                    if hasattr(product, 'packaging_size') and product.packaging_size:
+                                        packaging_size = str(product.packaging_size)
+                                    elif '(' in product.name and ')' in product.name:
+                                        try:
+                                            packaging_size = product.name.split('(')[1].split(')')[0]
+                                        except:
+                                            pass
+                                    
+                                    # Calculate stock counts
+                                    from .services import calculate_stock_count_and_weight
+                                    available_calc = calculate_stock_count_and_weight(
+                                        stock_data['available_quantity'],
+                                        product.unit,
+                                        packaging_size
+                                    )
+                                    
+                                    reserved_calc = calculate_stock_count_and_weight(
+                                        stock_data['reserved_quantity'],
+                                        product.unit,
+                                        packaging_size
+                                    )
+                                    
+                                    stock = {
+                                        'available_quantity': stock_data['available_quantity'],
+                                        'reserved_quantity': stock_data['reserved_quantity'],
+                                        'total_quantity': stock_data['total_quantity'],
+                                        'available_quantity_kg': available_calc['available_quantity_kg'],
+                                        'available_quantity_count': available_calc['available_quantity_count'],
+                                        'reserved_quantity_kg': reserved_calc['available_quantity_kg'],
+                                        'reserved_quantity_count': reserved_calc['available_quantity_count'],
+                                        'stock_stored_in_kg': available_calc['stock_stored_in_kg']
+                                    }
+                                    
+                                    # Calculate kg from count if needed (same logic as above)
+                                    if stock['available_quantity_kg'] == 0.0 and stock['available_quantity_count'] > 0 and packaging_size:
+                                        packaging_size_lower = str(packaging_size).lower().strip().replace(' ', '')
+                                        kg_match = re.match(r'^(\d+(?:\.\d+)?)\s*kg$', packaging_size_lower)
+                                        if kg_match:
+                                            weight_per_unit = float(kg_match.group(1))
+                                            stock['available_quantity_kg'] = stock['available_quantity_count'] * weight_per_unit
+                                        else:
+                                            g_match = re.match(r'^(\d+(?:\.\d+)?)\s*g$', packaging_size_lower)
+                                            if g_match:
+                                                weight_per_unit_grams = float(g_match.group(1))
+                                                weight_per_unit_kg = weight_per_unit_grams / 1000.0
+                                                stock['available_quantity_kg'] = stock['available_quantity_count'] * weight_per_unit_kg
+                                    
+                                    available_count = stock.get('available_quantity_count', 0) or 0
+                                    available_kg = stock.get('available_quantity_kg', 0) or 0
+                                    available_qty = stock.get('available_quantity', 0) or 0
+                                    is_in_stock = available_count > 0 or available_kg > 0 or available_qty > 0
+                                    
+                                    # Add to suggestions with lower confidence (since it wasn't in initial results)
+                                    suggestions.append({
+                                        'product_id': product.id,
+                                        'product_name': product.name,
+                                        'unit': product.unit,
+                                        'price': float(product.price) if product.price else 0.0,
+                                        'confidence_score': 35.0,  # Lower confidence since it's a stock-based match
+                                        'packaging_size': packaging_size,
+                                        'stock': stock,
+                                        'in_stock': is_in_stock,
+                                        'unlimited_stock': getattr(product, 'unlimited_stock', False)
+                                    })
         
         return Response({
             'status': 'success',
