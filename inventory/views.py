@@ -2170,21 +2170,26 @@ def get_invoice_upload_status(request):
 @permission_classes([IsAuthenticated])
 def check_stock_take_status(request):
     """
-    Check if stock take was completed today or yesterday
-    Returns whether stock take has been completed for today's or yesterday's date
+    Check if stock take was completed in the last 3 days (today, yesterday, or day before)
+    Returns whether stock take has been completed for today's, yesterday's, or day before yesterday's date
     """
     today = timezone.now().date()
     yesterday = today - timedelta(days=1)
+    day_before = today - timedelta(days=2)
     today_str = today.strftime('%Y%m%d')
     yesterday_str = yesterday.strftime('%Y%m%d')
+    day_before_str = day_before.strftime('%Y%m%d')
     today_prefix = f'STOCK-TAKE-{today_str}'
     yesterday_prefix = f'STOCK-TAKE-{yesterday_str}'
+    day_before_prefix = f'STOCK-TAKE-{day_before_str}'
     
-    # Check if there are any stock movements with today's or yesterday's stock take reference
+    # Check if there are any stock movements with today's, yesterday's, or day before yesterday's stock take reference
     stock_take_exists = StockMovement.objects.filter(
         reference_number__startswith=today_prefix
     ).exists() or StockMovement.objects.filter(
         reference_number__startswith=yesterday_prefix
+    ).exists() or StockMovement.objects.filter(
+        reference_number__startswith=day_before_prefix
     ).exists()
     
     return Response({
