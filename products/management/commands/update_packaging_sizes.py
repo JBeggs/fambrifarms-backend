@@ -33,6 +33,11 @@ class Command(BaseCommand):
             action='store_true',
             help='Show detailed output for each product',
         )
+        parser.add_argument(
+            '--list-missing',
+            action='store_true',
+            help='Only list products missing packaging_size without updating',
+        )
 
     def extract_packaging_from_name(self, name):
         """
@@ -91,6 +96,34 @@ class Command(BaseCommand):
         dry_run = options['dry_run']
         verbose = options['verbose']
         json_file = options.get('from_json')
+        list_missing = options.get('list_missing', False)
+        
+        # If --list-missing flag, just show missing products and exit
+        if list_missing:
+            missing = Product.objects.filter(
+                unit__in=['packet', 'head', 'bag', 'box', 'punnet', 'bunch'],
+                packaging_size__isnull=True
+            ).exclude(packaging_size='').order_by('name')
+            
+            empty_string = Product.objects.filter(
+                unit__in=['packet', 'head', 'bag', 'box', 'punnet', 'bunch'],
+                packaging_size=''
+            ).order_by('name')
+            
+            total_missing = missing.count() + empty_string.count()
+            
+            self.stdout.write(self.style.WARNING(f'\n{total_missing} products missing packaging_size:\n'))
+            
+            if missing.exists():
+                for product in missing:
+                    self.stdout.write(f"  • {product.name} (ID: {product.id}, unit: {product.unit})")
+            
+            if empty_string.exists():
+                for product in empty_string:
+                    self.stdout.write(f"  • {product.name} (ID: {product.id}, unit: {product.unit})")
+            
+            self.stdout.write('')
+            return
         
         if dry_run:
             self.stdout.write(self.style.WARNING('Running in DRY-RUN mode. No changes will be saved.'))
@@ -184,12 +217,21 @@ class Command(BaseCommand):
         missing = Product.objects.filter(
             unit__in=['packet', 'head', 'bag', 'box', 'punnet', 'bunch'],
             packaging_size__isnull=True
-        ).exclude(packaging_size='')
+        ).exclude(packaging_size='').order_by('name')
         
         if missing.exists():
             self.stdout.write(self.style.WARNING(f'\n{missing.count()} products still missing packaging_size:'))
-            for product in missing[:20]:
+            for product in missing:
                 self.stdout.write(f"  • {product.name} (ID: {product.id}, unit: {product.unit})")
-            if missing.count() > 20:
-                self.stdout.write(f"  ... and {missing.count() - 20} more")
+            
+            # Also show products with empty string packaging_size
+            empty_string = Product.objects.filter(
+                unit__in=['packet', 'head', 'bag', 'box', 'punnet', 'bunch'],
+                packaging_size=''
+            ).order_by('name')
+            
+            if empty_string.exists():
+                self.stdout.write(self.style.WARNING(f'\n{empty_string.count()} products with empty string packaging_size:'))
+                for product in empty_string:
+                    self.stdout.write(f"  • {product.name} (ID: {product.id}, unit: {product.unit})")
 
