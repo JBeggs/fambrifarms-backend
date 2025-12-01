@@ -38,21 +38,50 @@ class Command(BaseCommand):
         """
         Extract packaging size from product name using multiple patterns
         
+        Examples:
+            "Cabbage (1kg)" -> "1kg"
+            "Potatoes (2kg bag)" -> "2kg"
+            "Basil 100g packet" -> "100g"
+            "Tomatoes 5kg box" -> "5kg"
+            "Carrots 500g" -> "500g"
+            "Lettuce head" -> None (no weight)
+        
         Returns:
             String like "100g", "1kg", "500g" or None
         """
-        # Pattern 1: Product Name (Size)
-        match = re.search(r'\((\d+(?:\.\d+)?)(kg|g|ml|l)', name, re.IGNORECASE)
+        if not name:
+            return None
+        
+        # Pattern 1: Product Name (Size) or (Size container)
+        # Matches: "Cabbage (1kg)", "Potatoes (2kg bag)", "Basil (100g packet)"
+        match = re.search(r'\((\d+(?:\.\d+)?)\s*(kg|g|ml|l)\s*(?:bag|box|packet|punnet|bunch|head)?\)', name, re.IGNORECASE)
         if match:
             return f"{match.group(1)}{match.group(2)}"
         
-        # Pattern 2: Product Name Size packet/bag/box
-        match = re.search(r'(\d+(?:\.\d+)?)(kg|g|ml|l)\s+(?:packet|bag|box|punnet)', name, re.IGNORECASE)
+        # Pattern 2: Product Name Size container
+        # Matches: "Tomatoes 5kg box", "Carrots 500g bag", "Basil 100g packet"
+        match = re.search(r'(\d+(?:\.\d+)?)\s*(kg|g|ml|l)\s+(?:bag|box|packet|punnet|bunch|head)', name, re.IGNORECASE)
         if match:
             return f"{match.group(1)}{match.group(2)}"
         
-        # Pattern 3: Product Name Size (standalone at end)
-        match = re.search(r'(\d+(?:\.\d+)?)(kg|g|ml|l)\b', name, re.IGNORECASE)
+        # Pattern 3: Product Name Size (standalone, not part of quantity)
+        # Matches: "Carrots 500g", "Tomatoes 2kg" (but not "5 Carrots" or "10 Tomatoes")
+        # Look for size pattern that's NOT preceded by a space + number + space
+        match = re.search(r'(?<!\d\s)(\d+(?:\.\d+)?)\s*(kg|g|ml|l)\b(?!\s*(?:bag|box|packet|punnet|bunch|head|each|piece))', name, re.IGNORECASE)
+        if match:
+            # Verify it's not a quantity (check if followed by product name words)
+            # This is a size if it appears before common container words or at end
+            context_after = name[match.end():].strip()
+            if not context_after or context_after.lower().startswith(('bag', 'box', 'packet', 'punnet', 'bunch', 'head', 'each', 'piece')):
+                return f"{match.group(1)}{match.group(2)}"
+        
+        # Pattern 4: Size x Product or Product x Size
+        # Matches: "1kg Cabbage", "500g Basil", "Cabbage x 1kg"
+        match = re.search(r'(\d+(?:\.\d+)?)\s*(kg|g|ml|l)\s*(?:x|×|\*)?\s*[A-Za-z]', name, re.IGNORECASE)
+        if match:
+            return f"{match.group(1)}{match.group(2)}"
+        
+        match = re.search(r'[A-Za-z]\s*(?:x|×|\*)\s*(\d+(?:\.\d+)?)\s*(kg|g|ml|l)', name, re.IGNORECASE)
         if match:
             return f"{match.group(1)}{match.group(2)}"
         
