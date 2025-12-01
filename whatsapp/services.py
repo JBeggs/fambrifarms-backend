@@ -4471,15 +4471,30 @@ def calculate_stock_count_and_weight(available_quantity, product_unit, packaging
     # If we have packaging_size, we can convert between kg and count
     if packaging_size_kg and packaging_size_kg > 0:
         # Determine if available_quantity is likely in kg or count
-        # If available_quantity >= packaging_size_kg, it's definitely stored in kg (can't have 21.5 bags if packaging is 10kg)
-        # If available_quantity is not a whole number, it's stored in kg
-        # If available_quantity < 1, it's stored in kg (fractional)
-        # Otherwise, if it's a whole number >= 1 and < packaging_size_kg, it might be count
+        # For discrete units, we need better heuristics:
+        # 1. If it's NOT a whole number, it's definitely kg (e.g., 21.5)
+        # 2. If it's < 1, it's kg (fractional)
+        # 3. If it's a whole number, check which interpretation makes more sense:
+        #    - Calculate what kg would be if we treat as count
+        #    - Calculate what count would be if we treat as kg
+        #    - Prefer count if: whole number AND resulting kg is reasonable (< 1000 kg)
+        #    - Prefer kg if: whole number BUT resulting kg would be very large (>= 1000 kg)
         is_whole_number = available_qty == int(available_qty)
+        
+        # Calculate what kg would be if we treat available_qty as count
+        potential_kg_from_count = int(available_qty) * packaging_size_kg
+        # Calculate what count would be if we treat available_qty as kg
+        potential_count_from_kg = int(round(available_qty / packaging_size_kg)) if packaging_size_kg > 0 else 0
+        
+        # Determine storage unit:
+        # - If not whole number or < 1: definitely kg
+        # - If whole number: prefer count UNLESS treating as count gives unreasonable kg (>= 1000 kg)
+        #   This handles cases like: 20 punnets (0.2 kg each) = 4 kg (reasonable, so treat as count)
+        #   vs: 5000 punnets (0.2 kg each) = 1000 kg (unreasonable, so treat as kg)
         is_likely_kg = (
-            available_qty >= packaging_size_kg or  # Can't have 21.5 bags if packaging is 10kg
             not is_whole_number or  # Not a whole number = kg (e.g., 21.5)
-            available_qty < 1  # Less than 1 = kg (fractional)
+            available_qty < 1 or  # Less than 1 = kg (fractional)
+            (is_whole_number and potential_kg_from_count >= 1000)  # Very large kg value suggests stored as kg
         )
         
         if is_likely_kg:
@@ -4490,6 +4505,18 @@ def calculate_stock_count_and_weight(available_quantity, product_unit, packaging
             # available_quantity is likely in count, convert to kg
             count_value = int(available_qty)
             kg_value = count_value * packaging_size_kg
+        
+        # Debug logging for troubleshooting stock display issues
+        if unit_lower in ['punnet', 'box', 'bag', 'packet', 'each', 'head', 'bunch']:
+            import logging
+            logger = logging.getLogger(__name__)
+            logger.debug(
+                f"Stock calculation for {unit_lower} (packaging: {packaging_size_kg} kg): "
+                f"available_qty={available_qty}, is_whole={is_whole_number}, "
+                f"potential_kg_from_count={potential_kg_from_count}, "
+                f"is_likely_kg={is_likely_kg}, "
+                f"result: count={count_value}, kg={kg_value}"
+            )
         
         return {
             'available_quantity_kg': kg_value,
