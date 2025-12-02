@@ -1705,18 +1705,33 @@ def apply_stock_updates_to_inventory(request):
                 ~Q(processing_notes__icontains='Inventory:')
             )
             
+            # 🚀 PERFORMANCE FIX: Calculate values once outside the loop
+            success_rate = result.get('success_rate', 0)
+            successful_items = result.get('successful_items', 0)
+            total_items = result.get('total_items_processed', 0)
+            
+            if success_rate >= 90:
+                status_icon = "✅"
+            elif success_rate >= 70:
+                status_icon = "⚠️"
+            else:
+                status_icon = "❌"
+            
+            # Prepare failure details once
+            failure_details = []
+            if result.get('failed_items'):
+                failure_details = [
+                    f"'{failed_item['original_name']}': {failed_item['failure_reason']}"
+                    for failed_item in result['failed_items']
+                ]
+            
+            # Prepare warning count once
+            warning_count = len(result.get('processing_warnings', []))
+            
+            # 🚀 PERFORMANCE FIX: Collect message updates for bulk update instead of individual saves
+            messages_to_bulk_update = []
+            
             for message in all_messages_to_update:
-                success_rate = result.get('success_rate', 0)
-                successful_items = result.get('successful_items', 0)
-                total_items = result.get('total_items_processed', 0)
-                
-                if success_rate >= 90:
-                    status_icon = "✅"
-                elif success_rate >= 70:
-                    status_icon = "⚠️"
-                else:
-                    status_icon = "❌"
-                
                 # Replace the old inventory info or add new inventory info
                 if 'Inventory: 0/0 applied (0%)' in message.processing_notes:
                     # Replace the placeholder inventory info
@@ -1734,29 +1749,31 @@ def apply_stock_updates_to_inventory(request):
                     message.processing_notes += f" | {status_icon} Inventory: {successful_items}/{total_items} applied ({success_rate}%)"
                 
                 # Add detailed failure information
-                if result.get('failed_items'):
-                    failure_details = []
-                    for failed_item in result['failed_items']:
-                        failure_details.append(f"'{failed_item['original_name']}': {failed_item['failure_reason']}")
-                    
-                    if failure_details:
-                        # Remove old failed items info if it exists
-                        if 'Failed items:' in message.processing_notes:
-                            parts = message.processing_notes.split('Failed items:')
-                            if len(parts) > 1:
-                                # Keep everything before "Failed items:" and add new failure info
-                                before_failures = parts[0].rstrip(' |')
-                                message.processing_notes = f"{before_failures} | Failed items: {'; '.join(failure_details)}"
-                        else:
-                            message.processing_notes += f" | Failed items: {'; '.join(failure_details)}"
+                if failure_details:
+                    # Remove old failed items info if it exists
+                    if 'Failed items:' in message.processing_notes:
+                        parts = message.processing_notes.split('Failed items:')
+                        if len(parts) > 1:
+                            # Keep everything before "Failed items:" and add new failure info
+                            before_failures = parts[0].rstrip(' |')
+                            message.processing_notes = f"{before_failures} | Failed items: {'; '.join(failure_details)}"
+                    else:
+                        message.processing_notes += f" | Failed items: {'; '.join(failure_details)}"
                 
                 # Add processing warnings summary
-                if result.get('processing_warnings'):
-                    warning_count = len(result['processing_warnings'])
-                    if 'warnings' not in message.processing_notes:
-                        message.processing_notes += f" | ⚠️ {warning_count} warnings"
+                if warning_count > 0 and 'warnings' not in message.processing_notes:
+                    message.processing_notes += f" | ⚠️ {warning_count} warnings"
                 
-                message.save()
+                messages_to_bulk_update.append(message)
+            
+            # 🚀 PERFORMANCE FIX: Bulk update all messages at once
+            if messages_to_bulk_update:
+                WhatsAppMessage.objects.bulk_update(
+                    messages_to_bulk_update,
+                    ['processing_notes'],
+                    batch_size=100
+                )
+                print(f"[STOCK] Bulk updated {len(messages_to_bulk_update)} messages with inventory results")
         except Exception as msg_error:
             # Don't fail the main operation if message updates fail
             print(f"Warning: Failed to update message processing notes: {msg_error}")
@@ -2579,11 +2596,16 @@ def create_order_from_suggestions(request):
         
         # OPTIMIZATION: Bulk fetch all products at once to avoid N+1 queries
         product_ids = [item_data['product_id'] for item_data in items_data]
-        source_product_ids = [item_data.get('source_product_id') for item_data in items_data if item_data.get('source_product_id')]
+        # Filter out None values from source_product_ids
+        source_product_ids = [item_data.get('source_product_id') for item_data in items_data 
+                             if item_data.get('source_product_id') is not None]
         all_product_ids = list(set(product_ids + source_product_ids))
+        
+        logger.info(f"[ORDER CREATE] Fetching products: ordered={product_ids}, source={source_product_ids}, all={all_product_ids}")
         
         # Fetch all products in one query with select_related for related fields
         products_dict = {p.id: p for p in Product.objects.filter(id__in=all_product_ids).select_related('department')}
+        logger.info(f"[ORDER CREATE] Fetched {len(products_dict)} products: {[(p.id, p.name) for p in products_dict.values()]}")
         
         # OPTIMIZATION: Pre-fetch customer pricing data to avoid repeated queries
         today = date.today()
@@ -2678,15 +2700,37 @@ def create_order_from_suggestions(request):
                 total_price = quantity * price
                 stock_action = item_data.get('stock_action', 'reserve')  # Default to reserve
                 
+                # CRITICAL FIX: Extract source product information BEFORE stock reservation
+                # This ensures stock is deducted from the correct product (source product if specified)
+                source_product = None
+                source_quantity = None
+                if 'source_product_id' in item_data and item_data['source_product_id'] is not None:
+                    source_product_id = item_data['source_product_id']
+                    logger.info(f"[ORDER CREATE] Source product ID provided: {source_product_id} for ordered product: {product.name} (ID: {product.id})")
+                    source_product = products_dict.get(source_product_id)
+                    if source_product:
+                        source_quantity = Decimal(str(item_data.get('source_quantity', 0)))
+                        logger.info(f"[ORDER CREATE] Using source product: {source_product.name} (ID: {source_product.id}), quantity: {source_quantity}")
+                    else:
+                        logger.warning(f"[ORDER CREATE] Source product with ID {source_product_id} not found in bulk fetch. Available product IDs: {list(products_dict.keys())}")
+                
+                # Determine which product/quantity to use for stock operations
+                # Use source product/quantity if specified, otherwise use ordered product/quantity
+                stock_product = source_product if source_product else product
+                stock_quantity = source_quantity if source_quantity else quantity
+                
+                logger.info(f"[ORDER CREATE] Stock reservation: product={stock_product.name} (ID: {stock_product.id}), quantity={stock_quantity}, "
+                          f"ordered_product={product.name} (ID: {product.id}), source_product={'None' if not source_product else f'{source_product.name} (ID: {source_product.id})'}")
+                
                 # Handle stock actions
                 stock_result = None
                 stock_movement_id = None  # Store movement ID to update reference after order creation
                 if stock_action == 'reserve':
-                    # Reserve stock for this item
+                    # Reserve stock from the correct product (source product if specified, otherwise ordered product)
                     from .services import reserve_stock_for_customer
                     stock_result = reserve_stock_for_customer(
-                        product=product,
-                        quantity=quantity,
+                        product=stock_product,  # FIX: Use source product if specified
+                        quantity=stock_quantity,  # FIX: Use source quantity if specified
                         customer=customer,
                         fulfillment_method='user_confirmed'
                     )
@@ -2695,12 +2739,18 @@ def create_order_from_suggestions(request):
                         # OPTIMIZATION: Store movement ID from result for efficient update
                         movement_id = stock_result.get('stock_movement_id')
                         if movement_id:
+                            # Build product name for notes (include source product info if applicable)
+                            if source_product and source_product.id != product.id:
+                                product_name_for_notes = f"{product.name} (stock from {source_product.name}: {source_quantity}{source_product.unit})"
+                            else:
+                                product_name_for_notes = stock_product.name
+                            
                             stock_movements_to_update.append({
                                 'movement_id': movement_id,
-                                'product_name': product.name
+                                'product_name': product_name_for_notes
                             })
                     else:
-                        logger.warning(f"Failed to reserve stock for {product.name}: {stock_result.get('message', 'Unknown error')}")
+                        logger.warning(f"Failed to reserve stock for {stock_product.name}: {stock_result.get('message', 'Unknown error')}")
                 
                 elif stock_action == 'convert_to_kg':
                     # Convert bag/box items to kg equivalent
@@ -2738,19 +2788,6 @@ def create_order_from_suggestions(request):
                         logger.warning(f"Failed to convert to kg: {conversion_result.get('message', 'Unknown error')}")
                 
                 # stock_action == 'no_reserve' requires no special handling - just create the order item
-                
-                # Handle source product if specified
-                source_product = None
-                source_quantity = None
-                if 'source_product_id' in item_data and item_data['source_product_id'] is not None:
-                    source_product = products_dict.get(item_data['source_product_id'])
-                    if source_product:
-                        source_quantity = Decimal(str(item_data.get('source_quantity', 0)))
-                        
-                        # OPTIMIZATION: Bulk fetch source inventory if needed (defer validation to signals)
-                        # Just log warning if product not found
-                    else:
-                        logger.warning(f"Source product with ID {item_data['source_product_id']} not found in bulk fetch")
                 
                 from orders.models import OrderItem
                 order_item = OrderItem.objects.create(

@@ -3774,7 +3774,13 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
     
     # 🚀 OPTIMIZATION: Pre-cache ALL products for ID-based lookups
     all_products = list(Product.objects.all())
+    products_by_id = {p.id: p for p in all_products}
     print(f"[STOCK] Cached {len(all_products)} products for ID-based lookup")
+
+    # 🚀 PERFORMANCE FIX: Prefetch ALL inventory records to avoid N+1 queries
+    all_inventory_records = FinishedInventory.objects.select_related('product').all()
+    inventory_by_product_id = {inv.product_id: inv for inv in all_inventory_records}
+    print(f"[STOCK] Cached {len(inventory_by_product_id)} inventory records for lookup")
 
     # 🚀 OPTIMIZATION: Collect all inventory updates for bulk operations
     inventory_updates = []  # For bulk_update
@@ -3810,8 +3816,8 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
                     
                     try:
                         product_id = int(product_id_str)
-                        # Direct lookup by ID from cached products
-                        product = next((p for p in all_products if p.id == product_id), None)
+                        # Direct lookup by ID from cached products dictionary
+                        product = products_by_id.get(product_id)
                         if product:
                             matching_info.append(f"Direct ID lookup: {product_id} -> '{product.name}'")
                         else:
@@ -3835,14 +3841,16 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
                         errors.append(failure_reason)
                         continue
                     
-                    # Get or create FinishedInventory record
-                    # 🚀 OPTIMIZED: Collect for bulk operations instead of individual saves
+                    # 🚀 PERFORMANCE FIX: Use cached inventory lookup instead of database query
+                    # Get existing inventory or prepare for creation
                     from decimal import Decimal
                     new_quantity = Decimal(str(quantity))
                     
-                    # Get existing inventory or prepare for creation
-                    try:
-                        inventory = FinishedInventory.objects.get(product=product)
+                    # Look up inventory from cache instead of querying database
+                    inventory = inventory_by_product_id.get(product.id)
+                    
+                    if inventory:
+                        # Existing inventory record
                         old_quantity = inventory.available_quantity or Decimal('0')
                         difference = new_quantity - old_quantity
                         created = False
@@ -3857,8 +3865,8 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
                             product_updates.append(product)
                             
                             products_updated += 1
-                    except FinishedInventory.DoesNotExist:
-                        # Collect for bulk create
+                    else:
+                        # New inventory record - collect for bulk create
                         inventory = FinishedInventory(
                             product=product,
                             available_quantity=new_quantity,
@@ -3868,6 +3876,8 @@ def apply_stock_updates_to_inventory(reset_before_processing=True):
                             average_cost=product.price or 0,
                         )
                         inventory_creates.append(inventory)
+                        # Add to cache so we don't try to create duplicates
+                        inventory_by_product_id[product.id] = inventory
                         
                         # Collect product update
                         product.stock_level = new_quantity
@@ -4016,8 +4026,19 @@ def sync_shallome_to_procurement_intelligence():
         updated_products = 0
         errors = []
         
-        # Sync all products with inventory to supplier products
-        for inventory in FinishedInventory.objects.select_related('product'):
+        # 🚀 PERFORMANCE FIX: Prefetch all existing supplier products to avoid N+1 queries
+        existing_supplier_products = {
+            sp.product_id: sp
+            for sp in SupplierProduct.objects.filter(supplier=fambri_supplier).select_related('product')
+        }
+        
+        # 🚀 PERFORMANCE FIX: Collect all inventory records and prepare bulk operations
+        all_inventory = list(FinishedInventory.objects.select_related('product').all())
+        supplier_products_to_create = []
+        supplier_products_to_update = []
+        current_date = timezone.now().date()
+        
+        for inventory in all_inventory:
             try:
                 # Calculate stock count and weight to determine availability
                 stock_calc = calculate_stock_count_and_weight(
@@ -4033,33 +4054,33 @@ def sync_shallome_to_procurement_intelligence():
                     (inventory.available_quantity or 0) > 0
                 )
                 
-                # Get or create supplier product for Fambri Internal
-                supplier_product, sp_created = SupplierProduct.objects.get_or_create(
-                    supplier=fambri_supplier,
-                    product=inventory.product,
-                    defaults={
-                        'supplier_product_name': inventory.product.name,
-                        'supplier_product_code': f'SHAL-{inventory.product.id}',
-                        'stock_quantity': inventory.available_quantity,
-                        'is_available': is_available,
-                        'supplier_price': inventory.product.price or Decimal('0.00'),  # Use product's current cost basis
-                        'unit_of_measure': inventory.product.unit,
-                        'minimum_order_quantity': 1,
-                        'lead_time_days': 0,  # Immediate availability
-                        'quality_rating': Decimal('5.0'),  # Perfect internal quality
-                        'notes': f'SHALLOME internal stock - synced from inventory on {timezone.now().date()}'
-                    }
-                )
+                # Check if supplier product already exists
+                existing_sp = existing_supplier_products.get(inventory.product_id)
                 
-                if sp_created:
+                if existing_sp is None:
+                    # Create new supplier product (will be bulk created)
+                    supplier_products_to_create.append(SupplierProduct(
+                        supplier=fambri_supplier,
+                        product=inventory.product,
+                        supplier_product_name=inventory.product.name,
+                        supplier_product_code=f'SHAL-{inventory.product.id}',
+                        stock_quantity=inventory.available_quantity,
+                        is_available=is_available,
+                        supplier_price=inventory.product.price or Decimal('0.00'),
+                        unit_of_measure=inventory.product.unit,
+                        minimum_order_quantity=1,
+                        lead_time_days=0,  # Immediate availability
+                        quality_rating=Decimal('5.0'),  # Perfect internal quality
+                        notes=f'SHALLOME internal stock - synced from inventory on {current_date}'
+                    ))
                     created_products += 1
                 else:
-                    # Update existing supplier product with current stock levels
-                    old_quantity = supplier_product.stock_quantity
-                    supplier_product.stock_quantity = inventory.available_quantity
-                    supplier_product.is_available = is_available
-                    supplier_product.last_updated = timezone.now()
-                    supplier_product.save()
+                    # Update existing supplier product (will be bulk updated)
+                    old_quantity = existing_sp.stock_quantity
+                    existing_sp.stock_quantity = inventory.available_quantity
+                    existing_sp.is_available = is_available
+                    existing_sp.last_updated = timezone.now()
+                    supplier_products_to_update.append(existing_sp)
                     
                     if old_quantity != inventory.available_quantity:
                         updated_products += 1
@@ -4068,6 +4089,20 @@ def sync_shallome_to_procurement_intelligence():
                 
             except Exception as e:
                 errors.append(f"Error syncing {inventory.product.name}: {str(e)}")
+        
+        # 🚀 PERFORMANCE FIX: Bulk create new supplier products
+        if supplier_products_to_create:
+            SupplierProduct.objects.bulk_create(supplier_products_to_create, batch_size=100)
+            print(f"[STOCK SYNC] Bulk created {len(supplier_products_to_create)} supplier products")
+        
+        # 🚀 PERFORMANCE FIX: Bulk update existing supplier products
+        if supplier_products_to_update:
+            SupplierProduct.objects.bulk_update(
+                supplier_products_to_update,
+                ['stock_quantity', 'is_available', 'last_updated'],
+                batch_size=100
+            )
+            print(f"[STOCK SYNC] Bulk updated {len(supplier_products_to_update)} supplier products")
         
         return {
             'success': True,
@@ -4114,23 +4149,28 @@ def get_stock_take_data(only_with_stock=True):
     
     products_data = []
     
+    # 🚀 PERFORMANCE FIX: Build reverse index of product_name -> latest_stock_update
+    # Single pass through stock updates instead of nested loops
+    product_name_to_latest_update = {}
+    for stock_update in StockUpdate.objects.filter(processed=True).order_by('-stock_date'):
+        for item_name, item_data in stock_update.items.items():
+            # Only update if we haven't seen this product name yet (since ordered by date desc)
+            normalized_name = item_name.lower().strip()
+            if normalized_name not in product_name_to_latest_update:
+                product_name_to_latest_update[normalized_name] = {
+                    'date': stock_update.stock_date,
+                    'quantity': item_data.get('quantity', 0),
+                    'unit': item_data.get('unit', ''),
+                    'order_day': stock_update.order_day
+                }
+    
+    # Now build products data with O(1) lookup per product
     for product in query:
         inventory = product.inventory
         
-        # Get latest stock update for this product
-        latest_stock_update = None
-        for stock_update in StockUpdate.objects.filter(processed=True).order_by('-stock_date'):
-            for item_name, item_data in stock_update.items.items():
-                if item_name.lower().strip() == product.name.lower().strip():
-                    latest_stock_update = {
-                        'date': stock_update.stock_date,
-                        'quantity': item_data.get('quantity', 0),
-                        'unit': item_data.get('unit', ''),
-                        'order_day': stock_update.order_day
-                    }
-                    break
-            if latest_stock_update:
-                break
+        # Get latest stock update for this product using reverse index
+        normalized_product_name = product.name.lower().strip()
+        latest_stock_update = product_name_to_latest_update.get(normalized_product_name)
         
         products_data.append({
             'id': product.id,

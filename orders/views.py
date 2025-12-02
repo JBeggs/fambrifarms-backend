@@ -18,11 +18,29 @@ class OrderListView(generics.ListAPIView):
     permission_classes = [AllowAny]
     
     def get_queryset(self):
+        from django.db.models import Prefetch
+        from inventory.models import StockMovement
+        
+        # OPTIMIZATION: Prefetch stock movements to avoid N+1 queries in serializer
+        # Prefetch movements for products in order items
+        # Note: StockMovement has a ForeignKey to Product, so we prefetch via items__product
+        stock_movements_prefetch = Prefetch(
+            'items__product__stockmovement_set',
+            queryset=StockMovement.objects.filter(
+                movement_type__in=['finished_reserve', 'finished_release']
+            ).select_related('product').order_by('-timestamp'),
+            to_attr='prefetched_movements'
+        )
+        
         return Order.objects.select_related(
             'restaurant', 
-            'restaurant__restaurantprofile'
+            'restaurant__restaurantprofile',
+            'locked_by'
         ).prefetch_related(
-            'items__product__department'
+            'items__product__department',
+            'items__source_product',
+            stock_movements_prefetch,
+            'purchase_orders'
         ).order_by('-created_at')
 
 class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
@@ -40,8 +58,13 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
     def perform_destroy(self, instance):
         """
         Override deletion to properly release reserved stock before deleting order
+        OPTIMIZED: Uses bulk operations and prefetching to minimize database queries
         """
         import logging
+        from django.db import transaction
+        from inventory.models import StockMovement, FinishedInventory
+        from inventory.signals import release_stock_for_order
+        
         logger = logging.getLogger(__name__)
         
         order = instance
@@ -49,12 +72,18 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
         
         logger.info(f"[API] Deleting order {order_number} (ID: {order.id})")
         
+        # OPTIMIZATION: Prefetch order items with related products before deletion
+        # This prevents N+1 queries in release_stock_for_order
+        order = Order.objects.select_related(
+            'restaurant'
+        ).prefetch_related(
+            'items__product',
+            'items__source_product'
+        ).get(pk=order.id)
+        
         # CRITICAL: Release reserved stock before deletion
         try:
-            from inventory.signals import release_stock_for_order
-            from inventory.models import StockMovement
-            
-            # Check if there are reserved stock movements for this order
+            # OPTIMIZATION: Single query to check for reservations
             existing_reservations = StockMovement.objects.filter(
                 movement_type='finished_reserve',
                 reference_number=order_number
@@ -62,7 +91,8 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
             
             if existing_reservations:
                 logger.info(f"[API] Releasing reserved stock for order {order_number} before deletion")
-                release_stock_for_order(order)
+                # Use optimized bulk release function
+                _release_stock_bulk(order)
                 logger.info(f"[API] Successfully released reserved stock for order {order_number}")
             else:
                 logger.info(f"[API] No reserved stock found for order {order_number}")
@@ -72,8 +102,84 @@ class OrderDetailView(generics.RetrieveUpdateDestroyAPIView):
             # Continue with deletion even if stock release fails to avoid orphaned orders
         
         # Perform the actual deletion
-        instance.delete()
+        with transaction.atomic():
+            instance.delete()
         logger.info(f"[API] Order {order_number} deleted successfully")
+
+
+def _release_stock_bulk(order):
+    """
+    OPTIMIZED: Release reserved stock using bulk operations
+    Reduces N queries to ~3 queries total regardless of item count
+    """
+    from django.db import transaction
+    from inventory.models import StockMovement, FinishedInventory
+    from collections import defaultdict
+    
+    # Collect all products that need stock release
+    products_to_release = defaultdict(lambda: {'quantity': 0, 'items': []})
+    
+    # OPTIMIZATION: Single query to get all items (already prefetched)
+    for item in order.items.all():
+        stock_product = item.source_product if item.source_product else item.product
+        stock_quantity = item.source_quantity if item.source_quantity else item.quantity
+        
+        products_to_release[stock_product.id]['quantity'] += stock_quantity
+        products_to_release[stock_product.id]['items'].append({
+            'item': item,
+            'quantity': stock_quantity
+        })
+    
+    if not products_to_release:
+        return
+    
+    # OPTIMIZATION: Bulk fetch all FinishedInventory records in one query
+    product_ids = list(products_to_release.keys())
+    inventories = {
+        inv.product_id: inv 
+        for inv in FinishedInventory.objects.filter(product_id__in=product_ids).select_related('product')
+    }
+    
+    # OPTIMIZATION: Prepare bulk stock movements
+    stock_movements_to_create = []
+    
+    with transaction.atomic():
+        for product_id, data in products_to_release.items():
+            inventory = inventories.get(product_id)
+            if not inventory:
+                continue
+            
+            total_quantity = data['quantity']
+            
+            # Release stock
+            if inventory.release_stock(total_quantity):
+                # Create stock movement records for each item
+                for item_data in data['items']:
+                    item = item_data['item']
+                    quantity = item_data['quantity']
+                    
+                    # Build descriptive notes
+                    if item.source_product:
+                        notes = f"Released due to order deletion {order.order_number} - {item.product.name} (stock from {item.source_product.name}: {item.source_quantity}{item.source_product.unit})"
+                    else:
+                        notes = f"Released due to order deletion {order.order_number}"
+                    
+                    stock_movements_to_create.append(
+                        StockMovement(
+                            movement_type='finished_release',
+                            reference_number=order.order_number,
+                            product_id=product_id,
+                            quantity=quantity,
+                            unit_cost=item.price,
+                            total_value=item.total_price,
+                            user=order.restaurant,
+                            notes=notes
+                        )
+                    )
+        
+        # OPTIMIZATION: Bulk create all stock movements in one query
+        if stock_movements_to_create:
+            StockMovement.objects.bulk_create(stock_movements_to_create)
 
 class CustomerOrdersView(generics.ListAPIView):
     """Get orders for a specific customer"""

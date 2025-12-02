@@ -109,39 +109,34 @@ class OrderItemSerializer(serializers.ModelSerializer):
             }
     
     def get_stock_action(self, obj):
-        """Determine the stock action that was taken for this order item"""
+        """Determine the stock action that was taken for this order item
+        OPTIMIZED: Uses prefetched movements to avoid database queries
+        """
         try:
-            from inventory.models import StockMovement
-            
-            # FIRST: Check by reference_number (most reliable - links directly to order)
-            movement_by_ref = StockMovement.objects.filter(
-                product=obj.product,
-                reference_number=obj.order.order_number,
-                movement_type='finished_reserve'
-            ).order_by('-timestamp').first()
-            
-            if movement_by_ref:
-                return 'reserve'
-            
-            # SECOND: Check by customer, product, and timing (fallback for older orders)
-            from datetime import timedelta
-            time_window = timedelta(minutes=5)
-            start_time = obj.order.created_at - time_window
-            end_time = obj.order.created_at + time_window
-            
-            movement = StockMovement.objects.filter(
-                product=obj.product,
-                user=obj.order.restaurant,  # Match by customer
-                movement_type__in=['finished_reserve', 'finished_release'],
-                timestamp__gte=start_time,
-                timestamp__lte=end_time
-            ).order_by('-timestamp').first()
-            
-            if movement:
-                if movement.movement_type == 'finished_reserve':
+            # OPTIMIZATION: Use prefetched movements if available
+            # Check if movements were prefetched on the product
+            if hasattr(obj.product, 'prefetched_movements'):
+                movements = obj.product.prefetched_movements
+                # Filter by reference_number and movement_type
+                movement_by_ref = next(
+                    (m for m in movements 
+                     if m.reference_number == obj.order.order_number 
+                     and m.movement_type == 'finished_reserve'),
+                    None
+                )
+                if movement_by_ref:
                     return 'reserve'
-                elif movement.movement_type == 'finished_release':
-                    return 'no_reserve'
+            else:
+                # Fallback: Query database if not prefetched
+                from inventory.models import StockMovement
+                movement_by_ref = StockMovement.objects.filter(
+                    product=obj.product,
+                    reference_number=obj.order.order_number,
+                    movement_type='finished_reserve'
+                ).order_by('-timestamp').first()
+                
+                if movement_by_ref:
+                    return 'reserve'
             
             # If no stock movement found, check if conversion actually happened
             # Only mark as conversion in very specific cases with clear evidence
@@ -160,16 +155,28 @@ class OrderItemSerializer(serializers.ModelSerializer):
             return None
     
     def get_stock_result(self, obj):
-        """Get the result of the stock action"""
+        """Get the result of the stock action
+        OPTIMIZED: Uses prefetched movements to avoid database queries
+        """
         try:
-            from inventory.models import StockMovement, FinishedInventory
-            
-            # FIRST: Check by reference_number (most reliable - links directly to order)
-            movement_by_ref = StockMovement.objects.filter(
-                product=obj.product,
-                reference_number=obj.order.order_number,
-                movement_type='finished_reserve'
-            ).order_by('-timestamp').first()
+            # OPTIMIZATION: Use prefetched movements if available
+            movement_by_ref = None
+            if hasattr(obj.product, 'prefetched_movements'):
+                movements = obj.product.prefetched_movements
+                movement_by_ref = next(
+                    (m for m in movements 
+                     if m.reference_number == obj.order.order_number 
+                     and m.movement_type == 'finished_reserve'),
+                    None
+                )
+            else:
+                # Fallback: Query database if not prefetched
+                from inventory.models import StockMovement
+                movement_by_ref = StockMovement.objects.filter(
+                    product=obj.product,
+                    reference_number=obj.order.order_number,
+                    movement_type='finished_reserve'
+                ).order_by('-timestamp').first()
             
             if movement_by_ref:
                 return {
@@ -178,49 +185,38 @@ class OrderItemSerializer(serializers.ModelSerializer):
                     'reserved_quantity': float(movement_by_ref.quantity)
                 }
             
-            # SECOND: Look for stock movement by customer, product, and timing (fallback)
-            from datetime import timedelta
-            time_window = timedelta(minutes=5)
-            start_time = obj.order.created_at - time_window
-            end_time = obj.order.created_at + time_window
-            
-            movement = StockMovement.objects.filter(
-                product=obj.product,
-                user=obj.order.restaurant,  # Match by customer
-                movement_type='finished_reserve',
-                timestamp__gte=start_time,
-                timestamp__lte=end_time
-            ).order_by('-timestamp').first()
-            
-            if movement:
-                return {
-                    'success': True,
-                    'message': f'Reserved {movement.quantity} {obj.unit}',
-                    'reserved_quantity': float(movement.quantity)
-                }
-            
-            # Check if stock exists but wasn't reserved
-            try:
-                inventory = FinishedInventory.objects.get(product=obj.product)
-                available = inventory.available_quantity or 0
-                
-                if available < obj.quantity:
+            # Check if stock exists but wasn't reserved (only if needed)
+            # OPTIMIZATION: Skip this check for list views to reduce queries
+            # Only check if we're in detail view (has context)
+            if hasattr(self.context, 'get') and self.context.get('view') and hasattr(self.context['view'], 'action') and self.context['view'].action == 'retrieve':
+                from inventory.models import FinishedInventory
+                try:
+                    inventory = FinishedInventory.objects.get(product=obj.product)
+                    available = inventory.available_quantity or 0
+                    
+                    if available < obj.quantity:
+                        return {
+                            'success': False,
+                            'message': f'Insufficient stock - Available: {available}, Needed: {obj.quantity}',
+                            'available_quantity': float(available)
+                        }
+                    else:
+                        return {
+                            'success': False,
+                            'message': 'Stock not reserved - needs to be ordered',
+                            'available_quantity': float(available)
+                        }
+                except FinishedInventory.DoesNotExist:
                     return {
                         'success': False,
-                        'message': f'Insufficient stock - Available: {available}, Needed: {obj.quantity}',
-                        'available_quantity': float(available)
+                        'message': 'No inventory record - needs to be ordered'
                     }
-                else:
-                    return {
-                        'success': False,
-                        'message': 'Stock not reserved - needs to be ordered',
-                        'available_quantity': float(available)
-                    }
-            except FinishedInventory.DoesNotExist:
-                return {
-                    'success': False,
-                    'message': 'No inventory record - needs to be ordered'
-                }
+            
+            # Default for list views
+            return {
+                'success': False,
+                'message': 'Stock not reserved'
+            }
         except Exception as e:
             import logging
             logger = logging.getLogger(__name__)
