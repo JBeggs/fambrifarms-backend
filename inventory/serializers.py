@@ -300,6 +300,20 @@ class StockAdjustmentSerializer(serializers.Serializer):
         return data
 
 
+class BulkStockAdjustmentSerializer(serializers.Serializer):
+    """For bulk stock adjustments (stock take)"""
+    adjustments = serializers.ListField(
+        child=StockAdjustmentSerializer(),
+        min_length=1,
+        help_text="List of stock adjustments to process"
+    )
+    adjustment_mode = serializers.ChoiceField(
+        choices=[('set', 'Set'), ('add', 'Add')],
+        default='set',
+        help_text="Mode: 'set' replaces stock, 'add' adds to existing stock"
+    )
+
+
 class StockAnalysisItemSerializer(serializers.ModelSerializer):
     """Serializer for individual stock analysis items"""
     product_name = serializers.CharField(source='product.name', read_only=True)

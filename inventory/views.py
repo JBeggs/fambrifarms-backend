@@ -26,7 +26,7 @@ from .serializers import (
     ProductionBatchDetailSerializer, StockAlertSerializer,
     InventoryDashboardSerializer, StockLevelSerializer,
     StockReservationSerializer, ProductionStartSerializer,
-    ProductionCompleteSerializer, StockAdjustmentSerializer,
+    ProductionCompleteSerializer, StockAdjustmentSerializer, BulkStockAdjustmentSerializer,
     StockAnalysisListSerializer, StockAnalysisDetailSerializer,
     StockAnalysisCreateSerializer, StockAnalysisItemSerializer,
     MarketPriceSerializer, MarketPriceCreateSerializer,
@@ -802,6 +802,157 @@ def stock_adjustment(request):
             )
     
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+def bulk_stock_adjustment(request):
+    """Bulk stock adjustment for stock take - processes multiple adjustments in one request"""
+    import logging
+    from django.db import transaction
+    from django.db.models import Q
+    
+    logger = logging.getLogger('inventory')
+    logger.info(f"Bulk stock adjustment request received: {len(request.data.get('adjustments', []))} adjustments")
+    
+    serializer = BulkStockAdjustmentSerializer(data=request.data)
+    
+    if not serializer.is_valid():
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    data = serializer.validated_data
+    adjustments = data['adjustments']
+    adjustment_mode = data.get('adjustment_mode', 'set')
+    
+    # Generate reference number for all adjustments
+    from django.utils import timezone
+    reference_number = f"STOCK-TAKE-{timezone.now().strftime('%Y%m%d')}"
+    
+    # 🚀 PERFORMANCE: Prefetch all products and inventory records
+    product_ids = [adj['product_id'] for adj in adjustments if adj.get('product_id')]
+    products = {p.id: p for p in Product.objects.filter(id__in=product_ids)}
+    inventory_records = {inv.product_id: inv for inv in FinishedInventory.objects.filter(product_id__in=product_ids)}
+    
+    # Collect updates for bulk operations
+    inventory_updates = []
+    inventory_creates = []
+    product_updates = []
+    stock_movements = []
+    
+    processed_count = 0
+    errors = []
+    
+    with transaction.atomic():
+        for adj_data in adjustments:
+            try:
+                movement_type = adj_data['adjustment_type']
+                product_id = adj_data.get('product_id')
+                quantity = adj_data['quantity']
+                reason = adj_data['reason']
+                notes = adj_data.get('notes') or ''
+                weight = adj_data.get('weight')
+                
+                if not product_id or movement_type not in ['finished_adjust', 'finished_set', 'finished_waste']:
+                    errors.append(f"Invalid adjustment: {adj_data}")
+                    continue
+                
+                product = products.get(product_id)
+                if not product:
+                    errors.append(f"Product ID {product_id} not found")
+                    continue
+                
+                # Determine stock value (same logic as single adjustment)
+                product_unit = (product.unit or '').lower().strip()
+                is_kg_product = product_unit == 'kg'
+                
+                if is_kg_product:
+                    stock_value = weight if weight and weight > 0 else quantity
+                else:
+                    stock_value = quantity
+                
+                # Get or create inventory record
+                inventory = inventory_records.get(product_id)
+                is_new_inventory = False
+                
+                if not inventory:
+                    # Create new inventory record
+                    inventory = FinishedInventory(
+                        product=product,
+                        available_quantity=product.stock_level or 0,
+                        reserved_quantity=0,
+                        minimum_level=10,
+                        reorder_level=20,
+                        average_cost=product.price or 0,
+                    )
+                    is_new_inventory = True
+                    inventory_records[product_id] = inventory  # Add to cache
+                
+                # Apply adjustment
+                if movement_type == 'finished_adjust':
+                    new_quantity = inventory.available_quantity + stock_value
+                    inventory.available_quantity = max(Decimal('0.00'), new_quantity)
+                elif movement_type == 'finished_set':
+                    inventory.available_quantity = max(Decimal('0.00'), stock_value)
+                else:  # waste
+                    new_quantity = inventory.available_quantity - stock_value
+                    inventory.available_quantity = max(Decimal('0.00'), new_quantity)
+                
+                # Sync product stock level
+                product.stock_level = inventory.available_quantity
+                
+                # Collect for bulk operation (separate new vs existing)
+                if is_new_inventory:
+                    inventory_creates.append(inventory)
+                else:
+                    inventory_updates.append(inventory)
+                product_updates.append(product)
+                
+                # Prepare stock movement
+                if reference_number.startswith('STOCK-TAKE-') and movement_type == 'finished_waste':
+                    final_notes = notes
+                else:
+                    final_notes = f"Reason: {reason}. {notes}".strip()
+                
+                stock_movements.append(StockMovement(
+                    movement_type=movement_type,
+                    reference_number=reference_number,
+                    product=product,
+                    quantity=quantity,
+                    weight=weight,
+                    user=request.user,
+                    notes=final_notes
+                ))
+                
+                processed_count += 1
+                
+            except Exception as e:
+                logger.error(f"Error processing adjustment {adj_data}: {str(e)}")
+                errors.append(f"Product ID {adj_data.get('product_id')}: {str(e)}")
+        
+        # 🚀 PERFORMANCE: Execute bulk operations
+        if inventory_creates:
+            FinishedInventory.objects.bulk_create(inventory_creates, batch_size=100)
+            logger.info(f"Bulk created {len(inventory_creates)} inventory records")
+        
+        if inventory_updates:
+            FinishedInventory.objects.bulk_update(inventory_updates, ['available_quantity'], batch_size=100)
+            logger.info(f"Bulk updated {len(inventory_updates)} inventory records")
+        
+        if product_updates:
+            Product.objects.bulk_update(product_updates, ['stock_level'], batch_size=100)
+            logger.info(f"Bulk updated {len(product_updates)} product stock levels")
+        
+        if stock_movements:
+            StockMovement.objects.bulk_create(stock_movements, batch_size=100)
+            logger.info(f"Bulk created {len(stock_movements)} stock movements")
+    
+    return Response({
+        'success': True,
+        'processed_count': processed_count,
+        'total_count': len(adjustments),
+        'errors': errors,
+        'message': f"Processed {processed_count}/{len(adjustments)} adjustments successfully"
+    }, status=status.HTTP_200_OK)
 
 
 class StockAnalysisViewSet(viewsets.ModelViewSet):
