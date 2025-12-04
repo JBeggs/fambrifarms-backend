@@ -121,14 +121,32 @@ def _release_stock_bulk(order):
     
     # OPTIMIZATION: Single query to get all items (already prefetched)
     for item in order.items.all():
-        stock_product = item.source_product if item.source_product else item.product
-        stock_quantity = item.source_quantity if item.source_quantity else item.quantity
-        
-        products_to_release[stock_product.id]['quantity'] += stock_quantity
-        products_to_release[stock_product.id]['items'].append({
-            'item': item,
-            'quantity': stock_quantity
-        })
+        # Check if this item uses multiple source products (mixed products)
+        if item.source_products and isinstance(item.source_products, list) and len(item.source_products) > 0:
+            # Handle multiple source products
+            for sp_data in item.source_products:
+                sp_product_id = sp_data.get('product_id')
+                sp_quantity = Decimal(str(sp_data.get('quantity', 0)))
+                
+                if sp_product_id:
+                    products_to_release[sp_product_id]['quantity'] += sp_quantity
+                    products_to_release[sp_product_id]['items'].append({
+                        'item': item,
+                        'quantity': sp_quantity,
+                        'is_source_product': True,
+                        'source_product_data': sp_data
+                    })
+        else:
+            # Handle single source product (existing logic)
+            stock_product = item.source_product if item.source_product else item.product
+            stock_quantity = item.source_quantity if item.source_quantity else item.quantity
+            
+            products_to_release[stock_product.id]['quantity'] += stock_quantity
+            products_to_release[stock_product.id]['items'].append({
+                'item': item,
+                'quantity': stock_quantity,
+                'is_source_product': False
+            })
     
     if not products_to_release:
         return
@@ -159,7 +177,13 @@ def _release_stock_bulk(order):
                     quantity = item_data['quantity']
                     
                     # Build descriptive notes
-                    if item.source_product:
+                    if item_data.get('is_source_product') and item_data.get('source_product_data'):
+                        # Multiple source products case
+                        sp_data = item_data['source_product_data']
+                        sp_unit = sp_data.get('unit', 'kg')
+                        notes = f"Released due to order deletion {order.order_number} - {item.product.name} (stock from source product: {quantity}{sp_unit})"
+                    elif item.source_product:
+                        # Single source product case
                         notes = f"Released due to order deletion {order.order_number} - {item.product.name} (stock from {item.source_product.name}: {item.source_quantity}{item.source_product.unit})"
                     else:
                         notes = f"Released due to order deletion {order.order_number}"
@@ -896,6 +920,54 @@ def order_item_detail(request, order_id, item_id):
                         print(f"[ORDER ITEM UPDATE] Source product set to: {source_product.name} (ID: {source_product.id}), quantity: {source_quantity}")
                     except Product.DoesNotExist:
                         return Response({'error': f'Source product with ID {source_product_id} not found'}, status=status.HTTP_400_BAD_REQUEST)
+            
+            # Handle source_products array update (for mixed products)
+            if 'source_products' in request.data:
+                source_products_array = request.data.get('source_products')
+                
+                if source_products_array is None:
+                    # Clear source_products
+                    order_item.source_products = None
+                elif isinstance(source_products_array, list):
+                    # Validate and set source_products array
+                    from products.models import Product
+                    validated_array = []
+                    
+                    for sp_data in source_products_array:
+                        sp_product_id = sp_data.get('product_id')
+                        sp_quantity = sp_data.get('quantity')
+                        sp_unit = sp_data.get('unit', 'kg')
+                        
+                        if not sp_product_id:
+                            return Response({'error': 'Each source product must have a product_id'}, status=status.HTTP_400_BAD_REQUEST)
+                        
+                        if sp_quantity is None:
+                            return Response({'error': 'Each source product must have a quantity'}, status=status.HTTP_400_BAD_REQUEST)
+                        
+                        try:
+                            from decimal import Decimal
+                            sp_quantity = Decimal(str(sp_quantity))
+                            if sp_quantity <= 0:
+                                return Response({'error': 'Each source product quantity must be greater than 0'}, status=status.HTTP_400_BAD_REQUEST)
+                        except (ValueError, TypeError):
+                            return Response({'error': 'Each source product quantity must be a valid number'}, status=status.HTTP_400_BAD_REQUEST)
+                        
+                        # Validate product exists
+                        try:
+                            Product.objects.get(id=sp_product_id)
+                        except Product.DoesNotExist:
+                            return Response({'error': f'Source product with ID {sp_product_id} not found'}, status=status.HTTP_400_BAD_REQUEST)
+                        
+                        validated_array.append({
+                            'product_id': sp_product_id,
+                            'quantity': float(sp_quantity),
+                            'unit': sp_unit
+                        })
+                    
+                    order_item.source_products = validated_array
+                    print(f"[ORDER ITEM UPDATE] Source products array set: {validated_array}")
+                else:
+                    return Response({'error': 'source_products must be a list or null'}, status=status.HTTP_400_BAD_REQUEST)
             
             # Recalculate total_price based on updated quantity and price
             order_item.total_price = order_item.quantity * order_item.price

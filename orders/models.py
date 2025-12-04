@@ -169,6 +169,15 @@ class OrderItem(models.Model):
         help_text='Quantity to deduct from source product (e.g., kg from bulk product)'
     )
     
+    # Multiple source products for mixed products (e.g., Mixed Lettuce, Green Mixed Lettuce)
+    # Format: [{"product_id": 123, "quantity": 3.0, "unit": "kg"}, ...]
+    source_products = models.JSONField(
+        default=list,
+        null=True,
+        blank=True,
+        help_text='Array of source products for mixed products. Format: [{"product_id": 123, "quantity": 3.0, "unit": "kg"}, ...]'
+    )
+    
     original_text = models.CharField(max_length=200, blank=True)  # "1 x onions"
     confidence_score = models.FloatField(default=1.0)  # AI parsing confidence
     manually_corrected = models.BooleanField(default=False)

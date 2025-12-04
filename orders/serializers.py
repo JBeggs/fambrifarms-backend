@@ -14,6 +14,9 @@ class OrderItemSerializer(serializers.ModelSerializer):
     source_product_stock_level = serializers.CharField(source='source_product.stock_level', read_only=True)
     source_product_unit = serializers.CharField(source='source_product.unit', read_only=True)
     
+    # Multiple source products for mixed products (e.g., Mixed Lettuce, Green Mixed Lettuce)
+    source_products = serializers.SerializerMethodField()
+    
     # Pricing breakdown information
     product_base_price = serializers.CharField(source='product.price', read_only=True)
     pricing_breakdown = serializers.SerializerMethodField()
@@ -27,7 +30,7 @@ class OrderItemSerializer(serializers.ModelSerializer):
         fields = ['id', 'product', 'product_name', 'product_description', 'product_department', 
                  'product_stock_level', 'product_default_unit', 'quantity', 'unit', 'price', 
                  'total_price', 'original_text', 'confidence_score', 'manually_corrected', 'notes',
-                 'source_product', 'source_quantity', 'source_product_name', 'source_product_stock_level', 
+                 'source_product', 'source_quantity', 'source_products', 'source_product_name', 'source_product_stock_level', 
                  'source_product_unit', 'product_base_price', 'pricing_breakdown', 'stock_action', 
                  'stock_result']
     
@@ -107,6 +110,12 @@ class OrderItemSerializer(serializers.ModelSerializer):
                 'pricing_source': 'base_price',
                 'error': str(e)
             }
+    
+    def get_source_products(self, obj):
+        """Return source_products JSON if exists, otherwise return None"""
+        if obj.source_products:
+            return obj.source_products
+        return None
     
     def get_stock_action(self, obj):
         """Determine the stock action that was taken for this order item

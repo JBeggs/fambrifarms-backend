@@ -2599,6 +2599,13 @@ def create_order_from_suggestions(request):
         # Filter out None values from source_product_ids
         source_product_ids = [item_data.get('source_product_id') for item_data in items_data 
                              if item_data.get('source_product_id') is not None]
+        # Also collect source product IDs from source_products arrays (for mixed products)
+        for item_data in items_data:
+            source_products_array = item_data.get('source_products', [])
+            if source_products_array:
+                for sp in source_products_array:
+                    if sp.get('product_id'):
+                        source_product_ids.append(sp['product_id'])
         all_product_ids = list(set(product_ids + source_product_ids))
         
         logger.info(f"[ORDER CREATE] Fetching products: ordered={product_ids}, source={source_product_ids}, all={all_product_ids}")
@@ -2704,7 +2711,50 @@ def create_order_from_suggestions(request):
                 # This ensures stock is deducted from the correct product (source product if specified)
                 source_product = None
                 source_quantity = None
-                if 'source_product_id' in item_data and item_data['source_product_id'] is not None:
+                source_products_array = None
+                
+                # Check if this is a mixed product using source_products array
+                product_name_lower = product.name.lower()
+                is_mixed_product = ('mixed lettuce' in product_name_lower or 'green mixed lettuce' in product_name_lower)
+                
+                if is_mixed_product and 'source_products' in item_data and item_data['source_products']:
+                    # Handle multiple source products for mixed products
+                    source_products_array = item_data['source_products']
+                    logger.info(f"[ORDER CREATE] Mixed product detected: {product.name}, using source_products array: {source_products_array}")
+                    
+                    # Reserve stock from each source product
+                    if stock_action == 'reserve':
+                        from .services import reserve_stock_for_customer
+                        for sp_data in source_products_array:
+                            sp_product_id = sp_data.get('product_id')
+                            sp_quantity = Decimal(str(sp_data.get('quantity', 0)))
+                            sp_unit = sp_data.get('unit', 'kg')
+                            
+                            if sp_product_id:
+                                sp_product = products_dict.get(sp_product_id)
+                                if sp_product:
+                                    logger.info(f"[ORDER CREATE] Reserving stock from source product: {sp_product.name} (ID: {sp_product.id}), quantity: {sp_quantity} {sp_unit}")
+                                    sp_stock_result = reserve_stock_for_customer(
+                                        product=sp_product,
+                                        quantity=sp_quantity,
+                                        customer=customer,
+                                        fulfillment_method='user_confirmed'
+                                    )
+                                    
+                                    if sp_stock_result.get('success', False):
+                                        movement_id = sp_stock_result.get('stock_movement_id')
+                                        if movement_id:
+                                            product_name_for_notes = f"{product.name} (stock from {sp_product.name}: {sp_quantity}{sp_unit})"
+                                            stock_movements_to_update.append({
+                                                'movement_id': movement_id,
+                                                'product_name': product_name_for_notes
+                                            })
+                                    else:
+                                        logger.warning(f"Failed to reserve stock for source product {sp_product.name}: {sp_stock_result.get('message', 'Unknown error')}")
+                                else:
+                                    logger.warning(f"[ORDER CREATE] Source product with ID {sp_product_id} not found in bulk fetch")
+                elif 'source_product_id' in item_data and item_data['source_product_id'] is not None:
+                    # Handle single source product (existing logic)
                     source_product_id = item_data['source_product_id']
                     logger.info(f"[ORDER CREATE] Source product ID provided: {source_product_id} for ordered product: {product.name} (ID: {product.id})")
                     source_product = products_dict.get(source_product_id)
@@ -2713,44 +2763,44 @@ def create_order_from_suggestions(request):
                         logger.info(f"[ORDER CREATE] Using source product: {source_product.name} (ID: {source_product.id}), quantity: {source_quantity}")
                     else:
                         logger.warning(f"[ORDER CREATE] Source product with ID {source_product_id} not found in bulk fetch. Available product IDs: {list(products_dict.keys())}")
-                
-                # Determine which product/quantity to use for stock operations
-                # Use source product/quantity if specified, otherwise use ordered product/quantity
-                stock_product = source_product if source_product else product
-                stock_quantity = source_quantity if source_quantity else quantity
-                
-                logger.info(f"[ORDER CREATE] Stock reservation: product={stock_product.name} (ID: {stock_product.id}), quantity={stock_quantity}, "
-                          f"ordered_product={product.name} (ID: {product.id}), source_product={'None' if not source_product else f'{source_product.name} (ID: {source_product.id})'}")
-                
-                # Handle stock actions
-                stock_result = None
-                stock_movement_id = None  # Store movement ID to update reference after order creation
-                if stock_action == 'reserve':
-                    # Reserve stock from the correct product (source product if specified, otherwise ordered product)
-                    from .services import reserve_stock_for_customer
-                    stock_result = reserve_stock_for_customer(
-                        product=stock_product,  # FIX: Use source product if specified
-                        quantity=stock_quantity,  # FIX: Use source quantity if specified
-                        customer=customer,
-                        fulfillment_method='user_confirmed'
-                    )
                     
-                    if stock_result.get('success', False):
-                        # OPTIMIZATION: Store movement ID from result for efficient update
-                        movement_id = stock_result.get('stock_movement_id')
-                        if movement_id:
-                            # Build product name for notes (include source product info if applicable)
-                            if source_product and source_product.id != product.id:
-                                product_name_for_notes = f"{product.name} (stock from {source_product.name}: {source_quantity}{source_product.unit})"
-                            else:
-                                product_name_for_notes = stock_product.name
-                            
-                            stock_movements_to_update.append({
-                                'movement_id': movement_id,
-                                'product_name': product_name_for_notes
-                            })
-                    else:
-                        logger.warning(f"Failed to reserve stock for {stock_product.name}: {stock_result.get('message', 'Unknown error')}")
+                    # Determine which product/quantity to use for stock operations
+                    # Use source product/quantity if specified, otherwise use ordered product/quantity
+                    stock_product = source_product if source_product else product
+                    stock_quantity = source_quantity if source_quantity else quantity
+                    
+                    logger.info(f"[ORDER CREATE] Stock reservation: product={stock_product.name} (ID: {stock_product.id}), quantity={stock_quantity}, "
+                              f"ordered_product={product.name} (ID: {product.id}), source_product={'None' if not source_product else f'{source_product.name} (ID: {source_product.id})'}")
+                    
+                    # Handle stock actions
+                    stock_result = None
+                    stock_movement_id = None  # Store movement ID to update reference after order creation
+                    if stock_action == 'reserve':
+                        # Reserve stock from the correct product (source product if specified, otherwise ordered product)
+                        from .services import reserve_stock_for_customer
+                        stock_result = reserve_stock_for_customer(
+                            product=stock_product,  # FIX: Use source product if specified
+                            quantity=stock_quantity,  # FIX: Use source quantity if specified
+                            customer=customer,
+                            fulfillment_method='user_confirmed'
+                        )
+                        
+                        if stock_result.get('success', False):
+                            # OPTIMIZATION: Store movement ID from result for efficient update
+                            movement_id = stock_result.get('stock_movement_id')
+                            if movement_id:
+                                # Build product name for notes (include source product info if applicable)
+                                if source_product and source_product.id != product.id:
+                                    product_name_for_notes = f"{product.name} (stock from {source_product.name}: {source_quantity}{source_product.unit})"
+                                else:
+                                    product_name_for_notes = stock_product.name
+                                
+                                stock_movements_to_update.append({
+                                    'movement_id': movement_id,
+                                    'product_name': product_name_for_notes
+                                })
+                        else:
+                            logger.warning(f"Failed to reserve stock for {stock_product.name}: {stock_result.get('message', 'Unknown error')}")
                 
                 elif stock_action == 'convert_to_kg':
                     # Convert bag/box items to kg equivalent
@@ -2801,6 +2851,7 @@ def create_order_from_suggestions(request):
                     confidence_score=100.0,  # User confirmed selection
                     source_product=source_product,
                     source_quantity=source_quantity,
+                    source_products=source_products_array,  # Store array for mixed products
                 )
                 
                 created_items.append({
