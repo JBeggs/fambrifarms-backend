@@ -2342,18 +2342,36 @@ def check_stock_take_status(request):
     day_before_prefix = f'STOCK-TAKE-{day_before_str}'
     
     # Check if there are any stock movements with today's, yesterday's, or day before yesterday's stock take reference
-    stock_take_exists = StockMovement.objects.filter(
+    # Check ALL movement types (not just waste) - stock take creates multiple types
+    today_movements = StockMovement.objects.filter(
         reference_number__startswith=today_prefix
-    ).exists() or StockMovement.objects.filter(
+    )
+    yesterday_movements = StockMovement.objects.filter(
         reference_number__startswith=yesterday_prefix
-    ).exists() or StockMovement.objects.filter(
+    )
+    day_before_movements = StockMovement.objects.filter(
         reference_number__startswith=day_before_prefix
-    ).exists()
+    )
+    
+    stock_take_exists = today_movements.exists() or yesterday_movements.exists() or day_before_movements.exists()
+    
+    # Log for debugging
+    logger.info(f"Stock take status check: today={today_prefix}, found_today={today_movements.count()}, found_yesterday={yesterday_movements.count()}, found_day_before={day_before_movements.count()}, completed={stock_take_exists}")
+    
+    # Also log some example reference numbers for debugging
+    if not stock_take_exists:
+        recent_movements = StockMovement.objects.filter(
+            reference_number__startswith='STOCK-TAKE-'
+        ).order_by('-timestamp')[:5]
+        logger.info(f"Recent STOCK-TAKE movements (last 5): {[m.reference_number for m in recent_movements]}")
     
     return Response({
         'completed': stock_take_exists,
         'date': today.isoformat(),
         'reference_prefix': today_prefix,
+        'today_count': today_movements.count(),
+        'yesterday_count': yesterday_movements.count(),
+        'day_before_count': day_before_movements.count(),
     })
 
 
