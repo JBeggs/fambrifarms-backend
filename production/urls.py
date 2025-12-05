@@ -9,5 +9,7 @@ router = DefaultRouter()
 
 urlpatterns = [
     path('', include(router.urls)),
-    # Add specific endpoints here as needed
+    # Recipe endpoints
+    path('products/<int:product_id>/recipe/', views.get_product_recipe, name='get-product-recipe'),
+    path('recipes/', views.list_recipes, name='list-recipes'),
 ]

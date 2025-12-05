@@ -2700,11 +2700,52 @@ def create_order_from_suggestions(request):
                 total_price = quantity * price
                 stock_action = item_data.get('stock_action', 'reserve')  # Default to reserve
                 
+                # RECIPE INTEGRATION: Check if product has a recipe first
+                # If recipe exists, use recipe ingredients for stock deduction (no source product needed)
+                recipe = None
+                recipe_source_products = []  # List of source products from recipe
+                
+                try:
+                    from production.models import Recipe as ProductionRecipe
+                    recipe = ProductionRecipe.objects.filter(
+                        product=product,
+                        is_active=True
+                    ).prefetch_related('ingredients__raw_material').first()
+                    
+                    if recipe:
+                        logger.info(f"[ORDER CREATE] Recipe found for {product.name}: {recipe.name} (ID: {recipe.id})")
+                        # Calculate required quantities for each ingredient based on order quantity
+                        for ingredient in recipe.ingredients.all():
+                            # Calculate ingredient quantity needed: (order_quantity / recipe.batch_size) * ingredient.quantity
+                            ingredient_quantity = (quantity / Decimal(str(recipe.batch_size))) * ingredient.quantity
+                            ingredient_product = ingredient.raw_material
+                            
+                            # Add to recipe source products list
+                            recipe_source_products.append({
+                                'product_id': ingredient_product.id,
+                                'quantity': float(ingredient_quantity),
+                                'unit': ingredient.unit or ingredient_product.unit,
+                                'name': ingredient_product.name,
+                            })
+                            
+                            logger.info(f"[ORDER CREATE] Recipe ingredient: {ingredient_product.name} - {ingredient_quantity} {ingredient.unit or ingredient_product.unit}")
+                except Exception as e:
+                    logger.warning(f"[ORDER CREATE] Error checking recipe for {product.name}: {str(e)}")
+                    recipe = None
+                
                 # CRITICAL FIX: Extract source product information BEFORE stock reservation
                 # This ensures stock is deducted from the correct product (source product if specified)
+                # NOTE: If recipe exists, source_product_id is ignored (recipe takes precedence)
                 source_product = None
                 source_quantity = None
-                if 'source_product_id' in item_data and item_data['source_product_id'] is not None:
+                source_products_list = None
+                
+                if recipe and recipe_source_products:
+                    # Recipe exists - use recipe ingredients (multiple source products)
+                    source_products_list = recipe_source_products
+                    logger.info(f"[ORDER CREATE] Using recipe-based source products for {product.name}: {len(recipe_source_products)} ingredients")
+                elif 'source_product_id' in item_data and item_data['source_product_id'] is not None:
+                    # No recipe - use single source product (existing flow)
                     source_product_id = item_data['source_product_id']
                     logger.info(f"[ORDER CREATE] Source product ID provided: {source_product_id} for ordered product: {product.name} (ID: {product.id})")
                     source_product = products_dict.get(source_product_id)
@@ -2715,9 +2756,16 @@ def create_order_from_suggestions(request):
                         logger.warning(f"[ORDER CREATE] Source product with ID {source_product_id} not found in bulk fetch. Available product IDs: {list(products_dict.keys())}")
                 
                 # Determine which product/quantity to use for stock operations
-                # Use source product/quantity if specified, otherwise use ordered product/quantity
-                stock_product = source_product if source_product else product
-                stock_quantity = source_quantity if source_quantity else quantity
+                # If recipe exists, we'll handle multiple ingredients separately
+                # Otherwise, use source product/quantity if specified, or ordered product/quantity
+                if recipe and recipe_source_products:
+                    # Recipe flow - stock will be deducted from each ingredient separately
+                    stock_product = None  # Not used in recipe flow
+                    stock_quantity = None  # Not used in recipe flow
+                else:
+                    # Existing flow - single product/quantity
+                    stock_product = source_product if source_product else product
+                    stock_quantity = source_quantity if source_quantity else quantity
                 
                 logger.info(f"[ORDER CREATE] Stock reservation: product={stock_product.name} (ID: {stock_product.id}), quantity={stock_quantity}, "
                           f"ordered_product={product.name} (ID: {product.id}), source_product={'None' if not source_product else f'{source_product.name} (ID: {source_product.id})'}")
@@ -2726,31 +2774,94 @@ def create_order_from_suggestions(request):
                 stock_result = None
                 stock_movement_id = None  # Store movement ID to update reference after order creation
                 if stock_action == 'reserve':
-                    # Reserve stock from the correct product (source product if specified, otherwise ordered product)
-                    from .services import reserve_stock_for_customer
-                    stock_result = reserve_stock_for_customer(
-                        product=stock_product,  # FIX: Use source product if specified
-                        quantity=stock_quantity,  # FIX: Use source quantity if specified
-                        customer=customer,
-                        fulfillment_method='user_confirmed'
-                    )
-                    
-                    if stock_result.get('success', False):
-                        # OPTIMIZATION: Store movement ID from result for efficient update
-                        movement_id = stock_result.get('stock_movement_id')
-                        if movement_id:
-                            # Build product name for notes (include source product info if applicable)
-                            if source_product and source_product.id != product.id:
-                                product_name_for_notes = f"{product.name} (stock from {source_product.name}: {source_quantity}{source_product.unit})"
-                            else:
-                                product_name_for_notes = stock_product.name
+                    # RECIPE FLOW: If recipe exists, reserve stock from all ingredients
+                    if recipe and recipe_source_products:
+                        logger.info(f"[ORDER CREATE] Reserving stock from recipe ingredients for {product.name}")
+                        from .services import reserve_stock_for_customer
+                        
+                        recipe_stock_results = []
+                        all_successful = True
+                        
+                        for sp_data in recipe_source_products:
+                            ingredient_product_id = sp_data['product_id']
+                            ingredient_quantity = Decimal(str(sp_data['quantity']))
+                            ingredient_name = sp_data['name']
                             
-                            stock_movements_to_update.append({
-                                'movement_id': movement_id,
-                                'product_name': product_name_for_notes
-                            })
+                            # Get ingredient product from products_dict
+                            ingredient_product = products_dict.get(ingredient_product_id)
+                            if not ingredient_product:
+                                logger.warning(f"[ORDER CREATE] Recipe ingredient product {ingredient_name} (ID: {ingredient_product_id}) not found")
+                                all_successful = False
+                                continue
+                            
+                            # Reserve stock for this ingredient
+                            ingredient_stock_result = reserve_stock_for_customer(
+                                product=ingredient_product,
+                                quantity=ingredient_quantity,
+                                customer=customer,
+                                fulfillment_method='user_confirmed'
+                            )
+                            
+                            if ingredient_stock_result.get('success', False):
+                                movement_id = ingredient_stock_result.get('stock_movement_id')
+                                if movement_id:
+                                    product_name_for_notes = f"{product.name} (recipe ingredient: {ingredient_name}: {ingredient_quantity}{sp_data.get('unit', '')})"
+                                    stock_movements_to_update.append({
+                                        'movement_id': movement_id,
+                                        'product_name': product_name_for_notes
+                                    })
+                                recipe_stock_results.append({
+                                    'ingredient': ingredient_name,
+                                    'success': True
+                                })
+                            else:
+                                logger.warning(f"[ORDER CREATE] Failed to reserve stock for recipe ingredient {ingredient_name}: {ingredient_stock_result.get('message', 'Unknown error')}")
+                                all_successful = False
+                                recipe_stock_results.append({
+                                    'ingredient': ingredient_name,
+                                    'success': False,
+                                    'message': ingredient_stock_result.get('message', 'Unknown error')
+                                })
+                        
+                        # Set overall stock_result based on all ingredients
+                        if all_successful:
+                            stock_result = {
+                                'success': True,
+                                'message': f'Stock reserved from {len(recipe_source_products)} recipe ingredients',
+                                'recipe_ingredients': recipe_stock_results
+                            }
+                        else:
+                            stock_result = {
+                                'success': False,
+                                'message': 'Some recipe ingredients failed stock reservation',
+                                'recipe_ingredients': recipe_stock_results
+                            }
                     else:
-                        logger.warning(f"Failed to reserve stock for {stock_product.name}: {stock_result.get('message', 'Unknown error')}")
+                        # EXISTING FLOW: Reserve stock from single product (source product if specified, otherwise ordered product)
+                        from .services import reserve_stock_for_customer
+                        stock_result = reserve_stock_for_customer(
+                            product=stock_product,  # FIX: Use source product if specified
+                            quantity=stock_quantity,  # FIX: Use source quantity if specified
+                            customer=customer,
+                            fulfillment_method='user_confirmed'
+                        )
+                        
+                        if stock_result.get('success', False):
+                            # OPTIMIZATION: Store movement ID from result for efficient update
+                            movement_id = stock_result.get('stock_movement_id')
+                            if movement_id:
+                                # Build product name for notes (include source product info if applicable)
+                                if source_product and source_product.id != product.id:
+                                    product_name_for_notes = f"{product.name} (stock from {source_product.name}: {source_quantity}{source_product.unit})"
+                                else:
+                                    product_name_for_notes = stock_product.name
+                                
+                                stock_movements_to_update.append({
+                                    'movement_id': movement_id,
+                                    'product_name': product_name_for_notes
+                                })
+                        else:
+                            logger.warning(f"Failed to reserve stock for {stock_product.name}: {stock_result.get('message', 'Unknown error')}")
                 
                 elif stock_action == 'convert_to_kg':
                     # Convert bag/box items to kg equivalent
@@ -2799,8 +2910,9 @@ def create_order_from_suggestions(request):
                     total_price=total_price,
                     original_text=item_data.get('original_text', ''),
                     confidence_score=100.0,  # User confirmed selection
-                    source_product=source_product,
-                    source_quantity=source_quantity,
+                    source_product=source_product,  # Single source product (if no recipe)
+                    source_quantity=source_quantity,  # Single source quantity (if no recipe)
+                    source_products=source_products_list,  # Multiple source products from recipe (if recipe exists)
                 )
                 
                 created_items.append({

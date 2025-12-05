@@ -1,5 +1,6 @@
 from rest_framework import serializers
 from .models import Product, Department, ProductAlert, Recipe, MarketProcurementRecommendation, MarketProcurementItem, RestaurantPackageRestriction
+from production.models import Recipe as ProductionRecipe
 
 class DepartmentSerializer(serializers.ModelSerializer):
     class Meta:
@@ -11,6 +12,7 @@ class ProductSerializer(serializers.ModelSerializer):
     procurement_supplier_name = serializers.CharField(source='procurement_supplier.name', read_only=True)
     alert_count = serializers.SerializerMethodField()
     stock_level = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
+    recipe = serializers.SerializerMethodField()  # Optional recipe field
     
     class Meta:
         model = Product
@@ -18,12 +20,25 @@ class ProductSerializer(serializers.ModelSerializer):
             'id', 'name', 'description', 'department', 'department_name',
             'price', 'unit', 'stock_level', 'minimum_stock', 'is_active',
             'needs_setup', 'unlimited_stock', 'procurement_supplier', 'procurement_supplier_name',
-            'alert_count', 'created_at', 'updated_at'
+            'alert_count', 'recipe', 'created_at', 'updated_at'
         ]
-        read_only_fields = ['stock_level']  # Prevent direct stock level updates
+        read_only_fields = ['stock_level', 'recipe']  # Prevent direct stock level updates
     
     def get_alert_count(self, obj):
         return obj.alerts.filter(is_resolved=False).count()
+    
+    def get_recipe(self, obj):
+        """Get recipe for this product if it exists (from production app)"""
+        try:
+            # Check if product has a recipe in production app
+            recipe = ProductionRecipe.objects.filter(product=obj, is_active=True).select_related('product').prefetch_related('ingredients__raw_material').first()
+            if recipe:
+                from production.serializers import RecipeSerializer
+                return RecipeSerializer(recipe).data
+        except Exception:
+            # Recipe doesn't exist or error - return None
+            pass
+        return None
     
     def validate(self, data):
         """Prevent stock_level updates through API"""
