@@ -814,11 +814,18 @@ def bulk_stock_adjustment(request):
     
     logger = logging.getLogger('inventory')
     logger.info(f"Bulk stock adjustment request received: {len(request.data.get('adjustments', []))} adjustments")
+    logger.debug(f"Request data: {request.data}")
     
     serializer = BulkStockAdjustmentSerializer(data=request.data)
     
     if not serializer.is_valid():
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        logger.error(f"Bulk stock adjustment validation failed: {serializer.errors}")
+        logger.error(f"Invalid request data: {request.data}")
+        return Response({
+            'error': 'Validation failed',
+            'details': serializer.errors,
+            'message': 'Please check the adjustment data format'
+        }, status=status.HTTP_400_BAD_REQUEST)
     
     data = serializer.validated_data
     adjustments = data['adjustments']
