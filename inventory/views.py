@@ -951,14 +951,18 @@ def bulk_stock_adjustment(request):
         
         if stock_movements:
             StockMovement.objects.bulk_create(stock_movements, batch_size=100)
-            logger.info(f"Bulk created {len(stock_movements)} stock movements")
+            logger.info(f"Bulk created {len(stock_movements)} stock movements with reference_number: {reference_number}")
+            # Verify they were created immediately after transaction
+            created_count = StockMovement.objects.filter(reference_number=reference_number).count()
+            logger.info(f"Verified: {created_count} stock movements now exist with reference_number: {reference_number}")
     
     return Response({
         'success': True,
         'processed_count': processed_count,
         'total_count': len(adjustments),
         'errors': errors,
-        'message': f"Processed {processed_count}/{len(adjustments)} adjustments successfully"
+        'message': f"Processed {processed_count}/{len(adjustments)} adjustments successfully",
+        'reference_number': reference_number,  # Return reference number for debugging
     }, status=status.HTTP_200_OK)
 
 
@@ -2331,6 +2335,9 @@ def check_stock_take_status(request):
     Check if stock take was completed in the last 3 days (today, yesterday, or day before)
     Returns whether stock take has been completed for today's, yesterday's, or day before yesterday's date
     """
+    import logging
+    logger = logging.getLogger('inventory')
+    
     today = timezone.now().date()
     yesterday = today - timedelta(days=1)
     day_before = today - timedelta(days=2)
