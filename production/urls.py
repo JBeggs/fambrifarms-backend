@@ -9,7 +9,7 @@ router = DefaultRouter()
 
 urlpatterns = [
     path('', include(router.urls)),
-    # Recipe endpoints
-    path('products/<int:product_id>/recipe/', views.get_product_recipe, name='get-product-recipe'),
+    # Recipe endpoints - single endpoint handles GET/POST/PUT/DELETE
+    path('products/<int:product_id>/recipe/', views.product_recipe_detail, name='product-recipe-detail'),
     path('recipes/', views.list_recipes, name='list-recipes'),
 ]
