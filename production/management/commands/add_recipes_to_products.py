@@ -27,6 +27,7 @@ import os
 from decimal import Decimal
 from django.core.management.base import BaseCommand, CommandError
 from django.db import transaction
+from django.db.models import Q
 from products.models import Product
 from production.models import Recipe, RecipeIngredient
 
@@ -132,8 +133,7 @@ class Command(BaseCommand):
             base_name = product_name.lower().replace('(kg)', '').replace('kg', '').strip()
             try:
                 box_product = Product.objects.filter(
-                    name__icontains=base_name,
-                    name__icontains='box',
+                    Q(name__icontains=base_name) & Q(name__icontains='box'),
                     is_active=True
                 ).first()
                 if box_product:
