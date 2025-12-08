@@ -970,20 +970,33 @@ def bulk_stock_adjustment(request):
         if reference_number.startswith('STOCK-TAKE-'):
             from django.db.models import Q
             
-            # UNCONDITIONAL RESET: Set ALL reserved_quantity to 0 for ALL products
+            # UNCONDITIONAL RESET: Set ALL reserved_quantity to 0 for ALL ACTIVE products only
+            # Only reset reserved stock for products that still exist (not deleted)
             # This catches everything: > 0, NULL, negative, anything
             # This happens AFTER bulk_update, so it overwrites any old values that might have been saved
-            total_reset_count = FinishedInventory.objects.all().update(reserved_quantity=Decimal('0.00'))
-            logger.info(f"RESET ALL RESERVED STOCK: Set reserved_quantity = 0 for ALL {total_reset_count} products during stock take")
+            total_reset_count = FinishedInventory.objects.filter(
+                product__is_active=True
+            ).update(reserved_quantity=Decimal('0.00'))
+            logger.info(f"RESET ALL RESERVED STOCK: Set reserved_quantity = 0 for ALL {total_reset_count} ACTIVE products during stock take")
             
-            # Verify the reset worked - check immediately after update
+            # Also reset any orphaned FinishedInventory records (products that were deleted but inventory still exists)
+            # This shouldn't happen with CASCADE, but just in case
+            orphaned_count = FinishedInventory.objects.filter(
+                product__isnull=True
+            ).update(reserved_quantity=Decimal('0.00'))
+            if orphaned_count > 0:
+                logger.warning(f"Found {orphaned_count} orphaned FinishedInventory records (product deleted) - reset their reserved stock too")
+            
+            # Verify the reset worked - check immediately after update (only active products)
             remaining_reserved = FinishedInventory.objects.filter(
+                product__is_active=True
+            ).filter(
                 Q(reserved_quantity__gt=0) | Q(reserved_quantity__isnull=True)
             ).count()
             if remaining_reserved > 0:
-                logger.error(f"WARNING: {remaining_reserved} products still have reserved stock after reset!")
+                logger.error(f"WARNING: {remaining_reserved} ACTIVE products still have reserved stock after reset!")
             else:
-                logger.info(f"VERIFIED: All reserved stock successfully reset to 0")
+                logger.info(f"VERIFIED: All reserved stock successfully reset to 0 for active products")
     
     return Response({
         'success': True,
