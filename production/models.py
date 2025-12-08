@@ -48,6 +48,15 @@ class RecipeIngredient(models.Model):
     )
     unit = models.CharField(max_length=20, null=True, blank=True)
     
+    # Weight in kg (for non-kg products)
+    weight_kg = models.DecimalField(
+        max_digits=10, 
+        decimal_places=3,
+        null=True, 
+        blank=True,
+        help_text='Weight in kg (required for non-kg products, e.g., boxes, bags)'
+    )
+    
     # Optional details
     preparation_notes = models.TextField(blank=True)
     is_optional = models.BooleanField(null=True, blank=True)

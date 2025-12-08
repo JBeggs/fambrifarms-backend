@@ -19,6 +19,7 @@ class RecipeIngredientSerializer(serializers.ModelSerializer):
             'raw_material_unit',
             'quantity',
             'unit',
+            'weight_kg',
             'preparation_notes',
             'is_optional',
             'created_at',

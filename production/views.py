@@ -3,6 +3,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.response import Response
 from rest_framework import status
 from django.shortcuts import get_object_or_404
+from decimal import Decimal
 from .models import Recipe, RecipeIngredient
 from .serializers import RecipeSerializer, RecipeIngredientSerializer
 from products.models import Product
@@ -131,11 +132,20 @@ def product_recipe_detail(request, product_id):
                             'message': f'Ingredient quantity must be greater than 0 for {raw_material.name}'
                         }, status=status.HTTP_400_BAD_REQUEST)
                     
+                    # Get weight_kg if provided (for non-kg products)
+                    weight_kg = ing_data.get('weight_kg')
+                    if weight_kg is not None:
+                        try:
+                            weight_kg = Decimal(str(weight_kg))
+                        except (ValueError, TypeError):
+                            weight_kg = None
+                    
                     RecipeIngredient.objects.create(
                         recipe=recipe,
                         raw_material=raw_material,
                         quantity=quantity,
                         unit=ing_data.get('unit') or raw_material.unit,
+                        weight_kg=weight_kg,
                         preparation_notes=ing_data.get('preparation_notes', ''),
                         is_optional=ing_data.get('is_optional', False),
                     )
