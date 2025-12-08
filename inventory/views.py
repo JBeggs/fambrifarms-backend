@@ -2375,8 +2375,21 @@ def check_stock_take_status(request):
     if not stock_take_exists:
         recent_movements = StockMovement.objects.filter(
             reference_number__startswith='STOCK-TAKE-'
+        ).order_by('-timestamp')[:10]
+        logger.info(f"Recent STOCK-TAKE movements (last 10): {[m.reference_number for m in recent_movements]}")
+        
+        # Also check if there are ANY movements created today (regardless of reference)
+        from django.utils import timezone
+        from datetime import timedelta
+        today_start = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        today_movements_any = StockMovement.objects.filter(timestamp__gte=today_start).count()
+        logger.info(f"Total movements created today (any reference): {today_movements_any}")
+        
+        # Check for movements with similar reference patterns
+        similar_refs = StockMovement.objects.filter(
+            reference_number__icontains='STOCK'
         ).order_by('-timestamp')[:5]
-        logger.info(f"Recent STOCK-TAKE movements (last 5): {[m.reference_number for m in recent_movements]}")
+        logger.info(f"Movements with 'STOCK' in reference (last 5): {[(m.reference_number, m.timestamp) for m in similar_refs]}")
     
     return Response({
         'completed': stock_take_exists,
