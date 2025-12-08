@@ -105,25 +105,41 @@ def product_recipe_detail(request, product_id):
                     recipe.version = request.data.get('version', recipe.version)
                     recipe.save()
                 
-                # Clear existing ingredients
+                # Clear existing ingredients (bulk delete is efficient)
                 RecipeIngredient.objects.filter(recipe=recipe).delete()
                 
-                # Create new ingredients
+                # Extract all raw_material_ids for bulk fetch (fixes N+1 query problem)
+                raw_material_ids = [
+                    ing_data.get('raw_material_id') or ing_data.get('product_id')
+                    for ing_data in ingredients_data
+                ]
+                
+                # Validate all IDs are present
+                if not all(raw_material_ids):
+                    return Response({
+                        'status': 'error',
+                        'message': 'Each ingredient must have raw_material_id or product_id'
+                    }, status=status.HTTP_400_BAD_REQUEST)
+                
+                # Bulk fetch all products in one query (fixes N+1)
+                raw_materials = {
+                    p.id: p 
+                    for p in Product.objects.filter(id__in=raw_material_ids)
+                }
+                
+                # Validate all products exist
+                missing_ids = set(raw_material_ids) - set(raw_materials.keys())
+                if missing_ids:
+                    return Response({
+                        'status': 'error',
+                        'message': f'Ingredient products with IDs {list(missing_ids)} not found'
+                    }, status=status.HTTP_400_BAD_REQUEST)
+                
+                # Prepare ingredients for bulk creation
+                ingredients_to_create = []
                 for ing_data in ingredients_data:
                     raw_material_id = ing_data.get('raw_material_id') or ing_data.get('product_id')
-                    if not raw_material_id:
-                        return Response({
-                            'status': 'error',
-                            'message': 'Each ingredient must have raw_material_id or product_id'
-                        }, status=status.HTTP_400_BAD_REQUEST)
-                    
-                    try:
-                        raw_material = Product.objects.get(id=raw_material_id)
-                    except Product.DoesNotExist:
-                        return Response({
-                            'status': 'error',
-                            'message': f'Ingredient product with ID {raw_material_id} not found'
-                        }, status=status.HTTP_400_BAD_REQUEST)
+                    raw_material = raw_materials[raw_material_id]
                     
                     quantity = ing_data.get('quantity', 0)
                     if quantity <= 0:
@@ -140,18 +156,26 @@ def product_recipe_detail(request, product_id):
                         except (ValueError, TypeError):
                             weight_kg = None
                     
-                    RecipeIngredient.objects.create(
-                        recipe=recipe,
-                        raw_material=raw_material,
-                        quantity=quantity,
-                        unit=ing_data.get('unit') or raw_material.unit,
-                        weight_kg=weight_kg,
-                        preparation_notes=ing_data.get('preparation_notes', ''),
-                        is_optional=ing_data.get('is_optional', False),
+                    ingredients_to_create.append(
+                        RecipeIngredient(
+                            recipe=recipe,
+                            raw_material=raw_material,
+                            quantity=quantity,
+                            unit=ing_data.get('unit') or raw_material.unit,
+                            weight_kg=weight_kg,
+                            preparation_notes=ing_data.get('preparation_notes', ''),
+                            is_optional=ing_data.get('is_optional', False),
+                        )
                     )
                 
-                # Reload recipe with ingredients
-                recipe.refresh_from_db()
+                # Bulk create all ingredients in one query (much faster)
+                RecipeIngredient.objects.bulk_create(ingredients_to_create)
+                
+                # Reload recipe with prefetched ingredients to avoid N+1 in serializer
+                recipe = Recipe.objects.select_related('product').prefetch_related(
+                    'ingredients__raw_material'
+                ).get(id=recipe.id)
+                
                 serializer = RecipeSerializer(recipe)
                 
                 return Response({
