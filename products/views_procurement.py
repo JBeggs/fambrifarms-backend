@@ -177,7 +177,9 @@ def approve_market_recommendation(request, recommendation_id):
     1. Approves the procurement recommendation
     2. Confirms ALL unconfirmed orders (pending/received → confirmed status)
     3. Soft-deletes ALL processed WhatsApp messages (marks is_deleted=True)
-    4. Resets all stock levels to 0 (prevents carryover to next procurement cycle)
+    4. Releases reserved stock (moves reserved → available for items in recommendation)
+    
+    NOTE: Stock reset/updates are handled by stock take, NOT by procurement approval.
     
     POST /api/products/procurement/recommendations/{id}/approve/
     Body: {
@@ -185,7 +187,7 @@ def approve_market_recommendation(request, recommendation_id):
     }
     
     When approved, this completes the current order cycle and prepares the system
-    for the next stock take and procurement cycle by clearing all processed data.
+    for the next procurement cycle. Stock levels are managed separately by stock take.
     """
     try:
         recommendation = MarketProcurementRecommendation.objects.get(id=recommendation_id)
@@ -267,29 +269,26 @@ def approve_market_recommendation(request, recommendation_id):
             logger.error(f"Traceback: {traceback.format_exc()}")
             # Don't fail approval if message deletion fails
         
-        # Step 4: Reset all stock levels to 0 (prepare for next stock take)
-        # This prevents stock carryover between procurement cycles
+        # Step 4: REMOVED - Stock reset is now handled by stock take, not procurement approval
+        # Stock take should be the only process that resets/updates stock levels
+        # Procurement approval should only handle:
+        # - Approving recommendations
+        # - Confirming orders
+        # - Cleaning up messages
+        # - Releasing reserved stock (already handled in Step 2 if implemented)
         stock_reset_count = 0
-        try:
-            from whatsapp.services import reset_all_stock_levels
-            reset_summary = reset_all_stock_levels()
-            stock_reset_count = reset_summary.get('total_reset', 0)
-            logger.info(f"Reset {stock_reset_count} stock items to 0 for next cycle")
-        except Exception as e:
-            logger.warning(f"Error resetting stock levels: {e}")
-            # Don't fail approval if stock reset fails
         
         # Serialize response
         serializer = MarketProcurementRecommendationSerializer(recommendation)
         
         return Response({
             'success': True,
-            'message': f'Market recommendation approved. {orders_confirmed_count} orders confirmed. {messages_deleted_count} messages deleted. {stock_reset_count} stock items reset.',
+            'message': f'Market recommendation approved. {orders_confirmed_count} orders confirmed. {messages_deleted_count} messages deleted. Stock updates are handled by stock take.',
             'recommendation': serializer.data,
             'print_url': f'/api/products/procurement/recommendations/{recommendation_id}/print/',
             'orders_confirmed': orders_confirmed_count,
             'messages_deleted': messages_deleted_count,
-            'stock_reset': stock_reset_count
+            'stock_reset': stock_reset_count  # Always 0 now - stock take handles stock
         })
         
     except MarketProcurementRecommendation.DoesNotExist:

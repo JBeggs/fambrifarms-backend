@@ -904,6 +904,12 @@ def bulk_stock_adjustment(request):
                     new_quantity = inventory.available_quantity - stock_value
                     inventory.available_quantity = max(Decimal('0.00'), new_quantity)
                 
+                # CRITICAL FIX: Reset reserved stock to 0 during stock take reset
+                # Stock take should reset ALL stock (available + reserved) to start fresh
+                if reason == 'complete_stock_take_reset' and reference_number.startswith('STOCK-TAKE-'):
+                    inventory.reserved_quantity = Decimal('0.00')
+                    logger.info(f"Reset reserved stock to 0 for product {product_id} during stock take")
+                
                 # Sync product stock level
                 product.stock_level = inventory.available_quantity
                 
@@ -942,8 +948,9 @@ def bulk_stock_adjustment(request):
             logger.info(f"Bulk created {len(inventory_creates)} inventory records")
         
         if inventory_updates:
-            FinishedInventory.objects.bulk_update(inventory_updates, ['available_quantity'], batch_size=100)
-            logger.info(f"Bulk updated {len(inventory_updates)} inventory records")
+            # Update both available_quantity and reserved_quantity (reserved may have been reset during stock take)
+            FinishedInventory.objects.bulk_update(inventory_updates, ['available_quantity', 'reserved_quantity'], batch_size=100)
+            logger.info(f"Bulk updated {len(inventory_updates)} inventory records (available + reserved quantities)")
         
         if product_updates:
             Product.objects.bulk_update(product_updates, ['stock_level'], batch_size=100)
