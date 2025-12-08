@@ -968,7 +968,6 @@ def bulk_stock_adjustment(request):
         # NO CONDITIONS ON adjustment_mode - if reference_number starts with STOCK-TAKE-, ALWAYS reset reserved stock
         # This happens INSIDE the transaction, AFTER bulk_update, so it's the final word
         if reference_number.startswith('STOCK-TAKE-'):
-            from decimal import Decimal
             from django.db.models import Q
             
             # UNCONDITIONAL RESET: Set ALL reserved_quantity to 0 for ALL products
