@@ -468,8 +468,7 @@ class Command(BaseCommand):
                 for product in kg_products:
                     # Check if box version exists
                     box_exists = Product.objects.filter(
-                        name__icontains=product.name.split('(')[0].strip(),
-                        name__icontains='box',
+                        Q(name__icontains=product.name.split('(')[0].strip()) & Q(name__icontains='box'),
                         is_active=True
                     ).exists()
                     if box_exists:
