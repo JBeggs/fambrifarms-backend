@@ -313,6 +313,11 @@ class StockMovement(models.Model):
     
     class Meta:
         ordering = ['-timestamp']
+        indexes = [
+            models.Index(fields=['reference_number']),
+            models.Index(fields=['movement_type', 'timestamp']),
+            models.Index(fields=['product', 'timestamp']),
+        ]
     
     def __str__(self):
         return f"{self.get_movement_type_display()} - {self.quantity} - {self.timestamp.strftime('%Y-%m-%d %H:%M')}"

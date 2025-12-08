@@ -131,6 +131,10 @@ class Product(models.Model):
     class Meta:
         ordering = ['department__name', 'name']
         unique_together = ['name', 'department', 'unit']
+        indexes = [
+            models.Index(fields=['is_active']),
+            models.Index(fields=['department', 'is_active']),
+        ]
 
 class ProductAlert(models.Model):
     ALERT_TYPES = [

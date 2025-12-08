@@ -142,6 +142,14 @@ class Order(models.Model):
     
     def __str__(self):
         return f"Order {self.order_number} - {self.restaurant.email if self.restaurant else 'Unknown'}"
+    
+    class Meta:
+        ordering = ['-created_at']
+        indexes = [
+            models.Index(fields=['-created_at']),  # Descending index for order_by('-created_at')
+            models.Index(fields=['status', 'created_at']),
+            models.Index(fields=['restaurant', 'created_at']),
+        ]
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete=models.CASCADE, related_name='items')
