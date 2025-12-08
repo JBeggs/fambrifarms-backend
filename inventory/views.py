@@ -962,6 +962,15 @@ def bulk_stock_adjustment(request):
             # Verify they were created immediately after transaction
             created_count = StockMovement.objects.filter(reference_number=reference_number).count()
             logger.info(f"Verified: {created_count} stock movements now exist with reference_number: {reference_number}")
+        
+        # CRITICAL FIX: Reset reserved stock to 0 for ALL products during stock take (SET mode)
+        # This ensures products NOT in the adjustments list (not counted) also get reserved stock reset
+        if adjustment_mode == 'set' and reference_number.startswith('STOCK-TAKE-'):
+            from decimal import Decimal
+            reserved_reset_count = FinishedInventory.objects.filter(
+                reserved_quantity__gt=0
+            ).update(reserved_quantity=Decimal('0.00'))
+            logger.info(f"Reset reserved stock to 0 for {reserved_reset_count} products during stock take (including products not in adjustments)")
     
     return Response({
         'success': True,
