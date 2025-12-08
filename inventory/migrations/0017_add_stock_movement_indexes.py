@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('inventory', '0010_pricingrule_customerpricelist_weeklypricereport_and_more'),
+        ('inventory', '0016_stockmovement_weight_and_more'),
     ]
 
     operations = [

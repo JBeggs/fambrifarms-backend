@@ -6,7 +6,7 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('orders', '0002_alter_orderitem_source_product'),
+        ('orders', '0006_order_locked_at_order_locked_by'),
     ]
 
     operations = [
