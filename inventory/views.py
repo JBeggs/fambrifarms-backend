@@ -965,13 +965,25 @@ def bulk_stock_adjustment(request):
             logger.info(f"Verified: {created_count} stock movements now exist with reference_number: {reference_number}")
         
         # CRITICAL FIX: Reset reserved stock to 0 for ALL products during stock take (SET mode)
-        # This ensures products NOT in the adjustments list (not counted) also get reserved stock reset
+        # NO CONDITIONS - Just reset ALL reserved stock to 0, period.
+        # This happens INSIDE the transaction, so it's atomic with the rest of the stock take
         if adjustment_mode == 'set' and reference_number.startswith('STOCK-TAKE-'):
             from decimal import Decimal
-            reserved_reset_count = FinishedInventory.objects.filter(
-                reserved_quantity__gt=0
-            ).update(reserved_quantity=Decimal('0.00'))
-            logger.info(f"Reset reserved stock to 0 for {reserved_reset_count} products during stock take (including products not in adjustments)")
+            from django.db.models import Q
+            
+            # UNCONDITIONAL RESET: Set ALL reserved_quantity to 0 for ALL products
+            # This catches everything: > 0, NULL, negative, anything
+            total_reset_count = FinishedInventory.objects.all().update(reserved_quantity=Decimal('0.00'))
+            logger.info(f"RESET ALL RESERVED STOCK: Set reserved_quantity = 0 for ALL {total_reset_count} products during stock take")
+            
+            # Verify the reset worked
+            remaining_reserved = FinishedInventory.objects.filter(
+                Q(reserved_quantity__gt=0) | Q(reserved_quantity__isnull=True)
+            ).count()
+            if remaining_reserved > 0:
+                logger.error(f"WARNING: {remaining_reserved} products still have reserved stock after reset!")
+            else:
+                logger.info(f"VERIFIED: All reserved stock successfully reset to 0")
     
     return Response({
         'success': True,
